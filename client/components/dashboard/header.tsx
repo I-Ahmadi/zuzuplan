@@ -14,12 +14,14 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { SidebarTrigger } from '@/components/ui/sidebar';
 import { logout } from '@/lib/auth';
 
 export function Header() {
   return (
     <header className="flex h-16 items-center justify-between border-b border-border bg-background px-6">
       <div className="flex flex-1 items-center gap-4">
+        <SidebarTrigger />
         <div className="relative w-full max-w-md">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <Input
