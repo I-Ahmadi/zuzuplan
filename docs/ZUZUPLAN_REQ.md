@@ -309,6 +309,6 @@ server/
 
 ---
 
-## 5. Future Considerations (Frontend & Other)
-- Frontend implementation will follow server completion
+## 5. Future Considerations (Client & Other)
+- Client implementation will follow server completion
 - AI features (task suggestions, priority scoring)  
