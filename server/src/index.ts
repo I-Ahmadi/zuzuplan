@@ -22,13 +22,23 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
+const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3001';
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:3001',
+  origin: CLIENT_URL,
   credentials: true
 }));
 
+// Log CORS configuration
+console.log(`🔒 CORS enabled for: ${CLIENT_URL}`);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Request logging middleware for debugging
+app.use((req, res, next) => {
+  console.log(`📨 ${req.method} ${req.path}`);
+  next();
+});
 
 // Health check
 app.get('/health', (req, res) => {
@@ -55,11 +65,18 @@ app.use(errorHandler);
 // Connect to database and start server
 const startServer = async () => {
   try {
+    console.log('🔄 Connecting to database...');
     await connectDB();
     
     const server = app.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
       console.log(`📝 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🌐 API Base URL: http://localhost:${PORT}/api`);
+      console.log(`📋 Available endpoints:`);
+      console.log(`   POST /api/auth/register`);
+      console.log(`   POST /api/auth/login`);
+      console.log(`   GET  /health`);
+      console.log(`\n✅ All routes registered and server is ready!`);
     });
 
     // Handle server errors (e.g., port already in use)

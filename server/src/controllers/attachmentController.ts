@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from '../middleware/auth';
-import attachmentService from '../services/attachmentService';
+import * as attachmentService from '../services/attachmentService';
 import multer, { FileFilterCallback } from 'multer';
 import path from 'path';
 import fs from 'fs';

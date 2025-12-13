@@ -1,16 +1,20 @@
 import { Request, Response, NextFunction } from 'express';
 
-export class AppError extends Error {
+export interface AppError extends Error {
   statusCode: number;
   isOperational: boolean;
-
-  constructor(message: string, statusCode: number = 500) {
-    super(message);
-    this.statusCode = statusCode;
-    this.isOperational = true;
-    Error.captureStackTrace(this, this.constructor);
-  }
 }
+
+export function AppError(this: AppError, message: string, statusCode: number = 500) {
+  Error.call(this, message);
+  this.message = message;
+  this.statusCode = statusCode;
+  this.isOperational = true;
+  Error.captureStackTrace(this, AppError);
+}
+
+AppError.prototype = Object.create(Error.prototype);
+AppError.prototype.constructor = AppError;
 
 export const errorHandler = (
   err: Error | AppError,
@@ -18,7 +22,7 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  if (err instanceof AppError) {
+  if ('statusCode' in err && err.isOperational) {
     return res.status(err.statusCode).json({
       success: false,
       error: {
@@ -66,17 +70,6 @@ export const errorHandler = (
     });
   }
 
-  // Validation errors
-  if (err.name === 'ValidationError') {
-    return res.status(400).json({
-      success: false,
-      error: {
-        message: err.message,
-        statusCode: 400,
-      },
-    });
-  }
-
   // JWT errors
   if (err.name === 'JsonWebTokenError') {
     return res.status(401).json({
@@ -110,4 +103,3 @@ export const errorHandler = (
     },
   });
 };
-

@@ -35,48 +35,48 @@ export function KanbanView({ tasks, onTaskClick }: KanbanViewProps) {
   }, {} as Record<string, Task[]>);
 
   return (
-    <div className="flex h-full gap-4 overflow-x-auto p-6 pb-6">
+    <div className="flex h-full gap-6 overflow-x-auto p-6 pb-6">
       {statuses.map((status) => (
-        <div key={status.id} className="flex min-w-[300px] max-w-[300px] flex-col">
-          <div className="mb-4 flex items-center gap-2">
-            <div className={cn('h-3 w-3 rounded-full', status.color)} />
-            <h3 className="font-semibold text-foreground">{status.label}</h3>
-            <Badge variant="secondary" className="ml-auto">
+        <div key={status.id} className="flex min-w-[320px] max-w-[320px] flex-col">
+          <div className="mb-4 flex items-center gap-3 rounded-lg bg-muted/30 px-3 py-2.5">
+            <div className={cn('h-3 w-3 rounded-full shadow-sm', status.color)} />
+            <h3 className="font-semibold text-foreground text-sm">{status.label}</h3>
+            <Badge variant="secondary" className="ml-auto font-semibold">
               {tasksByStatus[status.id]?.length || 0}
             </Badge>
           </div>
-          <ScrollArea className="flex-1 rounded-lg border border-border bg-muted/20">
+          <ScrollArea className="flex-1 rounded-xl border-2 border-border bg-muted/10">
             <div className="space-y-3 p-3">
               {tasksByStatus[status.id]?.map((task) => (
                 <Card
                   key={task._id}
-                  className="cursor-pointer transition-shadow hover:shadow-md"
+                  className="cursor-pointer border-2 transition-all hover:shadow-lg hover:scale-[1.02] hover:border-primary/20"
                   onClick={() => onTaskClick?.(task)}
                 >
                   <CardHeader className="pb-3">
-                    <CardTitle className="text-sm font-medium">{task.title}</CardTitle>
+                    <CardTitle className="text-sm font-semibold leading-tight">{task.title}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     {task.description && (
-                      <p className="text-xs text-muted-foreground line-clamp-2">
+                      <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">
                         {task.description}
                       </p>
                     )}
-                    <div className="flex items-center justify-between">
-                      <Badge variant="outline" className={priorityColors[task.priority]}>
+                    <div className="flex items-center justify-between gap-2">
+                      <Badge variant="outline" className={cn("text-xs font-medium", priorityColors[task.priority])}>
                         {task.priority}
                       </Badge>
                       <div className="flex items-center gap-2">
                         {task.assignee && (
-                          <Avatar className="h-6 w-6">
+                          <Avatar className="h-7 w-7 border-2 border-background shadow-sm">
                             <AvatarImage src={task.assignee.avatar} />
-                            <AvatarFallback>
+                            <AvatarFallback className="text-xs font-semibold">
                               {task.assignee.name.charAt(0).toUpperCase()}
                             </AvatarFallback>
                           </Avatar>
                         )}
                         {task.dueDate && (
-                          <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          <div className="flex items-center gap-1.5 rounded-md bg-muted px-2 py-1 text-xs text-muted-foreground">
                             <Calendar className="h-3 w-3" />
                             {new Date(task.dueDate).toLocaleDateString()}
                           </div>
@@ -87,8 +87,12 @@ export function KanbanView({ tasks, onTaskClick }: KanbanViewProps) {
                 </Card>
               ))}
               {(!tasksByStatus[status.id] || tasksByStatus[status.id].length === 0) && (
-                <div className="py-8 text-center text-sm text-muted-foreground">
-                  No tasks
+                <div className="py-12 text-center">
+                  <div className="mx-auto mb-2 h-12 w-12 rounded-full bg-muted flex items-center justify-center">
+                    <Calendar className="h-6 w-6 text-muted-foreground/50" />
+                  </div>
+                  <p className="text-sm font-medium text-muted-foreground">No tasks</p>
+                  <p className="text-xs text-muted-foreground/70 mt-1">Drag tasks here or create new ones</p>
                 </div>
               )}
             </div>

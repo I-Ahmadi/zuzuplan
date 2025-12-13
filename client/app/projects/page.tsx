@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { Task } from '@/types';
 import { DashboardLayout } from '@/components/dashboard/dashboard-layout';
+import { ProtectedRoute } from '@/components/auth/protected-route';
 
 // Mock data - will be replaced with API calls
 const mockTasks: Task[] = [
@@ -83,27 +84,36 @@ export default function ProjectsPage() {
   };
 
   return (
-    <DashboardLayout>
+    <ProtectedRoute>
+      <DashboardLayout>
       <div className="flex h-screen flex-col">
-        <div className="flex items-center justify-between border-b border-border bg-background p-6">
+        <div className="flex items-center justify-between border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6 py-5">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Project Management</h1>
-            <p className="text-sm text-muted-foreground">
-              Manage your projects and tasks
+            <h1 className="text-3xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
+              Project Management
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Manage your projects and tasks efficiently
             </p>
           </div>
-          <Button>
+          <Button className="shadow-md hover:shadow-lg transition-shadow">
             <Plus className="mr-2 h-4 w-4" />
             New Task
           </Button>
         </div>
 
         <Tabs value={view} onValueChange={(v) => setView(v as typeof view)} className="flex flex-1 flex-col overflow-hidden">
-          <div className="border-b border-border px-6">
-            <TabsList className="bg-transparent">
-              <TabsTrigger value="kanban">Kanban</TabsTrigger>
-              <TabsTrigger value="list">List</TabsTrigger>
-              <TabsTrigger value="timeline">Timeline</TabsTrigger>
+          <div className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6">
+            <TabsList className="bg-transparent h-12">
+              <TabsTrigger value="kanban" className="data-[state=active]:bg-muted data-[state=active]:shadow-sm">
+                Kanban
+              </TabsTrigger>
+              <TabsTrigger value="list" className="data-[state=active]:bg-muted data-[state=active]:shadow-sm">
+                List
+              </TabsTrigger>
+              <TabsTrigger value="timeline" className="data-[state=active]:bg-muted data-[state=active]:shadow-sm">
+                Timeline
+              </TabsTrigger>
             </TabsList>
           </div>
 
@@ -125,6 +135,7 @@ export default function ProjectsPage() {
         </Tabs>
       </div>
     </DashboardLayout>
+    </ProtectedRoute>
   );
 }
 

@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from '../middleware/auth';
-import projectService from '../services/projectService';
+import * as projectService from '../services/projectService';
 
 export const getProjects = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {

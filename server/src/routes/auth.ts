@@ -26,7 +26,12 @@ const resetLimiter = rateLimit({
 });
 
 // Routes
-router.post('/register', register);
+router.post('/register', (req, res, next) => {
+  console.log('📥 POST /api/auth/register - Request received');
+  console.log('📦 Body:', { email: req.body?.email, name: req.body?.name });
+  register(req, res, next);
+});
+
 router.post('/login', authLimiter, login);
 router.post('/refresh', refreshToken);
 router.post('/logout', logout);

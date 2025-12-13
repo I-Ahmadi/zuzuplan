@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from '../middleware/auth';
-import taskService from '../services/taskService';
+import * as taskService from '../services/taskService';
 
 export const getTasks = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {

@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from '../middleware/auth';
-import commentService from '../services/commentService';
+import * as commentService from '../services/commentService';
 
 export const getComments = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {

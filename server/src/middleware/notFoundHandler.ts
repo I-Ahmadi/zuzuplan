@@ -5,6 +5,9 @@ export const notFoundHandler = (
   res: Response,
   next: NextFunction
 ) => {
+  // Log the request for debugging
+  console.log(`⚠️  404 - ${req.method} ${req.path} not found`);
+  
   res.status(404).json({
     success: false,
     error: {

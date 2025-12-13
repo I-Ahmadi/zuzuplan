@@ -41,37 +41,42 @@ export function TimelineView({ tasks, onTaskClick }: TimelineViewProps) {
   });
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-8 p-6">
       {sortedDates.map((date) => (
-        <div key={date} className="space-y-3">
-          <div className="flex items-center gap-3">
-            <div className="h-px flex-1 bg-border" />
-            <h3 className="text-sm font-semibold text-foreground">{date}</h3>
-            <div className="h-px flex-1 bg-border" />
+        <div key={date} className="space-y-4">
+          <div className="flex items-center gap-4">
+            <div className="h-px flex-1 bg-gradient-to-r from-transparent via-border to-border" />
+            <div className="flex items-center gap-2 rounded-lg bg-muted/50 px-4 py-2">
+              <Calendar className="h-4 w-4 text-muted-foreground" />
+              <h3 className="text-sm font-bold text-foreground">{date}</h3>
+            </div>
+            <div className="h-px flex-1 bg-gradient-to-l from-transparent via-border to-border" />
           </div>
-          <div className="ml-8 space-y-2 border-l-2 border-border pl-6">
-            {tasksByDate[date].map((task) => (
+          <div className="ml-8 space-y-3 border-l-2 border-border pl-8 relative">
+            <div className="absolute -left-[5px] top-0 bottom-0 w-1 bg-gradient-to-b from-primary/20 via-primary/40 to-primary/20" />
+            {tasksByDate[date].map((task, index) => (
               <Card
                 key={task._id}
-                className="cursor-pointer transition-shadow hover:shadow-md"
+                className="cursor-pointer border-2 transition-all hover:shadow-lg hover:scale-[1.01] hover:border-primary/20 relative"
                 onClick={() => onTaskClick?.(task)}
               >
+                <div className="absolute -left-[33px] top-6 h-3 w-3 rounded-full border-2 border-background bg-primary shadow-md" />
                 <CardHeader className="pb-3">
-                  <div className="flex items-start justify-between">
-                    <CardTitle className="text-base font-medium">{task.title}</CardTitle>
-                    <Badge variant="outline" className={priorityColors[task.priority]}>
+                  <div className="flex items-start justify-between gap-3">
+                    <CardTitle className="text-base font-semibold leading-tight">{task.title}</CardTitle>
+                    <Badge variant="outline" className={cn("text-xs font-medium flex-shrink-0", priorityColors[task.priority])}>
                       {task.priority}
                     </Badge>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {task.description && (
-                    <p className="text-sm text-muted-foreground">{task.description}</p>
+                    <p className="text-sm text-muted-foreground leading-relaxed">{task.description}</p>
                   )}
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-4 flex-wrap text-sm">
+                    <div className="flex items-center gap-2 rounded-md bg-muted px-2.5 py-1">
                       <div
-                        className={cn('h-2 w-2 rounded-full', {
+                        className={cn('h-2.5 w-2.5 rounded-full shadow-sm', {
                           'bg-gray-500': task.status === 'TODO',
                           'bg-blue-500': task.status === 'IN_PROGRESS',
                           'bg-yellow-500': task.status === 'IN_REVIEW',
@@ -79,23 +84,23 @@ export function TimelineView({ tasks, onTaskClick }: TimelineViewProps) {
                           'bg-red-500': task.status === 'CANCELLED',
                         })}
                       />
-                      <span>{task.status.replace('_', ' ')}</span>
+                      <span className="font-medium text-muted-foreground">{task.status.replace('_', ' ')}</span>
                     </div>
                     {task.assignee && (
                       <div className="flex items-center gap-2">
-                        <Avatar className="h-5 w-5">
+                        <Avatar className="h-7 w-7 border-2 border-background shadow-sm">
                           <AvatarImage src={task.assignee.avatar} />
-                          <AvatarFallback>
+                          <AvatarFallback className="text-xs font-semibold">
                             {task.assignee.name.charAt(0).toUpperCase()}
                           </AvatarFallback>
                         </Avatar>
-                        <span>{task.assignee.name}</span>
+                        <span className="font-medium text-muted-foreground">{task.assignee.name}</span>
                       </div>
                     )}
                     {task.dueDate && (
-                      <div className="flex items-center gap-2">
-                        <Clock className="h-4 w-4" />
-                        <span>{new Date(task.dueDate).toLocaleTimeString()}</span>
+                      <div className="flex items-center gap-2 rounded-md bg-muted px-2.5 py-1 text-muted-foreground">
+                        <Clock className="h-3.5 w-3.5" />
+                        <span className="font-medium">{new Date(task.dueDate).toLocaleTimeString()}</span>
                       </div>
                     )}
                   </div>
@@ -106,7 +111,13 @@ export function TimelineView({ tasks, onTaskClick }: TimelineViewProps) {
         </div>
       ))}
       {tasks.length === 0 && (
-        <div className="py-12 text-center text-muted-foreground">No tasks found</div>
+        <div className="py-16 text-center">
+          <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-muted flex items-center justify-center">
+            <Clock className="h-8 w-8 text-muted-foreground/50" />
+          </div>
+          <p className="text-base font-semibold text-muted-foreground">No tasks found</p>
+          <p className="text-sm text-muted-foreground/70 mt-1">Create tasks with due dates to see them on the timeline</p>
+        </div>
       )}
     </div>
   );

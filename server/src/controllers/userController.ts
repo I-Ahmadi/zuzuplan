@@ -1,6 +1,6 @@
 import { Response, NextFunction } from 'express';
 import { AuthRequest } from '../middleware/auth';
-import userService from '../services/userService';
+import * as userService from '../services/userService';
 
 export const getProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
