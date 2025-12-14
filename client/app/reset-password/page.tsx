@@ -116,7 +116,7 @@ export default function ResetPasswordPage() {
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-5 pt-6">
             {error && (
               <div className="flex items-center gap-2 p-3 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
                 <AlertCircle className="h-4 w-4" />
@@ -129,46 +129,46 @@ export default function ResetPasswordPage() {
                 <span>Reset token is missing. Please use the link from your email.</span>
               </div>
             )}
-            <div className="space-y-2">
-              <Label htmlFor="password">New Password</Label>
+            <div className="space-y-2.5">
+              <Label htmlFor="password" className="text-right">New Password</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Lock className="absolute left-3.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="password"
                   type="password"
                   placeholder="At least 8 characters"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-9"
+                  className="pl-10"
                   disabled={isLoading || !token}
                   required
                 />
               </div>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Confirm New Password</Label>
+            <div className="space-y-2.5">
+              <Label htmlFor="confirmPassword" className="text-right">Confirm New Password</Label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Lock className="absolute left-3.5 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="confirmPassword"
                   type="password"
                   placeholder="Confirm your new password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="pl-9"
+                  className="pl-10"
                   disabled={isLoading || !token}
                   required
                 />
               </div>
               {confirmPassword && password === confirmPassword && password.length >= 8 && (
-                <div className="flex items-center gap-2 text-xs text-green-600 dark:text-green-400">
+                <div className="flex items-center gap-2 text-xs text-green-600 dark:text-green-400 mt-1.5">
                   <CheckCircle2 className="h-3 w-3" />
                   <span>Passwords match</span>
                 </div>
               )}
             </div>
           </CardContent>
-          <CardFooter className="flex flex-col space-y-4">
+          <CardFooter className="flex flex-col space-y-4 pt-6">
             <Button
               type="submit"
               className="w-full"
