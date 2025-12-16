@@ -22,7 +22,7 @@ export default function RegisterPage() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      router.push('/dashboard');
+      router.push('/tasks');
     }
   }, [isAuthenticated, router]);
 

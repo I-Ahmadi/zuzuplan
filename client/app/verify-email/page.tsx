@@ -115,7 +115,7 @@ export default function VerifyEmailPage() {
           </CardHeader>
           <CardFooter className="flex flex-col space-y-2">
             <Button asChild className="w-full">
-              <Link href="/dashboard">Go to Dashboard</Link>
+              <Link href="/tasks">Go to Tasks</Link>
             </Button>
             <Button asChild variant="outline" className="w-full">
               <Link href="/login">Sign In</Link>

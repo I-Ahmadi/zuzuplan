@@ -3,10 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
-  LayoutDashboard,
   FolderKanban,
   CheckSquare,
-  Users,
   Settings,
   LogOut,
 } from 'lucide-react';
@@ -25,10 +23,7 @@ import {
 import { useAuth } from '@/contexts/auth-context';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Projects', href: '/projects', icon: FolderKanban },
   { name: 'Tasks', href: '/tasks', icon: CheckSquare },
-  { name: 'Members', href: '/members', icon: Users },
   { name: 'Settings', href: '/settings', icon: Settings },
 ];
 
@@ -42,7 +37,7 @@ export function AppSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild size="lg" className="hover:bg-sidebar-accent transition-colors">
-              <Link href="/dashboard">
+              <Link href="/tasks">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-xl bg-gradient-to-br from-sidebar-primary to-sidebar-primary/80 text-sidebar-primary-foreground shadow-lg shadow-sidebar-primary/25">
                   <FolderKanban className="size-5" />
                 </div>

@@ -3,7 +3,7 @@
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { api } from '@/lib/api';
-import { getAccessToken, getRefreshToken, setAuthTokens, clearAuthTokens } from '@/lib/auth';
+import { getAccessToken, getRefreshToken, setAuthTokens, clearAuthTokens, setUser as setUserInStorage, getUser } from '@/lib/auth';
 import { User, AuthResponse } from '@/types';
 
 interface AuthContextType {
@@ -27,13 +27,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const token = getAccessToken();
       if (!token) {
+        setUser(null);
         setLoading(false);
         return;
       }
 
-      // Try to get user info or validate token
-      // For now, we'll just check if token exists
-      // You might want to add a /me endpoint to get current user
+      // Restore user from localStorage if token exists
+      const storedUser = getUser();
+      if (storedUser) {
+        setUser(storedUser);
+      } else {
+        // If no user in storage but token exists, clear tokens
+        clearAuthTokens();
+        setUser(null);
+      }
       setLoading(false);
     } catch (error) {
       console.error('Auth check failed:', error);
@@ -53,8 +60,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (response.success && response.data) {
         const { user, accessToken, refreshToken } = response.data;
         setAuthTokens(accessToken, refreshToken);
-        setUser(user);
-        router.push('/dashboard');
+        setUserInStorage(user); // Store user in localStorage
+        setUser(user); // Set user in state
+        router.push('/tasks');
       }
     } catch (error: any) {
       throw new Error(error.message || 'Login failed');
@@ -67,12 +75,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (response.success && response.data) {
         const { user, accessToken, refreshToken } = response.data;
         setAuthTokens(accessToken, refreshToken);
-        setUser(user);
+        setUserInStorage(user); // Store user in localStorage
+        setUser(user); // Set user in state
         // Redirect to verify email page if email not verified
         if (!user.emailVerified) {
           router.push('/verify-email');
         } else {
-          router.push('/dashboard');
+          router.push('/tasks');
         }
       }
     } catch (error: any) {
