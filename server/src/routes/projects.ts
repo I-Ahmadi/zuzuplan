@@ -12,7 +12,7 @@ import {
   getProjectStats,
 } from '../controllers/projectController';
 import { authenticate } from '../middleware/auth';
-import { requireProjectAccess } from '../middleware/authorization';
+import { requireProjectAccess, requireProjectAdmin } from '../middleware/authorization';
 
 const router = Router();
 
@@ -22,12 +22,12 @@ router.use(authenticate);
 router.get('/', getProjects);
 router.post('/', createProject);
 router.get('/:id', requireProjectAccess(), getProject);
-router.put('/:id', requireProjectAccess('Admin'), updateProject);
-router.delete('/:id', requireProjectAccess('Owner'), deleteProject);
+router.put('/:id', requireProjectAdmin(), updateProject);
+router.delete('/:id', requireProjectAdmin(), deleteProject);
 router.get('/:id/members', requireProjectAccess(), getMembers);
-router.post('/:id/members', requireProjectAccess('Admin'), addMember);
-router.put('/:id/members/:userId', requireProjectAccess('Owner'), updateMemberRole);
-router.delete('/:id/members/:userId', requireProjectAccess('Admin'), removeMember);
+router.post('/:id/members', requireProjectAdmin(), addMember);
+router.put('/:id/members/:userId', requireProjectAdmin(), updateMemberRole);
+router.delete('/:id/members/:userId', requireProjectAdmin(), removeMember);
 router.get('/:id/stats', requireProjectAccess(), getProjectStats);
 
 export default router;

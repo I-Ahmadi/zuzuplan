@@ -98,7 +98,7 @@ export default function ForgotPasswordPage() {
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-5 pt-6">
+          <CardContent className="space-y-5">
             {error && (
               <div className="flex items-center gap-2 p-3 text-sm text-destructive bg-destructive/10 rounded-md border border-destructive/20">
                 <AlertCircle className="h-4 w-4" />

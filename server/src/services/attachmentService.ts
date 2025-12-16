@@ -1,7 +1,7 @@
 import { Attachment, Project, ProjectMember } from '../models';
 import { AppError } from '../middleware/errorHandler';
 import { logActivity } from './activityLogService';
-import { ACTIVITY_ACTIONS } from '../utils/constants';
+import { ACTIVITY_ACTIONS, ROLES } from '../utils/constants';
 import * as taskService from './taskService';
 
 export async function createAttachment(
@@ -64,7 +64,7 @@ export async function deleteAttachment(attachmentId: string, userId: string) {
     throw new AppError('Attachment not found', 404);
   }
 
-  // Check permissions - user can delete their own attachment or project admin/owner
+  // Check permissions - user can delete their own attachment or project admin
   if ((attachment.uploadedBy as any).toString() !== userId) {
     const project = await Project.findById((attachment.taskId as any).projectId).lean();
     if (!project) {
@@ -75,7 +75,7 @@ export async function deleteAttachment(attachmentId: string, userId: string) {
     const membership = await ProjectMember.findOne({
       projectId: project._id,
       userId,
-      role: { $in: ['Admin', 'Owner'] },
+      role: ROLES.ADMIN,
     });
 
     if (!isOwner && !membership) {

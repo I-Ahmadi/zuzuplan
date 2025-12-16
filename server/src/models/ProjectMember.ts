@@ -23,8 +23,8 @@ const ProjectMemberSchema = new Schema<IProjectMember>(
     },
     role: {
       type: String,
-      default: 'Member',
-      enum: ['Owner', 'Admin', 'Member', 'Viewer'],
+      default: 'Admin',
+      enum: ['Admin'],
     },
   },
   {

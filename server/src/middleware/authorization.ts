@@ -25,14 +25,14 @@ export const requireRole = (...allowedRoles: string[]) => {
   };
 };
 
-export const requireProjectAccess = (minRole: string = ROLES.VIEWER) => {
+export const requireProjectAccess = () => {
   return async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       if (!req.user) {
         throw new AppError('Authentication required', 401);
       }
 
-      const projectId = req.params.projectId || req.body.projectId;
+      const projectId = req.params.id || req.params.projectId || req.body.projectId;
       if (!projectId) {
         throw new AppError('Project ID required', 400);
       }
@@ -43,13 +43,13 @@ export const requireProjectAccess = (minRole: string = ROLES.VIEWER) => {
         throw new AppError('Project not found', 404);
       }
 
-      // Check if user is owner
+      // Check if user is owner (treat as admin)
       if (project.ownerId.toString() === req.user.id) {
-        req.user.role = ROLES.OWNER;
+        req.user.role = ROLES.ADMIN;
         return next();
       }
 
-      // Check if user is a member
+      // Check if user is an admin member
       const membership = await ProjectMember.findOne({
         projectId: projectId,
         userId: req.user.id,
@@ -59,18 +59,8 @@ export const requireProjectAccess = (minRole: string = ROLES.VIEWER) => {
         throw new AppError('Access denied to this project', 403);
       }
 
-      // Check role hierarchy
-      const roleHierarchy = {
-        [ROLES.OWNER]: 4,
-        [ROLES.ADMIN]: 3,
-        [ROLES.MEMBER]: 2,
-        [ROLES.VIEWER]: 1,
-      };
-
-      const userRoleLevel = roleHierarchy[membership.role as keyof typeof roleHierarchy] || 0;
-      const requiredRoleLevel = roleHierarchy[minRole as keyof typeof roleHierarchy] || 0;
-
-      if (userRoleLevel < requiredRoleLevel) {
+      // Only admin role is allowed
+      if (membership.role !== ROLES.ADMIN) {
         throw new AppError('Insufficient permissions for this project', 403);
       }
 
@@ -82,6 +72,43 @@ export const requireProjectAccess = (minRole: string = ROLES.VIEWER) => {
   };
 };
 
-export const requireProjectOwner = requireProjectAccess(ROLES.OWNER);
-export const requireProjectAdmin = requireProjectAccess(ROLES.ADMIN);
-export const requireProjectMember = requireProjectAccess(ROLES.MEMBER);
+export const requireProjectAdmin = () => {
+  return async (req: AuthRequest, res: Response, next: NextFunction) => {
+    try {
+      if (!req.user) {
+        throw new AppError('Authentication required', 401);
+      }
+
+      const projectId = req.params.id || req.params.projectId || req.body.projectId;
+      if (!projectId) {
+        throw new AppError('Project ID required', 400);
+      }
+
+      const project = await Project.findById(projectId);
+
+      if (!project) {
+        throw new AppError('Project not found', 404);
+      }
+
+      // Check if user is owner (treat as admin)
+      if (project.ownerId.toString() === req.user.id) {
+        return next();
+      }
+
+      // Check if user is an admin member
+      const membership = await ProjectMember.findOne({
+        projectId: projectId,
+        userId: req.user.id,
+        role: ROLES.ADMIN,
+      });
+
+      if (!membership) {
+        throw new AppError('Admin access required for this project', 403);
+      }
+
+      next();
+    } catch (error) {
+      next(error);
+    }
+  };
+};

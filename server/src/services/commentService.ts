@@ -2,7 +2,7 @@ import { Comment, Project, ProjectMember } from '../models';
 import { AppError } from '../middleware/errorHandler';
 import { getSkip, createPaginationResult } from '../utils/pagination';
 import { logActivity } from './activityLogService';
-import { ACTIVITY_ACTIONS } from '../utils/constants';
+import { ACTIVITY_ACTIONS, ROLES } from '../utils/constants';
 import { notifyCommentUpdate } from '../utils/realtime';
 import * as taskService from './taskService';
 
@@ -115,9 +115,9 @@ export async function deleteComment(commentId: string, userId: string) {
     throw new AppError('Comment not found', 404);
   }
 
-  // Check permissions - user can delete their own comment or project admin/owner
+  // Check permissions - user can delete their own comment or project admin
   if ((comment.userId as any).toString() !== userId) {
-    // Check if user is project admin/owner
+    // Check if user is project admin
     const project = await Project.findById((comment.taskId as any).projectId).lean();
     if (!project) {
       throw new AppError('Project not found', 404);
@@ -127,7 +127,7 @@ export async function deleteComment(commentId: string, userId: string) {
     const membership = await ProjectMember.findOne({
       projectId: project._id,
       userId,
-      role: { $in: ['Admin', 'Owner'] },
+      role: ROLES.ADMIN,
     });
 
     if (!isOwner && !membership) {

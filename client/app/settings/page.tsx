@@ -91,7 +91,7 @@ export default function SettingsPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="role">Role</Label>
-                    <Input id="role" defaultValue="Project Manager" className="h-11" />
+                    <Input id="role" defaultValue="Admin" className="h-11" />
                   </div>
                 </div>
                 <div className="flex justify-end">

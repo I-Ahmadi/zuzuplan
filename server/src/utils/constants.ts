@@ -1,8 +1,5 @@
 export const ROLES = {
-  OWNER: 'Owner',
   ADMIN: 'Admin',
-  MEMBER: 'Member',
-  VIEWER: 'Viewer',
 } as const;
 
 export const TASK_STATUS = {

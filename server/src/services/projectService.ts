@@ -54,11 +54,11 @@ export async function createProject(userId: string, data: { name: string; descri
     ownerId: userId,
   });
 
-  // Create owner membership
+  // Create admin membership for project creator
   await ProjectMember.create({
     projectId: project._id,
     userId: userId,
-    role: ROLES.OWNER,
+    role: ROLES.ADMIN,
   });
 
   // Populate owner and members
@@ -150,7 +150,7 @@ export async function updateProject(
     projectId,
     userId,
   });
-  const isAdmin = membership?.role === ROLES.ADMIN || membership?.role === ROLES.OWNER;
+  const isAdmin = membership?.role === ROLES.ADMIN;
 
   if (!isOwner && !isAdmin) {
     throw new AppError('Insufficient permissions', 403);
@@ -181,9 +181,15 @@ export async function updateProject(
 
 export async function deleteProject(projectId: string, userId: string) {
   const project = await getProjectById(projectId, userId);
+  const isOwner = project.ownerId.toString() === userId;
+  const membership = await ProjectMember.findOne({
+    projectId,
+    userId,
+  });
+  const isAdmin = membership?.role === ROLES.ADMIN;
 
-  if (project.ownerId.toString() !== userId) {
-    throw new AppError('Only project owner can delete the project', 403);
+  if (!isOwner && !isAdmin) {
+    throw new AppError('Only project admin can delete the project', 403);
   }
 
   await Project.findByIdAndDelete(projectId);
@@ -203,7 +209,7 @@ export async function addMember(
   projectId: string,
   userId: string,
   memberUserId: string,
-  role: string = ROLES.MEMBER
+  role: string = ROLES.ADMIN
 ) {
   const project = await getProjectById(projectId, userId);
 
@@ -213,7 +219,7 @@ export async function addMember(
     projectId,
     userId,
   });
-  const isAdmin = membership?.role === ROLES.ADMIN || membership?.role === ROLES.OWNER;
+  const isAdmin = membership?.role === ROLES.ADMIN;
 
   if (!isOwner && !isAdmin) {
     throw new AppError('Insufficient permissions to add members', 403);
@@ -268,10 +274,16 @@ export async function updateMemberRole(
   role: string
 ) {
   const project = await getProjectById(projectId, userId);
+  const isOwner = project.ownerId.toString() === userId;
+  const membership = await ProjectMember.findOne({
+    projectId,
+    userId,
+  });
+  const isAdmin = membership?.role === ROLES.ADMIN;
 
-  // Only owner can change roles
-  if (project.ownerId.toString() !== userId) {
-    throw new AppError('Only project owner can change member roles', 403);
+  // Only admin can change roles
+  if (!isOwner && !isAdmin) {
+    throw new AppError('Only project admin can change member roles', 403);
   }
 
   // Cannot change owner's role
@@ -317,7 +329,7 @@ export async function removeMember(projectId: string, userId: string, memberUser
     projectId,
     userId,
   });
-  const isAdmin = membership?.role === ROLES.ADMIN || membership?.role === ROLES.OWNER;
+  const isAdmin = membership?.role === ROLES.ADMIN;
 
   if (!isOwner && !isAdmin) {
     throw new AppError('Insufficient permissions to remove members', 403);

@@ -122,8 +122,9 @@ export default function MembersPage() {
             </CardHeader>
             <CardContent>
               <div className="flex items-center gap-2">
-                <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200 dark:bg-green-950 dark:text-green-300 dark:border-green-800">
-                  Member
+                <Badge variant="secondary" className="bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950 dark:text-blue-300 dark:border-blue-800">
+                  <Shield className="h-3 w-3 mr-1" />
+                  Admin
                 </Badge>
                 <span className="text-xs text-muted-foreground">2 projects</span>
               </div>

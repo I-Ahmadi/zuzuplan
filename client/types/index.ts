@@ -21,7 +21,7 @@ export interface Project {
 }
 
 // Project Member Types
-export type ProjectRole = 'Owner' | 'Admin' | 'Member' | 'Viewer';
+export type ProjectRole = 'Admin';
 
 export interface ProjectMember {
   _id: string;
