@@ -61,6 +61,7 @@ export const getActivityLog = async (
       .skip(skip)
       .limit(limit)
       .lean(),
+      
     ActivityLog.countDocuments(query),
   ]);
 
