@@ -8,6 +8,7 @@ export const register = async (req: Request, res: Response, next: NextFunction) 
 
     res.status(201).json({
       success: true,
+      message: 'User registered successfully',
       data: result,
     });
 
@@ -24,6 +25,7 @@ export const login = async (req: Request, res: Response, next: NextFunction) => 
 
     res.json({
       success: true,
+      message: 'Logged in successfully',
       data: result,
     });
 
@@ -40,6 +42,7 @@ export const refreshToken = async (req: Request, res: Response, next: NextFuncti
 
     res.json({
       success: true,
+      message: 'Token refreshed successfully',
       data: result,
     });
 

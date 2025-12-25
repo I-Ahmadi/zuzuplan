@@ -12,6 +12,7 @@ export const getProfile = async (req: AuthRequest, res: Response, next: NextFunc
 
     res.json({
       success: true,
+      message: 'Profile retrieved successfully',
       data: user,
     });
   } catch (error) {
@@ -29,6 +30,7 @@ export const updateProfile = async (req: AuthRequest, res: Response, next: NextF
 
     res.json({
       success: true,
+      message: 'Profile updated successfully',
       data: user,
     });
   } catch (error) {
@@ -47,6 +49,7 @@ export const updateAvatar = async (req: AuthRequest, res: Response, next: NextFu
 
     res.json({
       success: true,
+      message: 'Avatar updated successfully',
       data: user,
     });
   } catch (error) {
@@ -61,6 +64,7 @@ export const getUserById = async (req: AuthRequest, res: Response, next: NextFun
 
     res.json({
       success: true,
+      message: 'User retrieved successfully',
       data: user,
     });
   } catch (error) {

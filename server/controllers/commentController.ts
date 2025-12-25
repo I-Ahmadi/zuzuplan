@@ -16,6 +16,7 @@ export const getComments = async (req: AuthRequest, res: Response, next: NextFun
 
     res.json({
       success: true,
+      message: 'Comments retrieved successfully',
       data: result.data,
       pagination: result.pagination,
     });
@@ -35,6 +36,7 @@ export const createComment = async (req: AuthRequest, res: Response, next: NextF
 
     res.status(201).json({
       success: true,
+      message: 'Comment created successfully',      
       data: comment,
     });
   } catch (error) {
@@ -56,6 +58,7 @@ export const updateComment = async (req: AuthRequest, res: Response, next: NextF
 
     res.json({
       success: true,
+      message: 'Comment updated successfully',
       data: comment,
     });
   } catch (error) {

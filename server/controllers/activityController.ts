@@ -18,6 +18,7 @@ export const getActivity = async (req: AuthRequest, res: Response, next: NextFun
 
     res.json({
       success: true,
+      message: 'Activity log retrieved successfully',
       data: result.data,
       pagination: result.pagination,
     });

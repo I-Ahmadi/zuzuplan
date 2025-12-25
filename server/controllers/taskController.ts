@@ -20,6 +20,7 @@ export const getTasks = async (req: AuthRequest, res: Response, next: NextFuncti
 
     res.json({
       success: true,
+      message: 'Tasks retrieved successfully',
       data: result.data,
       pagination: result.pagination,
     });
@@ -39,6 +40,7 @@ export const createTask = async (req: AuthRequest, res: Response, next: NextFunc
 
     res.status(201).json({
       success: true,
+      message: 'Task created successfully',
       data: task,
     });
   } catch (error) {
@@ -56,6 +58,7 @@ export const getTask = async (req: AuthRequest, res: Response, next: NextFunctio
 
     res.json({
       success: true,
+      message: 'Task retrieved successfully',
       data: task,
     });
   } catch (error) {
@@ -73,6 +76,7 @@ export const updateTask = async (req: AuthRequest, res: Response, next: NextFunc
 
     res.json({
       success: true,
+      message: 'Task updated successfully',
       data: task,
     });
   } catch (error) {
@@ -111,6 +115,7 @@ export const addSubtask = async (req: AuthRequest, res: Response, next: NextFunc
 
     res.status(201).json({
       success: true,
+      message: 'Subtask added successfully',
       data: subtask,
     });
   } catch (error) {
@@ -133,6 +138,7 @@ export const updateSubtask = async (req: AuthRequest, res: Response, next: NextF
 
     res.json({
       success: true,
+      message: 'Subtask updated successfully',
       data: subtask,
     });
   } catch (error) {

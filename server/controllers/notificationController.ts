@@ -20,6 +20,7 @@ export const getNotificationsList = async (req: AuthRequest, res: Response, next
 
     res.json({
       success: true,
+      message: 'Notifications retrieved successfully',
       data: result.data,
       pagination: result.pagination,
     });
@@ -38,6 +39,7 @@ export const markAsRead = async (req: AuthRequest, res: Response, next: NextFunc
 
     res.json({
       success: true,
+      message: 'Notification marked as read',
       data: notification,
     });
   } catch (error) {

@@ -16,6 +16,7 @@ export const getProjects = async (req: AuthRequest, res: Response, next: NextFun
 
     res.json({
       success: true,
+      message: 'Projects retrieved successfully',
       data: result.data,
       pagination: result.pagination,
     });
@@ -34,6 +35,7 @@ export const createProject = async (req: AuthRequest, res: Response, next: NextF
 
     res.status(201).json({
       success: true,
+      message: 'Project created successfully',
       data: project,
     });
   } catch (error) {
@@ -51,6 +53,7 @@ export const getProject = async (req: AuthRequest, res: Response, next: NextFunc
 
     res.json({
       success: true,
+      message: 'Project retrieved successfully',
       data: project,
     });
   } catch (error) {
@@ -72,6 +75,7 @@ export const updateProject = async (req: AuthRequest, res: Response, next: NextF
 
     res.json({
       success: true,
+      message: 'Project updated successfully',
       data: project,
     });
   } catch (error) {
@@ -106,6 +110,7 @@ export const getMembers = async (req: AuthRequest, res: Response, next: NextFunc
 
     res.json({
       success: true,
+      message: 'Members retrieved successfully',
       data: members,
     });
   } catch (error) {
@@ -128,6 +133,7 @@ export const addMember = async (req: AuthRequest, res: Response, next: NextFunct
 
     res.status(201).json({
       success: true,
+      message: 'Member added successfully',
       data: member,
     });
   } catch (error) {
@@ -150,6 +156,7 @@ export const updateMemberRole = async (req: AuthRequest, res: Response, next: Ne
 
     res.json({
       success: true,
+      message: 'Member role updated successfully',
       data: member,
     });
   } catch (error) {
@@ -188,6 +195,7 @@ export const getProjectStats = async (req: AuthRequest, res: Response, next: Nex
 
     res.json({
       success: true,
+      message: 'Project stats retrieved successfully',
       data: stats,
     });
   } catch (error) {

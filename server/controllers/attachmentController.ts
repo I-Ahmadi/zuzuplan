@@ -48,6 +48,7 @@ export const getAttachments = async (req: AuthRequest, res: Response, next: Next
 
     res.json({
       success: true,
+      message: 'Attachments retrieved successfully',
       data: attachments,
     });
   } catch (error) {
@@ -81,6 +82,7 @@ export const uploadAttachment = async (req: AuthRequest, res: Response, next: Ne
 
     res.status(201).json({
       success: true,
+      message: 'Attachment uploaded successfully',
       data: attachment,
     });
   } catch (error) {
