@@ -4,7 +4,7 @@
   "description": "Server API for ZuzuPlan task management platform",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "tsx watch src/index.ts",
+    "dev": "tsx watch index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "seed": "tsx prisma/seed.ts",
