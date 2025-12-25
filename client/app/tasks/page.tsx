@@ -1,147 +1,385 @@
+'use client';
+
+import { useState } from 'react';
 import { DashboardLayout } from '@/components/dashboard/dashboard-layout';
 import { ProtectedRoute } from '@/components/auth/protected-route';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { 
-  Plus, 
-  Search, 
-  Filter, 
-  CheckSquare, 
-  Clock, 
-  AlertCircle,
-  CheckCircle2,
-  ListTodo
-} from 'lucide-react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Plus, Edit, Trash2, Eye, UserCog } from 'lucide-react';
+import { useAuth } from '@/contexts/auth-context';
+
+type Priority = 'High' | 'Medium' | 'Low';
+type Status = 'Pending' | 'In Progress' | 'Completed' | 'Blocked';
+
+interface Task {
+  id: string;
+  title: string;
+  description: string;
+  assignedTo: string;
+  priority: Priority;
+  status: Status;
+  dueDate: string;
+  createdAt: string;
+  updatedAt: string;
+  tags: string[];
+}
 
 export default function TasksPage() {
+  const { user } = useAuth();
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    assignedTo: user?.name || '',
+    priority: 'Medium' as Priority,
+    status: 'Pending' as Status,
+    dueDate: '',
+    tags: '',
+  });
+
+  const generateTaskId = () => {
+    return `TASK-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    const now = new Date().toISOString();
+    const newTask: Task = {
+      id: generateTaskId(),
+      title: formData.title,
+      description: formData.description,
+      assignedTo: formData.assignedTo,
+      priority: formData.priority,
+      status: formData.status,
+      dueDate: formData.dueDate,
+      createdAt: now,
+      updatedAt: now,
+      tags: formData.tags ? formData.tags.split(',').map(tag => tag.trim()) : [],
+    };
+
+    setTasks([...tasks, newTask]);
+    
+    // Reset form
+    setFormData({
+      title: '',
+      description: '',
+      assignedTo: user?.name || '',
+      priority: 'Medium',
+      status: 'Pending',
+      dueDate: '',
+      tags: '',
+    });
+    setIsFormOpen(false);
+  };
+
+  const handleDelete = (taskId: string) => {
+    setTasks(tasks.filter(task => task.id !== taskId));
+  };
+
+  const formatDate = (dateString: string) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  const getPriorityBadgeVariant = (priority: Priority) => {
+    switch (priority) {
+      case 'High':
+        return 'destructive';
+      case 'Medium':
+        return 'default';
+      case 'Low':
+        return 'secondary';
+      default:
+        return 'outline';
+    }
+  };
+
+  const getStatusBadgeVariant = (status: Status) => {
+    switch (status) {
+      case 'Completed':
+        return 'default';
+      case 'In Progress':
+        return 'default';
+      case 'Blocked':
+        return 'destructive';
+      case 'Pending':
+        return 'secondary';
+      default:
+        return 'outline';
+    }
+  };
+
   return (
     <ProtectedRoute>
       <DashboardLayout>
-      <div className="space-y-6 p-6 lg:p-8">
-        <div className="flex items-center justify-between">
-          <div className="space-y-1">
-            <h1 className="text-4xl font-bold tracking-tight bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-              Tasks
-            </h1>
-            <p className="text-muted-foreground text-lg">
-              Manage and track all your tasks across projects
-            </p>
+        <div className="space-y-6 p-6 lg:p-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold tracking-tight">Task Management</h1>
+              <p className="text-muted-foreground mt-2">
+                Create and manage your tasks
+              </p>
+            </div>
+            <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+              <Button onClick={() => setIsFormOpen(true)}>
+                <Plus className="mr-2 h-4 w-4" />
+                New Task
+              </Button>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+                <DialogHeader>
+                  <DialogTitle>Create New Task</DialogTitle>
+                  <DialogDescription>
+                    Fill in the details to create a new task
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="title">Title *</Label>
+                      <Input
+                        id="title"
+                        value={formData.title}
+                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                        placeholder="Enter task title"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="assignedTo">Assigned To *</Label>
+                      <Input
+                        id="assignedTo"
+                        value={formData.assignedTo}
+                        onChange={(e) => setFormData({ ...formData, assignedTo: e.target.value })}
+                        placeholder="Enter assignee name"
+                        required
+                      />
+                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Textarea
+                      id="description"
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      placeholder="Enter task description (optional)"
+                      rows={3}
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-2">
+                    <div className="space-y-1">
+                      <Label htmlFor="priority" className="text-sm">Priority *</Label>
+                      <Select
+                        value={formData.priority}
+                        onValueChange={(value) => setFormData({ ...formData, priority: value as Priority })}
+                      >
+                        <SelectTrigger id="priority" className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="High">High</SelectItem>
+                          <SelectItem value="Medium">Medium</SelectItem>
+                          <SelectItem value="Low">Low</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="status" className="text-sm">Status *</Label>
+                      <Select
+                        value={formData.status}
+                        onValueChange={(value) => setFormData({ ...formData, status: value as Status })}
+                      >
+                        <SelectTrigger id="status" className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="Pending">Pending</SelectItem>
+                          <SelectItem value="In Progress">In Progress</SelectItem>
+                          <SelectItem value="Completed">Completed</SelectItem>
+                          <SelectItem value="Blocked">Blocked</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label htmlFor="dueDate" className="text-sm">Due Date</Label>
+                      <Input
+                        id="dueDate"
+                        type="datetime-local"
+                        value={formData.dueDate}
+                        onChange={(e) => setFormData({ ...formData, dueDate: e.target.value })}
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+
+                  <DialogFooter>
+                    <Button type="button" variant="outline" onClick={() => setIsFormOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button type="submit">Create Task</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
           </div>
-          <Button className="shadow-md hover:shadow-lg transition-shadow">
-            <Plus className="mr-2 h-4 w-4" />
-            New Task
-          </Button>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Tasks</CardTitle>
+              <CardDescription>
+                {tasks.length === 0
+                  ? 'No tasks yet. Create your first task to get started.'
+                  : `Total tasks: ${tasks.length}`}
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {tasks.length === 0 ? (
+                <div className="text-center py-12 text-muted-foreground">
+                  <p>No tasks available. Click "New Task" to create one.</p>
+                </div>
+              ) : (
+                <div className="rounded-md border">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Task ID</TableHead>
+                        <TableHead>Title</TableHead>
+                        <TableHead>Description</TableHead>
+                        <TableHead>Assigned To</TableHead>
+                        <TableHead>Priority</TableHead>
+                        <TableHead>Status</TableHead>
+                        <TableHead>Due Date</TableHead>
+                        <TableHead>Created At</TableHead>
+                        <TableHead>Updated At</TableHead>
+                        <TableHead>Tags/Labels</TableHead>
+                        <TableHead>Actions</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {tasks.map((task) => (
+                        <TableRow key={task.id}>
+                          <TableCell className="font-mono text-xs">
+                            {task.id}
+                          </TableCell>
+                          <TableCell className="font-medium">{task.title}</TableCell>
+                          <TableCell className="max-w-xs truncate">
+                            {task.description || 'N/A'}
+                          </TableCell>
+                          <TableCell>{task.assignedTo}</TableCell>
+                          <TableCell>
+                            <Badge variant={getPriorityBadgeVariant(task.priority)}>
+                              {task.priority}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>
+                            <Badge variant={getStatusBadgeVariant(task.status)}>
+                              {task.status}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{formatDate(task.dueDate)}</TableCell>
+                          <TableCell className="text-xs text-muted-foreground">
+                            {formatDate(task.createdAt)}
+                          </TableCell>
+                          <TableCell className="text-xs text-muted-foreground">
+                            {formatDate(task.updatedAt)}
+                          </TableCell>
+                          <TableCell>
+                            {task.tags.length > 0 ? (
+                              <div className="flex flex-wrap gap-1">
+                                {task.tags.map((tag, index) => (
+                                  <Badge key={index} variant="outline" className="text-xs">
+                                    {tag}
+                                  </Badge>
+                                ))}
+                              </div>
+                            ) : (
+                              'N/A'
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-2">
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                title="View"
+                              >
+                                <Eye className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                title="Edit"
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8"
+                                title="Reassign"
+                              >
+                                <UserCog className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-destructive hover:text-destructive"
+                                title="Delete"
+                                onClick={() => handleDelete(task.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              )}
+            </CardContent>
+          </Card>
         </div>
-
-        <div className="flex items-center gap-4">
-          <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search tasks..."
-              className="pl-9 h-10 bg-muted/50 border-2"
-            />
-          </div>
-          <Button variant="outline" className="h-10">
-            <Filter className="mr-2 h-4 w-4" />
-            Filter
-          </Button>
-        </div>
-
-        <Tabs defaultValue="all" className="space-y-6">
-          <TabsList className="bg-transparent h-12">
-            <TabsTrigger value="all" className="data-[state=active]:bg-muted data-[state=active]:shadow-sm">
-              All Tasks
-            </TabsTrigger>
-            <TabsTrigger value="todo" className="data-[state=active]:bg-muted data-[state=active]:shadow-sm">
-              To Do
-            </TabsTrigger>
-            <TabsTrigger value="in-progress" className="data-[state=active]:bg-muted data-[state=active]:shadow-sm">
-              In Progress
-            </TabsTrigger>
-            <TabsTrigger value="completed" className="data-[state=active]:bg-muted data-[state=active]:shadow-sm">
-              Completed
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="all" className="space-y-4">
-            <Card className="border-2 shadow-lg">
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-muted to-muted/50">
-                    <ListTodo className="h-10 w-10 text-muted-foreground/50" />
-                  </div>
-                  <h3 className="mb-2 text-xl font-semibold">No tasks yet</h3>
-                  <p className="mb-6 text-sm text-muted-foreground max-w-sm">
-                    Get started by creating your first task. Tasks help you organize and track your work across projects.
-                  </p>
-                  <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create your first task
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="todo" className="space-y-4">
-            <Card className="border-2 shadow-lg">
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-orange-100 to-orange-200 dark:from-orange-900/30 dark:to-orange-800/30">
-                    <Clock className="h-10 w-10 text-orange-600 dark:text-orange-400" />
-                  </div>
-                  <h3 className="mb-2 text-xl font-semibold">No tasks to do</h3>
-                  <p className="mb-6 text-sm text-muted-foreground max-w-sm">
-                    All caught up! Create new tasks to get started.
-                  </p>
-                  <Button>
-                    <Plus className="mr-2 h-4 w-4" />
-                    Add new task
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="in-progress" className="space-y-4">
-            <Card className="border-2 shadow-lg">
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-900/30 dark:to-blue-800/30">
-                    <CheckSquare className="h-10 w-10 text-blue-600 dark:text-blue-400" />
-                  </div>
-                  <h3 className="mb-2 text-xl font-semibold">No tasks in progress</h3>
-                  <p className="mb-6 text-sm text-muted-foreground max-w-sm">
-                    Start working on tasks to see them here.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="completed" className="space-y-4">
-            <Card className="border-2 shadow-lg">
-              <CardContent className="pt-6">
-                <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <div className="mb-4 flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-green-100 to-green-200 dark:from-green-900/30 dark:to-green-800/30">
-                    <CheckCircle2 className="h-10 w-10 text-green-600 dark:text-green-400" />
-                  </div>
-                  <h3 className="mb-2 text-xl font-semibold">No completed tasks</h3>
-                  <p className="mb-6 text-sm text-muted-foreground max-w-sm">
-                    Complete tasks to see your achievements here.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
-      </div>
-    </DashboardLayout>
+      </DashboardLayout>
     </ProtectedRoute>
   );
 }
-
