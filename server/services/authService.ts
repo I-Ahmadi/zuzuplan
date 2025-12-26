@@ -10,7 +10,7 @@ export async function register(
   password: string,
   name: string
 ): Promise<{ user: any; accessToken: string; refreshToken: string }> {
-  // Check if user exists
+
   const existingUser = await User.findOne({ email: email.toLowerCase() });
 
   if (existingUser) {
@@ -23,6 +23,8 @@ export async function register(
   // Generate verification token
   const verificationToken = generateToken();
   const hashedVerificationToken = hashToken(verificationToken);
+  console.log('Verification Token: ', verificationToken);
+  console.log('Hashed Verification Token: ', hashedVerificationToken);
 
   // Create user
   const user = await User.create({
@@ -37,7 +39,6 @@ export async function register(
     await sendVerificationEmail(email, verificationToken);
   } catch (error) {
     console.error('Failed to send verification email:', error);
-    // Don't fail registration if email fails
   }
 
   // Generate tokens

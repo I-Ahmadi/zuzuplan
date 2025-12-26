@@ -45,6 +45,7 @@ export const updateAvatar = async (req: AuthRequest, res: Response, next: NextFu
     }
 
     const { avatarUrl } = req.body;
+    console.log('Updating avatar to:', avatarUrl);
     const user = await userService.updateAvatar(req.user.id, avatarUrl);
 
     res.json({

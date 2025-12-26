@@ -26,16 +26,7 @@ export const sendEmail = async (
   html: string,
   text?: string
 ): Promise<void> => {
-  if (EMAIL_DEV_MODE) {
-    // Development mode: log to console
-    console.log('\n📧 ===== EMAIL (DEV MODE) =====');
-    console.log(`To: ${to}`);
-    console.log(`Subject: ${subject}`);
-    console.log(`Text: ${text || html.replace(/<[^>]*>/g, '')}`);
-    console.log('================================\n');
-    return;
-  }
-
+  
   if (!transporter) {
     throw new Error('Email transporter not configured. Set EMAIL_HOST, EMAIL_USER, and EMAIL_PASS in .env file');
   }
