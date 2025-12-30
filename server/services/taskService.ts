@@ -62,7 +62,7 @@ export async function createTask(
   const task = await Task.create({
     title: data.title,
     description: data.description,
-    projectId,
+    projectId: projectId,
     assigneeId: data.assigneeId,
     dueDate: data.dueDate,
     priority: data.priority || TASK_PRIORITY.MEDIUM,

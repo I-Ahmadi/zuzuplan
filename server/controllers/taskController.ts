@@ -2,10 +2,11 @@ import { Response, NextFunction } from 'express';
 import { AuthRequest } from '../middleware/auth';
 import * as taskService from '../services/taskService';
 
-export const getTasks = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const getTasks = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+      res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+      return;
     }
 
     const projectId = (req.params as any).projectId;
@@ -29,10 +30,11 @@ export const getTasks = async (req: AuthRequest, res: Response, next: NextFuncti
   }
 };
 
-export const createTask = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const createTask = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+      res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+      return;
     }
 
     const projectId = (req.params as any).projectId;
@@ -48,10 +50,11 @@ export const createTask = async (req: AuthRequest, res: Response, next: NextFunc
   }
 };
 
-export const getTask = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const getTask = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+      res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+      return;
     }
 
     const task = await taskService.getTaskById(req.params.id, req.user.id);
@@ -66,10 +69,11 @@ export const getTask = async (req: AuthRequest, res: Response, next: NextFunctio
   }
 };
 
-export const updateTask = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const updateTask = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+      res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+      return;
     }
 
     const task = await taskService.updateTask(req.params.id, req.user.id, req.body);
@@ -84,10 +88,11 @@ export const updateTask = async (req: AuthRequest, res: Response, next: NextFunc
   }
 };
 
-export const deleteTask = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const deleteTask = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+      res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+      return;
     }
 
     await taskService.deleteTask(req.params.id, req.user.id);
@@ -101,10 +106,11 @@ export const deleteTask = async (req: AuthRequest, res: Response, next: NextFunc
   }
 };
 
-export const addSubtask = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const addSubtask = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+      res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+      return;
     }
 
     const subtask = await taskService.addSubtask(
@@ -123,10 +129,11 @@ export const addSubtask = async (req: AuthRequest, res: Response, next: NextFunc
   }
 };
 
-export const updateSubtask = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const updateSubtask = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+      res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+      return;
     }
 
     const subtask = await taskService.updateSubtask(
@@ -146,10 +153,11 @@ export const updateSubtask = async (req: AuthRequest, res: Response, next: NextF
   }
 };
 
-export const deleteSubtask = async (req: AuthRequest, res: Response, next: NextFunction) => {
+export const deleteSubtask = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     if (!req.user) {
-      return res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+      res.status(401).json({ success: false, error: { message: 'Unauthorized' } });
+      return;
     }
 
     await taskService.deleteSubtask(

@@ -1,14 +1,15 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export interface ITask extends Document {
-  _id: string;
+  _id: Types.ObjectId;
   title: string;
   description?: string;
-  projectId: string;
-  assigneeId?: string;
-  dueDate?: Date;
+  projectId: Types.ObjectId;
+  assigneeId?: Types.ObjectId;
+  createdById: Types.ObjectId;
   priority: string;
   status: string;
+  dueDate?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -31,8 +32,10 @@ const TaskSchema = new Schema<ITask>(
       type: Schema.Types.ObjectId,
       ref: 'User',
     },
-    dueDate: {
-      type: Date,
+    createdById: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
     },
     priority: {
       type: String,
@@ -44,45 +47,14 @@ const TaskSchema = new Schema<ITask>(
       default: 'TODO',
       enum: ['TODO', 'IN_PROGRESS', 'IN_REVIEW', 'DONE', 'CANCELLED'],
     },
+    dueDate: {
+      type: Date,
+    },
   },
   {
     timestamps: true,
   }
 );
-
-TaskSchema.index({ projectId: 1 });
-TaskSchema.index({ assigneeId: 1 });
-TaskSchema.index({ status: 1 });
-TaskSchema.index({ dueDate: 1 });
-
-// Virtual populate for comments and attachments
-TaskSchema.virtual('comments', {
-  ref: 'Comment',
-  localField: '_id',
-  foreignField: 'taskId',
-});
-
-TaskSchema.virtual('attachments', {
-  ref: 'Attachment',
-  localField: '_id',
-  foreignField: 'taskId',
-});
-
-TaskSchema.virtual('subtasks', {
-  ref: 'Subtask',
-  localField: '_id',
-  foreignField: 'taskId',
-});
-
-TaskSchema.virtual('taskLabels', {
-  ref: 'TaskLabel',
-  localField: '_id',
-  foreignField: 'taskId',
-});
-
-// Ensure virtuals are included in JSON output
-TaskSchema.set('toJSON', { virtuals: true });
-TaskSchema.set('toObject', { virtuals: true });
 
 export const Task = mongoose.model<ITask>('Task', TaskSchema);
 
