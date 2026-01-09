@@ -1,10 +1,10 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export interface IActivityLog extends Document {
-  _id: string;
-  projectId: string;
-  taskId?: string;
-  userId: string;
+  _id: Types.ObjectId;
+  projectId: Types.ObjectId;
+  taskId?: Types.ObjectId;
+  userId: Types.ObjectId;
   action: string;
   details?: string;
   createdAt: Date;
@@ -13,16 +13,16 @@ export interface IActivityLog extends Document {
 const ActivityLogSchema = new Schema<IActivityLog>(
   {
     projectId: {
-      type: Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId as any,
       ref: 'Project',
       required: true,
     },
     taskId: {
-      type: Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId as any,
       ref: 'Task',
     },
     userId: {
-      type: Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId as any,
       ref: 'User',
       required: true,
     },

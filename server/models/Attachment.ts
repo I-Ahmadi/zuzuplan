@@ -1,20 +1,20 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export interface IAttachment extends Document {
-  _id: string;
-  taskId: string;
+  _id: Types.ObjectId;
+  taskId: Types.ObjectId;
   fileName: string;
   fileUrl: string;
   fileType: string;
   fileSize: number;
-  uploadedBy: string;
+  uploadedBy: Types.ObjectId;
   createdAt: Date;
 }
 
 const AttachmentSchema = new Schema<IAttachment>(
   {
     taskId: {
-      type: Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId as any,
       ref: 'Task',
       required: true,
     },
@@ -35,7 +35,7 @@ const AttachmentSchema = new Schema<IAttachment>(
       required: true,
     },
     uploadedBy: {
-      type: Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId as any,
       ref: 'User',
       required: true,
     },

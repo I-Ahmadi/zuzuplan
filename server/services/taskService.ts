@@ -6,7 +6,7 @@ import { logActivity } from './activityLogService';
 import * as projectService from './projectService';
 import { notifyTaskAssignment } from './notificationService';
 
-export async function getTaskById(taskId: string, userId: string) {
+export async function getTaskById(taskId: string, userId: string): Promise<any> {
   const task = await Task.findById(taskId)
     .populate('assigneeId', 'id name email avatar')
     .populate('projectId', 'id name')
@@ -53,12 +53,10 @@ export async function createTask(
     assigneeId?: string;
     dueDate?: Date;
     priority?: string;
-    labelIds?: string[];
   }
-) {
-  // Verify project access
+): Promise<any> {
   await projectService.getProjectById(projectId, userId);
-
+  
   const task = await Task.create({
     title: data.title,
     description: data.description,
@@ -69,21 +67,6 @@ export async function createTask(
     status: TASK_STATUS.TODO,
   });
 
-  // Add labels if provided
-  if (data.labelIds && data.labelIds.length > 0) {
-    await TaskLabel.insertMany(
-      data.labelIds.map((labelId) => ({
-        taskId: task._id,
-        labelId,
-      }))
-    );
-  }
-
-  // Get task labels separately
-  const taskLabels = await TaskLabel.find({ taskId: task._id })
-    .populate('labelId')
-    .lean();
-
   const populatedTask = await Task.findById(task._id)
     .populate('assigneeId', 'id name email avatar')
     .populate('projectId', 'id name')
@@ -93,7 +76,7 @@ export async function createTask(
   await logActivity({
     projectId,
     taskId: task._id.toString(),
-    userId,
+    userId: userId,
     action: ACTIVITY_ACTIONS.CREATED,
     details: JSON.stringify({ type: 'task', title: task.title }),
   });
@@ -116,7 +99,7 @@ export async function createTask(
   // Update project progress
   await projectService.calculateProgress(projectId);
 
-  return { ...populatedTask, taskLabels };
+  return { ...populatedTask };
 }
 
 export async function getTasks(
@@ -205,7 +188,7 @@ export async function updateTask(
     status?: string;
     labelIds?: string[];
   }
-) {
+): Promise<any> {
   const task = await getTaskById(taskId, userId);
   const oldStatus = (task as any).status;
 

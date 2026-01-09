@@ -1,10 +1,10 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export interface IProject extends Document {
-  _id: string;
+  _id: Types.ObjectId;
   name: string;
   description?: string;
-  ownerId: string;
+  ownerId: Types.ObjectId;
   progress: number;
   createdAt: Date;
   updatedAt: Date;
@@ -20,7 +20,7 @@ const ProjectSchema = new Schema<IProject>(
       type: String,
     },
     ownerId: {
-      type: Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId as any,
       ref: 'User',
       required: true,
     },
@@ -30,13 +30,12 @@ const ProjectSchema = new Schema<IProject>(
       min: 0,
       max: 100,
     },
+    
   },
   {
     timestamps: true,
   }
 );
-
-ProjectSchema.index({ ownerId: 1 });
 
 export const Project = mongoose.model<IProject>('Project', ProjectSchema);
 

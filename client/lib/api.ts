@@ -54,8 +54,14 @@ async function refreshAccessToken(): Promise<string> {
       }
 
       throw new Error('Invalid refresh response');
-    } catch (error) {
+    } catch (error: any) {
       clearAuthTokens();
+      // Handle network errors
+      if (error instanceof TypeError && error.message.includes('fetch')) {
+        throw new Error(
+          `Unable to connect to the server. Please make sure the backend server is running at ${API_BASE_URL}.`
+        );
+      }
       if (typeof window !== 'undefined') {
         window.location.href = '/login';
       }
@@ -74,81 +80,93 @@ async function request<T>(
   options: RequestInit = {},
   retry = true
 ): Promise<ApiResponse<T>> {
-  const token = typeof window !== 'undefined' ? getAccessToken() : null;
+  try {
+    const token = typeof window !== 'undefined' ? getAccessToken() : null;
 
-  const headers: Record<string, string> = {
-    'Content-Type': 'application/json',
-    ...(options.headers as Record<string, string>),
-  };
+    const headers: Record<string, string> = {
+      'Content-Type': 'application/json',
+      ...(options.headers as Record<string, string>),
+    };
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers: headers as HeadersInit,
-    credentials: 'include',
-  });
-
-  // Check if response is JSON before parsing
-  const contentType = response.headers.get('content-type');
-  let data: any;
-  
-  if (contentType && contentType.includes('application/json')) {
-    data = await response.json();
-  } else {
-    // If not JSON, try to get text for error message
-    const text = await response.text();
-    throw new Error(
-      `Server returned non-JSON response (${response.status} ${response.statusText}). ` +
-      `This usually means the API endpoint is not available. ` +
-      `Please check that the server is running at ${API_BASE_URL}${endpoint}`
-    );
-  }
-
-  // Handle 401 Unauthorized - try to refresh token
-  if (response.status === 401 && retry && endpoint !== '/auth/refresh' && endpoint !== '/auth/login') {
-    try {
-      const newToken = await refreshAccessToken();
-      // Retry the original request with new token
-      headers['Authorization'] = `Bearer ${newToken}`;
-      const retryResponse = await fetch(`${API_BASE_URL}${endpoint}`, {
-        ...options,
-        headers: headers as HeadersInit,
-        credentials: 'include',
-      });
-      
-      const retryContentType = retryResponse.headers.get('content-type');
-      let retryData: any;
-      
-      if (retryContentType && retryContentType.includes('application/json')) {
-        retryData = await retryResponse.json();
-      } else {
-        const text = await retryResponse.text();
-        throw new Error(
-          `Server returned non-JSON response (${retryResponse.status} ${retryResponse.statusText})`
-        );
-      }
-      
-      if (!retryResponse.ok) {
-        throw new Error(retryData.error?.message || 'An error occurred');
-      }
-      return retryData;
-    } catch (error) {
-      clearAuthTokens();
-      if (typeof window !== 'undefined') {
-        window.location.href = '/login';
-      }
-      throw error;
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
     }
-  }
 
-  if (!response.ok) {
-    throw new Error(data.error?.message || 'An error occurred');
-  }
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers: headers as HeadersInit,
+      credentials: 'include',
+    });
 
-  return data;
+    // Check if response is JSON before parsing
+    const contentType = response.headers.get('content-type');
+    let data: any;
+    
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      // If not JSON, try to get text for error message
+      const text = await response.text();
+      throw new Error(
+        `Server returned non-JSON response (${response.status} ${response.statusText}). ` +
+        `This usually means the API endpoint is not available. ` +
+        `Please check that the server is running at ${API_BASE_URL}${endpoint}`
+      );
+    }
+
+    // Handle 401 Unauthorized - try to refresh token
+    if (response.status === 401 && retry && endpoint !== '/auth/refresh' && endpoint !== '/auth/login') {
+      try {
+        const newToken = await refreshAccessToken();
+        // Retry the original request with new token
+        headers['Authorization'] = `Bearer ${newToken}`;
+        const retryResponse = await fetch(`${API_BASE_URL}${endpoint}`, {
+          ...options,
+          headers: headers as HeadersInit,
+          credentials: 'include',
+        });
+        
+        const retryContentType = retryResponse.headers.get('content-type');
+        let retryData: any;
+        
+        if (retryContentType && retryContentType.includes('application/json')) {
+          retryData = await retryResponse.json();
+        } else {
+          const text = await retryResponse.text();
+          throw new Error(
+            `Server returned non-JSON response (${retryResponse.status} ${retryResponse.statusText})`
+          );
+        }
+        
+        if (!retryResponse.ok) {
+          throw new Error(retryData.error?.message || 'An error occurred');
+        }
+        return retryData;
+      } catch (error) {
+        clearAuthTokens();
+        if (typeof window !== 'undefined') {
+          window.location.href = '/login';
+        }
+        throw error;
+      }
+    }
+
+    if (!response.ok) {
+      throw new Error(data.error?.message || 'An error occurred');
+    }
+
+    return data;
+  } catch (error: any) {
+    // Handle network errors (fetch failures)
+    if (error instanceof TypeError && error.message.includes('fetch')) {
+      throw new Error(
+        `Unable to connect to the server. Please make sure the backend server is running at ${API_BASE_URL}. ` +
+        `Error: ${error.message}`
+      );
+    }
+    // Re-throw other errors as-is
+    throw error;
+  }
 }
 
 // Auth endpoints

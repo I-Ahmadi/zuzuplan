@@ -20,8 +20,9 @@ export const getProjects = async (req: AuthRequest, res: Response, next: NextFun
       data: result.data,
       pagination: result.pagination,
     });
+    return;
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -38,8 +39,9 @@ export const createProject = async (req: AuthRequest, res: Response, next: NextF
       message: 'Project created successfully',
       data: project,
     });
+    return;
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -56,8 +58,9 @@ export const getProject = async (req: AuthRequest, res: Response, next: NextFunc
       message: 'Project retrieved successfully',
       data: project,
     });
+    return;
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -78,8 +81,9 @@ export const updateProject = async (req: AuthRequest, res: Response, next: NextF
       message: 'Project updated successfully',
       data: project,
     });
+    return;
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -95,8 +99,9 @@ export const deleteProject = async (req: AuthRequest, res: Response, next: NextF
       success: true,
       message: 'Project deleted successfully',
     });
+    return;
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -113,8 +118,9 @@ export const getMembers = async (req: AuthRequest, res: Response, next: NextFunc
       message: 'Members retrieved successfully',
       data: members,
     });
+    return;
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -136,8 +142,9 @@ export const addMember = async (req: AuthRequest, res: Response, next: NextFunct
       message: 'Member added successfully',
       data: member,
     });
+    return;
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -159,8 +166,9 @@ export const updateMemberRole = async (req: AuthRequest, res: Response, next: Ne
       message: 'Member role updated successfully',
       data: member,
     });
+    return;
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -180,8 +188,9 @@ export const removeMember = async (req: AuthRequest, res: Response, next: NextFu
       success: true,
       message: 'Member removed successfully',
     });
+    return;
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -198,8 +207,9 @@ export const getProjectStats = async (req: AuthRequest, res: Response, next: Nex
       message: 'Project stats retrieved successfully',
       data: stats,
     });
+    return;
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 

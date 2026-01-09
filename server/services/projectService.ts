@@ -6,13 +6,12 @@ import { logActivity } from './activityLogService';
 import { ACTIVITY_ACTIONS } from '../utils/constants';
 
 export async function getProjectById(projectId: string, userId: string) {
-  // Check if user has access
   const project = await Project.findById(projectId).lean();
   if (!project) {
     throw new AppError('Project not found', 404);
   }
 
-  const isOwner = project.ownerId.toString() === userId;
+  const isOwner = project.ownerId?.toString() === userId;
   const membership = await ProjectMember.findOne({
     projectId: projectId,
     userId: userId,
@@ -47,7 +46,10 @@ export async function getProjectById(projectId: string, userId: string) {
   };
 }
 
-export async function createProject(userId: string, data: { name: string; description?: string }) {
+export async function createProject(
+  userId: string, 
+  data: { name: string; description?: string }
+): Promise<any> {
   const project = await Project.create({
     name: data.name,
     description: data.description,
@@ -145,7 +147,7 @@ export async function updateProject(
 ) {
   // Check permissions
   const project = await getProjectById(projectId, userId);
-  const isOwner = project.ownerId.toString() === userId;
+  const isOwner = project.ownerId?.toString() === userId;
   const membership = await ProjectMember.findOne({
     projectId,
     userId,
@@ -181,7 +183,7 @@ export async function updateProject(
 
 export async function deleteProject(projectId: string, userId: string) {
   const project = await getProjectById(projectId, userId);
-  const isOwner = project.ownerId.toString() === userId;
+  const isOwner = project.ownerId?.toString() === userId;
   const membership = await ProjectMember.findOne({
     projectId,
     userId,
@@ -214,7 +216,7 @@ export async function addMember(
   const project = await getProjectById(projectId, userId);
 
   // Check permissions
-  const isOwner = project.ownerId.toString() === userId;
+  const isOwner = project.ownerId?.toString() === userId;
   const membership = await ProjectMember.findOne({
     projectId,
     userId,
@@ -274,7 +276,7 @@ export async function updateMemberRole(
   role: string
 ) {
   const project = await getProjectById(projectId, userId);
-  const isOwner = project.ownerId.toString() === userId;
+  const isOwner = project.ownerId?.toString() === userId;
   const membership = await ProjectMember.findOne({
     projectId,
     userId,
@@ -287,7 +289,7 @@ export async function updateMemberRole(
   }
 
   // Cannot change owner's role
-  if (project.ownerId.toString() === memberUserId) {
+  if (project.ownerId?.toString() === memberUserId) {
     throw new AppError('Cannot change owner role', 400);
   }
 
@@ -324,7 +326,7 @@ export async function removeMember(projectId: string, userId: string, memberUser
   const project = await getProjectById(projectId, userId);
 
   // Check permissions
-  const isOwner = project.ownerId.toString() === userId;
+  const isOwner = project.ownerId?.toString() === userId;
   const membership = await ProjectMember.findOne({
     projectId,
     userId,
@@ -336,7 +338,7 @@ export async function removeMember(projectId: string, userId: string, memberUser
   }
 
   // Cannot remove owner
-  if (project.ownerId.toString() === memberUserId) {
+  if (project.ownerId?.toString() === memberUserId) {
     throw new AppError('Cannot remove project owner', 400);
   }
 

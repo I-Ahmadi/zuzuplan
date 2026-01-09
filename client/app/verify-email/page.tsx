@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useSearchParams } from 'next/navigation';
+import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { api } from '@/lib/api';
 import { Button } from '@/components/ui/button';
@@ -17,7 +18,7 @@ export default function VerifyEmailPage() {
   const [message, setMessage] = useState('');
   const [isResending, setIsResending] = useState(false);
 
-  const handleVerify = async (verifyToken?: string) => {
+  const handleVerify = useCallback(async (verifyToken?: string) => {
     const tokenToUse = verifyToken || token;
     if (!tokenToUse) {
       setStatus('error');
@@ -41,7 +42,7 @@ export default function VerifyEmailPage() {
       setStatus('error');
       setMessage(err.message || 'Failed to verify email. Please try again.');
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     const tokenParam = searchParams.get('token');
@@ -49,34 +50,7 @@ export default function VerifyEmailPage() {
       setToken(tokenParam);
       handleVerify(tokenParam);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchParams]);
-
-  const handleVerify = async (verifyToken?: string) => {
-    const tokenToUse = verifyToken || token;
-    if (!tokenToUse) {
-      setStatus('error');
-      setMessage('Verification token is required');
-      return;
-    }
-
-    setStatus('loading');
-    setMessage('');
-
-    try {
-      const response = await api.verifyEmail(tokenToUse);
-      if (response.success) {
-        setStatus('success');
-        setMessage('Your email has been verified successfully!');
-      } else {
-        setStatus('error');
-        setMessage(response.error?.message || 'Verification failed');
-      }
-    } catch (err: any) {
-      setStatus('error');
-      setMessage(err.message || 'Failed to verify email. Please try again.');
-    }
-  };
+  }, [searchParams, handleVerify]);
 
   const handleResend = async () => {
     if (!email) {

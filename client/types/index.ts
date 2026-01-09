@@ -156,8 +156,7 @@ export interface ProjectStats {
   totalTasks: number;
   completedTasks: number;
   inProgressTasks: number;
-  pendingTasks: number;
-  membersCount: number;
+  overdueTasks: number;
   progress: number;
 }
 
