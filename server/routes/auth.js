@@ -25,7 +25,7 @@ const registerValidation = [
 ];
 
 router.post('/register', registerValidation, validate, authController.register);
-router.post('/login', loginLimiter, authController.login);
+router.post('/login', authController.login);
 router.post('/refresh', authController.refresh);
 router.post('/logout', authController.logout);
 router.post('/verify-email', authController.verifyEmail);

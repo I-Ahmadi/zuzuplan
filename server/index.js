@@ -6,6 +6,7 @@ import cors from 'cors';
 import { connectDB } from './config/database.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import notFoundHandler from './middleware/notFoundHandler.js';
+import { verifyEmailTransport } from './utils/email.js';
 
 import authRoutes from './routes/auth.js';
 import userRoutes from './routes/users.js';
@@ -18,7 +19,6 @@ import notificationRoutes from './routes/notifications.js';
 import labelRoutes from './routes/labels.js';
 
 const PORT = process.env.PORT || 3000;
-const CLIENT_URL = process.env.CLIENT_URL || 'http://localhost:3001';
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
 
 if (!fs.existsSync(UPLOAD_DIR)) {
@@ -66,6 +66,7 @@ app.use(errorHandler);
 
 async function start() {
   await connectDB();
+  await verifyEmailTransport();
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

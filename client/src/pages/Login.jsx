@@ -28,12 +28,15 @@ export default function Login() {
         method: "POST",
         body: JSON.stringify(data),
       });
+
       if (!res.success) {
         throw new Error(res.error?.message || "Login failed");
       }
+
       return res;
     },
     onSuccess: (data) => {
+      console.log("data: ", data);
       const { user, accessToken, refreshToken } = data.data || {};
       if (accessToken) setAccessToken(accessToken);
       if (refreshToken) setRefreshToken(refreshToken);

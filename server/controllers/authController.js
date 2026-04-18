@@ -1,10 +1,10 @@
 import * as authService from '../services/authService.js';
 
-// -----------------------Reviewed-----------------------
 export async function register(req, res, next) {
   try {
-    const { email, password, name } = req.body;
-    const result = await authService.register(email, password, name);
+    const { name, email, password } = req.body;
+    const result = await authService.register(name, email, password);
+    console.log('Result: ', result);
 
     res.status(201).json({
       success: true,
@@ -18,7 +18,6 @@ export async function register(req, res, next) {
   }
 }
 
-// -----------------------Reviewed-----------------------
 export async function login(req, res, next) {
   try {
     const { email, password } = req.body;
@@ -36,7 +35,6 @@ export async function login(req, res, next) {
   }
 }
 
-// -----------------------Reviewed-----------------------
 export async function refresh(req, res, next) {
   try {
     const { token } = req.body;
@@ -78,7 +76,7 @@ export async function verifyEmail(req, res, next) {
     res.status(200).json({ 
       success: true, 
       message: 'Email verified successfully',
-      data: { user } 
+      data: user
     });
 
   } catch (err) {
@@ -98,7 +96,7 @@ export async function forgotPassword(req, res, next) {
     });
 
   } catch (err) {
-    console.error(`An error occurred during forgot password: ${err.message}`);
+    console.error(`An error occurred during forget password: ${err.message}`);
     next(err);
   }
 }
