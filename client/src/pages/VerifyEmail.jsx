@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -9,26 +9,21 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { useMutation } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { useAuth } from "@/contexts/auth-context";
+
 export default function VerifyEmail() {
+  const location = useLocation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const token = searchParams.get("token");
   const sent = searchParams.get("sent") === "true";
   const [status, setStatus] = useState("idle"); // idle | verifying | success | error
+  const email = location.state?.email || "";
   const hasVerified = useRef(false);
+  const { verifyEmail } = useAuth();
 
   const verifyMutation = useMutation({
-    mutationFn: async (verifyToken) => {
-      const res = await api("/auth/verify-email", {
-        method: "POST",
-        body: JSON.stringify({ token: verifyToken }),
-      });
-      if (!res.success) {
-        throw new Error(res.error?.message || "Verification failed");
-      }
-      return res;
-    },
+    mutationFn: verifyEmail,
     onSuccess: () => {
       setStatus("success");
       setTimeout(() => navigate("/login?verified=true"), 2000);
@@ -44,7 +39,7 @@ export default function VerifyEmail() {
       setStatus("verifying");
       verifyMutation.mutate(token);
     }
-  }, [token]);
+  }, [token, verifyMutation]);
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -86,9 +81,19 @@ export default function VerifyEmail() {
           )}
 
           {!token && !sent && (
-            <p className="text-muted-foreground">
-              No verification token found. Please use the link from your verification email.
-            </p>
+            <div className="space-y-3">
+              <p className="text-muted-foreground">
+                No verification token found. Please use the link from your verification email.
+              </p>
+              {email && (
+                <p className="text-sm text-muted-foreground">
+                  Verification was requested for <span className="font-medium text-foreground">{email}</span>.
+                </p>
+              )}
+              <p className="text-sm text-muted-foreground">
+                If you did not receive the email, sign up again with the same account to generate a fresh verification link.
+              </p>
+            </div>
           )}
         </CardContent>
 

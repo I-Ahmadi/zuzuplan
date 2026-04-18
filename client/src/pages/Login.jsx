@@ -11,36 +11,21 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { useMutation } from "@tanstack/react-query";
-import { api } from "@/lib/api";
-import { setAccessToken, setRefreshToken, setUser } from "@/lib/auth-api";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function Login() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const verified = searchParams.get("verified") === "true";
+  const reset = searchParams.get("reset") === "true";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const { login } = useAuth();
 
   const loginMutation = useMutation({
-    mutationFn: async (data) => {
-      const res = await api("/auth/login", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
-
-      if (!res.success) {
-        throw new Error(res.error?.message || "Login failed");
-      }
-
-      return res;
-    },
-    onSuccess: (data) => {
-      console.log("data: ", data);
-      const { user, accessToken, refreshToken } = data.data || {};
-      if (accessToken) setAccessToken(accessToken);
-      if (refreshToken) setRefreshToken(refreshToken);
-      if (user) setUser(user);
+    mutationFn: login,
+    onSuccess: () => {
       navigate("/");
     },
     onError: (err) => {
@@ -55,6 +40,8 @@ export default function Login() {
   };
 
   const isLoading = loginMutation.isPending;
+  const isUnverifiedError =
+    error.toLowerCase().includes("not verified") || error.toLowerCase().includes("verify your email");
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -67,6 +54,12 @@ export default function Login() {
           {verified && (
             <div className="mb-4 p-3 text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/50 rounded-md">
               Email verified! You can now log in.
+            </div>
+          )}
+
+          {reset && (
+            <div className="mb-4 p-3 text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/50 rounded-md">
+              Password reset successfully. You can now log in with your new password.
             </div>
           )}
 
@@ -107,6 +100,16 @@ export default function Login() {
               {isLoading ? "Logging in..." : "Login"}
             </Button>
           </form>
+
+          {isUnverifiedError && (
+            <p className="mt-4 text-sm text-muted-foreground">
+              Use the verification link from your email, or go back to{" "}
+              <Link to="/signup" className="text-primary hover:underline font-medium">
+                sign up
+              </Link>{" "}
+              again to request a new one.
+            </p>
+          )}
         </CardContent>
 
         <CardFooter className="flex flex-col gap-2">

@@ -30,9 +30,10 @@ export async function register(name, email, password) {
   try {
     await sendVerificationEmail(email, rawToken);
   } catch (err) {
+    await prisma.user.delete({ where: { id: newUser.id } })
     throw new AppError(`Verification email failed: ${err.message}`, 500);
   }
-
+  
   const { 
     password: _pw,
     emailVerificationToken: _evt,
@@ -108,9 +109,24 @@ export async function refreshToken(token) {
   }
   
   await prisma.refreshToken.delete({ where: { id: stored.id } });
-  const newAccessToken = generateAccessToken({ userId: payload.userId });
   
-  return { accessToken: newAccessToken };
+  const newAccessToken  = generateAccessToken({ userId: payload.userId });
+  const newRefreshToken = generateRefreshToken({ userId: payload.userId });
+  const expiresAt       = new Date(Date.now() + refreshExpiryMs);
+
+  await prisma.refreshToken.create({
+    data: {
+      token: newRefreshToken,
+      userId: payload.userId,
+      expiresAt: expiresAt
+    },
+  });
+  
+  return { 
+    accessToken: newAccessToken,
+    refreshToken: newRefreshToken,
+    expiresIn: refreshExpiryMs / 1000,
+  };
 }
 
 export async function logout(token) {

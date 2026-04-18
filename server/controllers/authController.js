@@ -4,7 +4,6 @@ export async function register(req, res, next) {
   try {
     const { name, email, password } = req.body;
     const result = await authService.register(name, email, password);
-    console.log('Result: ', result);
 
     res.status(201).json({
       success: true,

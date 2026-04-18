@@ -1,37 +1,194 @@
-"use client";
-
-import { createContext, useContext, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  clearAuth,
+  getAccessToken,
+  getRefreshToken,
+  getStoredUser,
+  setAccessToken,
+  setRefreshToken,
+  setStoredUser,
+} from "@/lib/auth-api";
+import { api, refreshAccessToken } from "@/lib/api";
 
 const AuthContext = createContext(undefined);
 
+async function fetchCurrentUser() {
+  const response = await api("/users/me", { method: "GET" }, false);
+
+  if (!response.success) {
+    throw new Error(response.error?.message || "Failed to load current user");
+  }
+
+  return response.data;
+}
+
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const [loading] = useState(true);
+  const [user, setUser] = useState(() => getStoredUser());
+  const [loading, setLoading] = useState(true);
 
-  const signup = async () => {
-    console.warn("Signup is not implemented in auth-context yet.");
-  };
+  const clearSession = useCallback(() => {
+    clearAuth();
+    setUser(null);
+  }, []);
 
-  const login = async () => {
-    console.warn("Login is not implemented in auth-context yet.");
-  };
+  const bootstrapSession = useCallback(async () => {
+    const storedUser = getStoredUser();
+    const accessToken = getAccessToken();
+    const refreshToken = getRefreshToken();
 
-  const logout = () => {
-    try {
-        setUser(null);
-        localStorage.removeItem("user");
-        localStorage.removeItem("accessToken");   
-
-    } catch (error) {
-        console.error("Logout error", error);
+    if (!accessToken && !refreshToken) {
+      clearSession();
+      setLoading(false);
+      return;
     }
-  };
 
-  return (
-    <AuthContext.Provider value={{ user, loading, login, logout, signup }}>
-      {children}
-    </AuthContext.Provider>
+    if (storedUser) {
+      setUser(storedUser);
+    }
+
+    try {
+      if (!accessToken && refreshToken) {
+        await refreshAccessToken();
+      }
+
+      const currentUser = await fetchCurrentUser();
+      setStoredUser(currentUser);
+      setUser(currentUser);
+    } catch {
+      clearSession();
+    } finally {
+      setLoading(false);
+    }
+  }, [clearSession]);
+
+  useEffect(() => {
+    bootstrapSession();
+  }, [bootstrapSession]);
+
+  const signup = useCallback(async ({ name, email, password }) => {
+    const response = await api("/auth/register", {
+      method: "POST",
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    if (!response.success) {
+      throw new Error(response.error?.message || "Registration failed");
+    }
+
+    return response.data;
+  }, []);
+
+  const login = useCallback(async ({ email, password }) => {
+    const response = await api("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.success) {
+      throw new Error(response.error?.message || "Login failed");
+    }
+
+    const nextAccessToken = response.data?.accessToken;
+    const nextRefreshToken = response.data?.refreshToken;
+    const nextUser = response.data?.user;
+
+    if (!nextAccessToken || !nextRefreshToken || !nextUser) {
+      throw new Error("Login response is missing session data");
+    }
+
+    setAccessToken(nextAccessToken);
+    setRefreshToken(nextRefreshToken);
+    setStoredUser(nextUser);
+    setUser(nextUser);
+
+    return response.data;
+  }, []);
+
+  const logout = useCallback(async () => {
+    try {
+      const refreshToken = getRefreshToken();
+
+      if (refreshToken) {
+        await api(
+          "/auth/logout",
+          {
+            method: "POST",
+            body: JSON.stringify({ token: refreshToken }),
+          },
+          false
+        );
+      }
+    } finally {
+      clearSession();
+    }
+  }, [clearSession]);
+
+  const forgotPassword = useCallback(async (email) => {
+    const response = await api("/auth/forgot-password", {
+      method: "POST",
+      body: JSON.stringify({ email }),
+    });
+
+    if (!response.success) {
+      throw new Error(response.error?.message || "Failed to request password reset");
+    }
+
+    return response;
+  }, []);
+
+  const resetPassword = useCallback(async ({ token, password }) => {
+    const response = await api("/auth/reset-password", {
+      method: "POST",
+      body: JSON.stringify({ token, password }),
+    });
+
+    if (!response.success) {
+      throw new Error(response.error?.message || "Failed to reset password");
+    }
+
+    return response;
+  }, []);
+
+  const verifyEmail = useCallback(async (token) => {
+    const response = await api("/auth/verify-email", {
+      method: "POST",
+      body: JSON.stringify({ token }),
+    });
+
+    if (!response.success) {
+      throw new Error(response.error?.message || "Failed to verify email");
+    }
+
+    return response.data;
+  }, []);
+
+  const value = useMemo(
+    () => ({
+      user,
+      loading,
+      isAuthenticated: Boolean(user),
+      signup,
+      login,
+      logout,
+      forgotPassword,
+      resetPassword,
+      verifyEmail,
+      refreshSession: bootstrapSession,
+    }),
+    [
+      user,
+      loading,
+      signup,
+      login,
+      logout,
+      forgotPassword,
+      resetPassword,
+      verifyEmail,
+      bootstrapSession,
+    ]
   );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {

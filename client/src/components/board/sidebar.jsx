@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/contexts/auth-context";
 import { useSidebar } from "@/contexts/sidebar-context";
 import { useTheme } from "@/contexts/theme-context";
 
@@ -32,6 +33,7 @@ export function Sidebar() {
   const navigate = useNavigate();
   const { collapsed, setCollapsed } = useSidebar();
   const { resolvedTheme, setTheme } = useTheme();
+  const { logout } = useAuth();
 
   return (
     <aside
@@ -92,9 +94,8 @@ export function Sidebar() {
         <Button
           variant="outline"
           className={cn("w-full text-destructive", collapsed && "px-0")}
-          onClick={() => {
-            localStorage.removeItem("user");
-            localStorage.removeItem("accessToken");
+          onClick={async () => {
+            await logout();
             navigate("/login");
           }}
         >

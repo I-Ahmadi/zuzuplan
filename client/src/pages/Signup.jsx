@@ -11,7 +11,7 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { useMutation } from "@tanstack/react-query";
-import { api } from "@/lib/api";
+import { useAuth } from "@/contexts/auth-context";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -19,20 +19,15 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const { signup } = useAuth();
 
   const registerMutation = useMutation({
-    mutationFn: async (data) => {
-      const response = await api("/auth/register", {
-        method: "POST",
-        body: JSON.stringify(data),
-      });
-      if (!response.success) {
-        throw new Error(response.error?.message || "Registration failed");
-      }
-      return response;
-    },
+    mutationFn: signup,
     onSuccess: () => {
-      navigate("/verify-email?sent=true");
+      setName("");
+      setEmail("");
+      setPassword("");
+      navigate("/verify-email?sent=true", { state: { email } });
     },
     onError: (error) => {
       setError(error.message || "Something went wrong");
@@ -42,12 +37,8 @@ export default function Signup() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
-    
-    registerMutation.mutate({ name, email, password });
 
-    setName("");
-    setEmail(""); 
-    setPassword("");
+    registerMutation.mutate({ name, email, password });
   };
 
   const isLoading = registerMutation.isPending;
