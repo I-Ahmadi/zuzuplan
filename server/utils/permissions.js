@@ -1,0 +1,57 @@
+import { PROJECT_PERMISSIONS, ROLES } from './constants.js';
+
+const ROLE_PERMISSIONS = {
+  [ROLES.ADMIN]: new Set(Object.values(PROJECT_PERMISSIONS)),
+  [ROLES.MANAGER]: new Set([
+    PROJECT_PERMISSIONS.PROJECT_READ,
+    PROJECT_PERMISSIONS.PROJECT_UPDATE,
+    PROJECT_PERMISSIONS.MEMBERS_READ,
+    PROJECT_PERMISSIONS.MEMBERS_MANAGE,
+    PROJECT_PERMISSIONS.TASK_CREATE,
+    PROJECT_PERMISSIONS.TASK_READ,
+    PROJECT_PERMISSIONS.TASK_UPDATE_ANY,
+    PROJECT_PERMISSIONS.TASK_ASSIGN,
+    PROJECT_PERMISSIONS.TASK_DELETE,
+    PROJECT_PERMISSIONS.COMMENT_CREATE,
+    PROJECT_PERMISSIONS.COMMENT_UPDATE_OWN,
+    PROJECT_PERMISSIONS.COMMENT_DELETE_ANY,
+    PROJECT_PERMISSIONS.COMMENT_DELETE_OWN,
+  ]),
+  [ROLES.EMPLOYEE]: new Set([
+    PROJECT_PERMISSIONS.PROJECT_READ,
+    PROJECT_PERMISSIONS.MEMBERS_READ,
+    PROJECT_PERMISSIONS.TASK_CREATE,
+    PROJECT_PERMISSIONS.TASK_READ,
+    PROJECT_PERMISSIONS.TASK_UPDATE_OWN,
+    PROJECT_PERMISSIONS.COMMENT_CREATE,
+    PROJECT_PERMISSIONS.COMMENT_UPDATE_OWN,
+    PROJECT_PERMISSIONS.COMMENT_DELETE_OWN,
+  ]),
+  [ROLES.VIEWER]: new Set([
+    PROJECT_PERMISSIONS.PROJECT_READ,
+    PROJECT_PERMISSIONS.MEMBERS_READ,
+    PROJECT_PERMISSIONS.TASK_READ,
+  ]),
+};
+
+export function normalizeRole(role) {
+  if (!role) return null;
+  return Object.values(ROLES).find((knownRole) => knownRole.toLowerCase() === String(role).toLowerCase()) || null;
+}
+
+export function getProjectRole(project, userId) {
+  if (!project || !userId) return null;
+  if (project.ownerId === userId) return ROLES.ADMIN;
+  const member = project.members?.find((item) => item.userId === userId);
+  return normalizeRole(member?.role);
+}
+
+export function hasProjectPermission(role, permission) {
+  const normalizedRole = normalizeRole(role);
+  return Boolean(normalizedRole && ROLE_PERMISSIONS[normalizedRole]?.has(permission));
+}
+
+export function getProjectPermissions(role) {
+  const normalizedRole = normalizeRole(role);
+  return normalizedRole ? Array.from(ROLE_PERMISSIONS[normalizedRole] || []) : [];
+}

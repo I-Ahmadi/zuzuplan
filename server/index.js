@@ -14,9 +14,9 @@ import projectRoutes from './routes/projects.js';
 import taskRoutes from './routes/tasks.js';
 import commentRoutes from './routes/comments.js';
 import attachmentRoutes from './routes/attachments.js';
-import activityRoutes from './routes/activity.js';
-import notificationRoutes from './routes/notifications.js';
-import labelRoutes from './routes/labels.js';
+import sprintRoutes from './routes/sprints.js';
+import docRoutes from './routes/docs.js';
+import searchRoutes from './routes/search.js';
 
 const PORT = process.env.PORT || 3000;
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
@@ -53,11 +53,15 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/projects/:projectId/tasks', taskRoutes);
-app.use('/api/projects/:projectId/labels', labelRoutes);
-app.use('/api/projects/:projectId/activity', activityRoutes);
+app.use('/api/projects/:projectId/sprints', sprintRoutes);
+app.use('/api/projects/:projectId/docs', docRoutes);
+app.use('/api/spaces', projectRoutes);
+app.use('/api/spaces/:projectId/tasks', taskRoutes);
+app.use('/api/spaces/:projectId/sprints', sprintRoutes);
+app.use('/api/spaces/:projectId/docs', docRoutes);
 app.use('/api/tasks/:taskId/comments', commentRoutes);
 app.use('/api/tasks/:taskId/attachments', attachmentRoutes);
-app.use('/api/notifications', notificationRoutes);
+app.use('/api/search', searchRoutes);
 
 app.use('/uploads', express.static(UPLOAD_DIR));
 

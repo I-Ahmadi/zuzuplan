@@ -15,9 +15,9 @@ export function TableRow(props) {
 }
 
 export function TableHead(props) {
-  return <th className="h-10 px-2 text-left align-middle font-medium text-muted-foreground" {...props} />;
+  return <th className="h-9 px-2 text-left align-middle font-medium text-muted-foreground" {...props} />;
 }
 
 export function TableCell(props) {
-  return <td className="p-2 align-middle" {...props} />;
+  return <td className="px-2 py-1.5 align-middle" {...props} />;
 }

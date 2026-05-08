@@ -1,10 +1,10 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/client"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -25,10 +25,25 @@ model User {
   projectMembers       ProjectMember[]
   createdTasks          Task[]            @relation("TaskCreator")
   assignedTasks         Task[]            @relation("TaskAssignee")
+  createdDocs           ProjectDoc[]
   comments              Comment[]
   attachments           Attachment[]
-  activityLogs          ActivityLog[]
-  notifications         Notification[]
+  sentProjectInvites    ProjectInvite[]   @relation("ProjectInviteInviter")
+  acceptedProjectInvites ProjectInvite[]  @relation("ProjectInviteAcceptedBy")
+  preferences           UserPreference?
+}
+
+model UserPreference {
+  id                   String   @id @default(cuid())
+  userId               String   @unique
+  defaultView          String   @default("board")
+  density              String   @default("comfortable")
+  theme                String   @default("system")
+  profileNote          String   @default("")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model RefreshToken {
@@ -61,15 +76,62 @@ model Project {
   owner   User            @relation("ProjectOwner", fields: [ownerId], references: [id], onDelete: Cascade)
   members ProjectMember[]
   tasks   Task[]
-  labels  Label[]
-  activityLogs ActivityLog[]
+  sprints Sprint[]
+  docs    ProjectDoc[]
+  invites ProjectInvite[]
+
+  @@unique([ownerId, key])
+  @@index([ownerId])
+  @@index([status])
+}
+
+model ProjectInvite {
+  id           String    @id @default(cuid())
+  projectId    String
+  email        String
+  role         String    @default("Employee") // Admin | Manager | Employee | Viewer
+  tokenHash    String    @unique
+  status       String    @default("PENDING") // PENDING | ACCEPTED | REVOKED | EXPIRED
+  invitedById  String
+  acceptedById String?
+  expiresAt    DateTime
+  acceptedAt   DateTime?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  project    Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  invitedBy  User    @relation("ProjectInviteInviter", fields: [invitedById], references: [id], onDelete: Cascade)
+  acceptedBy User?   @relation("ProjectInviteAcceptedBy", fields: [acceptedById], references: [id], onDelete: SetNull)
+
+  @@index([projectId])
+  @@index([email])
+  @@index([status])
+  @@index([expiresAt])
+}
+
+model ProjectDoc {
+  id          String   @id @default(cuid())
+  title       String
+  content     String   @default("")
+  projectId   String
+  createdById String
+  pinned      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy User    @relation(fields: [createdById], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@index([createdById])
+  @@index([pinned])
 }
 
 model ProjectMember {
   id        String   @id @default(cuid())
   projectId String
   userId    String
-  role      String   @default("Admin") // Admin
+  role      String   @default("Employee") // Admin | Manager | Employee | Viewer
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -88,20 +150,64 @@ model Task {
   projectId   String
   assigneeId  String?
   createdById String
+  sprintId    String?
   priority    String    @default("MEDIUM") // LOW, MEDIUM, HIGH, URGENT
   status      String    @default("TODO")    // TODO, IN_PROGRESS, IN_REVIEW, DONE, CANCELLED
+  backlogOrder Float   @default(0)
+  sprintOrder  Float   @default(0)
   dueDate     DateTime?
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 
   project   Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  sprint    Sprint?      @relation(fields: [sprintId], references: [id], onDelete: SetNull)
   assignee  User?        @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
   createdBy User         @relation("TaskCreator", fields: [createdById], references: [id], onDelete: Cascade)
   subtasks  Subtask[]
-  taskLabels TaskLabel[]
   comments  Comment[]
   attachments Attachment[]
-  activityLogs ActivityLog[]
+  linkedFrom TaskLink[] @relation("TaskLinksFrom")
+  linkedTo   TaskLink[] @relation("TaskLinksTo")
+
+  @@index([projectId])
+  @@index([sprintId])
+  @@index([assigneeId])
+  @@index([createdById])
+  @@index([status])
+  @@index([priority])
+}
+
+model TaskLink {
+  id           String   @id @default(cuid())
+  sourceTaskId String
+  targetTaskId String
+  type         String   @default("RELATES_TO")
+  createdAt    DateTime @default(now())
+
+  sourceTask Task @relation("TaskLinksFrom", fields: [sourceTaskId], references: [id], onDelete: Cascade)
+  targetTask Task @relation("TaskLinksTo", fields: [targetTaskId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceTaskId, targetTaskId, type])
+  @@index([sourceTaskId])
+  @@index([targetTaskId])
+}
+
+model Sprint {
+  id        String    @id @default(cuid())
+  name      String
+  goal      String?
+  status    String    @default("PLANNED") // PLANNED, ACTIVE, COMPLETED
+  projectId String
+  startDate DateTime?
+  endDate   DateTime?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks   Task[]
+
+  @@index([projectId])
+  @@index([status])
 }
 
 model Subtask {
@@ -115,30 +221,6 @@ model Subtask {
   task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
   @@index([taskId])
-}
-
-model Label {
-  id        String   @id @default(cuid())
-  name      String
-  color     String
-  projectId String
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  project    Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  taskLabels TaskLabel[]
-}
-
-model TaskLabel {
-  taskId  String
-  labelId String
-
-  task  Task  @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  label Label @relation(fields: [labelId], references: [id], onDelete: Cascade)
-
-  @@id([taskId, labelId])
-  @@index([taskId])
-  @@index([labelId])
 }
 
 model Comment {
@@ -174,37 +256,3 @@ model Attachment {
   @@index([uploadedBy])
 }
 
-model ActivityLog {
-  id        String   @id @default(cuid())
-  projectId String
-  taskId    String?
-  userId    String
-  action    String
-  details   String?
-  createdAt DateTime @default(now())
-
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  task    Task?   @relation(fields: [taskId], references: [id], onDelete: SetNull)
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([projectId])
-  @@index([taskId])
-  @@index([userId])
-  @@index([createdAt])
-}
-
-model Notification {
-  id        String   @id @default(cuid())
-  userId    String
-  type      String
-  message   String
-  read      Boolean  @default(false)
-  relatedId String?
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  @@index([userId])
-  @@index([read])
-  @@index([createdAt])
-}

@@ -37,9 +37,6 @@ REST API for the ZuzuPlan task management system. Built with **Node.js**, **Expr
 - **Tasks**: `/api/projects/:projectId/tasks` (CRUD, subtasks)
 - **Comments**: `/api/tasks/:taskId/comments`
 - **Attachments**: `/api/tasks/:taskId/attachments` (multipart upload)
-- **Activity**: `/api/projects/:projectId/activity`
-- **Labels**: `/api/projects/:projectId/labels`
-- **Notifications**: `/api/notifications`
 
 Protected routes require header: `Authorization: Bearer <accessToken>`.
 

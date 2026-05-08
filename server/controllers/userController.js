@@ -28,6 +28,24 @@ async function updateAvatar(req, res, next) {
   }
 }
 
+async function getPreferences(req, res, next) {
+  try {
+    const preferences = await userService.getPreferences(req.user.id);
+    res.json({ success: true, data: preferences });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function updatePreferences(req, res, next) {
+  try {
+    const preferences = await userService.updatePreferences(req.user.id, req.body);
+    res.json({ success: true, data: preferences });
+  } catch (err) {
+    next(err);
+  }
+}
+
 async function getUserById(req, res, next) {
   try {
     const user = await userService.getUserById(req.params.id);
@@ -37,4 +55,4 @@ async function getUserById(req, res, next) {
   }
 }
 
-export { getMe, updateMe, updateAvatar, getUserById };
+export { getMe, updateMe, updateAvatar, getPreferences, updatePreferences, getUserById };

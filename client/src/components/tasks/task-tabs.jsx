@@ -5,9 +5,6 @@ const TABS = [
   { id: "backlog", label: "Backlog" },
   { id: "list", label: "List" },
   { id: "board", label: "Board" },
-  { id: "timeline", label: "Timeline" },
-  { id: "calendar", label: "Calendar" },
-  { id: "note", label: "Note" },
 ];
 
 export default function TaskTabs({ activeTab, onTabChange }) {

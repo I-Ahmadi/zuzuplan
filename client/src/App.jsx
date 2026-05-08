@@ -2,18 +2,16 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import BoardLayout from "@/components/board/board-layout";
 import Providers from "@/components/providers/providers";
 import { useAuth } from "@/contexts/auth-context";
-import Home from "@/pages/Home";
-import ActivityFeeds from "@/pages/ActivityFeeds";
-import AuditLogs from "@/pages/AuditLogs";
+import AcceptInvite from "@/pages/AcceptInvite";
+import ForYou from "@/pages/ForYou";
 import ForgotPassword from "@/pages/ForgotPassword";
 import Login from "@/pages/Login";
-import Notifications from "@/pages/Notifications";
 import Projects from "@/pages/Projects";
+import Recent from "@/pages/Recent";
 import ResetPassword from "@/pages/ResetPassword";
-import SearchPage from "@/pages/SearchPage";
 import Setting from "@/pages/Settings";
 import Signup from "@/pages/Signup";
-import Tasks from "@/pages/Tasks";
+import Tasks, { TaskDetailPage } from "@/pages/Tasks";
 import TeamMembers from "@/pages/TeamMembers";
 import VerifyEmail from "@/pages/VerifyEmail";
 
@@ -61,14 +59,20 @@ function AppRoutes() {
       <Route path="/reset-password" element={<GuestRoute><ResetPassword /></GuestRoute>} />
       <Route path="/signup" element={<GuestRoute><Signup /></GuestRoute>} />
       <Route path="/verify-email" element={<VerifyEmail />} />
-      <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
-      <Route path="/activity-feeds" element={<ProtectedRoute><ActivityFeeds /></ProtectedRoute>} />
-      <Route path="/audit-logs" element={<ProtectedRoute><AuditLogs /></ProtectedRoute>} />
-      <Route path="/notifications" element={<ProtectedRoute><Notifications /></ProtectedRoute>} />
+      <Route path="/invites/:token/accept" element={<ProtectedRoute><AcceptInvite /></ProtectedRoute>} />
+      <Route path="/" element={<ProtectedRoute><Navigate to="/for-you" replace /></ProtectedRoute>} />
+      <Route path="/dashboard" element={<ProtectedRoute><Navigate to="/for-you" replace /></ProtectedRoute>} />
+      <Route path="/for-you" element={<ProtectedRoute><ForYou /></ProtectedRoute>} />
+      <Route path="/recent" element={<ProtectedRoute><Recent /></ProtectedRoute>} />
+      <Route path="/spaces" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
+      <Route path="/spaces/:projectId" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
+      <Route path="/spaces/:projectId/tasks/:taskId" element={<ProtectedRoute><TaskDetailPage /></ProtectedRoute>} />
+      <Route path="/spaces/:projectId/tasks" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
       <Route path="/projects" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
       <Route path="/projects/:projectId" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
+      <Route path="/projects/:projectId/tasks/:taskId" element={<ProtectedRoute><TaskDetailPage /></ProtectedRoute>} />
+      <Route path="/projects/:projectId/tasks" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
       <Route path="/profile" element={<Navigate to="/settting" replace />} />
-      <Route path="/search-page" element={<ProtectedRoute><SearchPage /></ProtectedRoute>} />
       <Route path="/settting" element={<ProtectedRoute><Setting /></ProtectedRoute>} />
       <Route path="/settings" element={<Navigate to="/settting" replace />} />
       <Route path="/tasks" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />

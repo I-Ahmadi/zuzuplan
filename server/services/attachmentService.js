@@ -1,11 +1,10 @@
 import { prisma } from '../config/database.js';
-import { logActivity } from './activityLogService.js';
-import { ACTIVITY_ACTIONS, ROLES } from '../utils/constants.js';
+import { ROLES } from '../utils/constants.js';
 import { ensureTaskAccess } from './taskService.js';
 import { AppError } from '../middleware/errorHandler.js';
 
 export async function createAttachment(taskId, userId, fileData) {
-  const task = await ensureTaskAccess(taskId, userId);
+  await ensureTaskAccess(taskId, userId);
   const attachment = await prisma.attachment.create({
     data: {
       taskId,
@@ -16,13 +15,6 @@ export async function createAttachment(taskId, userId, fileData) {
       uploadedBy: userId,
     },
     include: { user: { select: { id: true, name: true } } },
-  });
-  await logActivity({
-    projectId: task.projectId,
-    taskId,
-    userId,
-    action: ACTIVITY_ACTIONS.ATTACHMENT_ADDED,
-    details: `Attachment: ${fileData.fileName}`,
   });
   return attachment;
 }

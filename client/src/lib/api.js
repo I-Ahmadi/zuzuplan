@@ -1,5 +1,4 @@
 import {
-  clearAuth,
   getAccessToken,
   getRefreshToken,
   setAccessToken,
@@ -25,7 +24,6 @@ export async function refreshAccessToken() {
   const refreshToken = getRefreshToken();
 
   if (!refreshToken) {
-    clearAuth();
     throw new Error("No refresh token available");
   }
 
@@ -43,7 +41,6 @@ export async function refreshAccessToken() {
       const data = await parseResponse(res);
 
       if (!res.ok || !data?.success || !data?.data?.accessToken) {
-        clearAuth();
         throw new Error(data?.error?.message || "Session refresh failed");
       }
 
@@ -97,7 +94,11 @@ export async function api(endpoint, options = {}, retry = true) {
       await refreshAccessToken();
       return api(endpoint, options, false);
     } catch {
-      clearAuth();
+      return {
+        success: false,
+        error: { message: "Session refresh failed" },
+        status: 401,
+      };
     }
   }
 

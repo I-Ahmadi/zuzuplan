@@ -6,14 +6,14 @@ export function Dialog({ open, children }) {
 
 export function DialogContent({ className, children }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className={cn("w-full max-w-lg rounded-lg border bg-background p-6 shadow-lg", className)}>{children}</div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3">
+      <div className={cn("w-full max-w-lg rounded-lg border bg-background p-4 shadow-lg", className)}>{children}</div>
     </div>
   );
 }
 
 export function DialogHeader({ className, ...props }) {
-  return <div className={cn("flex flex-col space-y-1.5 text-center sm:text-left", className)} {...props} />;
+  return <div className={cn("flex flex-col space-y-1 text-center sm:text-left", className)} {...props} />;
 }
 
 export function DialogTitle({ className, ...props }) {

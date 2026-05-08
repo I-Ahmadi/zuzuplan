@@ -44,16 +44,16 @@ export default function Signup() {
   const isLoading = registerMutation.isPending;
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Card className="w-full max-w-md mx-4">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-3 py-4">
+      <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Sign Up</CardTitle>
         </CardHeader>
 
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3">
             {error && (
-              <div className="p-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 rounded-md">
+              <div className="rounded-md bg-red-50 p-2.5 text-sm text-red-600">
                 {error}
               </div>
             )}

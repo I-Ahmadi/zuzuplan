@@ -68,6 +68,51 @@ async function addMember(req, res, next) {
   }
 }
 
+async function getInvites(req, res, next) {
+  try {
+    const invites = await projectService.getInvites(req.params.id, req.user.id);
+    res.json({ success: true, data: invites });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function createInvite(req, res, next) {
+  try {
+    const invite = await projectService.createInvite(req.params.id, req.user.id, req.body);
+    res.status(201).json({ success: true, data: invite });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function revokeInvite(req, res, next) {
+  try {
+    await projectService.revokeInvite(req.params.id, req.params.inviteId, req.user.id);
+    res.json({ success: true, message: 'Invite revoked' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function getInviteByToken(req, res, next) {
+  try {
+    const invite = await projectService.getInviteByToken(req.params.token);
+    res.json({ success: true, data: invite });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function acceptInvite(req, res, next) {
+  try {
+    const project = await projectService.acceptInvite(req.params.token, req.user.id);
+    res.json({ success: true, data: project });
+  } catch (err) {
+    next(err);
+  }
+}
+
 async function updateMemberRole(req, res, next) {
   try {
     const member = await projectService.updateMemberRole(
@@ -108,6 +153,11 @@ export {
   remove,
   getMembers,
   addMember,
+  getInvites,
+  createInvite,
+  revokeInvite,
+  getInviteByToken,
+  acceptInvite,
   updateMemberRole,
   removeMember,
   getStats,

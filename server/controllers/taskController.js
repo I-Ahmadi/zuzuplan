@@ -7,6 +7,7 @@ async function list(req, res, next) {
       status: req.query.status,
       assigneeId: req.query.assigneeId,
       priority: req.query.priority,
+      sprintId: req.query.sprintId,
       search: req.query.search,
       page: req.query.page,
       limit: req.query.limit,
@@ -86,6 +87,24 @@ async function deleteSubtask(req, res, next) {
   }
 }
 
+async function addTaskLink(req, res, next) {
+  try {
+    const link = await taskService.addTaskLink(req.params.id, req.user.id, req.body);
+    res.status(201).json({ success: true, data: link });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function deleteTaskLink(req, res, next) {
+  try {
+    await taskService.deleteTaskLink(req.params.id, req.params.linkId, req.user.id);
+    res.json({ success: true, message: 'Linked work item removed' });
+  } catch (err) {
+    next(err);
+  }
+}
+
 export {
   list,
   getById,
@@ -95,4 +114,6 @@ export {
   addSubtask,
   updateSubtask,
   deleteSubtask,
+  addTaskLink,
+  deleteTaskLink,
 };

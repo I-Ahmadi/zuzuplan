@@ -44,28 +44,28 @@ export default function Login() {
     error.toLowerCase().includes("not verified") || error.toLowerCase().includes("verify your email");
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Card className="max-w-md w-full mx-4">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-3 py-4">
+      <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Login</CardTitle>
         </CardHeader>
 
         <CardContent>
           {verified && (
-            <div className="mb-4 p-3 text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/50 rounded-md">
+            <div className="mb-3 rounded-md bg-green-50 p-2.5 text-sm text-green-600">
               Email verified! You can now log in.
             </div>
           )}
 
           {reset && (
-            <div className="mb-4 p-3 text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/50 rounded-md">
+            <div className="mb-3 rounded-md bg-green-50 p-2.5 text-sm text-green-600">
               Password reset successfully. You can now log in with your new password.
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3">
             {error && (
-              <div className="p-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 rounded-md">
+              <div className="rounded-md bg-red-50 p-2.5 text-sm text-red-600">
                 {error}
               </div>
             )}
@@ -102,7 +102,7 @@ export default function Login() {
           </form>
 
           {isUnverifiedError && (
-            <p className="mt-4 text-sm text-muted-foreground">
+            <p className="mt-3 text-sm text-muted-foreground">
               Use the verification link from your email, or go back to{" "}
               <Link to="/signup" className="text-primary hover:underline font-medium">
                 sign up

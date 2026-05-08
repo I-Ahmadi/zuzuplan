@@ -11,9 +11,31 @@ function omitPassword(user) {
 export async function getProfile(userId) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
+    include: { preferences: true },
   });
   if (!user) throw new AppError('User not found', 404);
   return omitPassword(user);
+}
+
+export async function getPreferences(userId) {
+  return prisma.userPreference.upsert({
+    where: { userId },
+    update: {},
+    create: { userId },
+  });
+}
+
+export async function updatePreferences(userId, data) {
+  const allowed = ['defaultView', 'density', 'theme', 'profileNote'];
+  const updateData = {};
+  allowed.forEach((key) => {
+    if (data[key] !== undefined) updateData[key] = data[key];
+  });
+  return prisma.userPreference.upsert({
+    where: { userId },
+    update: updateData,
+    create: { userId, ...updateData },
+  });
 }
 
 export async function updateProfile(userId, data) {

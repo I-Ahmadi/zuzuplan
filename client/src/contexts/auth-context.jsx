@@ -13,7 +13,7 @@ import { api, refreshAccessToken } from "@/lib/api";
 const AuthContext = createContext(undefined);
 
 async function fetchCurrentUser() {
-  const response = await api("/users/me", { method: "GET" }, false);
+  const response = await api("/users/me", { method: "GET" });
 
   if (!response.success) {
     throw new Error(response.error?.message || "Failed to load current user");
@@ -54,8 +54,10 @@ export function AuthProvider({ children }) {
       const currentUser = await fetchCurrentUser();
       setStoredUser(currentUser);
       setUser(currentUser);
-    } catch {
-      clearSession();
+    } catch (error) {
+      if (!storedUser) {
+        clearSession();
+      }
     } finally {
       setLoading(false);
     }
@@ -88,9 +90,9 @@ export function AuthProvider({ children }) {
       throw new Error(response.error?.message || "Login failed");
     }
 
-    const nextAccessToken = response.data?.accessToken;
-    const nextRefreshToken = response.data?.refreshToken;
-    const nextUser = response.data?.user;
+    const nextAccessToken  = response.data.accessToken;
+    const nextRefreshToken = response.data.refreshToken;
+    const nextUser         = response.data.user;
 
     if (!nextAccessToken || !nextRefreshToken || !nextUser) {
       throw new Error("Login response is missing session data");

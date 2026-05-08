@@ -29,20 +29,20 @@ export default function ResetPassword() {
   const missingToken = !token;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
-      <Card className="w-full max-w-md mx-4">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-3 py-4">
+      <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Reset password</CardTitle>
         </CardHeader>
 
         <CardContent>
           {missingToken ? (
-            <div className="p-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 rounded-md">
+            <div className="rounded-md bg-red-50 p-2.5 text-sm text-red-600">
               This reset link is missing a token. Please request a new password reset email.
             </div>
           ) : (
             <form
-              className="space-y-4"
+              className="space-y-3"
               onSubmit={(e) => {
                 e.preventDefault();
                 setError("");
@@ -56,7 +56,7 @@ export default function ResetPassword() {
               }}
             >
               {error && (
-                <div className="p-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 rounded-md">
+                <div className="rounded-md bg-red-50 p-2.5 text-sm text-red-600">
                   {error}
                 </div>
               )}

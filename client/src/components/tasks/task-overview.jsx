@@ -12,14 +12,14 @@ export default function TaskOverview({ tasks }) {
   ];
 
   return (
-    <div className="grid gap-4 md:grid-cols-3">
+    <div className="grid gap-3 md:grid-cols-3">
       {stats.map((stat) => (
         <Card key={stat.label}>
           <CardHeader>
             <CardTitle className="text-base">{stat.label}</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-bold">{stat.value}</p>
+            <p className="text-2xl font-bold">{stat.value}</p>
           </CardContent>
         </Card>
       ))}

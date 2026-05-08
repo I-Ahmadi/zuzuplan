@@ -1,23 +1,25 @@
 import { prisma } from '../config/database.js';
 import { getPageAndLimit, getSkip, createPaginationResult } from '../utils/pagination.js';
-import { logActivity } from './activityLogService.js';
 import { notifyCommentUpdate } from '../utils/realtime.js';
-import { ACTIVITY_ACTIONS, ROLES } from '../utils/constants.js';
+import { PROJECT_PERMISSIONS } from '../utils/constants.js';
 import { ensureTaskAccess } from './taskService.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { getProjectRole, hasProjectPermission } from '../utils/permissions.js';
+
+function requireProjectPermission(project, userId, permission) {
+  const role = getProjectRole(project, userId);
+  if (!hasProjectPermission(role, permission)) {
+    throw new AppError('Insufficient project permission', 403);
+  }
+  return role;
+}
 
 export async function createComment(taskId, userId, content) {
   const task = await ensureTaskAccess(taskId, userId);
+  requireProjectPermission(task.project, userId, PROJECT_PERMISSIONS.COMMENT_CREATE);
   const comment = await prisma.comment.create({
     data: { taskId, userId, content },
     include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
-  });
-  await logActivity({
-    projectId: task.projectId,
-    taskId,
-    userId,
-    action: ACTIVITY_ACTIONS.COMMENT_ADDED,
-    details: 'Comment added',
   });
   try {
     notifyCommentUpdate(task.projectId, taskId, comment.id, comment);
@@ -50,7 +52,11 @@ export async function updateComment(commentId, userId, content) {
     include: { task: { include: { project: true } } },
   });
   if (!comment) throw new AppError('Comment not found', 404);
-  if (comment.userId !== userId) throw new AppError('Only author can edit', 403);
+  const task = await ensureTaskAccess(comment.taskId, userId);
+  const canEditOwn =
+    comment.userId === userId &&
+    hasProjectPermission(getProjectRole(task.project, userId), PROJECT_PERMISSIONS.COMMENT_UPDATE_OWN);
+  if (!canEditOwn) throw new AppError('Only comment authors with edit permission can edit', 403);
 
   const updated = await prisma.comment.update({
     where: { id: commentId },
@@ -70,10 +76,10 @@ export async function deleteComment(commentId, userId) {
   });
   if (!comment) throw new AppError('Comment not found', 404);
   const isAuthor = comment.userId === userId;
-  const isOwner = comment.task.project.ownerId === userId;
-  const member = comment.task.project.members.find((m) => m.userId === userId);
-  const isAdmin = member && member.role === ROLES.ADMIN;
-  if (!isAuthor && !isOwner && !isAdmin) throw new AppError('Forbidden', 403);
+  const role = getProjectRole(comment.task.project, userId);
+  const canDeleteOwn = isAuthor && hasProjectPermission(role, PROJECT_PERMISSIONS.COMMENT_DELETE_OWN);
+  const canDeleteAny = hasProjectPermission(role, PROJECT_PERMISSIONS.COMMENT_DELETE_ANY);
+  if (!canDeleteOwn && !canDeleteAny) throw new AppError('Forbidden', 403);
 
   await prisma.comment.delete({ where: { id: commentId } });
 }

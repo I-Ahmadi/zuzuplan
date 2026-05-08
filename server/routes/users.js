@@ -9,6 +9,8 @@ const router = express.Router();
 router.use(authenticate);
 
 router.get('/me', userController.getMe);
+router.get('/me/preferences', userController.getPreferences);
+router.put('/me/preferences', userController.updatePreferences);
 router.put(
   '/me',
   [

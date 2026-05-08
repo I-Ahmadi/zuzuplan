@@ -45,8 +45,8 @@ export default function TaskForm({ open, onOpenChange, onCreate }) {
           <DialogTitle>Create Task</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-          <div className="grid gap-4 md:grid-cols-2">
+        <form onSubmit={handleSubmit} className="mt-3 space-y-3">
+          <div className="grid gap-3 md:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="title">Title</Label>
               <Input id="title" value={title} onChange={(e) => setTitle(e.target.value)} required />
@@ -62,12 +62,12 @@ export default function TaskForm({ open, onOpenChange, onCreate }) {
             <Textarea id="description" value={description} onChange={(e) => setDescription(e.target.value)} rows={3} />
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="grid gap-3 md:grid-cols-3">
             <div className="space-y-2">
               <Label htmlFor="priority">Priority</Label>
               <select
                 id="priority"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm"
                 value={priority}
                 onChange={(e) => setPriority(e.target.value)}
               >
@@ -82,7 +82,7 @@ export default function TaskForm({ open, onOpenChange, onCreate }) {
               <Label htmlFor="status">Status</Label>
               <select
                 id="status"
-                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                className="flex h-9 w-full rounded-md border border-input bg-background px-3 py-1.5 text-sm"
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
               >

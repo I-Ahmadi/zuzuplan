@@ -21,6 +21,11 @@ if (process.env.EMAIL_HOST && process.env.EMAIL_USER) {
 
 export async function sendEmail(to, subject, html, text) {
   if (!transporter) {
+    if (EMAIL_DEV_MODE) {
+      console.info(`Email dev mode: ${subject} -> ${to}`);
+      console.info(text || html.replace(/<[^>]*>/g, ''));
+      return;
+    }
     throw new Error('Email transporter not configured');
   }
 
@@ -35,6 +40,10 @@ export async function sendEmail(to, subject, html, text) {
 
 export async function verifyEmailTransport() {
   if (!transporter) {
+    if (EMAIL_DEV_MODE) {
+      console.info('Email transport: dev mode enabled; SMTP verification skipped.');
+      return;
+    }
     throw new Error('SMTP is not configured. Set EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASS, and EMAIL_FROM.');
   }
 
@@ -54,7 +63,8 @@ export function sendPasswordResetEmail(email, token) {
   return sendEmail(email, 'Reset your password', html);
 }
 
-export function sendNotificationEmail(email, subject, message) {
-  const html = `<p>${message}</p>`;
-  return sendEmail(email, subject, html);
+export function sendProjectInviteEmail(email, token, projectName, inviterName) {
+  const url = `${CLIENT_URL}/invites/${token}/accept`;
+  const html = `${inviterName} invited you to join ${projectName} on ZuzuPlan: <a href="${url}">${url}</a>`;
+  return sendEmail(email, `Invitation to join ${projectName}`, html);
 }

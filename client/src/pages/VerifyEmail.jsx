@@ -42,13 +42,13 @@ export default function VerifyEmail() {
   }, [token, verifyMutation]);
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Card className="w-full max-w-md mx-4">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-3 py-4">
+      <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Verify your email</CardTitle>
         </CardHeader>
 
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-3">
           {sent && !token && (
             <p className="text-muted-foreground">
               We&apos;ve sent a verification link to your email. Please check your inbox and click the link to verify your account.
@@ -60,7 +60,7 @@ export default function VerifyEmail() {
           )}
 
           {status === "success" && (
-            <div className="p-4 text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/50 rounded-md">
+            <div className="rounded-md bg-green-50 p-3 text-green-600">
               <p className="font-medium">Email verified successfully!</p>
               <p className="text-sm mt-1">Redirecting you to login...</p>
             </div>
@@ -68,7 +68,7 @@ export default function VerifyEmail() {
 
           {status === "error" && (
             <div className="space-y-2">
-              <div className="p-4 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 rounded-md">
+              <div className="rounded-md bg-red-50 p-3 text-red-600">
                 <p className="font-medium">Verification failed</p>
                 <p className="text-sm mt-1">
                   {verifyMutation.error?.message || "The link may be invalid or expired."}

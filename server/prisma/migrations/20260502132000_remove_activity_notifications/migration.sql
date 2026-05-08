@@ -1,0 +1,2 @@
+DROP TABLE IF EXISTS "Notification";
+DROP TABLE IF EXISTS "ActivityLog";

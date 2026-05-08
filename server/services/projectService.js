@@ -1,8 +1,37 @@
 import { prisma } from '../config/database.js';
 import { getSkip, getPageAndLimit, createPaginationResult } from '../utils/pagination.js';
-import { logActivity } from './activityLogService.js';
-import { ACTIVITY_ACTIONS, ROLES } from '../utils/constants.js';
+import { PROJECT_INVITE_STATUS, PROJECT_PERMISSIONS, ROLES } from '../utils/constants.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { getProjectPermissions, getProjectRole, hasProjectPermission, normalizeRole } from '../utils/permissions.js';
+import { generateToken, hashToken } from '../utils/crypto.js';
+import { sendProjectInviteEmail } from '../utils/email.js';
+
+function requireProjectPermission(project, userId, permission) {
+  const role = getProjectRole(project, userId);
+  if (!hasProjectPermission(role, permission)) {
+    throw new AppError('Insufficient project permission', 403);
+  }
+  return role;
+}
+
+function normalizeEmail(email) {
+  return String(email || '').trim().toLowerCase();
+}
+
+function inviteSelect() {
+  return {
+    id: true,
+    projectId: true,
+    email: true,
+    role: true,
+    status: true,
+    expiresAt: true,
+    acceptedAt: true,
+    createdAt: true,
+    invitedBy: { select: { id: true, name: true, email: true, avatar: true } },
+    acceptedBy: { select: { id: true, name: true, email: true, avatar: true } },
+  };
+}
 
 export async function getProjectById(projectId, userId) {
   const project = await prisma.project.findUnique({
@@ -10,14 +39,15 @@ export async function getProjectById(projectId, userId) {
     include: {
       owner: { select: { id: true, name: true, email: true, avatar: true } },
       members: { include: { user: { select: { id: true, name: true, email: true, avatar: true } } } },
-      _count: { select: { tasks: true, labels: true } },
+      _count: { select: { tasks: true } },
     },
   });
   if (!project) throw new AppError('Project not found', 404);
   const isOwner = project.ownerId === userId;
   const isMember = project.members.some((m) => m.userId === userId);
   if (!isOwner && !isMember) throw new AppError('Access denied', 403);
-  return project;
+  const role = getProjectRole(project, userId);
+  return { ...project, currentUserRole: role, currentUserPermissions: getProjectPermissions(role) };
 }
 
 export async function createProject(userId, data) {
@@ -39,12 +69,6 @@ export async function createProject(userId, data) {
   });
   await prisma.projectMember.create({
     data: { projectId: project.id, userId, role: ROLES.ADMIN },
-  });
-  await logActivity({
-    projectId: project.id,
-    userId,
-    action: ACTIVITY_ACTIONS.CREATED,
-    details: `Project created: ${project.name}`,
   });
   return getProjectById(project.id, userId);
 }
@@ -87,16 +111,12 @@ export async function getProjects(userId, options = {}) {
 }
 
 export async function updateProject(projectId, userId, data) {
-  await getProjectById(projectId, userId);
-  const member = await prisma.projectMember.findFirst({
-    where: { projectId, userId },
+  const projectAccess = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: { members: true },
   });
-  const isOwner = await prisma.project.findFirst({
-    where: { id: projectId, ownerId: userId },
-  });
-  if (!isOwner && (!member || member.role !== ROLES.ADMIN)) {
-    throw new AppError('Admin access required', 403);
-  }
+  if (!projectAccess) throw new AppError('Project not found', 404);
+  requireProjectPermission(projectAccess, userId, PROJECT_PERMISSIONS.PROJECT_UPDATE);
 
   const updateData = {};
   if (data.name != null) updateData.name = data.name;
@@ -104,8 +124,8 @@ export async function updateProject(projectId, userId, data) {
   if (data.description != null) updateData.description = data.description;
   if (data.status != null) updateData.status = data.status;
   if (data.visibility != null) updateData.visibility = data.visibility;
-  if (data.startDate != null) updateData.startDate = data.startDate ? new Date(data.startDate) : null;
-  if (data.endDate != null) updateData.endDate = data.endDate ? new Date(data.endDate) : null;
+  if (data.startDate !== undefined) updateData.startDate = data.startDate ? new Date(data.startDate) : null;
+  if (data.endDate !== undefined) updateData.endDate = data.endDate ? new Date(data.endDate) : null;
 
   const project = await prisma.project.update({
     where: { id: projectId },
@@ -115,48 +135,194 @@ export async function updateProject(projectId, userId, data) {
       members: { include: { user: { select: { id: true, name: true, email: true } } } },
     },
   });
-  await logActivity({
-    projectId,
-    userId,
-    action: ACTIVITY_ACTIONS.UPDATED,
-    details: 'Project updated',
-  });
   return project;
 }
 
 export async function deleteProject(projectId, userId) {
-  await getProjectById(projectId, userId);
-  const isOwner = await prisma.project.findFirst({
-    where: { id: projectId, ownerId: userId },
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: { members: true },
   });
-  const member = await prisma.projectMember.findFirst({
-    where: { projectId, userId },
-  });
-  if (!isOwner && (!member || member.role !== ROLES.ADMIN)) {
-    throw new AppError('Admin access required', 403);
-  }
+  if (!project) throw new AppError('Project not found', 404);
+  requireProjectPermission(project, userId, PROJECT_PERMISSIONS.PROJECT_DELETE);
   await prisma.project.delete({ where: { id: projectId } });
 }
 
 export async function getMembers(projectId, userId) {
-  await getProjectById(projectId, userId);
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: { members: true },
+  });
+  if (!project) throw new AppError('Project not found', 404);
+  requireProjectPermission(project, userId, PROJECT_PERMISSIONS.MEMBERS_READ);
   return prisma.projectMember.findMany({
     where: { projectId },
     include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
   });
 }
 
-export async function addMember(projectId, userId, memberUserId, role) {
-  await getProjectById(projectId, userId);
-  const isOwner = await prisma.project.findFirst({
-    where: { id: projectId, ownerId: userId },
+export async function getInvites(projectId, userId) {
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: { members: true },
   });
-  const member = await prisma.projectMember.findFirst({
-    where: { projectId, userId },
+  if (!project) throw new AppError('Project not found', 404);
+  requireProjectPermission(project, userId, PROJECT_PERMISSIONS.MEMBERS_READ);
+
+  await prisma.projectInvite.updateMany({
+    where: {
+      projectId,
+      status: PROJECT_INVITE_STATUS.PENDING,
+      expiresAt: { lt: new Date() },
+    },
+    data: { status: PROJECT_INVITE_STATUS.EXPIRED },
   });
-  if (!isOwner && (!member || member.role !== ROLES.ADMIN)) {
-    throw new AppError('Admin access required', 403);
+
+  return prisma.projectInvite.findMany({
+    where: { projectId },
+    orderBy: { createdAt: 'desc' },
+    select: inviteSelect(),
+  });
+}
+
+export async function createInvite(projectId, userId, data) {
+  const email = normalizeEmail(data.email);
+  const role = normalizeRole(data.role) || ROLES.EMPLOYEE;
+
+  if (!email) throw new AppError('Invite email is required', 400);
+
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: {
+      members: true,
+      owner: { select: { id: true, name: true, email: true } },
+    },
+  });
+  if (!project) throw new AppError('Project not found', 404);
+  requireProjectPermission(project, userId, PROJECT_PERMISSIONS.MEMBERS_MANAGE);
+
+  const existingUser = await prisma.user.findUnique({ where: { email } });
+  if (existingUser) {
+    const isOwner = project.ownerId === existingUser.id;
+    const isMember = project.members.some((member) => member.userId === existingUser.id);
+    if (isOwner || isMember) throw new AppError('This user is already a project member', 409);
   }
+
+  await prisma.projectInvite.updateMany({
+    where: { projectId, email, status: PROJECT_INVITE_STATUS.PENDING },
+    data: { status: PROJECT_INVITE_STATUS.REVOKED },
+  });
+
+  const rawToken = generateToken();
+  const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+  const invite = await prisma.projectInvite.create({
+    data: {
+      projectId,
+      email,
+      role,
+      tokenHash: hashToken(rawToken),
+      invitedById: userId,
+      expiresAt,
+    },
+    select: inviteSelect(),
+  });
+
+  const inviter = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { name: true, email: true },
+  });
+
+  await sendProjectInviteEmail(email, rawToken, project.name, inviter?.name || inviter?.email || 'A teammate');
+  return invite;
+}
+
+export async function revokeInvite(projectId, inviteId, userId) {
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: { members: true },
+  });
+  if (!project) throw new AppError('Project not found', 404);
+  requireProjectPermission(project, userId, PROJECT_PERMISSIONS.MEMBERS_MANAGE);
+
+  const invite = await prisma.projectInvite.findFirst({ where: { id: inviteId, projectId } });
+  if (!invite) throw new AppError('Invite not found', 404);
+  if (invite.status !== PROJECT_INVITE_STATUS.PENDING) {
+    throw new AppError('Only pending invites can be revoked', 400);
+  }
+
+  await prisma.projectInvite.update({
+    where: { id: inviteId },
+    data: { status: PROJECT_INVITE_STATUS.REVOKED },
+  });
+}
+
+export async function getInviteByToken(token) {
+  const invite = await prisma.projectInvite.findUnique({
+    where: { tokenHash: hashToken(token) },
+    select: {
+      ...inviteSelect(),
+      project: { select: { id: true, name: true, key: true } },
+    },
+  });
+  if (!invite) throw new AppError('Invite not found', 404);
+  return invite;
+}
+
+export async function acceptInvite(token, userId) {
+  const invite = await prisma.projectInvite.findUnique({
+    where: { tokenHash: hashToken(token) },
+    include: {
+      project: { include: { members: true } },
+    },
+  });
+
+  if (!invite) throw new AppError('Invite not found', 404);
+  if (invite.status !== PROJECT_INVITE_STATUS.PENDING) throw new AppError('Invite is no longer active', 400);
+  if (invite.expiresAt < new Date()) {
+    await prisma.projectInvite.update({
+      where: { id: invite.id },
+      data: { status: PROJECT_INVITE_STATUS.EXPIRED },
+    });
+    throw new AppError('Invite has expired', 400);
+  }
+
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) throw new AppError('User not found', 404);
+  if (normalizeEmail(user.email) !== normalizeEmail(invite.email)) {
+    throw new AppError('This invite was sent to a different email address', 403);
+  }
+  if (invite.project.ownerId === userId || invite.project.members.some((member) => member.userId === userId)) {
+    throw new AppError('You are already a member of this project', 409);
+  }
+
+  await prisma.$transaction([
+    prisma.projectMember.create({
+      data: {
+        projectId: invite.projectId,
+        userId,
+        role: normalizeRole(invite.role) || ROLES.EMPLOYEE,
+      },
+    }),
+    prisma.projectInvite.update({
+      where: { id: invite.id },
+      data: {
+        status: PROJECT_INVITE_STATUS.ACCEPTED,
+        acceptedById: userId,
+        acceptedAt: new Date(),
+      },
+    }),
+  ]);
+
+  return getProjectById(invite.projectId, userId);
+}
+
+export async function addMember(projectId, userId, memberUserId, role) {
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: { members: true },
+  });
+  if (!project) throw new AppError('Project not found', 404);
+  requireProjectPermission(project, userId, PROJECT_PERMISSIONS.MEMBERS_MANAGE);
 
   const targetUser = await prisma.user.findUnique({ where: { id: memberUserId } });
   if (!targetUser) throw new AppError('User not found', 404);
@@ -166,13 +332,7 @@ export async function addMember(projectId, userId, memberUserId, role) {
   if (existing) throw new AppError('User is already a member', 409);
 
   await prisma.projectMember.create({
-    data: { projectId, userId: memberUserId, role: role || ROLES.ADMIN },
-  });
-  await logActivity({
-    projectId,
-    userId,
-    action: ACTIVITY_ACTIONS.MEMBER_ADDED,
-    details: `Added ${targetUser.name}`,
+    data: { projectId, userId: memberUserId, role: normalizeRole(role) || ROLES.EMPLOYEE },
   });
   return getMembers(projectId, userId);
 }
@@ -182,26 +342,14 @@ export async function updateMemberRole(projectId, userId, memberUserId, role) {
   if (project.ownerId === memberUserId) {
     throw new AppError('Cannot change owner role', 403);
   }
-  const adminMember = await prisma.projectMember.findFirst({
-    where: { projectId, userId },
-  });
-  const isOwner = await prisma.project.findFirst({
-    where: { id: projectId, ownerId: userId },
-  });
-  if (!isOwner && (!adminMember || adminMember.role !== ROLES.ADMIN)) {
-    throw new AppError('Admin access required', 403);
-  }
+  requireProjectPermission(project, userId, PROJECT_PERMISSIONS.MEMBERS_MANAGE);
+  const normalizedRole = normalizeRole(role);
+  if (!normalizedRole) throw new AppError('Invalid project role', 400);
 
   const updated = await prisma.projectMember.update({
     where: { projectId_userId: { projectId, userId: memberUserId } },
-    data: { role },
+    data: { role: normalizedRole },
     include: { user: { select: { id: true, name: true, email: true } } },
-  });
-  await logActivity({
-    projectId,
-    userId,
-    action: ACTIVITY_ACTIONS.ROLE_CHANGED,
-    details: `Role updated for member`,
   });
   return updated;
 }
@@ -211,22 +359,10 @@ export async function removeMember(projectId, userId, memberUserId) {
   if (project.ownerId === memberUserId) {
     throw new AppError('Cannot remove project owner', 403);
   }
-  const adminMember = await prisma.projectMember.findFirst({
-    where: { projectId, userId },
-  });
-  const isOwner = project.ownerId === userId;
-  if (!isOwner && (!adminMember || adminMember.role !== ROLES.ADMIN)) {
-    throw new AppError('Admin access required', 403);
-  }
+  requireProjectPermission(project, userId, PROJECT_PERMISSIONS.MEMBERS_MANAGE);
 
   await prisma.projectMember.delete({
     where: { projectId_userId: { projectId, userId: memberUserId } },
-  });
-  await logActivity({
-    projectId,
-    userId,
-    action: ACTIVITY_ACTIONS.MEMBER_REMOVED,
-    details: 'Member removed',
   });
 }
 

@@ -18,10 +18,3 @@ export function notifyCommentUpdate(projectId, taskId, commentId, data) {
   sendRealtimeUpdate(`projects/${projectId}/tasks/${taskId}/comments/${commentId}`, data);
 }
 
-export function notifyActivityUpdate(projectId, activity) {
-  sendRealtimeUpdate(`projects/${projectId}/activity/${activity.id}`, activity);
-}
-
-export function notifyNotificationUpdate(userId, notification) {
-  sendRealtimeUpdate(`users/${userId}/notifications/${notification.id}`, notification);
-}

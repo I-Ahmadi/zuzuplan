@@ -26,15 +26,15 @@ export default function ForgotPassword() {
   });
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 dark:bg-gray-900">
-      <Card className="w-full max-w-md mx-4">
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-3 py-4">
+      <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Forgot password</CardTitle>
         </CardHeader>
 
         <CardContent>
           <form
-            className="space-y-4"
+            className="space-y-3"
             onSubmit={(e) => {
               e.preventDefault();
               setMessage("");
@@ -43,13 +43,13 @@ export default function ForgotPassword() {
             }}
           >
             {message && (
-              <div className="p-3 text-sm text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-950/50 rounded-md">
+              <div className="rounded-md bg-green-50 p-2.5 text-sm text-green-600">
                 {message}
               </div>
             )}
 
             {error && (
-              <div className="p-3 text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950/50 rounded-md">
+              <div className="rounded-md bg-red-50 p-2.5 text-sm text-red-600">
                 {error}
               </div>
             )}

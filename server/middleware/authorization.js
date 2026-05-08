@@ -1,6 +1,7 @@
 import { prisma } from '../config/database.js';
 import { AppError } from './errorHandler.js';
-import { ROLES } from '../utils/constants.js';
+import { PROJECT_PERMISSIONS } from '../utils/constants.js';
+import { getProjectPermissions, getProjectRole, hasProjectPermission } from '../utils/permissions.js';
 
 export function requireRole(...allowedRoles) {
   return (req, res, next) => {
@@ -28,15 +29,15 @@ export async function resolveProjectAccess(req) {
   }
 
   const userId = req.user.id;
-  const isOwner = project.ownerId === userId;
-  const member = project.members.find((m) => m.userId === userId);
+  const role = getProjectRole(project, userId);
 
-  if (!isOwner && !member) {
+  if (!role) {
     throw new AppError('Access denied to this project', 403);
   }
 
   req.project = project;
-  req.user.role = isOwner ? ROLES.ADMIN : member.role;
+  req.user.role = role;
+  req.user.permissions = getProjectPermissions(role);
   return project;
 }
 
@@ -55,8 +56,22 @@ export function requireProjectAdmin() {
   return async (req, res, next) => {
     try {
       await resolveProjectAccess(req);
-      if (req.user.role !== ROLES.ADMIN) {
-        throw new AppError('Admin access required', 403);
+      if (!hasProjectPermission(req.user.role, PROJECT_PERMISSIONS.PROJECT_UPDATE)) {
+        throw new AppError('Project management permission required', 403);
+      }
+      next();
+    } catch (err) {
+      next(err);
+    }
+  };
+}
+
+export function requireProjectPermission(permission) {
+  return async (req, res, next) => {
+    try {
+      await resolveProjectAccess(req);
+      if (!hasProjectPermission(req.user.role, permission)) {
+        throw new AppError('Insufficient project permission', 403);
       }
       next();
     } catch (err) {

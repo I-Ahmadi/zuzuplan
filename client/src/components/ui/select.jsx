@@ -6,7 +6,7 @@ export function Select({ value, onValueChange, children }) {
 
 export function SelectTrigger({ className, children, ...props }) {
   return (
-    <div className={cn("flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm", className)} {...props}>
+    <div className={cn("flex h-9 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-1.5 text-sm", className)} {...props}>
       {children}
     </div>
   );
@@ -17,12 +17,12 @@ export function SelectValue({ placeholder, value }) {
 }
 
 export function SelectContent({ children }) {
-  return <div className="mt-2 space-y-2">{children}</div>;
+  return <div className="mt-1.5 space-y-1.5">{children}</div>;
 }
 
 export function SelectItem({ value, children, onSelect }) {
   return (
-    <button type="button" className="block w-full rounded-md border px-3 py-2 text-left text-sm hover:bg-accent" onClick={() => onSelect?.(value)}>
+    <button type="button" className="block w-full rounded-md border px-3 py-1.5 text-left text-sm hover:bg-accent" onClick={() => onSelect?.(value)}>
       {children}
     </button>
   );
