@@ -20,7 +20,7 @@ export default function Login() {
   const loginMutation = useMutation({
     mutationFn: login,
     onSuccess: () => {
-      navigate("/");
+      navigate("/for-you");
     },
     onError: (err) => {
       setError(err.message || "Something went wrong");
