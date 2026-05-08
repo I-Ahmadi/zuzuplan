@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Check, ChevronDown, FolderKanban, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -118,7 +118,7 @@ export default function Header() {
                 <FolderKanban className="h-4 w-4 shrink-0 text-muted-foreground" />
                 <span className="hidden min-w-0 truncate text-sm font-medium tracking-normal text-foreground sm:block">{currentProject.name}</span>
                 <span className="flex h-7 min-w-10 shrink-0 items-center justify-center rounded border bg-background px-2 text-xs font-medium text-muted-foreground shadow-sm">
-                  {(currentProject.key || "ZP").slice(0, 3).toUpperCase()}
+                  {(currentProject.key || "SPC").slice(0, 3).toUpperCase()}
                 </span>
                 <ChevronDown className={cn("h-3.5 w-3.5 shrink-0 text-muted-foreground transition-transform", open && "rotate-180")} />
               </button>
@@ -142,7 +142,7 @@ export default function Header() {
                           role="menuitem"
                         >
                           <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary text-[10px] font-bold text-primary-foreground">
-                            {project.key?.slice(0, 2).toUpperCase() || "ZP"}
+                            {project.key?.slice(0, 2).toUpperCase() || "SP"}
                           </span>
                           <span className="min-w-0 flex-1">
                             <span className="block truncate font-medium">{project.name}</span>

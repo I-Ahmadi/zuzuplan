@@ -215,7 +215,7 @@ function SidebarAccountMenu({ user, collapsed }) {
         aria-label="Account menu"
         title={collapsed ? user?.name || "Account menu" : undefined}
       >
-        <UserAvatar user={user} fallback="ZP" className={collapsed ? "h-7 w-7" : "h-6 w-6"} fallbackClassName="bg-primary text-primary-foreground" />
+        <UserAvatar user={user} fallback="ME" className={collapsed ? "h-7 w-7" : "h-6 w-6"} fallbackClassName="bg-primary text-primary-foreground" />
         {!collapsed ? (
           <span className="min-w-0 flex-1">
             <span className="block truncate text-sm font-medium">{user?.name || "Your profile"}</span>
@@ -233,7 +233,7 @@ function SidebarAccountMenu({ user, collapsed }) {
         >
           <div className="border-b px-3 py-2">
             <div className="flex min-w-0 items-center gap-2">
-              <UserAvatar user={user} fallback="ZP" className="h-8 w-8" fallbackClassName="bg-primary text-primary-foreground" />
+              <UserAvatar user={user} fallback="ME" className="h-8 w-8" fallbackClassName="bg-primary text-primary-foreground" />
               <div className="min-w-0">
                 <p className="truncate text-sm font-medium">{user?.name || "Your profile"}</p>
                 <p className="truncate text-xs text-muted-foreground">{user?.email || "Account"}</p>
@@ -397,14 +397,8 @@ export function Sidebar() {
       style={{ width: SIDEBAR_WIDTH_EXPANDED }}
     >
       <div className="flex h-14 items-center justify-between border-b px-3">
-        <Link to="/for-you" className="flex min-w-0 items-center gap-2 rounded-md px-1 py-1 hover:bg-accent">
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
-            ZP
-          </span>
-          <span className="min-w-0">
-            <span className="block truncate text-sm font-semibold leading-4">ZuzuPlan</span>
-            <span className="block truncate text-xs text-muted-foreground">Workspace</span>
-          </span>
+        <Link to="/for-you" className="rounded-md px-1 py-1 text-sm font-semibold hover:bg-accent">
+          Workspace
         </Link>
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setCollapsed(true)} aria-label="Collapse sidebar">
           <PanelLeftClose className="h-4 w-4" />

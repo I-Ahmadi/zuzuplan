@@ -263,7 +263,7 @@ export default function Setting() {
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = "zuzuplan-account-data.json";
+    link.download = "account-data.json";
     link.click();
     URL.revokeObjectURL(url);
     setMessage("Account data exported.");
@@ -296,7 +296,7 @@ export default function Setting() {
           <CardContent className="p-3">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex min-w-0 items-center gap-3">
-                <UserAvatar user={profile} fallback="ZP" className="h-11 w-11 rounded-md" fallbackClassName="rounded-md bg-secondary text-foreground" />
+                <UserAvatar user={profile} fallback="ME" className="h-11 w-11 rounded-md" fallbackClassName="rounded-md bg-secondary text-foreground" />
                 <div className="min-w-0">
                   <p className="truncate font-medium">{profile.name || "Your profile"}</p>
                   <p className="truncate text-xs text-muted-foreground">{profile.email}</p>
@@ -352,7 +352,7 @@ export default function Setting() {
                   }}
                 >
                   <div className="flex flex-col gap-4 md:flex-row md:items-start">
-                    <UserAvatar user={profile} fallback="ZP" className="h-24 w-24 rounded-md" fallbackClassName="rounded-md bg-secondary text-2xl text-foreground" />
+                    <UserAvatar user={profile} fallback="ME" className="h-24 w-24 rounded-md" fallbackClassName="rounded-md bg-secondary text-2xl text-foreground" />
                     <div className="grid min-w-0 flex-1 gap-4 md:grid-cols-2">
                       <div className="space-y-2">
                         <Label htmlFor="name">Name</Label>
@@ -405,7 +405,7 @@ export default function Setting() {
                   <Monitor className="h-4 w-4" />
                   Preferences
                 </CardTitle>
-                <CardDescription>Control how ZuzuPlan opens and feels for your account.</CardDescription>
+                <CardDescription>Control how your workspace opens and feels for your account.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 p-4">
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -464,11 +464,11 @@ export default function Setting() {
                   <Bell className="h-4 w-4" />
                   Notifications
                 </CardTitle>
-                <CardDescription>These notification preferences are persisted to your ZuzuPlan account.</CardDescription>
+                <CardDescription>These notification preferences are persisted to your account.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3 p-4">
                 <ToggleRow title="Email notifications" description="Send important updates to your email inbox." checked={preferences.emailNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, emailNotifications: checked }))} />
-                <ToggleRow title="In-app notifications" description="Show notifications inside ZuzuPlan." checked={preferences.inAppNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, inAppNotifications: checked }))} />
+                <ToggleRow title="In-app notifications" description="Show notifications inside your workspace." checked={preferences.inAppNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, inAppNotifications: checked }))} />
                 <ToggleRow title="Due-soon reminders" description="Remind me before assigned work is due." checked={preferences.dueSoonNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, dueSoonNotifications: checked }))} />
                 <ToggleRow title="Assignments" description="Notify me when work is assigned or reassigned to me." checked={preferences.assignmentNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, assignmentNotifications: checked }))} />
                 <ToggleRow title="Mentions" description="Notify me when someone mentions me." checked={preferences.mentionNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, mentionNotifications: checked }))} />

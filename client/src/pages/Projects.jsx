@@ -104,7 +104,7 @@ function SpaceDialog({ mode, open, form, setForm, pending, onClose, onSubmit }) 
                 maxLength={10}
                 value={form.key}
                 onChange={(event) => setForm((current) => ({ ...current, key: event.target.value.toUpperCase() }))}
-                placeholder="ZP"
+                placeholder="SPC"
               />
             </div>
             <div className="space-y-2">

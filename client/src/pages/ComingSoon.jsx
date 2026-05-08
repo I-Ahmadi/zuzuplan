@@ -15,7 +15,7 @@ export default function ComingSoon({ title, description }) {
             <Construction className="h-4 w-4" />
             Under development
           </CardTitle>
-          <CardDescription>This area is planned for a future ZuzuPlan release.</CardDescription>
+          <CardDescription>This area is planned for a future release.</CardDescription>
         </CardHeader>
         <CardContent>
           <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">

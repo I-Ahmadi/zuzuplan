@@ -39,7 +39,7 @@ export default function AcceptInvite() {
             Space Invitation
           </CardTitle>
           <CardDescription>
-            {invite ? `You were invited to join ${invite.project?.name || "a ZuzuPlan space"}.` : "Loading invitation details."}
+            {invite ? `You were invited to join ${invite.project?.name || "a workspace"}.` : "Loading invitation details."}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 text-sm">

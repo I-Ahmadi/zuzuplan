@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { AuthNotice, AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
@@ -26,14 +26,15 @@ export default function ForgotPassword() {
   });
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-3 py-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Forgot password</CardTitle>
-          <CardDescription>Request a secure reset link for your ZuzuPlan account.</CardDescription>
-        </CardHeader>
-
-        <CardContent>
+    <AuthShell
+      title="Reset your password"
+      description="Enter your email and we will send a secure reset link if the account exists."
+      footer={
+        <Link to="/login" className="font-medium text-[#0c66e4] hover:underline">
+          Back to login
+        </Link>
+      }
+    >
           <form
             className="space-y-3"
             onSubmit={(e) => {
@@ -44,19 +45,15 @@ export default function ForgotPassword() {
             }}
           >
             {message && (
-              <div className="rounded-md bg-green-50 p-2.5 text-sm text-green-600">
-                {message}
-              </div>
+              <AuthNotice type="success">{message}</AuthNotice>
             )}
 
             {error && (
-              <div className="rounded-md bg-red-50 p-2.5 text-sm text-red-600">
-                {error}
-              </div>
+              <AuthNotice>{error}</AuthNotice>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-xs font-semibold text-[#172b4d]">Email</Label>
               <Input
                 id="email"
                 type="email"
@@ -72,14 +69,6 @@ export default function ForgotPassword() {
               {forgotPasswordMutation.isPending ? "Sending reset link..." : "Send reset link"}
             </Button>
           </form>
-        </CardContent>
-
-        <CardFooter className="justify-center">
-          <Link to="/login" className="text-sm text-primary hover:underline">
-            Back to login
-          </Link>
-        </CardFooter>
-      </Card>
-    </div>
+    </AuthShell>
   );
 }

@@ -100,7 +100,7 @@ function formatDate(date) {
 }
 
 function issueKey(project, task) {
-  return `${project?.key || "ZP"}-${task.id.slice(-4).toUpperCase()}`;
+  return `${project?.key || "SPC"}-${task.id.slice(-4).toUpperCase()}`;
 }
 
 function countByStatus(tasks, status) {

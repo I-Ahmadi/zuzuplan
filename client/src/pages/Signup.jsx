@@ -1,17 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { AuthNotice, AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-  CardDescription,
-} from "@/components/ui/card";
-import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/auth-context";
 
 export default function Signup() {
@@ -45,23 +38,25 @@ export default function Signup() {
   const isLoading = registerMutation.isPending;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-3 py-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Sign Up</CardTitle>
-          <CardDescription>Create an account to organize spaces, tasks, teams, and delivery plans.</CardDescription>
-        </CardHeader>
-
-        <CardContent>
+    <AuthShell
+      title="Create your account"
+      description="Start organizing spaces, tasks, teams, docs, and delivery plans."
+      footer={
+        <p>
+          Already have an account?{" "}
+          <Link to="/login" className="font-medium text-[#0c66e4] hover:underline">
+            Log in
+          </Link>
+        </p>
+      }
+    >
           <form onSubmit={handleSubmit} className="space-y-3">
             {error && (
-              <div className="rounded-md bg-red-50 p-2.5 text-sm text-red-600">
-                {error}
-              </div>
+              <AuthNotice>{error}</AuthNotice>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="name">Name</Label>
+              <Label htmlFor="name" className="text-xs font-semibold text-[#172b4d]">Name</Label>
               <Input
                 id="name"
                 type="text"
@@ -74,11 +69,11 @@ export default function Signup() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-xs font-semibold text-[#172b4d]">Email</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="example@email.com"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -87,7 +82,7 @@ export default function Signup() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-xs font-semibold text-[#172b4d]">Password</Label>
               <Input
                 id="password"
                 type="password"
@@ -101,20 +96,12 @@ export default function Signup() {
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signing up..." : "Sign Up"}
+              {isLoading ? "Creating account..." : "Create account"}
             </Button>
+            <p className="text-center text-xs leading-5 text-[#626f86]">
+              By creating an account, you agree to use this workspace for collaboration and delivery planning.
+            </p>
           </form>
-        </CardContent>
-
-        <CardFooter className="flex justify-center">
-          <p className="text-sm text-muted-foreground">
-            Already have an account?{" "}
-            <Link to="/login" className="text-primary hover:underline font-medium">
-              Log in
-            </Link>
-          </p>
-        </CardFooter>
-      </Card>
-    </div>
+    </AuthShell>
   );
 }

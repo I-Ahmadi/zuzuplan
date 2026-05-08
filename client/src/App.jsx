@@ -8,7 +8,9 @@ import AcceptInvite from "@/pages/AcceptInvite";
 import ComingSoon from "@/pages/ComingSoon";
 import ForYou from "@/pages/ForYou";
 import ForgotPassword from "@/pages/ForgotPassword";
+import Inbox from "@/pages/Inbox";
 import Login from "@/pages/Login";
+import MyTasks from "@/pages/MyTasks";
 import Projects from "@/pages/Projects";
 import ProjectSettings from "@/pages/ProjectSettings";
 import Recent from "@/pages/Recent";
@@ -89,8 +91,8 @@ function AppRoutes() {
       <Route path="/dashboard" element={<ProtectedRoute><LandingRedirect /></ProtectedRoute>} />
       <Route path="/for-you" element={<ProtectedRoute><ForYou /></ProtectedRoute>} />
       <Route path="/recent" element={<ProtectedRoute><Recent /></ProtectedRoute>} />
-      <Route path="/my-tasks" element={<ProtectedRoute><ComingSoon title="My Tasks" description="A personal workload view for tasks assigned to you across spaces." /></ProtectedRoute>} />
-      <Route path="/inbox" element={<ProtectedRoute><ComingSoon title="Inbox" description="A focused place for mentions, assignments, comments, and notifications." /></ProtectedRoute>} />
+      <Route path="/my-tasks" element={<ProtectedRoute><MyTasks /></ProtectedRoute>} />
+      <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
       <Route path="/notifications" element={<ProtectedRoute><ComingSoon title="Notifications" description="A focused notification center for mentions, assignments, reminders, and updates." /></ProtectedRoute>} />
       <Route path="/release-notes" element={<ProtectedRoute><ComingSoon title="Release Notes" description="Product updates, improvements, fixes, and rollout notes will appear here." /></ProtectedRoute>} />
       <Route path="/knowledge" element={<ProtectedRoute><ComingSoon title="Knowledge" description="A global knowledge hub for docs, notes, decisions, and team references." /></ProtectedRoute>} />

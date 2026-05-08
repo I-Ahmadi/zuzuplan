@@ -1,15 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from "@/components/ui/card";
 import { useMutation } from "@tanstack/react-query";
+import { AuthNotice, AuthShell } from "@/components/auth/AuthShell";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
 
 export default function VerifyEmail() {
@@ -43,40 +36,49 @@ export default function VerifyEmail() {
   }, [token, verifyMutation]);
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-3 py-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Verify your email</CardTitle>
-          <CardDescription>Confirm your email address to activate your ZuzuPlan account.</CardDescription>
-        </CardHeader>
-
-        <CardContent className="space-y-3">
+    <AuthShell
+      title="Verify your email"
+      description="Confirm your email address to activate your account."
+      footer={
+        <div className="flex flex-col gap-2">
+          <Button asChild variant="outline" className="w-full">
+            <Link to="/login">Back to login</Link>
+          </Button>
+          {!token ? (
+            <Button asChild variant="link" className="w-full text-[#0c66e4]">
+              <Link to="/signup">Sign up again</Link>
+            </Button>
+          ) : null}
+        </div>
+      }
+    >
+        <div className="space-y-3">
           {sent && !token && (
-            <p className="text-muted-foreground">
+            <p className="text-sm leading-5 text-[#44546f]">
               We&apos;ve sent a verification link to your email. Please check your inbox and click the link to verify your account.
             </p>
           )}
 
           {token && status === "verifying" && (
-            <p className="text-muted-foreground">Verifying your email...</p>
+            <p className="text-sm text-[#44546f]">Verifying your email...</p>
           )}
 
           {status === "success" && (
-            <div className="rounded-md bg-green-50 p-3 text-green-600">
+            <AuthNotice type="success">
               <p className="font-medium">Email verified successfully!</p>
               <p className="text-sm mt-1">Redirecting you to login...</p>
-            </div>
+            </AuthNotice>
           )}
 
           {status === "error" && (
             <div className="space-y-2">
-              <div className="rounded-md bg-red-50 p-3 text-red-600">
+              <AuthNotice>
                 <p className="font-medium">Verification failed</p>
                 <p className="text-sm mt-1">
                   {verifyMutation.error?.message || "The link may be invalid or expired."}
                 </p>
-              </div>
-              <p className="text-sm text-muted-foreground">
+              </AuthNotice>
+              <p className="text-sm text-[#44546f]">
                 You can request a new verification email by signing up again or contacting support.
               </p>
             </div>
@@ -84,32 +86,20 @@ export default function VerifyEmail() {
 
           {!token && !sent && (
             <div className="space-y-3">
-              <p className="text-muted-foreground">
+              <p className="text-sm text-[#44546f]">
                 No verification token found. Please use the link from your verification email.
               </p>
               {email && (
-                <p className="text-sm text-muted-foreground">
-                  Verification was requested for <span className="font-medium text-foreground">{email}</span>.
+                <p className="text-sm text-[#44546f]">
+                  Verification was requested for <span className="font-medium text-[#172b4d]">{email}</span>.
                 </p>
               )}
-              <p className="text-sm text-muted-foreground">
+              <p className="text-sm text-[#44546f]">
                 If you did not receive the email, sign up again with the same account to generate a fresh verification link.
               </p>
             </div>
           )}
-        </CardContent>
-
-        <CardFooter className="flex flex-col gap-2">
-          <Button asChild variant="outline" className="w-full">
-            <Link to="/login">Back to Login</Link>
-          </Button>
-          {!token && (
-            <Button asChild variant="link" className="w-full">
-              <Link to="/signup">Sign up again</Link>
-            </Button>
-          )}
-        </CardFooter>
-      </Card>
-    </div>
+        </div>
+    </AuthShell>
   );
 }

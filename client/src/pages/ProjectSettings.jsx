@@ -202,7 +202,7 @@ export default function ProjectSettings() {
   }, [localSettingsKey]);
 
   const projectBadge = useMemo(() => {
-    const key = form.key || project?.key || "ZP";
+    const key = form.key || project?.key || "SPC";
     return key.slice(0, 3).toUpperCase();
   }, [form.key, project?.key]);
 

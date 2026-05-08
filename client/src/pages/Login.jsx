@@ -1,17 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useMutation } from "@tanstack/react-query";
+import { AuthNotice, AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-  CardDescription,
-} from "@/components/ui/card";
-import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/auth-context";
 
 export default function Login() {
@@ -45,39 +38,41 @@ export default function Login() {
     error.toLowerCase().includes("not verified") || error.toLowerCase().includes("verify your email");
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-3 py-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Login</CardTitle>
-          <CardDescription>Access your ZuzuPlan workspace and continue managing your work.</CardDescription>
-        </CardHeader>
-
-        <CardContent>
+    <AuthShell
+      title="Log in to continue"
+      description="Access your workspace and continue managing your work."
+      footer={
+        <>
+          <Link to="/forgot-password" className="font-medium text-[#0c66e4] hover:underline">
+            Can&apos;t log in?
+          </Link>
+          <span className="mx-2 text-[#626f86]">.</span>
+          <Link to="/signup" className="font-medium text-[#0c66e4] hover:underline">
+            Create an account
+          </Link>
+        </>
+      }
+    >
+      <div className="space-y-4">
           {verified && (
-            <div className="mb-3 rounded-md bg-green-50 p-2.5 text-sm text-green-600">
-              Email verified! You can now log in.
-            </div>
+            <AuthNotice type="success">Email verified. You can now log in.</AuthNotice>
           )}
 
           {reset && (
-            <div className="mb-3 rounded-md bg-green-50 p-2.5 text-sm text-green-600">
-              Password reset successfully. You can now log in with your new password.
-            </div>
+            <AuthNotice type="success">Password reset successfully. You can now log in with your new password.</AuthNotice>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-3">
             {error && (
-              <div className="rounded-md bg-red-50 p-2.5 text-sm text-red-600">
-                {error}
-              </div>
+              <AuthNotice>{error}</AuthNotice>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-xs font-semibold text-[#172b4d]">Email</Label>
               <Input
                 id="email"
                 type="email"
-                placeholder="example@email.com"
+                placeholder="Enter your email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -86,11 +81,11 @@ export default function Login() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-xs font-semibold text-[#172b4d]">Password</Label>
               <Input
                 id="password"
                 type="password"
-                placeholder="Password"
+                placeholder="Enter your password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
@@ -99,7 +94,7 @@ export default function Login() {
             </div>
 
             <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Logging in..." : "Login"}
+              {isLoading ? "Logging in..." : "Continue"}
             </Button>
           </form>
 
@@ -112,23 +107,7 @@ export default function Login() {
               again to request a new one.
             </p>
           )}
-        </CardContent>
-
-        <CardFooter className="flex flex-col gap-2">
-          <Link
-            to="/forgot-password"
-            className="text-sm text-muted-foreground hover:text-primary"
-          >
-            Forgot password?
-          </Link>
-          <p className="text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
-            <Link to="/signup" className="text-primary hover:underline font-medium">
-              Sign up
-            </Link>
-          </p>
-        </CardFooter>
-      </Card>
-    </div>
+        </div>
+    </AuthShell>
   );
 }

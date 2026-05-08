@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
+import { AuthNotice, AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
@@ -29,18 +29,22 @@ export default function ResetPassword() {
   const missingToken = !token;
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-3 py-4">
-      <Card className="w-full max-w-sm">
-        <CardHeader>
-          <CardTitle>Reset password</CardTitle>
-          <CardDescription>Choose a new password to restore access to your workspace.</CardDescription>
-        </CardHeader>
-
-        <CardContent>
+    <AuthShell
+      title="Choose a new password"
+      description="Create a new password to restore access to your workspace."
+      footer={
+        <Link
+          to={missingToken ? "/forgot-password" : "/login"}
+          className="font-medium text-[#0c66e4] hover:underline"
+        >
+          {missingToken ? "Request a new reset link" : "Back to login"}
+        </Link>
+      }
+    >
           {missingToken ? (
-            <div className="rounded-md bg-red-50 p-2.5 text-sm text-red-600">
+            <AuthNotice>
               This reset link is missing a token. Please request a new password reset email.
-            </div>
+            </AuthNotice>
           ) : (
             <form
               className="space-y-3"
@@ -57,13 +61,11 @@ export default function ResetPassword() {
               }}
             >
               {error && (
-                <div className="rounded-md bg-red-50 p-2.5 text-sm text-red-600">
-                  {error}
-                </div>
+                <AuthNotice>{error}</AuthNotice>
               )}
 
               <div className="space-y-2">
-                <Label htmlFor="password">New password</Label>
+                <Label htmlFor="password" className="text-xs font-semibold text-[#172b4d]">New password</Label>
                 <Input
                   id="password"
                   type="password"
@@ -77,7 +79,7 @@ export default function ResetPassword() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirm password</Label>
+                <Label htmlFor="confirmPassword" className="text-xs font-semibold text-[#172b4d]">Confirm password</Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -95,17 +97,6 @@ export default function ResetPassword() {
               </Button>
             </form>
           )}
-        </CardContent>
-
-        <CardFooter className="justify-center">
-          <Link
-            to={missingToken ? "/forgot-password" : "/login"}
-            className="text-sm text-primary hover:underline"
-          >
-            {missingToken ? "Request a new reset link" : "Back to login"}
-          </Link>
-        </CardFooter>
-      </Card>
-    </div>
+    </AuthShell>
   );
 }
