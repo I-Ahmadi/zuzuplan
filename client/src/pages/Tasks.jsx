@@ -24,17 +24,19 @@ import {
   RefreshCcw,
   Search,
   Trash2,
-  UserCircle,
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { UserAvatar } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
 import { Textarea } from "@/components/ui/textarea";
 import { createComment, getTaskComments } from "@/lib/comment-api";
 import { createDoc, deleteDoc, getProjectDocs, updateDoc } from "@/lib/doc-api";
 import { getProject, getProjectMembers, getProjects } from "@/lib/project-api";
+import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
 import {
   addTasksToSprint,
   completeSprint,
@@ -47,6 +49,7 @@ import {
   updateSprint,
 } from "@/lib/sprint-api";
 import { addTaskLink, createTask, deleteTask, deleteTaskLink, getProjectTasks, getTask, updateTask } from "@/lib/task-api";
+import { useAuth } from "@/contexts/auth-context";
 import { cn } from "@/lib/utils";
 
 const STATUSES = [
@@ -72,6 +75,8 @@ const PROJECT_TABS = [
   { value: "docs", label: "Docs", icon: FileText },
 ];
 const TASK_DETAIL_PANEL_WIDTH = "clamp(560px, 42vw, 720px)";
+const CURRENT_PROJECT_KEY = STORAGE_KEYS.currentProjectId;
+const CURRENT_PROJECT_CHANGE_EVENT = "current-project-change";
 
 const emptyTask = {
   title: "",
@@ -102,10 +107,6 @@ function countByStatus(tasks, status) {
   return tasks.filter((task) => task.status === status).length;
 }
 
-function avatarLabel(user) {
-  return (user?.name || user?.email || "U").slice(0, 2).toUpperCase();
-}
-
 function relativeDate(date) {
   if (!date) return "None";
   const diff = Date.now() - new Date(date).getTime();
@@ -116,12 +117,13 @@ function relativeDate(date) {
 }
 
 export default function Tasks() {
+  const { user } = useAuth();
   const { projectId: routeProjectId } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const queryClient = useQueryClient();
-  const [projectId, setProjectId] = useState(routeProjectId || "");
+  const [projectId, setProjectId] = useState(() => routeProjectId || migrateStorageKey(LEGACY_STORAGE_KEYS.currentProjectId, CURRENT_PROJECT_KEY) || "");
   const requestedView = searchParams.get("view");
-  const initialView = PROJECT_TABS.some((tab) => tab.value === requestedView) ? requestedView : "backlog";
+  const initialView = PROJECT_TABS.some((tab) => tab.value === requestedView) ? requestedView : "summary";
   const [activeView, setActiveView] = useState(initialView);
   const [filters, setFilters] = useState({ search: "", status: "", priority: "", assigneeId: "", sprintId: "" });
   const [createOpen, setCreateOpen] = useState(false);
@@ -130,17 +132,31 @@ export default function Tasks() {
   const [comment, setComment] = useState("");
   const [error, setError] = useState("");
   const [docSearch, setDocSearch] = useState("");
+  const [taskPage, setTaskPage] = useState(1);
+  const [docPage, setDocPage] = useState(1);
 
-  const projectsQuery = useQuery({ queryKey: ["projects"], queryFn: () => getProjects() });
+  const projectsQuery = useQuery({ queryKey: ["projects"], queryFn: () => getProjects({ limit: PAGE_SIZE }) });
   const projects = projectsQuery.data?.data || [];
 
   useEffect(() => {
-    if (!projectId && projects[0]?.id) setProjectId(projects[0].id);
+    if (!projectId && projects[0]?.id) {
+      localStorage.setItem(CURRENT_PROJECT_KEY, projects[0].id);
+      setProjectId(projects[0].id);
+    }
   }, [projectId, projects]);
 
   useEffect(() => {
     if (routeProjectId && routeProjectId !== projectId) setProjectId(routeProjectId);
   }, [projectId, routeProjectId]);
+
+  useEffect(() => {
+    function handleProjectChange(event) {
+      if (!routeProjectId && event.detail) setProjectId(event.detail);
+    }
+
+    window.addEventListener(CURRENT_PROJECT_CHANGE_EVENT, handleProjectChange);
+    return () => window.removeEventListener(CURRENT_PROJECT_CHANGE_EVENT, handleProjectChange);
+  }, [routeProjectId]);
 
   useEffect(() => {
     const nextView = searchParams.get("view");
@@ -162,8 +178,8 @@ export default function Tasks() {
   });
 
   const tasksQuery = useQuery({
-    queryKey: ["project-tasks", projectId, filters],
-    queryFn: () => getProjectTasks(projectId, { ...filters, limit: 100 }),
+    queryKey: ["project-tasks", projectId, filters, taskPage],
+    queryFn: () => getProjectTasks(projectId, { ...filters, page: taskPage, limit: PAGE_SIZE }),
     enabled: Boolean(projectId),
   });
 
@@ -174,8 +190,8 @@ export default function Tasks() {
   });
 
   const docsQuery = useQuery({
-    queryKey: ["project-docs", projectId, docSearch],
-    queryFn: () => getProjectDocs(projectId, { search: docSearch }),
+    queryKey: ["project-docs", projectId, docSearch, docPage],
+    queryFn: () => getProjectDocs(projectId, { search: docSearch, page: docPage, limit: PAGE_SIZE }),
     enabled: Boolean(projectId),
   });
 
@@ -189,6 +205,8 @@ export default function Tasks() {
   const tasks = tasksQuery.data?.data || [];
   const sprints = sprintsQuery.data?.data || [];
   const docs = docsQuery.data?.data || [];
+  const tasksPagination = tasksQuery.data?.pagination;
+  const docsPagination = docsQuery.data?.pagination;
   const activeProject = projectQuery.data?.data;
   const currentPermissions = activeProject?.currentUserPermissions || [];
 
@@ -215,6 +233,14 @@ export default function Tasks() {
       total: tasks.length,
     };
   }, [tasks]);
+
+  useEffect(() => {
+    setTaskPage(1);
+  }, [activeView, filters, projectId]);
+
+  useEffect(() => {
+    setDocPage(1);
+  }, [docSearch, projectId]);
 
   const createMutation = useMutation({
     mutationFn: (payload) => createTask(projectId, payload),
@@ -499,12 +525,14 @@ export default function Tasks() {
           ) : null}
 
           {activeView === "summary" ? (
-            <SummaryView tasks={tasks} summary={summary} activeProject={activeProject} />
+            <SummaryView tasks={tasks} summary={summary} activeProject={activeProject} user={user} />
           ) : null}
 
           {activeView === "board" ? (
           <BoardView
             tasks={tasks}
+            pagination={tasksPagination}
+            onPageChange={setTaskPage}
             activeProject={activeProject}
             members={members}
             sprints={sprints}
@@ -519,6 +547,8 @@ export default function Tasks() {
           {activeView === "list" ? (
             <ListView
               tasks={tasks}
+              pagination={tasksPagination}
+              onPageChange={setTaskPage}
               activeProject={activeProject}
               members={members}
               sprints={sprints}
@@ -537,6 +567,8 @@ export default function Tasks() {
           {activeView === "backlog" ? (
             <BacklogView
               tasks={tasks}
+              pagination={tasksPagination}
+              onPageChange={setTaskPage}
               sprints={sprints}
               activeProject={activeProject}
               members={members}
@@ -565,6 +597,8 @@ export default function Tasks() {
           {activeView === "docs" ? (
             <DocsView
               docs={docs}
+              pagination={docsPagination}
+              onPageChange={setDocPage}
               docSearch={docSearch}
               setDocSearch={setDocSearch}
               canManage={canManageSprints}
@@ -649,8 +683,8 @@ export function TaskDetailPage() {
     enabled: Boolean(taskId),
   });
   const tasksQuery = useQuery({
-    queryKey: ["project-tasks", projectId, { limit: 100 }],
-    queryFn: () => getProjectTasks(projectId, { limit: 100 }),
+    queryKey: ["project-tasks", projectId, { limit: PAGE_SIZE }],
+    queryFn: () => getProjectTasks(projectId, { limit: PAGE_SIZE }),
     enabled: Boolean(projectId),
   });
   const docsQuery = useQuery({
@@ -746,15 +780,35 @@ export function TaskDetailPage() {
   }
 
   if (taskQuery.isLoading) {
-    return <div className="p-6 text-sm text-muted-foreground">Loading work item...</div>;
+    return (
+      <div className="space-y-3 px-3 py-3 sm:px-4 lg:px-5">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Work Item</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Review details, links, documents, activity, and ownership for this task.</p>
+        </div>
+        <p className="rounded-md border p-6 text-sm text-muted-foreground">Loading work item...</p>
+      </div>
+    );
   }
 
   if (!taskDraft) {
-    return <div className="p-6 text-sm text-muted-foreground">Work item not found.</div>;
+    return (
+      <div className="space-y-3 px-3 py-3 sm:px-4 lg:px-5">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Work Item</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Review details, links, documents, activity, and ownership for this task.</p>
+        </div>
+        <p className="rounded-md border p-6 text-sm text-muted-foreground">Work item not found.</p>
+      </div>
+    );
   }
 
   return (
     <div className="min-h-[calc(100vh-3rem)] bg-background px-3 py-3 sm:px-4 lg:px-5">
+      <div className="mb-4">
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Work Item</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Review details, links, documents, activity, and ownership for this task.</p>
+      </div>
       {error ? (
         <p className="mb-3 rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">{error}</p>
       ) : null}
@@ -786,7 +840,11 @@ export function TaskDetailPage() {
 
 function ProjectHeader({ activeView, setActiveView }) {
   return (
-    <div className="border-b bg-background px-3 sm:px-4 lg:px-5">
+    <div className="border-b bg-background px-3 pt-3 sm:px-4 lg:px-5">
+      <div className="pb-3">
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Board</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Plan backlog work, track sprint progress, manage docs, and review delivery status.</p>
+      </div>
       <div className="flex min-h-10 items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2">
           <nav className="flex min-w-0 gap-1 overflow-x-auto">
@@ -819,7 +877,7 @@ function ProjectHeader({ activeView, setActiveView }) {
   );
 }
 
-function SummaryView({ tasks, summary, activeProject }) {
+function SummaryView({ tasks, summary, activeProject, user }) {
   const donut = buildDonut(tasks);
   const recent = tasks.slice(0, 4);
 
@@ -860,12 +918,10 @@ function SummaryView({ tasks, summary, activeProject }) {
             <p className="text-sm font-semibold">Today</p>
             {recent.map((task, index) => (
               <div key={task.id} className="flex gap-3">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-                  IA
-                </div>
+                <UserAvatar user={user} fallback="IA" className="h-8 w-8" fallbackClassName="bg-primary text-primary-foreground" />
                 <div className="min-w-0 text-sm">
                   <p>
-                    <span className="font-medium text-primary">Ismail Ahmadi</span> updated field "status" on{" "}
+                    <span className="font-medium text-primary">{user?.name || user?.email || "A teammate"}</span> updated field "status" on{" "}
                     <span className="rounded border px-1 text-primary">{issueKey(activeProject, task)}: {task.title}</span>
                   </p>
                   <span className="mt-1 inline-block rounded bg-primary/15 px-1.5 py-0.5 text-xs font-semibold uppercase text-primary">
@@ -923,7 +979,7 @@ function SummaryView({ tasks, summary, activeProject }) {
   );
 }
 
-function BoardView({ tasks, activeProject, members, sprints, filters, setFilters, setSelectedTask, moveTask, refetch }) {
+function BoardView({ tasks, pagination, onPageChange, activeProject, members, sprints, filters, setFilters, setSelectedTask, moveTask, refetch }) {
   return (
     <div className="space-y-3">
       <div className="rounded-md border bg-background">
@@ -939,7 +995,7 @@ function BoardView({ tasks, activeProject, members, sprints, filters, setFilters
           return (
             <section
               key={column.value}
-              className="min-h-[520px] rounded-md border bg-muted/35"
+              className="min-h-[520px] rounded-md border bg-board-column"
               onDragOver={(event) => event.preventDefault()}
               onDrop={(event) => {
                 const taskId = event.dataTransfer.getData("text/task-id");
@@ -993,9 +1049,7 @@ function BoardView({ tasks, activeProject, members, sprints, filters, setFilters
                           <CalendarDays className="h-3.5 w-3.5 shrink-0" />
                           <span className="truncate">{formatDate(task.dueDate)}</span>
                         </span>
-                        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">
-                          {avatarLabel(task.assignee)}
-                        </span>
+                        <UserAvatar user={task.assignee} className="h-7 w-7" />
                       </div>
                     </button>
                   ))
@@ -1010,12 +1064,15 @@ function BoardView({ tasks, activeProject, members, sprints, filters, setFilters
         })}
         </div>
       </div>
+      <PaginationControls pagination={pagination} onPageChange={onPageChange} />
     </div>
   );
 }
 
 function BacklogView({
   tasks,
+  pagination,
+  onPageChange,
   sprints,
   activeProject,
   members,
@@ -1252,6 +1309,7 @@ function BacklogView({
       />
 
       <CompletedSprintHistory sprints={completedSprints} />
+      <PaginationControls pagination={pagination} onPageChange={onPageChange} />
       <SprintDialog
         state={sprintDialog}
         onClose={() => setSprintDialog(null)}
@@ -1453,7 +1511,7 @@ function QuickCreateTask({ members, sprints, defaultStatus = "TODO", defaultSpri
   );
 }
 
-function ListView({ tasks, activeProject, members, sprints, filters, setFilters, setSelectedTask, canCreate, canAssign, createInlineTask, updateTaskMutation, deleteTaskMutation, refetch }) {
+function ListView({ tasks, pagination, onPageChange, activeProject, members, sprints, filters, setFilters, setSelectedTask, canCreate, canAssign, createInlineTask, updateTaskMutation, deleteTaskMutation, refetch }) {
   const [selectedIds, setSelectedIds] = useState([]);
   const [sort, setSort] = useState({ field: "updatedAt", direction: "desc" });
   const [creating, setCreating] = useState(false);
@@ -1557,6 +1615,7 @@ function ListView({ tasks, activeProject, members, sprints, filters, setFilters,
           </tbody>
         </table>
       </div>
+      <PaginationControls pagination={pagination} onPageChange={onPageChange} />
     </div>
   );
 }
@@ -1918,13 +1977,7 @@ function BacklogRow({ task, activeProject, selected, onToggle, onOpen, onUpdate,
             <X className="h-3.5 w-3.5" />
           </button>
         ) : null}
-        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-secondary text-muted-foreground">
-          {task.assignee?.name?.[0] ? (
-            <span className="text-[11px] font-semibold">{task.assignee.name[0].toUpperCase()}</span>
-          ) : (
-            <UserCircle className="h-4 w-4" />
-          )}
-        </span>
+        <UserAvatar user={task.assignee} className="h-6 w-6" fallbackClassName="bg-secondary text-[11px] text-muted-foreground" />
       </div>
     </div>
   );
@@ -1944,7 +1997,7 @@ function CountPill({ value, tone, label }) {
   );
 }
 
-function DocsView({ docs, docSearch, setDocSearch, canManage, createDocMutation, updateDocMutation, deleteDocMutation, refetch }) {
+function DocsView({ docs, pagination, onPageChange, docSearch, setDocSearch, canManage, createDocMutation, updateDocMutation, deleteDocMutation, refetch }) {
   const [selectedDocId, setSelectedDocId] = useState("");
   const selectedDoc = docs.find((doc) => doc.id === selectedDocId) || docs[0] || null;
   const [draft, setDraft] = useState({ title: "", content: "" });
@@ -2000,6 +2053,7 @@ function DocsView({ docs, docSearch, setDocSearch, canManage, createDocMutation,
           ))}
           {!docs.length ? <p className="px-3 py-8 text-center text-sm text-muted-foreground">No documents yet.</p> : null}
         </div>
+        <PaginationControls pagination={pagination} onPageChange={onPageChange} className="m-2 border-0 px-1" />
       </aside>
       <section className="rounded-md border bg-background">
         {selectedDoc ? (
@@ -2191,7 +2245,7 @@ function WorkItemView({
         </DetailRow>
         <DetailRow label="Reporter">
           <span className="inline-flex items-center gap-2">
-            <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">{avatarLabel(reporter)}</span>
+            <UserAvatar user={reporter} className="h-6 w-6" fallbackClassName="bg-primary text-[10px] text-primary-foreground" />
             {reporter?.name || reporter?.email || "Unknown"}
           </span>
         </DetailRow>
@@ -2364,9 +2418,7 @@ function WorkItemView({
             ))}
           </div>
           <div className="flex gap-3">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-              {avatarLabel(reporter)}
-            </span>
+            <UserAvatar user={reporter} className="h-8 w-8" fallbackClassName="bg-primary text-primary-foreground" />
             <div className="flex-1 space-y-2">
               <Input placeholder="Add a comment..." value={comment} onChange={(event) => setComment(event.target.value)} disabled={!canComment} />
               <div className="flex flex-wrap gap-2">
@@ -2385,7 +2437,10 @@ function WorkItemView({
             {comments.map((item) => (
               <div key={item.id} className="rounded-md border p-3 text-sm">
                 <p>{item.content}</p>
-                <p className="mt-2 text-xs text-muted-foreground">{item.user?.name || item.user?.email}</p>
+                <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
+                  <UserAvatar user={item.user} className="h-6 w-6" />
+                  <span>{item.user?.name || item.user?.email}</span>
+                </div>
               </div>
             ))}
           </div>
@@ -2459,7 +2514,7 @@ function IssueDetailDialog({
 
   return (
     <aside
-      className="fixed bottom-0 right-0 top-12 z-40 flex w-full flex-col border-l bg-background shadow-2xl sm:w-[82vw] lg:w-[var(--task-detail-width)]"
+      className="fixed bottom-0 right-0 top-14 z-40 flex w-full flex-col border-l bg-background shadow-2xl sm:w-[82vw] lg:w-[var(--task-detail-width)]"
       style={{ "--task-detail-width": TASK_DETAIL_PANEL_WIDTH }}
       aria-label="Jira work item"
     >

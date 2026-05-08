@@ -1,20 +1,7 @@
-import { Link } from "react-router-dom";
 import { Clock3 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-const RECENT_KEY = "zuzuplan.recentNavigation";
-
-function getRecentItems() {
-  try {
-    return JSON.parse(localStorage.getItem(RECENT_KEY) || "[]");
-  } catch {
-    return [];
-  }
-}
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function Recent() {
-  const items = getRecentItems();
-
   return (
     <div className="space-y-3 px-3 py-3 sm:px-4 lg:px-5">
       <div>
@@ -23,18 +10,17 @@ export default function Recent() {
       </div>
 
       <Card>
-        <CardHeader><CardTitle className="text-base">Recently Viewed</CardTitle></CardHeader>
-        <CardContent className="space-y-2">
-          {items.map((item) => (
-            <Link key={item.path} to={item.path} className="flex items-center gap-3 rounded-md border p-3 text-sm hover:border-primary/60">
-              <Clock3 className="h-4 w-4 text-muted-foreground" />
-              <span className="min-w-0">
-                <span className="block truncate font-medium">{item.label}</span>
-                <span className="block truncate text-xs text-muted-foreground">{item.path}</span>
-              </span>
-            </Link>
-          ))}
-          {!items.length ? <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">Your recently viewed work will appear here.</p> : null}
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-base">
+            <Clock3 className="h-4 w-4" />
+            Recent navigation disabled
+          </CardTitle>
+          <CardDescription>This portal no longer stores page navigation history in local storage.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <p className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">
+            Use search or the sidebar navigation to open spaces, boards, tasks, and settings.
+          </p>
         </CardContent>
       </Card>
     </div>

@@ -2,8 +2,8 @@ import * as docService from '../services/docService.js';
 
 async function list(req, res, next) {
   try {
-    const docs = await docService.listDocs(req.params.projectId, req.user.id, req.query);
-    res.json({ success: true, data: docs });
+    const result = await docService.listDocs(req.params.projectId, req.user.id, req.query);
+    res.json({ success: true, data: result.data, pagination: result.pagination });
   } catch (err) {
     next(err);
   }

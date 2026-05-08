@@ -2,6 +2,7 @@ import { useQueries, useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { CheckCircle2, Clock3, FolderKanban, ListTodo } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { PAGE_SIZE } from "@/components/ui/pagination";
 import { useAuth } from "@/contexts/auth-context";
 import { getProjects } from "@/lib/project-api";
 import { getProjectTasks } from "@/lib/task-api";
@@ -13,12 +14,12 @@ function formatDate(value) {
 
 export default function ForYou() {
   const { user } = useAuth();
-  const spacesQuery = useQuery({ queryKey: ["spaces", "for-you"], queryFn: () => getProjects({ limit: 12 }) });
+  const spacesQuery = useQuery({ queryKey: ["spaces", "for-you"], queryFn: () => getProjects({ limit: PAGE_SIZE }) });
   const spaces = spacesQuery.data?.data || [];
   const taskQueries = useQueries({
     queries: spaces.slice(0, 6).map((space) => ({
       queryKey: ["for-you-tasks", space.id],
-      queryFn: () => getProjectTasks(space.id, { limit: 20 }),
+      queryFn: () => getProjectTasks(space.id, { limit: PAGE_SIZE }),
       enabled: Boolean(space.id),
     })),
   });

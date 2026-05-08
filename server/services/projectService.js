@@ -63,8 +63,8 @@ export async function createProject(userId, data) {
       endDate: data.endDate ? new Date(data.endDate) : null,
     },
     include: {
-      owner: { select: { id: true, name: true, email: true } },
-      members: { include: { user: { select: { id: true, name: true, email: true } } } },
+      owner: { select: { id: true, name: true, email: true, avatar: true } },
+      members: { include: { user: { select: { id: true, name: true, email: true, avatar: true } } } },
     },
   });
   await prisma.projectMember.create({
@@ -92,6 +92,8 @@ export async function getProjects(userId, options = {}) {
       ],
     }));
   }
+  if (options.visibility) where.visibility = options.visibility;
+  if (options.status) where.status = options.status;
 
   const [items, total] = await Promise.all([
     prisma.project.findMany({
@@ -100,7 +102,7 @@ export async function getProjects(userId, options = {}) {
       take: limit,
       orderBy: { updatedAt: 'desc' },
       include: {
-        owner: { select: { id: true, name: true } },
+        owner: { select: { id: true, name: true, email: true, avatar: true } },
         _count: { select: { tasks: true, members: true } },
       },
     }),
@@ -131,8 +133,8 @@ export async function updateProject(projectId, userId, data) {
     where: { id: projectId },
     data: updateData,
     include: {
-      owner: { select: { id: true, name: true, email: true } },
-      members: { include: { user: { select: { id: true, name: true, email: true } } } },
+      owner: { select: { id: true, name: true, email: true, avatar: true } },
+      members: { include: { user: { select: { id: true, name: true, email: true, avatar: true } } } },
     },
   });
   return project;
@@ -195,7 +197,7 @@ export async function createInvite(projectId, userId, data) {
     where: { id: projectId },
     include: {
       members: true,
-      owner: { select: { id: true, name: true, email: true } },
+      owner: { select: { id: true, name: true, email: true, avatar: true } },
     },
   });
   if (!project) throw new AppError('Project not found', 404);
@@ -349,7 +351,7 @@ export async function updateMemberRole(projectId, userId, memberUserId, role) {
   const updated = await prisma.projectMember.update({
     where: { projectId_userId: { projectId, userId: memberUserId } },
     data: { role: normalizedRole },
-    include: { user: { select: { id: true, name: true, email: true } } },
+    include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
   });
   return updated;
 }

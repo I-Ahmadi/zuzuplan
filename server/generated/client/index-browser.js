@@ -130,6 +130,7 @@ exports.Prisma.UserScalarFieldEnum = {
   emailVerificationToken: 'emailVerificationToken',
   passwordResetToken: 'passwordResetToken',
   passwordResetExpires: 'passwordResetExpires',
+  passwordChangedAt: 'passwordChangedAt',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -141,6 +142,19 @@ exports.Prisma.UserPreferenceScalarFieldEnum = {
   density: 'density',
   theme: 'theme',
   profileNote: 'profileNote',
+  sidebarDefault: 'sidebarDefault',
+  projectSelectorBehavior: 'projectSelectorBehavior',
+  rememberLastSpace: 'rememberLastSpace',
+  emailNotifications: 'emailNotifications',
+  inAppNotifications: 'inAppNotifications',
+  dueSoonNotifications: 'dueSoonNotifications',
+  assignmentNotifications: 'assignmentNotifications',
+  mentionNotifications: 'mentionNotifications',
+  commentNotifications: 'commentNotifications',
+  digestFrequency: 'digestFrequency',
+  quietHoursEnabled: 'quietHoursEnabled',
+  quietHoursStart: 'quietHoursStart',
+  quietHoursEnd: 'quietHoursEnd',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

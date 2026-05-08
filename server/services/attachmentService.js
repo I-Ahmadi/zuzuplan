@@ -14,7 +14,7 @@ export async function createAttachment(taskId, userId, fileData) {
       fileSize: fileData.fileSize,
       uploadedBy: userId,
     },
-    include: { user: { select: { id: true, name: true } } },
+    include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
   });
   return attachment;
 }
@@ -23,7 +23,7 @@ export async function getAttachments(taskId, userId) {
   await ensureTaskAccess(taskId, userId);
   return prisma.attachment.findMany({
     where: { taskId },
-    include: { user: { select: { id: true, name: true, email: true } } },
+    include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
   });
 }
 

@@ -1,6 +1,7 @@
 import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { PROJECT_PERMISSIONS } from '../utils/constants.js';
+import { createPaginationResult, getPageAndLimit, getSkip } from '../utils/pagination.js';
 import { getProjectRole, hasProjectPermission } from '../utils/permissions.js';
 
 async function getProject(projectId, userId, permission) {
@@ -19,7 +20,7 @@ async function getProject(projectId, userId, permission) {
 async function getDoc(projectId, docId) {
   const doc = await prisma.projectDoc.findFirst({
     where: { id: docId, projectId },
-    include: { createdBy: { select: { id: true, name: true, email: true } } },
+    include: { createdBy: { select: { id: true, name: true, email: true, avatar: true } } },
   });
   if (!doc) throw new AppError('Document not found', 404);
   return doc;
@@ -27,6 +28,8 @@ async function getDoc(projectId, docId) {
 
 export async function listDocs(projectId, userId, filters = {}) {
   await getProject(projectId, userId, PROJECT_PERMISSIONS.PROJECT_READ);
+  const { page, limit } = getPageAndLimit(filters);
+  const skip = getSkip(page, limit);
   const where = { projectId };
   if (filters.search) {
     where.OR = [
@@ -34,11 +37,17 @@ export async function listDocs(projectId, userId, filters = {}) {
       { content: { contains: filters.search, mode: 'insensitive' } },
     ];
   }
-  return prisma.projectDoc.findMany({
-    where,
-    include: { createdBy: { select: { id: true, name: true, email: true } } },
-    orderBy: [{ pinned: 'desc' }, { updatedAt: 'desc' }],
-  });
+  const [items, total] = await Promise.all([
+    prisma.projectDoc.findMany({
+      where,
+      skip,
+      take: limit,
+      include: { createdBy: { select: { id: true, name: true, email: true, avatar: true } } },
+      orderBy: [{ pinned: 'desc' }, { updatedAt: 'desc' }],
+    }),
+    prisma.projectDoc.count({ where }),
+  ]);
+  return createPaginationResult(items, total, page, limit);
 }
 
 export async function createDoc(projectId, userId, data) {
@@ -51,7 +60,7 @@ export async function createDoc(projectId, userId, data) {
       projectId,
       createdById: userId,
     },
-    include: { createdBy: { select: { id: true, name: true, email: true } } },
+    include: { createdBy: { select: { id: true, name: true, email: true, avatar: true } } },
   });
 }
 
@@ -65,7 +74,7 @@ export async function updateDoc(projectId, docId, userId, data) {
   return prisma.projectDoc.update({
     where: { id: docId },
     data: updateData,
-    include: { createdBy: { select: { id: true, name: true, email: true } } },
+    include: { createdBy: { select: { id: true, name: true, email: true, avatar: true } } },
   });
 }
 

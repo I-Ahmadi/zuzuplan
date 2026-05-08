@@ -1,14 +1,46 @@
 import express from 'express';
+import multer from 'multer';
+import path from 'path';
 import { body } from 'express-validator';
 import { authenticate } from '../middleware/auth.js';
 import { validate } from '../middleware/validation.js';
 import * as userController from '../controllers/userController.js';
+import { AppError } from '../middleware/errorHandler.js';
 
 const router = express.Router();
+const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
+const AVATAR_MAX_FILE_SIZE = parseInt(process.env.AVATAR_MAX_FILE_SIZE, 10) || 2 * 1024 * 1024;
+const AVATAR_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+
+const avatarStorage = multer.diskStorage({
+  destination(req, file, cb) {
+    cb(null, UPLOAD_DIR);
+  },
+  filename(req, file, cb) {
+    const unique = `${Date.now()}-${Math.round(Math.random() * 1e9)}`;
+    const ext = path.extname(file.originalname) || '';
+    cb(null, `avatar-${unique}${ext}`);
+  },
+});
+
+const avatarUpload = multer({
+  storage: avatarStorage,
+  fileFilter(req, file, cb) {
+    if (AVATAR_ALLOWED_TYPES.includes(file.mimetype)) {
+      cb(null, true);
+      return;
+    }
+    cb(new AppError('Avatar must be a JPG, PNG, GIF, or WebP image', 400));
+  },
+  limits: { fileSize: AVATAR_MAX_FILE_SIZE },
+});
 
 router.use(authenticate);
 
 router.get('/me', userController.getMe);
+router.get('/me/sessions', userController.getSessions);
+router.delete('/me/sessions/others', userController.revokeOtherSessions);
+router.post('/me/resend-verification', userController.resendVerification);
 router.get('/me/preferences', userController.getPreferences);
 router.put('/me/preferences', userController.updatePreferences);
 router.put(
@@ -16,6 +48,7 @@ router.put(
   [
     body('name').optional().trim().notEmpty(),
     body('email').optional().isEmail().normalizeEmail(),
+    body('currentPassword').optional().isString(),
     body('password').optional().isLength({ min: 6 }),
   ],
   validate,
@@ -23,10 +56,11 @@ router.put(
 );
 router.put(
   '/me/avatar',
-  [body('avatarUrl').notEmpty()],
+  [body('avatarUrl').optional({ nullable: true }).isString()],
   validate,
   userController.updateAvatar
 );
+router.post('/me/avatar/upload', avatarUpload.single('avatar'), userController.uploadAvatar);
 router.get('/:id', userController.getUserById);
 
 export default router;

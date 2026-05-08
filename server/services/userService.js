@@ -1,6 +1,8 @@
 import bcrypt from 'bcrypt';
 import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { generateToken, hashToken } from '../utils/crypto.js';
+import { sendVerificationEmail } from '../utils/email.js';
 
 function omitPassword(user) {
   if (!user) return null;
@@ -26,7 +28,25 @@ export async function getPreferences(userId) {
 }
 
 export async function updatePreferences(userId, data) {
-  const allowed = ['defaultView', 'density', 'theme', 'profileNote'];
+  const allowed = [
+    'defaultView',
+    'density',
+    'theme',
+    'profileNote',
+    'sidebarDefault',
+    'projectSelectorBehavior',
+    'rememberLastSpace',
+    'emailNotifications',
+    'inAppNotifications',
+    'dueSoonNotifications',
+    'assignmentNotifications',
+    'mentionNotifications',
+    'commentNotifications',
+    'digestFrequency',
+    'quietHoursEnabled',
+    'quietHoursStart',
+    'quietHoursEnd',
+  ];
   const updateData = {};
   allowed.forEach((key) => {
     if (data[key] !== undefined) updateData[key] = data[key];
@@ -50,7 +70,13 @@ export async function updateProfile(userId, data) {
     updateData.emailVerified = false;
   }
   if (data.password != null && data.password.length > 0) {
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new AppError('User not found', 404);
+    if (!data.currentPassword || !await bcrypt.compare(data.currentPassword, user.password)) {
+      throw new AppError('Current password is required to change password', 400);
+    }
     updateData.password = await bcrypt.hash(data.password, 12);
+    updateData.passwordChangedAt = new Date();
   }
   const user = await prisma.user.update({
     where: { id: userId },
@@ -62,7 +88,7 @@ export async function updateProfile(userId, data) {
 export async function updateAvatar(userId, avatarUrl) {
   const user = await prisma.user.update({
     where: { id: userId },
-    data: { avatar: avatarUrl },
+    data: { avatar: avatarUrl || null },
   });
   return omitPassword(user);
 }
@@ -74,4 +100,33 @@ export async function getUserById(userId) {
   });
   if (!user) throw new AppError('User not found', 404);
   return user;
+}
+
+export async function getSessions(userId) {
+  const sessions = await prisma.refreshToken.findMany({
+    where: { userId, expiresAt: { gt: new Date() } },
+    orderBy: { createdAt: 'desc' },
+    select: { id: true, createdAt: true, expiresAt: true },
+  });
+  return sessions;
+}
+
+export async function revokeOtherSessions(userId, currentRefreshToken) {
+  const where = { userId };
+  if (currentRefreshToken) where.token = { not: currentRefreshToken };
+  await prisma.refreshToken.deleteMany({ where });
+}
+
+export async function resendVerification(userId) {
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  if (!user) throw new AppError('User not found', 404);
+  if (user.emailVerified) throw new AppError('Email is already verified', 400);
+
+  const rawToken = generateToken();
+  const emailVerificationToken = hashToken(rawToken);
+  await prisma.user.update({
+    where: { id: userId },
+    data: { emailVerificationToken },
+  });
+  await sendVerificationEmail(user.email, rawToken);
 }

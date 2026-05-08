@@ -17,6 +17,7 @@ model User {
   emailVerificationToken String?
   passwordResetToken    String?
   passwordResetExpires   DateTime?
+  passwordChangedAt      DateTime?
   createdAt             DateTime  @default(now())
   updatedAt             DateTime  @updatedAt
 
@@ -40,6 +41,19 @@ model UserPreference {
   density              String   @default("comfortable")
   theme                String   @default("system")
   profileNote          String   @default("")
+  sidebarDefault       String   @default("expanded")
+  projectSelectorBehavior String @default("remember")
+  rememberLastSpace    Boolean  @default(true)
+  emailNotifications   Boolean  @default(true)
+  inAppNotifications   Boolean  @default(true)
+  dueSoonNotifications Boolean  @default(true)
+  assignmentNotifications Boolean @default(true)
+  mentionNotifications Boolean @default(true)
+  commentNotifications Boolean @default(true)
+  digestFrequency      String   @default("daily")
+  quietHoursEnabled    Boolean  @default(false)
+  quietHoursStart      String   @default("18:00")
+  quietHoursEnd        String   @default("09:00")
   createdAt            DateTime @default(now())
   updatedAt            DateTime @updatedAt
 

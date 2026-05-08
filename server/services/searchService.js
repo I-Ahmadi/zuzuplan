@@ -43,7 +43,7 @@ export async function globalSearch(userId, query) {
       orderBy: { updatedAt: 'desc' },
       include: {
         project: { select: { id: true, name: true, key: true } },
-        assignee: { select: { id: true, name: true, email: true } },
+        assignee: { select: { id: true, name: true, email: true, avatar: true } },
       },
     }),
     prisma.projectDoc.findMany({
@@ -66,7 +66,7 @@ export async function globalSearch(userId, query) {
       take: 8,
       orderBy: { updatedAt: 'desc' },
       include: {
-        user: { select: { id: true, name: true, email: true } },
+        user: { select: { id: true, name: true, email: true, avatar: true } },
         task: { select: { id: true, title: true, projectId: true, project: { select: { id: true, name: true, key: true } } } },
       },
     }),

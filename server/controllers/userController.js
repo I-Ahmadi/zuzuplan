@@ -28,6 +28,20 @@ async function updateAvatar(req, res, next) {
   }
 }
 
+async function uploadAvatar(req, res, next) {
+  try {
+    if (!req.file) {
+      res.status(400).json({ success: false, error: { message: 'No avatar uploaded', statusCode: 400 } });
+      return;
+    }
+    const avatarUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+    const user = await userService.updateAvatar(req.user.id, avatarUrl);
+    res.json({ success: true, data: user });
+  } catch (err) {
+    next(err);
+  }
+}
+
 async function getPreferences(req, res, next) {
   try {
     const preferences = await userService.getPreferences(req.user.id);
@@ -55,4 +69,42 @@ async function getUserById(req, res, next) {
   }
 }
 
-export { getMe, updateMe, updateAvatar, getPreferences, updatePreferences, getUserById };
+async function getSessions(req, res, next) {
+  try {
+    const sessions = await userService.getSessions(req.user.id);
+    res.json({ success: true, data: sessions });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function revokeOtherSessions(req, res, next) {
+  try {
+    await userService.revokeOtherSessions(req.user.id, req.body.currentRefreshToken);
+    res.json({ success: true, message: 'Other sessions revoked' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+async function resendVerification(req, res, next) {
+  try {
+    await userService.resendVerification(req.user.id);
+    res.json({ success: true, message: 'Verification email sent' });
+  } catch (err) {
+    next(err);
+  }
+}
+
+export {
+  getMe,
+  updateMe,
+  updateAvatar,
+  uploadAvatar,
+  getPreferences,
+  updatePreferences,
+  getUserById,
+  getSessions,
+  revokeOtherSessions,
+  resendVerification,
+};

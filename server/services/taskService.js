@@ -55,21 +55,21 @@ export async function getTaskById(taskId, userId) {
       project: { include: { members: true } },
       sprint: { select: { id: true, name: true, status: true, startDate: true, endDate: true } },
       assignee: { select: { id: true, name: true, email: true, avatar: true } },
-      createdBy: { select: { id: true, name: true, email: true } },
+      createdBy: { select: { id: true, name: true, email: true, avatar: true } },
       subtasks: true,
       comments: {
         include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
         orderBy: { createdAt: 'asc' },
       },
       attachments: {
-        include: { user: { select: { id: true, name: true } } },
+        include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
       },
       linkedFrom: {
         include: {
           targetTask: {
             include: {
-              assignee: { select: { id: true, name: true, email: true } },
-              createdBy: { select: { id: true, name: true, email: true } },
+              assignee: { select: { id: true, name: true, email: true, avatar: true } },
+              createdBy: { select: { id: true, name: true, email: true, avatar: true } },
             },
           },
         },
@@ -79,8 +79,8 @@ export async function getTaskById(taskId, userId) {
         include: {
           sourceTask: {
             include: {
-              assignee: { select: { id: true, name: true, email: true } },
-              createdBy: { select: { id: true, name: true, email: true } },
+              assignee: { select: { id: true, name: true, email: true, avatar: true } },
+              createdBy: { select: { id: true, name: true, email: true, avatar: true } },
             },
           },
         },
@@ -121,8 +121,8 @@ export async function createTask(projectId, userId, data) {
       sprintOrder: data.sprintId ? Date.now() : 0,
     },
     include: {
-      assignee: { select: { id: true, name: true, email: true } },
-      createdBy: { select: { id: true, name: true } },
+      assignee: { select: { id: true, name: true, email: true, avatar: true } },
+      createdBy: { select: { id: true, name: true, email: true, avatar: true } },
       sprint: { select: { id: true, name: true, status: true } },
     },
   });
@@ -165,8 +165,8 @@ export async function getTasks(projectId, userId, filters = {}) {
       take: limit,
       orderBy: [{ sprintOrder: 'asc' }, { backlogOrder: 'asc' }, { updatedAt: 'desc' }],
       include: {
-        assignee: { select: { id: true, name: true, email: true } },
-        createdBy: { select: { id: true, name: true, email: true } },
+        assignee: { select: { id: true, name: true, email: true, avatar: true } },
+        createdBy: { select: { id: true, name: true, email: true, avatar: true } },
         sprint: { select: { id: true, name: true, status: true } },
         _count: { select: { comments: true, attachments: true } },
       },
@@ -284,8 +284,8 @@ export async function addTaskLink(taskId, userId, data) {
     include: {
       targetTask: {
         include: {
-          assignee: { select: { id: true, name: true, email: true } },
-          createdBy: { select: { id: true, name: true, email: true } },
+          assignee: { select: { id: true, name: true, email: true, avatar: true } },
+          createdBy: { select: { id: true, name: true, email: true, avatar: true } },
         },
       },
     },

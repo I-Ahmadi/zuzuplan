@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
   CardFooter,
@@ -46,6 +47,7 @@ export default function VerifyEmail() {
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Verify your email</CardTitle>
+          <CardDescription>Confirm your email address to activate your ZuzuPlan account.</CardDescription>
         </CardHeader>
 
         <CardContent className="space-y-3">

@@ -22,6 +22,32 @@ export async function updateAvatar(avatarUrl) {
   });
 }
 
+export async function uploadAvatarImage(file) {
+  const formData = new FormData();
+  formData.append("avatar", file);
+  return api("/users/me/avatar/upload", {
+    method: "POST",
+    body: formData,
+  });
+}
+
+export async function getUserSessions() {
+  return api("/users/me/sessions");
+}
+
+export async function revokeOtherSessions(currentRefreshToken) {
+  return api("/users/me/sessions/others", {
+    method: "DELETE",
+    body: JSON.stringify({ currentRefreshToken }),
+  });
+}
+
+export async function resendVerificationEmail() {
+  return api("/users/me/resend-verification", {
+    method: "POST",
+  });
+}
+
 export async function getUserPreferences() {
   return api("/users/me/preferences");
 }

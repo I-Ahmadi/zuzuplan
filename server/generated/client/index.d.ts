@@ -2254,6 +2254,7 @@ export namespace Prisma {
     emailVerificationToken: string | null
     passwordResetToken: string | null
     passwordResetExpires: Date | null
+    passwordChangedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2268,6 +2269,7 @@ export namespace Prisma {
     emailVerificationToken: string | null
     passwordResetToken: string | null
     passwordResetExpires: Date | null
+    passwordChangedAt: Date | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -2282,6 +2284,7 @@ export namespace Prisma {
     emailVerificationToken: number
     passwordResetToken: number
     passwordResetExpires: number
+    passwordChangedAt: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -2298,6 +2301,7 @@ export namespace Prisma {
     emailVerificationToken?: true
     passwordResetToken?: true
     passwordResetExpires?: true
+    passwordChangedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2312,6 +2316,7 @@ export namespace Prisma {
     emailVerificationToken?: true
     passwordResetToken?: true
     passwordResetExpires?: true
+    passwordChangedAt?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -2326,6 +2331,7 @@ export namespace Prisma {
     emailVerificationToken?: true
     passwordResetToken?: true
     passwordResetExpires?: true
+    passwordChangedAt?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -2413,6 +2419,7 @@ export namespace Prisma {
     emailVerificationToken: string | null
     passwordResetToken: string | null
     passwordResetExpires: Date | null
+    passwordChangedAt: Date | null
     createdAt: Date
     updatedAt: Date
     _count: UserCountAggregateOutputType | null
@@ -2444,6 +2451,7 @@ export namespace Prisma {
     emailVerificationToken?: boolean
     passwordResetToken?: boolean
     passwordResetExpires?: boolean
+    passwordChangedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     refreshTokens?: boolean | User$refreshTokensArgs<ExtArgs>
@@ -2470,6 +2478,7 @@ export namespace Prisma {
     emailVerificationToken?: boolean
     passwordResetToken?: boolean
     passwordResetExpires?: boolean
+    passwordChangedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2484,6 +2493,7 @@ export namespace Prisma {
     emailVerificationToken?: boolean
     passwordResetToken?: boolean
     passwordResetExpires?: boolean
+    passwordChangedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }, ExtArgs["result"]["user"]>
@@ -2498,11 +2508,12 @@ export namespace Prisma {
     emailVerificationToken?: boolean
     passwordResetToken?: boolean
     passwordResetExpires?: boolean
+    passwordChangedAt?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "name" | "avatar" | "emailVerified" | "emailVerificationToken" | "passwordResetToken" | "passwordResetExpires" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
+  export type UserOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "email" | "password" | "name" | "avatar" | "emailVerified" | "emailVerificationToken" | "passwordResetToken" | "passwordResetExpires" | "passwordChangedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["user"]>
   export type UserInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     refreshTokens?: boolean | User$refreshTokensArgs<ExtArgs>
     ownedProjects?: boolean | User$ownedProjectsArgs<ExtArgs>
@@ -2545,6 +2556,7 @@ export namespace Prisma {
       emailVerificationToken: string | null
       passwordResetToken: string | null
       passwordResetExpires: Date | null
+      passwordChangedAt: Date | null
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["user"]>
@@ -2990,6 +3002,7 @@ export namespace Prisma {
     readonly emailVerificationToken: FieldRef<"User", 'String'>
     readonly passwordResetToken: FieldRef<"User", 'String'>
     readonly passwordResetExpires: FieldRef<"User", 'DateTime'>
+    readonly passwordChangedAt: FieldRef<"User", 'DateTime'>
     readonly createdAt: FieldRef<"User", 'DateTime'>
     readonly updatedAt: FieldRef<"User", 'DateTime'>
   }
@@ -3679,6 +3692,19 @@ export namespace Prisma {
     density: string | null
     theme: string | null
     profileNote: string | null
+    sidebarDefault: string | null
+    projectSelectorBehavior: string | null
+    rememberLastSpace: boolean | null
+    emailNotifications: boolean | null
+    inAppNotifications: boolean | null
+    dueSoonNotifications: boolean | null
+    assignmentNotifications: boolean | null
+    mentionNotifications: boolean | null
+    commentNotifications: boolean | null
+    digestFrequency: string | null
+    quietHoursEnabled: boolean | null
+    quietHoursStart: string | null
+    quietHoursEnd: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -3690,6 +3716,19 @@ export namespace Prisma {
     density: string | null
     theme: string | null
     profileNote: string | null
+    sidebarDefault: string | null
+    projectSelectorBehavior: string | null
+    rememberLastSpace: boolean | null
+    emailNotifications: boolean | null
+    inAppNotifications: boolean | null
+    dueSoonNotifications: boolean | null
+    assignmentNotifications: boolean | null
+    mentionNotifications: boolean | null
+    commentNotifications: boolean | null
+    digestFrequency: string | null
+    quietHoursEnabled: boolean | null
+    quietHoursStart: string | null
+    quietHoursEnd: string | null
     createdAt: Date | null
     updatedAt: Date | null
   }
@@ -3701,6 +3740,19 @@ export namespace Prisma {
     density: number
     theme: number
     profileNote: number
+    sidebarDefault: number
+    projectSelectorBehavior: number
+    rememberLastSpace: number
+    emailNotifications: number
+    inAppNotifications: number
+    dueSoonNotifications: number
+    assignmentNotifications: number
+    mentionNotifications: number
+    commentNotifications: number
+    digestFrequency: number
+    quietHoursEnabled: number
+    quietHoursStart: number
+    quietHoursEnd: number
     createdAt: number
     updatedAt: number
     _all: number
@@ -3714,6 +3766,19 @@ export namespace Prisma {
     density?: true
     theme?: true
     profileNote?: true
+    sidebarDefault?: true
+    projectSelectorBehavior?: true
+    rememberLastSpace?: true
+    emailNotifications?: true
+    inAppNotifications?: true
+    dueSoonNotifications?: true
+    assignmentNotifications?: true
+    mentionNotifications?: true
+    commentNotifications?: true
+    digestFrequency?: true
+    quietHoursEnabled?: true
+    quietHoursStart?: true
+    quietHoursEnd?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -3725,6 +3790,19 @@ export namespace Prisma {
     density?: true
     theme?: true
     profileNote?: true
+    sidebarDefault?: true
+    projectSelectorBehavior?: true
+    rememberLastSpace?: true
+    emailNotifications?: true
+    inAppNotifications?: true
+    dueSoonNotifications?: true
+    assignmentNotifications?: true
+    mentionNotifications?: true
+    commentNotifications?: true
+    digestFrequency?: true
+    quietHoursEnabled?: true
+    quietHoursStart?: true
+    quietHoursEnd?: true
     createdAt?: true
     updatedAt?: true
   }
@@ -3736,6 +3814,19 @@ export namespace Prisma {
     density?: true
     theme?: true
     profileNote?: true
+    sidebarDefault?: true
+    projectSelectorBehavior?: true
+    rememberLastSpace?: true
+    emailNotifications?: true
+    inAppNotifications?: true
+    dueSoonNotifications?: true
+    assignmentNotifications?: true
+    mentionNotifications?: true
+    commentNotifications?: true
+    digestFrequency?: true
+    quietHoursEnabled?: true
+    quietHoursStart?: true
+    quietHoursEnd?: true
     createdAt?: true
     updatedAt?: true
     _all?: true
@@ -3820,6 +3911,19 @@ export namespace Prisma {
     density: string
     theme: string
     profileNote: string
+    sidebarDefault: string
+    projectSelectorBehavior: string
+    rememberLastSpace: boolean
+    emailNotifications: boolean
+    inAppNotifications: boolean
+    dueSoonNotifications: boolean
+    assignmentNotifications: boolean
+    mentionNotifications: boolean
+    commentNotifications: boolean
+    digestFrequency: string
+    quietHoursEnabled: boolean
+    quietHoursStart: string
+    quietHoursEnd: string
     createdAt: Date
     updatedAt: Date
     _count: UserPreferenceCountAggregateOutputType | null
@@ -3848,6 +3952,19 @@ export namespace Prisma {
     density?: boolean
     theme?: boolean
     profileNote?: boolean
+    sidebarDefault?: boolean
+    projectSelectorBehavior?: boolean
+    rememberLastSpace?: boolean
+    emailNotifications?: boolean
+    inAppNotifications?: boolean
+    dueSoonNotifications?: boolean
+    assignmentNotifications?: boolean
+    mentionNotifications?: boolean
+    commentNotifications?: boolean
+    digestFrequency?: boolean
+    quietHoursEnabled?: boolean
+    quietHoursStart?: boolean
+    quietHoursEnd?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -3860,6 +3977,19 @@ export namespace Prisma {
     density?: boolean
     theme?: boolean
     profileNote?: boolean
+    sidebarDefault?: boolean
+    projectSelectorBehavior?: boolean
+    rememberLastSpace?: boolean
+    emailNotifications?: boolean
+    inAppNotifications?: boolean
+    dueSoonNotifications?: boolean
+    assignmentNotifications?: boolean
+    mentionNotifications?: boolean
+    commentNotifications?: boolean
+    digestFrequency?: boolean
+    quietHoursEnabled?: boolean
+    quietHoursStart?: boolean
+    quietHoursEnd?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -3872,6 +4002,19 @@ export namespace Prisma {
     density?: boolean
     theme?: boolean
     profileNote?: boolean
+    sidebarDefault?: boolean
+    projectSelectorBehavior?: boolean
+    rememberLastSpace?: boolean
+    emailNotifications?: boolean
+    inAppNotifications?: boolean
+    dueSoonNotifications?: boolean
+    assignmentNotifications?: boolean
+    mentionNotifications?: boolean
+    commentNotifications?: boolean
+    digestFrequency?: boolean
+    quietHoursEnabled?: boolean
+    quietHoursStart?: boolean
+    quietHoursEnd?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     user?: boolean | UserDefaultArgs<ExtArgs>
@@ -3884,11 +4027,24 @@ export namespace Prisma {
     density?: boolean
     theme?: boolean
     profileNote?: boolean
+    sidebarDefault?: boolean
+    projectSelectorBehavior?: boolean
+    rememberLastSpace?: boolean
+    emailNotifications?: boolean
+    inAppNotifications?: boolean
+    dueSoonNotifications?: boolean
+    assignmentNotifications?: boolean
+    mentionNotifications?: boolean
+    commentNotifications?: boolean
+    digestFrequency?: boolean
+    quietHoursEnabled?: boolean
+    quietHoursStart?: boolean
+    quietHoursEnd?: boolean
     createdAt?: boolean
     updatedAt?: boolean
   }
 
-  export type UserPreferenceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "defaultView" | "density" | "theme" | "profileNote" | "createdAt" | "updatedAt", ExtArgs["result"]["userPreference"]>
+  export type UserPreferenceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "defaultView" | "density" | "theme" | "profileNote" | "sidebarDefault" | "projectSelectorBehavior" | "rememberLastSpace" | "emailNotifications" | "inAppNotifications" | "dueSoonNotifications" | "assignmentNotifications" | "mentionNotifications" | "commentNotifications" | "digestFrequency" | "quietHoursEnabled" | "quietHoursStart" | "quietHoursEnd" | "createdAt" | "updatedAt", ExtArgs["result"]["userPreference"]>
   export type UserPreferenceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -3911,6 +4067,19 @@ export namespace Prisma {
       density: string
       theme: string
       profileNote: string
+      sidebarDefault: string
+      projectSelectorBehavior: string
+      rememberLastSpace: boolean
+      emailNotifications: boolean
+      inAppNotifications: boolean
+      dueSoonNotifications: boolean
+      assignmentNotifications: boolean
+      mentionNotifications: boolean
+      commentNotifications: boolean
+      digestFrequency: string
+      quietHoursEnabled: boolean
+      quietHoursStart: string
+      quietHoursEnd: string
       createdAt: Date
       updatedAt: Date
     }, ExtArgs["result"]["userPreference"]>
@@ -4343,6 +4512,19 @@ export namespace Prisma {
     readonly density: FieldRef<"UserPreference", 'String'>
     readonly theme: FieldRef<"UserPreference", 'String'>
     readonly profileNote: FieldRef<"UserPreference", 'String'>
+    readonly sidebarDefault: FieldRef<"UserPreference", 'String'>
+    readonly projectSelectorBehavior: FieldRef<"UserPreference", 'String'>
+    readonly rememberLastSpace: FieldRef<"UserPreference", 'Boolean'>
+    readonly emailNotifications: FieldRef<"UserPreference", 'Boolean'>
+    readonly inAppNotifications: FieldRef<"UserPreference", 'Boolean'>
+    readonly dueSoonNotifications: FieldRef<"UserPreference", 'Boolean'>
+    readonly assignmentNotifications: FieldRef<"UserPreference", 'Boolean'>
+    readonly mentionNotifications: FieldRef<"UserPreference", 'Boolean'>
+    readonly commentNotifications: FieldRef<"UserPreference", 'Boolean'>
+    readonly digestFrequency: FieldRef<"UserPreference", 'String'>
+    readonly quietHoursEnabled: FieldRef<"UserPreference", 'Boolean'>
+    readonly quietHoursStart: FieldRef<"UserPreference", 'String'>
+    readonly quietHoursEnd: FieldRef<"UserPreference", 'String'>
     readonly createdAt: FieldRef<"UserPreference", 'DateTime'>
     readonly updatedAt: FieldRef<"UserPreference", 'DateTime'>
   }
@@ -17519,6 +17701,7 @@ export namespace Prisma {
     emailVerificationToken: 'emailVerificationToken',
     passwordResetToken: 'passwordResetToken',
     passwordResetExpires: 'passwordResetExpires',
+    passwordChangedAt: 'passwordChangedAt',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -17533,6 +17716,19 @@ export namespace Prisma {
     density: 'density',
     theme: 'theme',
     profileNote: 'profileNote',
+    sidebarDefault: 'sidebarDefault',
+    projectSelectorBehavior: 'projectSelectorBehavior',
+    rememberLastSpace: 'rememberLastSpace',
+    emailNotifications: 'emailNotifications',
+    inAppNotifications: 'inAppNotifications',
+    dueSoonNotifications: 'dueSoonNotifications',
+    assignmentNotifications: 'assignmentNotifications',
+    mentionNotifications: 'mentionNotifications',
+    commentNotifications: 'commentNotifications',
+    digestFrequency: 'digestFrequency',
+    quietHoursEnabled: 'quietHoursEnabled',
+    quietHoursStart: 'quietHoursStart',
+    quietHoursEnd: 'quietHoursEnd',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt'
   };
@@ -17806,6 +18002,7 @@ export namespace Prisma {
     emailVerificationToken?: StringNullableFilter<"User"> | string | null
     passwordResetToken?: StringNullableFilter<"User"> | string | null
     passwordResetExpires?: DateTimeNullableFilter<"User"> | Date | string | null
+    passwordChangedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     refreshTokens?: RefreshTokenListRelationFilter
@@ -17831,6 +18028,7 @@ export namespace Prisma {
     emailVerificationToken?: SortOrderInput | SortOrder
     passwordResetToken?: SortOrderInput | SortOrder
     passwordResetExpires?: SortOrderInput | SortOrder
+    passwordChangedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     refreshTokens?: RefreshTokenOrderByRelationAggregateInput
@@ -17859,6 +18057,7 @@ export namespace Prisma {
     emailVerificationToken?: StringNullableFilter<"User"> | string | null
     passwordResetToken?: StringNullableFilter<"User"> | string | null
     passwordResetExpires?: DateTimeNullableFilter<"User"> | Date | string | null
+    passwordChangedAt?: DateTimeNullableFilter<"User"> | Date | string | null
     createdAt?: DateTimeFilter<"User"> | Date | string
     updatedAt?: DateTimeFilter<"User"> | Date | string
     refreshTokens?: RefreshTokenListRelationFilter
@@ -17884,6 +18083,7 @@ export namespace Prisma {
     emailVerificationToken?: SortOrderInput | SortOrder
     passwordResetToken?: SortOrderInput | SortOrder
     passwordResetExpires?: SortOrderInput | SortOrder
+    passwordChangedAt?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserCountOrderByAggregateInput
@@ -17904,6 +18104,7 @@ export namespace Prisma {
     emailVerificationToken?: StringNullableWithAggregatesFilter<"User"> | string | null
     passwordResetToken?: StringNullableWithAggregatesFilter<"User"> | string | null
     passwordResetExpires?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
+    passwordChangedAt?: DateTimeNullableWithAggregatesFilter<"User"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"User"> | Date | string
   }
@@ -17918,6 +18119,19 @@ export namespace Prisma {
     density?: StringFilter<"UserPreference"> | string
     theme?: StringFilter<"UserPreference"> | string
     profileNote?: StringFilter<"UserPreference"> | string
+    sidebarDefault?: StringFilter<"UserPreference"> | string
+    projectSelectorBehavior?: StringFilter<"UserPreference"> | string
+    rememberLastSpace?: BoolFilter<"UserPreference"> | boolean
+    emailNotifications?: BoolFilter<"UserPreference"> | boolean
+    inAppNotifications?: BoolFilter<"UserPreference"> | boolean
+    dueSoonNotifications?: BoolFilter<"UserPreference"> | boolean
+    assignmentNotifications?: BoolFilter<"UserPreference"> | boolean
+    mentionNotifications?: BoolFilter<"UserPreference"> | boolean
+    commentNotifications?: BoolFilter<"UserPreference"> | boolean
+    digestFrequency?: StringFilter<"UserPreference"> | string
+    quietHoursEnabled?: BoolFilter<"UserPreference"> | boolean
+    quietHoursStart?: StringFilter<"UserPreference"> | string
+    quietHoursEnd?: StringFilter<"UserPreference"> | string
     createdAt?: DateTimeFilter<"UserPreference"> | Date | string
     updatedAt?: DateTimeFilter<"UserPreference"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -17930,6 +18144,19 @@ export namespace Prisma {
     density?: SortOrder
     theme?: SortOrder
     profileNote?: SortOrder
+    sidebarDefault?: SortOrder
+    projectSelectorBehavior?: SortOrder
+    rememberLastSpace?: SortOrder
+    emailNotifications?: SortOrder
+    inAppNotifications?: SortOrder
+    dueSoonNotifications?: SortOrder
+    assignmentNotifications?: SortOrder
+    mentionNotifications?: SortOrder
+    commentNotifications?: SortOrder
+    digestFrequency?: SortOrder
+    quietHoursEnabled?: SortOrder
+    quietHoursStart?: SortOrder
+    quietHoursEnd?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     user?: UserOrderByWithRelationInput
@@ -17945,6 +18172,19 @@ export namespace Prisma {
     density?: StringFilter<"UserPreference"> | string
     theme?: StringFilter<"UserPreference"> | string
     profileNote?: StringFilter<"UserPreference"> | string
+    sidebarDefault?: StringFilter<"UserPreference"> | string
+    projectSelectorBehavior?: StringFilter<"UserPreference"> | string
+    rememberLastSpace?: BoolFilter<"UserPreference"> | boolean
+    emailNotifications?: BoolFilter<"UserPreference"> | boolean
+    inAppNotifications?: BoolFilter<"UserPreference"> | boolean
+    dueSoonNotifications?: BoolFilter<"UserPreference"> | boolean
+    assignmentNotifications?: BoolFilter<"UserPreference"> | boolean
+    mentionNotifications?: BoolFilter<"UserPreference"> | boolean
+    commentNotifications?: BoolFilter<"UserPreference"> | boolean
+    digestFrequency?: StringFilter<"UserPreference"> | string
+    quietHoursEnabled?: BoolFilter<"UserPreference"> | boolean
+    quietHoursStart?: StringFilter<"UserPreference"> | string
+    quietHoursEnd?: StringFilter<"UserPreference"> | string
     createdAt?: DateTimeFilter<"UserPreference"> | Date | string
     updatedAt?: DateTimeFilter<"UserPreference"> | Date | string
     user?: XOR<UserScalarRelationFilter, UserWhereInput>
@@ -17957,6 +18197,19 @@ export namespace Prisma {
     density?: SortOrder
     theme?: SortOrder
     profileNote?: SortOrder
+    sidebarDefault?: SortOrder
+    projectSelectorBehavior?: SortOrder
+    rememberLastSpace?: SortOrder
+    emailNotifications?: SortOrder
+    inAppNotifications?: SortOrder
+    dueSoonNotifications?: SortOrder
+    assignmentNotifications?: SortOrder
+    mentionNotifications?: SortOrder
+    commentNotifications?: SortOrder
+    digestFrequency?: SortOrder
+    quietHoursEnabled?: SortOrder
+    quietHoursStart?: SortOrder
+    quietHoursEnd?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     _count?: UserPreferenceCountOrderByAggregateInput
@@ -17974,6 +18227,19 @@ export namespace Prisma {
     density?: StringWithAggregatesFilter<"UserPreference"> | string
     theme?: StringWithAggregatesFilter<"UserPreference"> | string
     profileNote?: StringWithAggregatesFilter<"UserPreference"> | string
+    sidebarDefault?: StringWithAggregatesFilter<"UserPreference"> | string
+    projectSelectorBehavior?: StringWithAggregatesFilter<"UserPreference"> | string
+    rememberLastSpace?: BoolWithAggregatesFilter<"UserPreference"> | boolean
+    emailNotifications?: BoolWithAggregatesFilter<"UserPreference"> | boolean
+    inAppNotifications?: BoolWithAggregatesFilter<"UserPreference"> | boolean
+    dueSoonNotifications?: BoolWithAggregatesFilter<"UserPreference"> | boolean
+    assignmentNotifications?: BoolWithAggregatesFilter<"UserPreference"> | boolean
+    mentionNotifications?: BoolWithAggregatesFilter<"UserPreference"> | boolean
+    commentNotifications?: BoolWithAggregatesFilter<"UserPreference"> | boolean
+    digestFrequency?: StringWithAggregatesFilter<"UserPreference"> | string
+    quietHoursEnabled?: BoolWithAggregatesFilter<"UserPreference"> | boolean
+    quietHoursStart?: StringWithAggregatesFilter<"UserPreference"> | string
+    quietHoursEnd?: StringWithAggregatesFilter<"UserPreference"> | string
     createdAt?: DateTimeWithAggregatesFilter<"UserPreference"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"UserPreference"> | Date | string
   }
@@ -18850,6 +19116,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
@@ -18875,6 +19142,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -18900,6 +19168,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
@@ -18925,6 +19194,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -18950,6 +19220,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -18964,6 +19235,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18978,6 +19250,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -18988,6 +19261,19 @@ export namespace Prisma {
     density?: string
     theme?: string
     profileNote?: string
+    sidebarDefault?: string
+    projectSelectorBehavior?: string
+    rememberLastSpace?: boolean
+    emailNotifications?: boolean
+    inAppNotifications?: boolean
+    dueSoonNotifications?: boolean
+    assignmentNotifications?: boolean
+    mentionNotifications?: boolean
+    commentNotifications?: boolean
+    digestFrequency?: string
+    quietHoursEnabled?: boolean
+    quietHoursStart?: string
+    quietHoursEnd?: string
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutPreferencesInput
@@ -19000,6 +19286,19 @@ export namespace Prisma {
     density?: string
     theme?: string
     profileNote?: string
+    sidebarDefault?: string
+    projectSelectorBehavior?: string
+    rememberLastSpace?: boolean
+    emailNotifications?: boolean
+    inAppNotifications?: boolean
+    dueSoonNotifications?: boolean
+    assignmentNotifications?: boolean
+    mentionNotifications?: boolean
+    commentNotifications?: boolean
+    digestFrequency?: string
+    quietHoursEnabled?: boolean
+    quietHoursStart?: string
+    quietHoursEnd?: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -19010,6 +19309,19 @@ export namespace Prisma {
     density?: StringFieldUpdateOperationsInput | string
     theme?: StringFieldUpdateOperationsInput | string
     profileNote?: StringFieldUpdateOperationsInput | string
+    sidebarDefault?: StringFieldUpdateOperationsInput | string
+    projectSelectorBehavior?: StringFieldUpdateOperationsInput | string
+    rememberLastSpace?: BoolFieldUpdateOperationsInput | boolean
+    emailNotifications?: BoolFieldUpdateOperationsInput | boolean
+    inAppNotifications?: BoolFieldUpdateOperationsInput | boolean
+    dueSoonNotifications?: BoolFieldUpdateOperationsInput | boolean
+    assignmentNotifications?: BoolFieldUpdateOperationsInput | boolean
+    mentionNotifications?: BoolFieldUpdateOperationsInput | boolean
+    commentNotifications?: BoolFieldUpdateOperationsInput | boolean
+    digestFrequency?: StringFieldUpdateOperationsInput | string
+    quietHoursEnabled?: BoolFieldUpdateOperationsInput | boolean
+    quietHoursStart?: StringFieldUpdateOperationsInput | string
+    quietHoursEnd?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutPreferencesNestedInput
@@ -19022,6 +19334,19 @@ export namespace Prisma {
     density?: StringFieldUpdateOperationsInput | string
     theme?: StringFieldUpdateOperationsInput | string
     profileNote?: StringFieldUpdateOperationsInput | string
+    sidebarDefault?: StringFieldUpdateOperationsInput | string
+    projectSelectorBehavior?: StringFieldUpdateOperationsInput | string
+    rememberLastSpace?: BoolFieldUpdateOperationsInput | boolean
+    emailNotifications?: BoolFieldUpdateOperationsInput | boolean
+    inAppNotifications?: BoolFieldUpdateOperationsInput | boolean
+    dueSoonNotifications?: BoolFieldUpdateOperationsInput | boolean
+    assignmentNotifications?: BoolFieldUpdateOperationsInput | boolean
+    mentionNotifications?: BoolFieldUpdateOperationsInput | boolean
+    commentNotifications?: BoolFieldUpdateOperationsInput | boolean
+    digestFrequency?: StringFieldUpdateOperationsInput | string
+    quietHoursEnabled?: BoolFieldUpdateOperationsInput | boolean
+    quietHoursStart?: StringFieldUpdateOperationsInput | string
+    quietHoursEnd?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19033,6 +19358,19 @@ export namespace Prisma {
     density?: string
     theme?: string
     profileNote?: string
+    sidebarDefault?: string
+    projectSelectorBehavior?: string
+    rememberLastSpace?: boolean
+    emailNotifications?: boolean
+    inAppNotifications?: boolean
+    dueSoonNotifications?: boolean
+    assignmentNotifications?: boolean
+    mentionNotifications?: boolean
+    commentNotifications?: boolean
+    digestFrequency?: string
+    quietHoursEnabled?: boolean
+    quietHoursStart?: string
+    quietHoursEnd?: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -19043,6 +19381,19 @@ export namespace Prisma {
     density?: StringFieldUpdateOperationsInput | string
     theme?: StringFieldUpdateOperationsInput | string
     profileNote?: StringFieldUpdateOperationsInput | string
+    sidebarDefault?: StringFieldUpdateOperationsInput | string
+    projectSelectorBehavior?: StringFieldUpdateOperationsInput | string
+    rememberLastSpace?: BoolFieldUpdateOperationsInput | boolean
+    emailNotifications?: BoolFieldUpdateOperationsInput | boolean
+    inAppNotifications?: BoolFieldUpdateOperationsInput | boolean
+    dueSoonNotifications?: BoolFieldUpdateOperationsInput | boolean
+    assignmentNotifications?: BoolFieldUpdateOperationsInput | boolean
+    mentionNotifications?: BoolFieldUpdateOperationsInput | boolean
+    commentNotifications?: BoolFieldUpdateOperationsInput | boolean
+    digestFrequency?: StringFieldUpdateOperationsInput | string
+    quietHoursEnabled?: BoolFieldUpdateOperationsInput | boolean
+    quietHoursStart?: StringFieldUpdateOperationsInput | string
+    quietHoursEnd?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -19054,6 +19405,19 @@ export namespace Prisma {
     density?: StringFieldUpdateOperationsInput | string
     theme?: StringFieldUpdateOperationsInput | string
     profileNote?: StringFieldUpdateOperationsInput | string
+    sidebarDefault?: StringFieldUpdateOperationsInput | string
+    projectSelectorBehavior?: StringFieldUpdateOperationsInput | string
+    rememberLastSpace?: BoolFieldUpdateOperationsInput | boolean
+    emailNotifications?: BoolFieldUpdateOperationsInput | boolean
+    inAppNotifications?: BoolFieldUpdateOperationsInput | boolean
+    dueSoonNotifications?: BoolFieldUpdateOperationsInput | boolean
+    assignmentNotifications?: BoolFieldUpdateOperationsInput | boolean
+    mentionNotifications?: BoolFieldUpdateOperationsInput | boolean
+    commentNotifications?: BoolFieldUpdateOperationsInput | boolean
+    digestFrequency?: StringFieldUpdateOperationsInput | string
+    quietHoursEnabled?: BoolFieldUpdateOperationsInput | boolean
+    quietHoursStart?: StringFieldUpdateOperationsInput | string
+    quietHoursEnd?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -20113,6 +20477,7 @@ export namespace Prisma {
     emailVerificationToken?: SortOrder
     passwordResetToken?: SortOrder
     passwordResetExpires?: SortOrder
+    passwordChangedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -20127,6 +20492,7 @@ export namespace Prisma {
     emailVerificationToken?: SortOrder
     passwordResetToken?: SortOrder
     passwordResetExpires?: SortOrder
+    passwordChangedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -20141,6 +20507,7 @@ export namespace Prisma {
     emailVerificationToken?: SortOrder
     passwordResetToken?: SortOrder
     passwordResetExpires?: SortOrder
+    passwordChangedAt?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -20229,6 +20596,19 @@ export namespace Prisma {
     density?: SortOrder
     theme?: SortOrder
     profileNote?: SortOrder
+    sidebarDefault?: SortOrder
+    projectSelectorBehavior?: SortOrder
+    rememberLastSpace?: SortOrder
+    emailNotifications?: SortOrder
+    inAppNotifications?: SortOrder
+    dueSoonNotifications?: SortOrder
+    assignmentNotifications?: SortOrder
+    mentionNotifications?: SortOrder
+    commentNotifications?: SortOrder
+    digestFrequency?: SortOrder
+    quietHoursEnabled?: SortOrder
+    quietHoursStart?: SortOrder
+    quietHoursEnd?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -20240,6 +20620,19 @@ export namespace Prisma {
     density?: SortOrder
     theme?: SortOrder
     profileNote?: SortOrder
+    sidebarDefault?: SortOrder
+    projectSelectorBehavior?: SortOrder
+    rememberLastSpace?: SortOrder
+    emailNotifications?: SortOrder
+    inAppNotifications?: SortOrder
+    dueSoonNotifications?: SortOrder
+    assignmentNotifications?: SortOrder
+    mentionNotifications?: SortOrder
+    commentNotifications?: SortOrder
+    digestFrequency?: SortOrder
+    quietHoursEnabled?: SortOrder
+    quietHoursStart?: SortOrder
+    quietHoursEnd?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -20251,6 +20644,19 @@ export namespace Prisma {
     density?: SortOrder
     theme?: SortOrder
     profileNote?: SortOrder
+    sidebarDefault?: SortOrder
+    projectSelectorBehavior?: SortOrder
+    rememberLastSpace?: SortOrder
+    emailNotifications?: SortOrder
+    inAppNotifications?: SortOrder
+    dueSoonNotifications?: SortOrder
+    assignmentNotifications?: SortOrder
+    mentionNotifications?: SortOrder
+    commentNotifications?: SortOrder
+    digestFrequency?: SortOrder
+    quietHoursEnabled?: SortOrder
+    quietHoursStart?: SortOrder
+    quietHoursEnd?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
   }
@@ -22602,6 +23008,19 @@ export namespace Prisma {
     density?: string
     theme?: string
     profileNote?: string
+    sidebarDefault?: string
+    projectSelectorBehavior?: string
+    rememberLastSpace?: boolean
+    emailNotifications?: boolean
+    inAppNotifications?: boolean
+    dueSoonNotifications?: boolean
+    assignmentNotifications?: boolean
+    mentionNotifications?: boolean
+    commentNotifications?: boolean
+    digestFrequency?: string
+    quietHoursEnabled?: boolean
+    quietHoursStart?: string
+    quietHoursEnd?: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -22612,6 +23031,19 @@ export namespace Prisma {
     density?: string
     theme?: string
     profileNote?: string
+    sidebarDefault?: string
+    projectSelectorBehavior?: string
+    rememberLastSpace?: boolean
+    emailNotifications?: boolean
+    inAppNotifications?: boolean
+    dueSoonNotifications?: boolean
+    assignmentNotifications?: boolean
+    mentionNotifications?: boolean
+    commentNotifications?: boolean
+    digestFrequency?: string
+    quietHoursEnabled?: boolean
+    quietHoursStart?: string
+    quietHoursEnd?: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -22918,6 +23350,19 @@ export namespace Prisma {
     density?: StringFieldUpdateOperationsInput | string
     theme?: StringFieldUpdateOperationsInput | string
     profileNote?: StringFieldUpdateOperationsInput | string
+    sidebarDefault?: StringFieldUpdateOperationsInput | string
+    projectSelectorBehavior?: StringFieldUpdateOperationsInput | string
+    rememberLastSpace?: BoolFieldUpdateOperationsInput | boolean
+    emailNotifications?: BoolFieldUpdateOperationsInput | boolean
+    inAppNotifications?: BoolFieldUpdateOperationsInput | boolean
+    dueSoonNotifications?: BoolFieldUpdateOperationsInput | boolean
+    assignmentNotifications?: BoolFieldUpdateOperationsInput | boolean
+    mentionNotifications?: BoolFieldUpdateOperationsInput | boolean
+    commentNotifications?: BoolFieldUpdateOperationsInput | boolean
+    digestFrequency?: StringFieldUpdateOperationsInput | string
+    quietHoursEnabled?: BoolFieldUpdateOperationsInput | boolean
+    quietHoursStart?: StringFieldUpdateOperationsInput | string
+    quietHoursEnd?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22928,6 +23373,19 @@ export namespace Prisma {
     density?: StringFieldUpdateOperationsInput | string
     theme?: StringFieldUpdateOperationsInput | string
     profileNote?: StringFieldUpdateOperationsInput | string
+    sidebarDefault?: StringFieldUpdateOperationsInput | string
+    projectSelectorBehavior?: StringFieldUpdateOperationsInput | string
+    rememberLastSpace?: BoolFieldUpdateOperationsInput | boolean
+    emailNotifications?: BoolFieldUpdateOperationsInput | boolean
+    inAppNotifications?: BoolFieldUpdateOperationsInput | boolean
+    dueSoonNotifications?: BoolFieldUpdateOperationsInput | boolean
+    assignmentNotifications?: BoolFieldUpdateOperationsInput | boolean
+    mentionNotifications?: BoolFieldUpdateOperationsInput | boolean
+    commentNotifications?: BoolFieldUpdateOperationsInput | boolean
+    digestFrequency?: StringFieldUpdateOperationsInput | string
+    quietHoursEnabled?: BoolFieldUpdateOperationsInput | boolean
+    quietHoursStart?: StringFieldUpdateOperationsInput | string
+    quietHoursEnd?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22942,6 +23400,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
@@ -22966,6 +23425,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -23006,6 +23466,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
@@ -23030,6 +23491,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -23054,6 +23516,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     ownedProjects?: ProjectCreateNestedManyWithoutOwnerInput
@@ -23078,6 +23541,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     ownedProjects?: ProjectUncheckedCreateNestedManyWithoutOwnerInput
@@ -23118,6 +23582,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownedProjects?: ProjectUpdateManyWithoutOwnerNestedInput
@@ -23142,6 +23607,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     ownedProjects?: ProjectUncheckedUpdateManyWithoutOwnerNestedInput
@@ -23166,6 +23632,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
@@ -23190,6 +23657,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -23410,6 +23878,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
@@ -23434,6 +23903,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -23596,6 +24066,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
@@ -23620,6 +24091,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -23649,6 +24121,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
@@ -23673,6 +24146,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -23762,6 +24236,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
@@ -23786,6 +24261,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -23821,6 +24297,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
@@ -23845,6 +24322,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -23912,6 +24390,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
@@ -23936,6 +24415,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -24025,6 +24505,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
@@ -24049,6 +24530,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -24116,6 +24598,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
@@ -24140,6 +24623,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -24229,6 +24713,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
@@ -24253,6 +24738,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -24349,6 +24835,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
@@ -24373,6 +24860,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -24402,6 +24890,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
@@ -24426,6 +24915,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -24682,6 +25172,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
@@ -24706,6 +25197,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -24741,6 +25233,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
@@ -24765,6 +25258,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -25399,6 +25893,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
@@ -25423,6 +25918,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -25516,6 +26012,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
@@ -25540,6 +26037,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
@@ -25611,6 +26109,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
@@ -25635,6 +26134,7 @@ export namespace Prisma {
     emailVerificationToken?: string | null
     passwordResetToken?: string | null
     passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
@@ -25728,6 +26228,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
@@ -25752,6 +26253,7 @@ export namespace Prisma {
     emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
     passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput

@@ -1,12 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Archive, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2, Users } from "lucide-react";
+import { Eye, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
 import { Textarea } from "@/components/ui/textarea";
 import { createProject, deleteProject, getProject, getProjects, updateProject } from "@/lib/project-api";
 import { cn } from "@/lib/utils";
@@ -141,7 +142,7 @@ function SpaceDialog({ mode, open, form, setForm, pending, onClose, onSubmit }) 
   );
 }
 
-function SpaceActionsMenu({ space, onOpen, onEdit, onArchive, onDelete }) {
+function SpaceActionsMenu({ space, onOpen, onEdit, onDelete }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   const triggerRef = useRef(null);
@@ -152,7 +153,7 @@ function SpaceActionsMenu({ space, onOpen, onEdit, onArchive, onDelete }) {
     if (!rect) return;
 
     const menuWidth = 176;
-    const menuHeight = 184;
+    const menuHeight = 132;
     const left = Math.min(Math.max(rect.right - menuWidth, 8), window.innerWidth - menuWidth - 8);
     const opensUp = rect.bottom + menuHeight + 8 > window.innerHeight;
     const top = opensUp ? Math.max(rect.top - menuHeight - 4, 8) : rect.bottom + 4;
@@ -211,21 +212,13 @@ function SpaceActionsMenu({ space, onOpen, onEdit, onArchive, onDelete }) {
           className="fixed z-[100] w-44 rounded-md border bg-popover p-1 text-sm text-popover-foreground shadow-lg"
           style={{ top: position.top, left: position.left }}
         >
-          <button type="button" className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left hover:bg-accent" onClick={() => select(onOpen)}>
-            <FolderKanban className="h-3.5 w-3.5" />
-            Open
-          </button>
           <button type="button" className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left hover:bg-accent" onClick={() => select(onEdit)}>
             <Pencil className="h-3.5 w-3.5" />
             Edit
           </button>
-          <button type="button" className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left hover:bg-accent" onClick={() => select(() => onOpen("/team-members"))}>
-            <Users className="h-3.5 w-3.5" />
-            Manage Members
-          </button>
-          <button type="button" className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left hover:bg-accent" onClick={() => select(onArchive)}>
-            <Archive className="h-3.5 w-3.5" />
-            {space.status === "archived" ? "Restore" : "Archive"}
+          <button type="button" className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left hover:bg-accent" onClick={() => select(() => onOpen(`/spaces/${space.id}/settings`))}>
+            <Eye className="h-3.5 w-3.5" />
+            View
           </button>
           <button type="button" className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-destructive hover:bg-accent" onClick={() => select(onDelete)}>
             <Trash2 className="h-3.5 w-3.5" />
@@ -249,10 +242,11 @@ export default function Projects() {
   const [editingSpaceId, setEditingSpaceId] = useState("");
   const [form, setForm] = useState(emptySpaceForm);
   const [message, setMessage] = useState("");
+  const [page, setPage] = useState(1);
 
   const projectsQuery = useQuery({
-    queryKey: ["projects", search],
-    queryFn: () => getProjects({ search }),
+    queryKey: ["projects", { search, visibility, status, page }],
+    queryFn: () => getProjects({ search, visibility, status, page, limit: PAGE_SIZE }),
   });
 
   const editProjectQuery = useQuery({
@@ -261,15 +255,13 @@ export default function Projects() {
     enabled: Boolean(editingSpaceId && dialogMode === "edit"),
   });
 
-  const spaces = useMemo(() => {
-    return (projectsQuery.data?.data || []).filter((space) => {
-      const matchesVisibility = !visibility || space.visibility === visibility;
-      const matchesStatus = !status || space.status === status;
-      return matchesVisibility && matchesStatus;
-    });
-  }, [projectsQuery.data, status, visibility]);
-
+  const spaces = projectsQuery.data?.data || [];
+  const pagination = projectsQuery.data?.pagination;
   const editingSpace = editProjectQuery.data?.data;
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, status, visibility]);
 
   useEffect(() => {
     if (!editingSpace || dialogMode !== "edit") return;
@@ -375,11 +367,6 @@ export default function Projects() {
     createMutation.mutate(payload);
   }
 
-  function archiveSpace(space) {
-    const nextStatus = space.status === "archived" ? "active" : "archived";
-    updateMutation.mutate({ id: space.id, payload: { status: nextStatus } });
-  }
-
   function deleteSpace(space) {
     if (!window.confirm(`Delete ${space.name}? This permanently removes its tasks, docs, sprints, comments, and attachments metadata.`)) return;
     deleteMutation.mutate(space.id);
@@ -448,6 +435,7 @@ export default function Projects() {
                   key={space.id}
                   className={cn("cursor-pointer border-t transition-colors hover:bg-accent/40", space.id === projectId && "bg-primary/10")}
                   onClick={() => navigate(`/spaces/${space.id}`)}
+                  onDoubleClick={() => navigate(`/spaces/${space.id}/settings`)}
                 >
                   <td className="px-3 py-2" onClick={(event) => event.stopPropagation()}>
                     <input type="checkbox" aria-label={`Select ${space.name}`} />
@@ -476,7 +464,6 @@ export default function Projects() {
                       space={space}
                       onOpen={(path) => navigate(path || `/spaces/${space.id}/tasks`)}
                       onEdit={() => openEditDialog(space)}
-                      onArchive={() => archiveSpace(space)}
                       onDelete={() => deleteSpace(space)}
                     />
                   </td>
@@ -488,6 +475,8 @@ export default function Projects() {
           </tbody>
         </table>
       </div>
+
+      <PaginationControls pagination={pagination} onPageChange={setPage} />
 
       <SpaceDialog
         mode={dialogMode}

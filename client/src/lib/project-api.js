@@ -16,6 +16,10 @@ export async function getProject(projectId) {
   return api(`/projects/${projectId}`);
 }
 
+export async function getProjectStats(projectId) {
+  return api(`/projects/${projectId}/stats`);
+}
+
 export async function createProject(payload) {
   return api("/projects", {
     method: "POST",

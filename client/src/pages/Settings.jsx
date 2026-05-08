@@ -1,36 +1,121 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Check, KeyRound, Monitor, Save, ShieldCheck, UserCircle } from "lucide-react";
+import {
+  Bell,
+  Check,
+  Database,
+  Download,
+  ImagePlus,
+  KeyRound,
+  Laptop,
+  Lock,
+  Monitor,
+  Save,
+  ShieldCheck,
+  Trash2,
+  UserCircle,
+  X,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { UserAvatar } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { setStoredUser } from "@/lib/auth-api";
-import { getUserPreferences, updateAvatar, updateCurrentUser, updateUserPreferences } from "@/lib/user-api";
+import { getRefreshToken, setStoredUser } from "@/lib/auth-api";
+import {
+  getUserPreferences,
+  getUserSessions,
+  resendVerificationEmail,
+  revokeOtherSessions,
+  updateAvatar,
+  uploadAvatarImage,
+  updateCurrentUser,
+  updateUserPreferences,
+} from "@/lib/user-api";
 import { useAuth } from "@/contexts/auth-context";
+import { useSidebar } from "@/contexts/sidebar-context";
+import { useTheme } from "@/contexts/theme-context";
+import { cn } from "@/lib/utils";
 
+const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
 const preferenceDefaults = {
   defaultView: "board",
   density: "comfortable",
   theme: "system",
   profileNote: "",
+  sidebarDefault: "expanded",
+  projectSelectorBehavior: "remember",
+  rememberLastSpace: true,
   emailNotifications: true,
   inAppNotifications: true,
   dueSoonNotifications: true,
+  assignmentNotifications: true,
+  mentionNotifications: true,
+  commentNotifications: true,
+  digestFrequency: "daily",
+  quietHoursEnabled: false,
+  quietHoursStart: "18:00",
+  quietHoursEnd: "09:00",
 };
+
+const SECTIONS = [
+  { id: "profile", label: "Profile", icon: UserCircle },
+  { id: "preferences", label: "Preferences", icon: Monitor },
+  { id: "notifications", label: "Notifications", icon: Bell },
+  { id: "security", label: "Security", icon: ShieldCheck },
+  { id: "sessions", label: "Sessions", icon: Laptop },
+  { id: "danger", label: "Danger Zone", icon: Trash2 },
+];
+
+function formatDate(value) {
+  if (!value) return "Not available";
+  return new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(value));
+}
+
+function ToggleRow({ title, description, checked, onChange }) {
+  return (
+    <label className="flex items-center justify-between gap-4 rounded-md border p-3 text-sm">
+      <span className="min-w-0">
+        <span className="block font-medium">{title}</span>
+        <span className="mt-0.5 block text-xs text-muted-foreground">{description}</span>
+      </span>
+      <input type="checkbox" className="h-4 w-4 shrink-0" checked={Boolean(checked)} onChange={(event) => onChange(event.target.checked)} />
+    </label>
+  );
+}
+
+function passwordStrength(password) {
+  if (!password) return { label: "No new password", tone: "text-muted-foreground" };
+  let score = 0;
+  if (password.length >= 8) score += 1;
+  if (/[A-Z]/.test(password)) score += 1;
+  if (/[0-9]/.test(password)) score += 1;
+  if (/[^A-Za-z0-9]/.test(password)) score += 1;
+  if (score <= 1) return { label: "Weak", tone: "text-destructive" };
+  if (score <= 3) return { label: "Good", tone: "text-[hsl(var(--chart-3))]" };
+  return { label: "Strong", tone: "text-[hsl(var(--notion-green))]" };
+}
 
 export default function Setting() {
   const queryClient = useQueryClient();
-  const { user, refreshSession } = useAuth();
+  const { user, refreshSession, logout } = useAuth();
+  const { setTheme } = useTheme();
+  const { setCollapsed } = useSidebar();
+  const [activeSection, setActiveSection] = useState("profile");
   const [profile, setProfile] = useState({ name: "", email: "", avatar: "" });
-  const [password, setPassword] = useState("");
+  const [passwordForm, setPasswordForm] = useState({ currentPassword: "", password: "", confirmPassword: "" });
   const [preferences, setPreferences] = useState(preferenceDefaults);
   const [message, setMessage] = useState("");
+  const [avatarUploading, setAvatarUploading] = useState(false);
 
   const preferencesQuery = useQuery({
     queryKey: ["user-preferences"],
     queryFn: getUserPreferences,
+  });
+  const sessionsQuery = useQuery({
+    queryKey: ["user-sessions"],
+    queryFn: getUserSessions,
   });
 
   useEffect(() => {
@@ -43,44 +128,13 @@ export default function Setting() {
 
   useEffect(() => {
     if (preferencesQuery.data?.data) {
-      setPreferences({ ...preferenceDefaults, ...preferencesQuery.data.data });
+      const nextPreferences = { ...preferenceDefaults, ...preferencesQuery.data.data };
+      setPreferences(nextPreferences);
+      setCollapsed(nextPreferences.sidebarDefault === "collapsed");
     }
-  }, [preferencesQuery.data?.data]);
+  }, [preferencesQuery.data?.data, setCollapsed]);
 
-  const initials = useMemo(() => {
-    return (profile.name || profile.email || "ZP")
-      .split(" ")
-      .map((part) => part[0])
-      .join("")
-      .slice(0, 2)
-      .toUpperCase();
-  }, [profile.email, profile.name]);
-
-  const profileMutation = useMutation({
-    mutationFn: async () => {
-      const payload = {
-        name: profile.name.trim(),
-        email: profile.email.trim(),
-      };
-      if (password.trim()) payload.password = password.trim();
-      const result = await updateCurrentUser(payload);
-      if (!result.success) throw new Error(result.error?.message || "Could not update profile.");
-
-      if (profile.avatar.trim() !== (user?.avatar || "")) {
-        const avatarResult = await updateAvatar(profile.avatar.trim());
-        if (!avatarResult.success) throw new Error(avatarResult.error?.message || "Could not update avatar.");
-      }
-
-      return result.data;
-    },
-    onSuccess: async (updatedUser) => {
-      setStoredUser(updatedUser);
-      setPassword("");
-      await refreshSession();
-      setMessage("Settings saved.");
-    },
-    onError: (error) => setMessage(error.message),
-  });
+  const strength = passwordStrength(passwordForm.password);
 
   const preferencesMutation = useMutation({
     mutationFn: updateUserPreferences,
@@ -89,173 +143,484 @@ export default function Setting() {
         setMessage(result?.error?.message || "Could not save preferences.");
         return;
       }
-      setPreferences({ ...preferenceDefaults, ...result.data });
+      const nextPreferences = { ...preferenceDefaults, ...result.data };
+      setPreferences(nextPreferences);
+      setTheme(nextPreferences.theme);
+      setCollapsed(nextPreferences.sidebarDefault === "collapsed");
       queryClient.invalidateQueries({ queryKey: ["user-preferences"] });
       setMessage("Preferences saved.");
     },
     onError: (error) => setMessage(error.message),
   });
 
+  const profileMutation = useMutation({
+    mutationFn: async () => {
+      const payload = { name: profile.name.trim() };
+      if (profile.email.trim() !== (user?.email || "")) payload.email = profile.email.trim();
+      if (passwordForm.password) {
+        if (passwordForm.password !== passwordForm.confirmPassword) throw new Error("New passwords do not match.");
+        payload.currentPassword = passwordForm.currentPassword;
+        payload.password = passwordForm.password;
+      }
+
+      const result = await updateCurrentUser(payload);
+      if (!result.success) throw new Error(result.error?.message || "Could not update profile.");
+
+      if (profile.avatar.trim() !== (user?.avatar || "")) {
+        const avatarResult = await updateAvatar(profile.avatar.trim());
+        if (!avatarResult.success) throw new Error(avatarResult.error?.message || "Could not update avatar.");
+      }
+
+      const preferenceResult = await updateUserPreferences({ ...preferences, profileNote: preferences.profileNote });
+      if (!preferenceResult.success) throw new Error(preferenceResult.error?.message || "Could not save profile note.");
+
+      return result.data;
+    },
+    onSuccess: async (updatedUser) => {
+      setStoredUser(updatedUser);
+      setPasswordForm({ currentPassword: "", password: "", confirmPassword: "" });
+      await refreshSession();
+      queryClient.invalidateQueries({ queryKey: ["user-preferences"] });
+      setMessage("Profile saved.");
+    },
+    onError: (error) => setMessage(error.message),
+  });
+
+  const resendMutation = useMutation({
+    mutationFn: resendVerificationEmail,
+    onSuccess: (result) => {
+      if (!result?.success) {
+        setMessage(result?.error?.message || "Could not send verification email.");
+        return;
+      }
+      setMessage("Verification email sent.");
+    },
+    onError: (error) => setMessage(error.message),
+  });
+
+  const revokeSessionsMutation = useMutation({
+    mutationFn: () => revokeOtherSessions(getRefreshToken()),
+    onSuccess: (result) => {
+      if (!result?.success) {
+        setMessage(result?.error?.message || "Could not revoke sessions.");
+        return;
+      }
+      queryClient.invalidateQueries({ queryKey: ["user-sessions"] });
+      setMessage("Other sessions revoked.");
+    },
+    onError: (error) => setMessage(error.message),
+  });
+
+  async function uploadAvatar(event) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      setMessage("Please choose an image file.");
+      return;
+    }
+    if (file.size > MAX_AVATAR_SIZE) {
+      setMessage("Avatar image must be 2 MB or smaller.");
+      return;
+    }
+
+    setAvatarUploading(true);
+    setMessage("");
+    try {
+      const result = await uploadAvatarImage(file);
+      if (!result?.success) {
+        setMessage(result?.error?.message || "Could not upload avatar.");
+        return;
+      }
+      setStoredUser(result.data);
+      setProfile((current) => ({ ...current, avatar: result.data?.avatar || "" }));
+      await refreshSession();
+      setMessage("Avatar uploaded.");
+    } catch (error) {
+      setMessage(error.message || "Could not upload avatar.");
+    } finally {
+      setAvatarUploading(false);
+    }
+  }
+
   function savePreferences(nextPreferences = preferences) {
-    setPreferences(nextPreferences);
     preferencesMutation.mutate(nextPreferences);
   }
+
+  function exportProfileData() {
+    const payload = {
+      exportedAt: new Date().toISOString(),
+      user: {
+        id: user?.id,
+        name: user?.name,
+        email: user?.email,
+        emailVerified: user?.emailVerified,
+        createdAt: user?.createdAt,
+      },
+      preferences,
+    };
+    const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "zuzuplan-account-data.json";
+    link.click();
+    URL.revokeObjectURL(url);
+    setMessage("Account data exported.");
+  }
+
+  const sessions = sessionsQuery.data?.data || [];
 
   return (
     <div className="space-y-3 px-3 py-3 sm:px-4 lg:px-5">
       <div className="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Settings</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Manage your profile and workspace preferences.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Manage your account, preferences, notifications, and security.</p>
         </div>
         {message ? (
-          <div className="inline-flex items-center gap-2 rounded-md border bg-card px-3 py-2 text-sm">
-            <Check className="h-4 w-4 text-primary" />
-            {message}
+          <div className="flex items-center justify-between gap-3 rounded-md border bg-card px-3 py-2 text-sm">
+            <span className="inline-flex min-w-0 items-center gap-2">
+              <Check className="h-4 w-4 shrink-0 text-[hsl(var(--notion-green))]" />
+              <span className="truncate">{message}</span>
+            </span>
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setMessage("")} aria-label="Dismiss message">
+              <X className="h-4 w-4" />
+            </Button>
           </div>
         ) : null}
       </div>
 
-      <div className="grid gap-4 xl:grid-cols-[minmax(0,1fr)_340px]">
-        <section className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <UserCircle className="h-4 w-4" />
-                Profile
-              </CardTitle>
-              <CardDescription>Update the identity shown across spaces, tasks, and comments.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form
-                className="space-y-3"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  setMessage("");
-                  profileMutation.mutate();
-                }}
-              >
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                  <div className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-lg border bg-secondary text-lg font-semibold">
-                    {profile.avatar ? <img src={profile.avatar} alt="" className="h-full w-full object-cover" /> : initials}
-                  </div>
-                  <div className="grid flex-1 gap-3 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Name</Label>
-                      <Input id="name" value={profile.name} onChange={(event) => setProfile((current) => ({ ...current, name: event.target.value }))} />
+      <div className="space-y-4">
+        <Card>
+          <CardContent className="p-3">
+            <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex min-w-0 items-center gap-3">
+                <UserAvatar user={profile} fallback="ZP" className="h-11 w-11 rounded-md" fallbackClassName="rounded-md bg-secondary text-foreground" />
+                <div className="min-w-0">
+                  <p className="truncate font-medium">{profile.name || "Your profile"}</p>
+                  <p className="truncate text-xs text-muted-foreground">{profile.email}</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                <span className="rounded border px-1.5 py-0.5 text-foreground">{user?.emailVerified ? "Verified email" : "Unverified email"}</span>
+                <span className="rounded border px-1.5 py-0.5 capitalize text-foreground">{preferences.theme} theme</span>
+              </div>
+            </div>
+            <div className="mt-3 overflow-x-auto border-t">
+              <nav className="flex min-w-max gap-1" aria-label="Settings sections">
+                {SECTIONS.map((section) => {
+                  const Icon = section.icon;
+                  const active = activeSection === section.id;
+                  return (
+                    <button
+                      key={section.id}
+                      type="button"
+                      className={cn(
+                        "flex h-10 shrink-0 items-center gap-1.5 border-b-2 px-2.5 text-sm font-medium transition-colors",
+                        active ? "border-primary text-primary" : "border-transparent text-muted-foreground hover:text-foreground"
+                      )}
+                      onClick={() => setActiveSection(section.id)}
+                    >
+                      <Icon className="h-4 w-4" />
+                      {section.label}
+                    </button>
+                  );
+                })}
+              </nav>
+            </div>
+          </CardContent>
+        </Card>
+
+        <main className="space-y-4">
+          {activeSection === "profile" ? (
+            <Card>
+              <CardHeader className="border-b">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <UserCircle className="h-4 w-4" />
+                  Profile
+                </CardTitle>
+                <CardDescription>Update the identity shown across spaces, tasks, docs, and comments.</CardDescription>
+              </CardHeader>
+              <CardContent className="p-4">
+                <form
+                  className="space-y-4"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    setMessage("");
+                    profileMutation.mutate();
+                  }}
+                >
+                  <div className="flex flex-col gap-4 md:flex-row md:items-start">
+                    <UserAvatar user={profile} fallback="ZP" className="h-24 w-24 rounded-md" fallbackClassName="rounded-md bg-secondary text-2xl text-foreground" />
+                    <div className="grid min-w-0 flex-1 gap-4 md:grid-cols-2">
+                      <div className="space-y-2">
+                        <Label htmlFor="name">Name</Label>
+                        <Input id="name" value={profile.name} onChange={(event) => setProfile((current) => ({ ...current, name: event.target.value }))} />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input id="email" type="email" value={profile.email} onChange={(event) => setProfile((current) => ({ ...current, email: event.target.value }))} />
+                        {profile.email !== (user?.email || "") ? <p className="text-xs text-destructive">Changing your email will require verification again.</p> : null}
+                      </div>
+                      <div className="space-y-2 md:col-span-2">
+                        <Label htmlFor="avatar">Avatar</Label>
+                        <div className="grid gap-2 lg:grid-cols-[minmax(0,1fr)_auto_auto]">
+                          <Input id="avatar" value={profile.avatar} onChange={(event) => setProfile((current) => ({ ...current, avatar: event.target.value }))} placeholder="Paste image URL or upload an image" />
+                          <Button type="button" variant="outline" disabled={avatarUploading} asChild>
+                            <label htmlFor="avatar-upload" className="cursor-pointer">
+                              <ImagePlus className="h-4 w-4" />
+                              {avatarUploading ? "Uploading..." : "Upload"}
+                            </label>
+                          </Button>
+                          <Button type="button" variant="outline" disabled={!profile.avatar} onClick={() => setProfile((current) => ({ ...current, avatar: "" }))}>
+                            <Trash2 className="h-4 w-4" />
+                            Remove
+                          </Button>
+                        </div>
+                        <Input id="avatar-upload" type="file" accept="image/*" className="sr-only" onChange={uploadAvatar} />
+                        <p className="text-xs text-muted-foreground">Upload a JPG, PNG, GIF, or WebP image up to 2 MB.</p>
+                      </div>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email">Email</Label>
-                      <Input id="email" type="email" value={profile.email} onChange={(event) => setProfile((current) => ({ ...current, email: event.target.value }))} />
-                    </div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="bio">Profile note</Label>
+                    <Textarea id="bio" className="min-h-24" value={preferences.profileNote} onChange={(event) => setPreferences((current) => ({ ...current, profileNote: event.target.value }))} placeholder="Role, focus area, or working notes" />
+                  </div>
+
+                  <Button disabled={profileMutation.isPending}>
+                    <Save className="h-4 w-4" />
+                    {profileMutation.isPending ? "Saving..." : "Save profile"}
+                  </Button>
+                </form>
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {activeSection === "preferences" ? (
+            <Card>
+              <CardHeader className="border-b">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Monitor className="h-4 w-4" />
+                  Preferences
+                </CardTitle>
+                <CardDescription>Control how ZuzuPlan opens and feels for your account.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 p-4">
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                  <div className="space-y-2">
+                    <Label>Default landing page</Label>
+                    <select className="h-9 w-full rounded-md border bg-background px-3 text-sm" value={preferences.defaultView} onChange={(event) => setPreferences((current) => ({ ...current, defaultView: event.target.value }))}>
+                      <option value="for-you">For You</option>
+                      <option value="spaces">Spaces</option>
+                      <option value="board">Board</option>
+                      <option value="recent">Recent</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Theme</Label>
+                    <select className="h-9 w-full rounded-md border bg-background px-3 text-sm" value={preferences.theme} onChange={(event) => setPreferences((current) => ({ ...current, theme: event.target.value }))}>
+                      <option value="system">System</option>
+                      <option value="light">Light</option>
+                      <option value="dark">Dark</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Layout density</Label>
+                    <select className="h-9 w-full rounded-md border bg-background px-3 text-sm" value={preferences.density} onChange={(event) => setPreferences((current) => ({ ...current, density: event.target.value }))}>
+                      <option value="comfortable">Comfortable</option>
+                      <option value="compact">Compact</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Sidebar default</Label>
+                    <select className="h-9 w-full rounded-md border bg-background px-3 text-sm" value={preferences.sidebarDefault} onChange={(event) => setPreferences((current) => ({ ...current, sidebarDefault: event.target.value }))}>
+                      <option value="expanded">Expanded</option>
+                      <option value="collapsed">Collapsed</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Project selector</Label>
+                    <select className="h-9 w-full rounded-md border bg-background px-3 text-sm" value={preferences.projectSelectorBehavior} onChange={(event) => setPreferences((current) => ({ ...current, projectSelectorBehavior: event.target.value }))}>
+                      <option value="remember">Remember last selected</option>
+                      <option value="first">Use first available</option>
+                    </select>
                   </div>
                 </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="avatar">Avatar URL</Label>
-                  <Input id="avatar" value={profile.avatar} onChange={(event) => setProfile((current) => ({ ...current, avatar: event.target.value }))} placeholder="https://..." />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="bio">Profile note</Label>
-                  <Textarea id="bio" value={preferences.profileNote} onChange={(event) => savePreferences({ ...preferences, profileNote: event.target.value })} placeholder="Role, focus area, or working notes" />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="password">New password</Label>
-                  <Input id="password" type="password" value={password} onChange={(event) => setPassword(event.target.value)} placeholder="Leave blank to keep current password" />
-                </div>
-
-                <Button disabled={profileMutation.isPending}>
+                <ToggleRow title="Remember last opened space" description="Use your last active space when opening boards and project-specific tools." checked={preferences.rememberLastSpace} onChange={(checked) => setPreferences((current) => ({ ...current, rememberLastSpace: checked }))} />
+                <Button disabled={preferencesMutation.isPending} onClick={() => savePreferences()}>
                   <Save className="h-4 w-4" />
-                  {profileMutation.isPending ? "Saving..." : "Save profile"}
+                  {preferencesMutation.isPending ? "Saving..." : "Save preferences"}
                 </Button>
-              </form>
-            </CardContent>
-          </Card>
-        </section>
+              </CardContent>
+            </Card>
+          ) : null}
 
-        <aside className="space-y-4">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <Monitor className="h-4 w-4" />
-                Workspace Defaults
-              </CardTitle>
-              <CardDescription>Saved preferences for how ZuzuPlan opens for you.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="space-y-2">
-                <Label>Default view</Label>
-                <select
-                  className="h-9 w-full rounded-md border bg-background px-3 text-sm"
-                  value={preferences.defaultView}
-                  onChange={(event) => savePreferences({ ...preferences, defaultView: event.target.value })}
-                >
-                  <option value="dashboard">Dashboard</option>
-                  <option value="spaces">Spaces</option>
-                  <option value="board">Board</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label>Theme</Label>
-                <select
-                  className="h-9 w-full rounded-md border bg-background px-3 text-sm"
-                  value={preferences.theme}
-                  onChange={(event) => savePreferences({ ...preferences, theme: event.target.value })}
-                >
-                  <option value="system">System</option>
-                  <option value="light">Light</option>
-                  <option value="dark">Dark</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <Label>Layout density</Label>
-                <select
-                  className="h-9 w-full rounded-md border bg-background px-3 text-sm"
-                  value={preferences.density}
-                  onChange={(event) => savePreferences({ ...preferences, density: event.target.value })}
-                >
-                  <option value="comfortable">Comfortable</option>
-                  <option value="compact">Compact</option>
-                </select>
-              </div>
-              {[
-                ["emailNotifications", "Email notifications"],
-                ["inAppNotifications", "In-app notifications"],
-                ["dueSoonNotifications", "Due-soon reminders"],
-              ].map(([key, label]) => (
-                <label key={key} className="flex items-center justify-between rounded-md border p-3 text-sm">
-                  <span>{label}</span>
-                  <input type="checkbox" checked={Boolean(preferences[key])} onChange={(event) => savePreferences({ ...preferences, [key]: event.target.checked })} />
-                </label>
-              ))}
-            </CardContent>
-          </Card>
+          {activeSection === "notifications" ? (
+            <Card>
+              <CardHeader className="border-b">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Bell className="h-4 w-4" />
+                  Notifications
+                </CardTitle>
+                <CardDescription>These notification preferences are persisted to your ZuzuPlan account.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3 p-4">
+                <ToggleRow title="Email notifications" description="Send important updates to your email inbox." checked={preferences.emailNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, emailNotifications: checked }))} />
+                <ToggleRow title="In-app notifications" description="Show notifications inside ZuzuPlan." checked={preferences.inAppNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, inAppNotifications: checked }))} />
+                <ToggleRow title="Due-soon reminders" description="Remind me before assigned work is due." checked={preferences.dueSoonNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, dueSoonNotifications: checked }))} />
+                <ToggleRow title="Assignments" description="Notify me when work is assigned or reassigned to me." checked={preferences.assignmentNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, assignmentNotifications: checked }))} />
+                <ToggleRow title="Mentions" description="Notify me when someone mentions me." checked={preferences.mentionNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, mentionNotifications: checked }))} />
+                <ToggleRow title="Comments and replies" description="Notify me about replies and comments on work I follow." checked={preferences.commentNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, commentNotifications: checked }))} />
+                <div className="grid gap-4 pt-1 md:grid-cols-3">
+                  <div className="space-y-2">
+                    <Label>Digest</Label>
+                    <select className="h-9 w-full rounded-md border bg-background px-3 text-sm" value={preferences.digestFrequency} onChange={(event) => setPreferences((current) => ({ ...current, digestFrequency: event.target.value }))}>
+                      <option value="off">Off</option>
+                      <option value="daily">Daily</option>
+                      <option value="weekly">Weekly</option>
+                    </select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Quiet hours start</Label>
+                    <Input type="time" value={preferences.quietHoursStart} disabled={!preferences.quietHoursEnabled} onChange={(event) => setPreferences((current) => ({ ...current, quietHoursStart: event.target.value }))} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Quiet hours end</Label>
+                    <Input type="time" value={preferences.quietHoursEnd} disabled={!preferences.quietHoursEnabled} onChange={(event) => setPreferences((current) => ({ ...current, quietHoursEnd: event.target.value }))} />
+                  </div>
+                </div>
+                <ToggleRow title="Quiet hours" description="Pause non-critical notifications during the selected time range." checked={preferences.quietHoursEnabled} onChange={(checked) => setPreferences((current) => ({ ...current, quietHoursEnabled: checked }))} />
+                <Button disabled={preferencesMutation.isPending} onClick={() => savePreferences()}>
+                  <Save className="h-4 w-4" />
+                  {preferencesMutation.isPending ? "Saving..." : "Save notifications"}
+                </Button>
+              </CardContent>
+            </Card>
+          ) : null}
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-base">
-                <ShieldCheck className="h-4 w-4" />
-                Account Security
-              </CardTitle>
-              <CardDescription>Session and verification status.</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-3 text-sm">
-              <div className="flex items-center justify-between rounded-md border p-3">
-                <span>Email verified</span>
-                <span className="rounded-md bg-secondary px-2 py-1 text-xs">{user?.emailVerified ? "Yes" : "No"}</span>
-              </div>
-              <div className="flex items-center justify-between rounded-md border p-3">
-                <span>Password</span>
-                <span className="flex items-center gap-1 rounded-md bg-secondary px-2 py-1 text-xs">
-                  <KeyRound className="h-3 w-3" />
-                  Managed
-                </span>
-              </div>
-            </CardContent>
-          </Card>
-        </aside>
+          {activeSection === "security" ? (
+            <Card>
+              <CardHeader className="border-b">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <ShieldCheck className="h-4 w-4" />
+                  Security
+                </CardTitle>
+                <CardDescription>Protect your account and verification status.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 p-4">
+                <div className="grid gap-4 md:grid-cols-3">
+                  <div className="space-y-2">
+                    <Label htmlFor="current-password">Current password</Label>
+                    <Input id="current-password" type="password" value={passwordForm.currentPassword} onChange={(event) => setPasswordForm((current) => ({ ...current, currentPassword: event.target.value }))} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="new-password">New password</Label>
+                    <Input id="new-password" type="password" value={passwordForm.password} onChange={(event) => setPasswordForm((current) => ({ ...current, password: event.target.value }))} />
+                    <p className={cn("text-xs", strength.tone)}>Strength: {strength.label}</p>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm-password">Confirm new password</Label>
+                    <Input id="confirm-password" type="password" value={passwordForm.confirmPassword} onChange={(event) => setPasswordForm((current) => ({ ...current, confirmPassword: event.target.value }))} />
+                  </div>
+                </div>
+                <div className="grid gap-3 border-t pt-4 sm:grid-cols-3">
+                  <div className="flex items-center justify-between rounded-md border p-3 text-sm">
+                    <span>Email verified</span>
+                    <span className="rounded-md bg-secondary px-2 py-1 text-xs">{user?.emailVerified ? "Yes" : "No"}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-md border p-3 text-sm">
+                    <span>Password changed</span>
+                    <span className="text-xs text-muted-foreground">{formatDate(user?.passwordChangedAt)}</span>
+                  </div>
+                  <div className="flex items-center justify-between rounded-md border p-3 text-sm">
+                    <span>Two-factor auth</span>
+                    <span className="rounded-md bg-secondary px-2 py-1 text-xs">Planned</span>
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button disabled={profileMutation.isPending} onClick={() => profileMutation.mutate()}>
+                    <KeyRound className="h-4 w-4" />
+                    {profileMutation.isPending ? "Saving..." : "Change password"}
+                  </Button>
+                  <Button variant="outline" disabled={user?.emailVerified || resendMutation.isPending} onClick={() => resendMutation.mutate()}>
+                    <Lock className="h-4 w-4" />
+                    {resendMutation.isPending ? "Sending..." : "Resend verification"}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {activeSection === "sessions" ? (
+            <Card>
+              <CardHeader className="border-b">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <Laptop className="h-4 w-4" />
+                  Sessions
+                </CardTitle>
+                <CardDescription>Review active refresh-token sessions and revoke access from other devices.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3 p-4">
+                {sessions.map((session, index) => (
+                  <div key={session.id} className="flex flex-col gap-2 rounded-md border p-3 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p className="text-sm font-medium">{index === 0 ? "Recent session" : "Active session"}</p>
+                      <p className="mt-1 text-xs text-muted-foreground">Created {formatDate(session.createdAt)} - expires {formatDate(session.expiresAt)}</p>
+                    </div>
+                    <span className="w-fit rounded-md bg-secondary px-2 py-1 text-xs text-muted-foreground">Refresh token</span>
+                  </div>
+                ))}
+                {!sessionsQuery.isLoading && sessions.length === 0 ? <p className="text-sm text-muted-foreground">No active sessions found.</p> : null}
+                <div className="flex flex-wrap gap-2 border-t pt-4">
+                  <Button variant="outline" disabled={revokeSessionsMutation.isPending} onClick={() => revokeSessionsMutation.mutate()}>
+                    <ShieldCheck className="h-4 w-4" />
+                    {revokeSessionsMutation.isPending ? "Revoking..." : "Revoke other sessions"}
+                  </Button>
+                  <Button variant="outline" onClick={logout}>
+                    <X className="h-4 w-4" />
+                    Logout from this device
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
+
+          {activeSection === "danger" ? (
+            <Card className="border-destructive/30">
+              <CardHeader className="border-b">
+                <CardTitle className="flex items-center gap-2 text-base text-destructive">
+                  <Trash2 className="h-4 w-4" />
+                  Danger Zone
+                </CardTitle>
+                <CardDescription>Export account data now. Full account deletion requires ownership transfer support.</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-3 p-4">
+                <div className="flex flex-col gap-3 rounded-md border p-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="font-medium">Export account data</p>
+                    <p className="mt-1 text-sm text-muted-foreground">Download your profile and settings as a JSON archive.</p>
+                  </div>
+                  <Button variant="outline" onClick={exportProfileData}>
+                    <Download className="h-4 w-4" />
+                    Export
+                  </Button>
+                </div>
+                <div className="flex flex-col gap-3 rounded-md border border-destructive/30 p-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <p className="font-medium text-destructive">Delete account</p>
+                    <p className="mt-1 text-sm text-muted-foreground">Planned after project ownership transfer is available.</p>
+                  </div>
+                  <Button variant="destructive" disabled>
+                    <Database className="h-4 w-4" />
+                    Planned
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
+        </main>
       </div>
     </div>
   );

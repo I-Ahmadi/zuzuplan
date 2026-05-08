@@ -1,30 +1,29 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Check, ChevronDown, CircleHelp, FolderKanban, Moon, Search, Settings, Sun } from "lucide-react";
+import { Check, ChevronDown, FolderKanban, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useAuth } from "@/contexts/auth-context";
+import { PAGE_SIZE } from "@/components/ui/pagination";
 import { useGlobalSearch } from "@/contexts/search-context";
-import { useTheme } from "@/contexts/theme-context";
 import { getProject, getProjects } from "@/lib/project-api";
+import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
 import { cn } from "@/lib/utils";
 
-const CURRENT_PROJECT_KEY = "zuzuplan.currentProjectId";
+const CURRENT_PROJECT_KEY = STORAGE_KEYS.currentProjectId;
+const CURRENT_PROJECT_CHANGE_EVENT = "current-project-change";
 
 export default function Header() {
-  const { user } = useAuth();
   const { openSearch } = useGlobalSearch();
-  const { theme, toggleTheme } = useTheme();
   const { pathname, search } = useLocation();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState(() => new URLSearchParams(search).get("q") || "");
   const dropdownRef = useRef(null);
   const projectId = pathname.match(/^\/(?:projects|spaces)\/([^/]+)/)?.[1];
-  const [storedProjectId, setStoredProjectId] = useState(() => localStorage.getItem(CURRENT_PROJECT_KEY) || "");
+  const [storedProjectId, setStoredProjectId] = useState(() => migrateStorageKey(LEGACY_STORAGE_KEYS.currentProjectId, CURRENT_PROJECT_KEY) || "");
   const projectsQuery = useQuery({
     queryKey: ["projects", "header-switcher"],
-    queryFn: () => getProjects({ limit: 50 }),
+    queryFn: () => getProjects({ limit: PAGE_SIZE }),
     staleTime: 60 * 1000,
   });
   const projects = useMemo(() => projectsQuery.data?.data || [], [projectsQuery.data]);
@@ -36,12 +35,6 @@ export default function Header() {
     staleTime: 60 * 1000,
   });
   const currentProject = projectQuery.data?.data || projects.find((project) => project.id === currentProjectId);
-  const initials = (user?.name || user?.email || "IA")
-    .split(" ")
-    .map((part) => part[0])
-    .join("")
-    .slice(0, 2)
-    .toUpperCase();
 
   useEffect(() => {
     if (!projectId) return;
@@ -67,8 +60,11 @@ export default function Header() {
   function switchProject(nextProjectId) {
     localStorage.setItem(CURRENT_PROJECT_KEY, nextProjectId);
     setStoredProjectId(nextProjectId);
+    window.dispatchEvent(new CustomEvent(CURRENT_PROJECT_CHANGE_EVENT, { detail: nextProjectId }));
     setOpen(false);
-    navigate(`/spaces/${nextProjectId}/tasks`);
+    if (projectId) {
+      navigate(`${pathname.replace(projectId, nextProjectId)}${search}`);
+    }
   }
 
   function submitSearch(event) {
@@ -89,19 +85,19 @@ export default function Header() {
   }, [openSearch]);
 
   return (
-    <header className="sticky top-0 z-30 h-12 border-b bg-[hsl(var(--topbar))]">
+    <header className="sticky top-0 z-30 h-14 border-b bg-topbar">
       <div className="grid h-full grid-cols-[auto_minmax(0,1fr)] items-center gap-3 px-3 lg:grid-cols-[minmax(260px,560px)_minmax(0,1fr)_auto]">
         <form className="relative min-w-0 justify-self-start lg:w-full" onSubmit={submitSearch}>
           <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input
-            className="hidden h-8 w-full rounded-md border bg-background pl-8 pr-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring lg:block"
+            className="hidden h-9 w-full rounded-md border bg-background pl-8 pr-3 text-sm outline-none transition-colors placeholder:text-muted-foreground focus:border-ring focus:ring-1 focus:ring-ring lg:block"
             value={searchValue}
             onChange={(event) => setSearchValue(event.target.value)}
             onFocus={() => openSearch(searchValue)}
             placeholder="Search spaces, tasks, docs..."
             type="search"
           />
-          <Button type="button" variant="ghost" size="icon" className="h-8 w-8 lg:hidden" aria-label="Search" onClick={() => openSearch()}>
+          <Button type="button" variant="ghost" size="icon" className="h-9 w-9 lg:hidden" aria-label="Search" onClick={() => openSearch()}>
             <Search className="h-4 w-4" />
           </Button>
         </form>
@@ -114,7 +110,7 @@ export default function Header() {
             <>
               <button
                 type="button"
-                className="flex h-8 max-w-[min(34vw,260px)] items-center gap-2 rounded-md px-2 text-left transition-colors hover:bg-accent"
+                className="flex h-9 max-w-[min(34vw,260px)] items-center gap-2 rounded-md px-2 text-left transition-colors hover:bg-accent"
                 onClick={() => setOpen((current) => !current)}
                 aria-expanded={open}
                 aria-haspopup="menu"
@@ -169,20 +165,6 @@ export default function Header() {
               ) : null}
             </>
           ) : null}
-          </div>
-          <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-foreground" aria-label="Toggle theme" onClick={toggleTheme}>
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Help">
-            <CircleHelp className="h-4 w-4" />
-          </Button>
-          <Button asChild variant="ghost" size="icon" className="h-8 w-8" aria-label="Administration">
-            <Link to="/settting">
-              <Settings className="h-4 w-4" />
-            </Link>
-          </Button>
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-            {initials}
           </div>
         </div>
       </div>

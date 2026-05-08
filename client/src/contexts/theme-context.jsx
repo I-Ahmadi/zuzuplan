@@ -1,32 +1,42 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
 
 const ThemeContext = createContext(null);
-const STORAGE_KEY = "zuzuplan-theme";
+const STORAGE_KEY = STORAGE_KEYS.theme;
 
-function getInitialTheme() {
+function resolveThemePreference(preference) {
+  if (preference === "dark" || preference === "light") return preference;
   if (typeof window === "undefined") return "light";
-  const stored = window.localStorage.getItem(STORAGE_KEY);
-  if (stored === "light" || stored === "dark") return stored;
   return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
+function getInitialPreference() {
+  if (typeof window === "undefined") return "light";
+  migrateStorageKey(LEGACY_STORAGE_KEYS.theme, STORAGE_KEY);
+  const stored = window.localStorage.getItem(STORAGE_KEY);
+  if (stored === "light" || stored === "dark" || stored === "system") return stored;
+  return "light";
+}
+
 export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(getInitialTheme);
+  const [theme, setTheme] = useState(getInitialPreference);
+  const resolvedTheme = resolveThemePreference(theme);
 
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.toggle("dark", theme === "dark");
+    root.classList.toggle("dark", resolvedTheme === "dark");
     root.dataset.theme = theme;
     window.localStorage.setItem(STORAGE_KEY, theme);
-  }, [theme]);
+  }, [resolvedTheme, theme]);
 
   const value = useMemo(
     () => ({
       theme,
+      resolvedTheme,
       setTheme,
-      toggleTheme: () => setTheme((current) => (current === "dark" ? "light" : "dark")),
+      toggleTheme: () => setTheme((current) => (resolveThemePreference(current) === "dark" ? "light" : "dark")),
     }),
-    [theme]
+    [resolvedTheme, theme]
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;

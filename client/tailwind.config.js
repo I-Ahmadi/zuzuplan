@@ -44,6 +44,27 @@ module.exports = {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
         ring: 'hsl(var(--ring))',
+        sidebar: {
+          DEFAULT: 'hsl(var(--sidebar))',
+          foreground: 'hsl(var(--sidebar-foreground))',
+          hover: 'hsl(var(--sidebar-hover))',
+          active: 'hsl(var(--sidebar-active))'
+        },
+        topbar: 'hsl(var(--topbar))',
+        surface: {
+          subtle: 'hsl(var(--surface-subtle))',
+          muted: 'hsl(var(--surface-muted))',
+          raised: 'hsl(var(--surface-raised))'
+        },
+        board: {
+          column: 'hsl(var(--board-column))'
+        },
+        purple: {
+          DEFAULT: 'hsl(var(--purple))',
+          soft: 'hsl(var(--purple-soft))'
+        },
+        success: 'hsl(var(--success))',
+        warning: 'hsl(var(--warning))',
         chart: {
           '1': 'hsl(var(--chart-1))',
           '2': 'hsl(var(--chart-2))',

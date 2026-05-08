@@ -4,12 +4,14 @@ import { useNavigate } from "react-router-dom";
 import { FileText, FolderKanban, ListTodo, MessageSquare, Search, UserCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { globalSearch } from "@/lib/search-api";
+import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
 import { cn } from "@/lib/utils";
 
-const RECENT_SEARCHES_KEY = "zuzuplan.recentSearches";
+const RECENT_SEARCHES_KEY = STORAGE_KEYS.recentSearches;
 
 function readRecentSearches() {
   try {
+    migrateStorageKey(LEGACY_STORAGE_KEYS.recentSearches, RECENT_SEARCHES_KEY);
     return JSON.parse(localStorage.getItem(RECENT_SEARCHES_KEY) || "[]");
   } catch {
     return [];

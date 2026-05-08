@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
+  CardDescription,
 } from "@/components/ui/card";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/auth-context";
@@ -48,6 +49,7 @@ export default function Login() {
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Login</CardTitle>
+          <CardDescription>Access your ZuzuPlan workspace and continue managing your work.</CardDescription>
         </CardHeader>
 
         <CardContent>

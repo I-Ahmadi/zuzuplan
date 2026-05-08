@@ -26,7 +26,7 @@ async function getSprintInProject(projectId, sprintId) {
     include: {
       tasks: {
         include: {
-          assignee: { select: { id: true, name: true, email: true } },
+          assignee: { select: { id: true, name: true, email: true, avatar: true } },
           _count: { select: { comments: true, attachments: true } },
         },
         orderBy: [{ sprintOrder: 'asc' }, { updatedAt: 'desc' }],

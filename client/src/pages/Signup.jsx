@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
   CardFooter,
+  CardDescription,
 } from "@/components/ui/card";
 import { useMutation } from "@tanstack/react-query";
 import { useAuth } from "@/contexts/auth-context";
@@ -48,6 +49,7 @@ export default function Signup() {
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle>Sign Up</CardTitle>
+          <CardDescription>Create an account to organize spaces, tasks, teams, and delivery plans.</CardDescription>
         </CardHeader>
 
         <CardContent>

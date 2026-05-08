@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MailPlus, Shield, Trash2, UserMinus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { UserAvatar } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { getClientPagination, PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
 import {
   createProjectInvite,
   getProject,
@@ -14,10 +16,12 @@ import {
   revokeProjectInvite,
   updateProjectMember,
 } from "@/lib/project-api";
+import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
 import { useAuth } from "@/contexts/auth-context";
 
 const ROLES = ["Admin", "Manager", "Employee", "Viewer"];
-const CURRENT_PROJECT_KEY = "zuzuplan.currentProjectId";
+const CURRENT_PROJECT_KEY = STORAGE_KEYS.currentProjectId;
+const CURRENT_PROJECT_CHANGE_EVENT = "current-project-change";
 
 function resultMessage(result, fallback) {
   return result?.error?.message || fallback;
@@ -31,12 +35,14 @@ function formatDate(value) {
 export default function TeamMembers() {
   const queryClient = useQueryClient();
   const { user } = useAuth();
-  const [projectId, setProjectId] = useState(() => localStorage.getItem(CURRENT_PROJECT_KEY) || "");
+  const [projectId, setProjectId] = useState(() => migrateStorageKey(LEGACY_STORAGE_KEYS.currentProjectId, CURRENT_PROJECT_KEY) || "");
   const [inviteEmail, setInviteEmail] = useState("");
   const [inviteRole, setInviteRole] = useState("Employee");
   const [message, setMessage] = useState("");
+  const [membersPage, setMembersPage] = useState(1);
+  const [invitesPage, setInvitesPage] = useState(1);
 
-  const projectsQuery = useQuery({ queryKey: ["projects"], queryFn: () => getProjects() });
+  const projectsQuery = useQuery({ queryKey: ["projects"], queryFn: () => getProjects({ limit: PAGE_SIZE }) });
   const projects = projectsQuery.data?.data || [];
 
   useEffect(() => {
@@ -45,6 +51,15 @@ export default function TeamMembers() {
       setProjectId(projects[0].id);
     }
   }, [projectId, projects]);
+
+  useEffect(() => {
+    function handleProjectChange(event) {
+      if (event.detail) setProjectId(event.detail);
+    }
+
+    window.addEventListener(CURRENT_PROJECT_CHANGE_EVENT, handleProjectChange);
+    return () => window.removeEventListener(CURRENT_PROJECT_CHANGE_EVENT, handleProjectChange);
+  }, []);
 
   const projectQuery = useQuery({
     queryKey: ["project", projectId],
@@ -129,6 +144,13 @@ export default function TeamMembers() {
   const invites = invitesQuery.data?.data || [];
   const canManage = project?.currentUserPermissions?.includes("members.manage");
   const pendingInvites = invites.filter((invite) => invite.status === "PENDING");
+  const { items: pagedMembers, pagination: membersPagination } = getClientPagination(members, membersPage, PAGE_SIZE);
+  const { items: pagedInvites, pagination: invitesPagination } = getClientPagination(pendingInvites, invitesPage, PAGE_SIZE);
+
+  useEffect(() => {
+    setMembersPage(1);
+    setInvitesPage(1);
+  }, [projectId]);
 
   function submitInvite(event) {
     event.preventDefault();
@@ -172,14 +194,17 @@ export default function TeamMembers() {
               <CardDescription>{project?.name || "Select a space"} access list.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {members.map((member) => {
+              {pagedMembers.map((member) => {
                 const isOwner = project?.ownerId === member.userId;
                 const isCurrentUser = user?.id === member.userId;
                 return (
                   <div key={member.id} className="grid gap-3 rounded-md border p-3 sm:grid-cols-[minmax(0,1fr)_160px_auto] sm:items-center">
-                    <div className="min-w-0">
-                      <p className="truncate text-sm font-medium">{member.user?.name || member.user?.email}</p>
-                      <p className="truncate text-xs text-muted-foreground">{member.user?.email}</p>
+                    <div className="flex min-w-0 items-center gap-3">
+                      <UserAvatar user={member.user} className="h-9 w-9" />
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-medium">{member.user?.name || member.user?.email}</p>
+                        <p className="truncate text-xs text-muted-foreground">{member.user?.email}</p>
+                      </div>
                     </div>
                     <select
                       className="h-9 rounded-md border bg-background px-2 text-sm"
@@ -202,6 +227,7 @@ export default function TeamMembers() {
                   </div>
                 );
               })}
+              <PaginationControls pagination={membersPagination} onPageChange={setMembersPage} className="border-0 px-0" />
               {!membersQuery.isLoading && members.length === 0 ? <p className="text-sm text-muted-foreground">No members found.</p> : null}
             </CardContent>
           </Card>
@@ -212,7 +238,7 @@ export default function TeamMembers() {
               <CardDescription>Invitations expire after seven days.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {pendingInvites.map((invite) => (
+              {pagedInvites.map((invite) => (
                 <div key={invite.id} className="grid gap-3 rounded-md border p-3 sm:grid-cols-[minmax(0,1fr)_120px_auto] sm:items-center">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">{invite.email}</p>
@@ -234,6 +260,7 @@ export default function TeamMembers() {
                   </Button>
                 </div>
               ))}
+              <PaginationControls pagination={invitesPagination} onPageChange={setInvitesPage} className="border-0 px-0" />
               {!invitesQuery.isLoading && pendingInvites.length === 0 ? <p className="text-sm text-muted-foreground">No pending invites.</p> : null}
             </CardContent>
           </Card>
