@@ -225,8 +225,15 @@ exports.Prisma.TaskScalarFieldEnum = {
   assigneeId: 'assigneeId',
   createdById: 'createdById',
   sprintId: 'sprintId',
+  type: 'type',
   priority: 'priority',
   status: 'status',
+  estimate: 'estimate',
+  branchName: 'branchName',
+  blockedReason: 'blockedReason',
+  readyAt: 'readyAt',
+  mergedAt: 'mergedAt',
+  deployedAt: 'deployedAt',
   backlogOrder: 'backlogOrder',
   sprintOrder: 'sprintOrder',
   dueDate: 'dueDate',
@@ -284,9 +291,115 @@ exports.Prisma.AttachmentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.ActivityEventScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  taskId: 'taskId',
+  actorId: 'actorId',
+  targetUserId: 'targetUserId',
+  type: 'type',
+  entityType: 'entityType',
+  entityId: 'entityId',
+  title: 'title',
+  description: 'description',
+  severity: 'severity',
+  metadata: 'metadata',
+  createdAt: 'createdAt'
+};
+
+exports.Prisma.InboxItemScalarFieldEnum = {
+  id: 'id',
+  userId: 'userId',
+  projectId: 'projectId',
+  taskId: 'taskId',
+  activityEventId: 'activityEventId',
+  type: 'type',
+  title: 'title',
+  description: 'description',
+  priority: 'priority',
+  status: 'status',
+  actionUrl: 'actionUrl',
+  source: 'source',
+  readAt: 'readAt',
+  archivedAt: 'archivedAt',
+  snoozedUntil: 'snoozedUntil',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.IntegrationScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  provider: 'provider',
+  name: 'name',
+  repository: 'repository',
+  externalId: 'externalId',
+  status: 'status',
+  config: 'config',
+  createdById: 'createdById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.PullRequestScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  taskId: 'taskId',
+  integrationId: 'integrationId',
+  provider: 'provider',
+  repository: 'repository',
+  number: 'number',
+  title: 'title',
+  url: 'url',
+  branch: 'branch',
+  targetBranch: 'targetBranch',
+  status: 'status',
+  reviewState: 'reviewState',
+  ciStatus: 'ciStatus',
+  author: 'author',
+  openedAt: 'openedAt',
+  mergedAt: 'mergedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.DeploymentScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  taskId: 'taskId',
+  pullRequestId: 'pullRequestId',
+  integrationId: 'integrationId',
+  environment: 'environment',
+  status: 'status',
+  version: 'version',
+  url: 'url',
+  deployedBy: 'deployedBy',
+  deployedAt: 'deployedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
+exports.Prisma.ReleaseScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  title: 'title',
+  version: 'version',
+  status: 'status',
+  summary: 'summary',
+  createdById: 'createdById',
+  shippedAt: 'shippedAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullableJsonNullValueInput = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull
 };
 
 exports.Prisma.QueryMode = {
@@ -297,6 +410,12 @@ exports.Prisma.QueryMode = {
 exports.Prisma.NullsOrder = {
   first: 'first',
   last: 'last'
+};
+
+exports.Prisma.JsonNullValueFilter = {
+  DbNull: Prisma.DbNull,
+  JsonNull: Prisma.JsonNull,
+  AnyNull: Prisma.AnyNull
 };
 
 
@@ -313,7 +432,13 @@ exports.Prisma.ModelName = {
   Sprint: 'Sprint',
   Subtask: 'Subtask',
   Comment: 'Comment',
-  Attachment: 'Attachment'
+  Attachment: 'Attachment',
+  ActivityEvent: 'ActivityEvent',
+  InboxItem: 'InboxItem',
+  Integration: 'Integration',
+  PullRequest: 'PullRequest',
+  Deployment: 'Deployment',
+  Release: 'Release'
 };
 
 /**

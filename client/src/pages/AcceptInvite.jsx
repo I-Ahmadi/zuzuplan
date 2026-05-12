@@ -21,7 +21,7 @@ export default function AcceptInvite() {
     mutationFn: () => acceptProjectInvite(token),
     onSuccess: (result) => {
       if (result?.success && result?.data?.id) {
-        navigate(`/spaces/${result.data.id}/tasks`);
+        navigate(`/spaces/${result.data.id}/issues`);
       }
     },
   });

@@ -42,7 +42,7 @@ export default function TaskForm({ open, onOpenChange, onCreate }) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create Task</DialogTitle>
+          <DialogTitle>Create Issue</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="mt-3 space-y-3">
@@ -103,7 +103,7 @@ export default function TaskForm({ open, onOpenChange, onCreate }) {
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancel
             </Button>
-            <Button type="submit">Create Task</Button>
+            <Button type="submit">Create Issue</Button>
           </DialogFooter>
         </form>
       </DialogContent>

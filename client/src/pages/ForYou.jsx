@@ -24,6 +24,7 @@ import { UserAvatar } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/auth-context";
 import { getProjects } from "@/lib/project-api";
 import { getProjectTasks } from "@/lib/task-api";
+import { ISSUE_STATUS_LABELS } from "@/lib/issue-constants";
 import { cn } from "@/lib/utils";
 
 const DAY_MS = 1000 * 60 * 60 * 24;
@@ -34,12 +35,7 @@ const PRIORITY_TONES = {
   MEDIUM: "border-orange-500/30 bg-orange-500/10 text-orange-500",
   LOW: "border-muted bg-muted/40 text-muted-foreground",
 };
-const STATUS_LABELS = {
-  TODO: "To Do",
-  IN_PROGRESS: "In Progress",
-  IN_REVIEW: "In Review",
-  DONE: "Done",
-};
+const STATUS_LABELS = ISSUE_STATUS_LABELS;
 
 function relativeDate(value) {
   if (!value) return "No recent activity";
@@ -65,7 +61,7 @@ function dueMeta(task) {
 }
 
 function taskPath(task) {
-  return `/spaces/${task.space?.id || task.projectId}/tasks/${task.id}`;
+  return `/spaces/${task.space?.id || task.projectId}/issues/${task.id}`;
 }
 
 function issueKey(task) {
@@ -199,11 +195,11 @@ function SpaceRow({ space, tasks }) {
   const progress = total ? Math.round((done / total) * 100) : 0;
 
   return (
-    <Link to={`/spaces/${space.id}/tasks`} className="block rounded-md border p-3 text-sm transition-colors hover:border-primary/60 hover:bg-accent/45">
+    <Link to={`/spaces/${space.id}/issues`} className="block rounded-md border p-3 text-sm transition-colors hover:border-primary/60 hover:bg-accent/45">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate font-semibold">{space.name}</p>
-          <p className="mt-1 text-xs text-muted-foreground">{total} work items · {done} done</p>
+          <p className="mt-1 text-xs text-muted-foreground">{total} issues · {done} done</p>
         </div>
         <span className="rounded border bg-muted/35 px-2 py-1 text-xs font-medium">{space.key}</span>
       </div>
@@ -229,7 +225,7 @@ export default function ForYou() {
   const tasks = taskQueries.flatMap((query, index) => (query.data?.data || []).map((task) => ({ ...task, space: spaces[index] })));
   const loading = spacesQuery.isLoading || taskQueries.some((query) => query.isLoading);
   const primarySpace = spaces[0];
-  const primarySpaceTasksPath = primarySpace ? `/spaces/${primarySpace.id}/tasks` : "/spaces";
+  const primarySpaceTasksPath = primarySpace ? `/spaces/${primarySpace.id}/issues` : "/spaces";
 
   const dashboard = useMemo(() => {
     const activeTasks = tasks.filter((task) => task.status !== "DONE");
@@ -276,7 +272,7 @@ export default function ForYou() {
           <Button asChild size="sm">
             <Link to={`${primarySpaceTasksPath}?view=list`}>
               <Plus className="h-4 w-4" />
-              Create task
+              Create issue
             </Link>
           </Button>
           <Button asChild variant="outline" size="sm">
@@ -315,7 +311,7 @@ export default function ForYou() {
             icon={Sparkles}
             action={
               <Button asChild variant="outline" size="sm">
-                <Link to={primarySpaceTasksPath}>View all work</Link>
+                <Link to={primarySpaceTasksPath}>View all issues</Link>
               </Button>
             }
           >
@@ -326,7 +322,7 @@ export default function ForYou() {
               {!dashboard.attention.length ? (
                 <EmptyState
                   title={loading ? "Loading attention points..." : "No urgent work"}
-                  description={loading ? "Gathering work across your spaces." : "You are clear for now. New urgent tasks and due-today items will show here."}
+                  description={loading ? "Gathering work across your spaces." : "You are clear for now. New urgent issues and due-today items will show here."}
                 />
               ) : null}
             </div>
@@ -346,15 +342,15 @@ export default function ForYou() {
               </div>
               <div className="space-y-2">
                 <p className="text-xs font-semibold uppercase text-muted-foreground">Following</p>
-                <EmptyState title="Watching planned" description="Followed tasks and saved views will appear here once enabled." />
+                <EmptyState title="Watching planned" description="Followed issues and saved views will appear here once enabled." />
               </div>
             </div>
           </SectionCard>
 
-          <SectionCard title="Recent Activity" description="Latest task movement and updates from your accessible spaces." icon={CheckCircle2}>
+          <SectionCard title="Recent Activity" description="Latest issue movement and updates from your accessible spaces." icon={CheckCircle2}>
             <div className="space-y-2">
               {dashboard.recent.map((task) => <ActivityItem key={task.id} task={task} />)}
-              {!dashboard.recent.length ? <EmptyState title="Recent updates will appear here" description="Task changes, comments, and space movement will populate this feed." /> : null}
+              {!dashboard.recent.length ? <EmptyState title="Recent updates will appear here" description="Issue changes, comments, and space movement will populate this feed." /> : null}
             </div>
           </SectionCard>
         </main>
@@ -363,7 +359,7 @@ export default function ForYou() {
           <SectionCard title="Upcoming" description="Deadlines and near-term planning signals." icon={CalendarClock}>
             <div className="space-y-2">
               {dashboard.dueSoon.slice(0, 4).map((task) => <TaskRow key={task.id} task={task} compact />)}
-              {!dashboard.dueSoon.length ? <EmptyState title="No due-soon tasks" description="Tasks due in the next 7 days will appear here." /> : null}
+              {!dashboard.dueSoon.length ? <EmptyState title="No due-soon issues" description="Issues due in the next 7 days will appear here." /> : null}
               <div className="rounded-md border bg-muted/20 p-3 text-sm">
                 <div className="flex items-center gap-2 font-medium">
                   <Rocket className="h-4 w-4 text-primary" />

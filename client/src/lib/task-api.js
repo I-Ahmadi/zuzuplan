@@ -9,42 +9,42 @@ export async function getProjectTasks(projectId, params = {}) {
   });
 
   const query = searchParams.toString();
-  return api(`/projects/${projectId}/tasks${query ? `?${query}` : ""}`);
+  return api(`/projects/${projectId}/issues${query ? `?${query}` : ""}`);
 }
 
 export async function createTask(projectId, payload) {
-  return api(`/projects/${projectId}/tasks`, {
+  return api(`/projects/${projectId}/issues`, {
     method: "POST",
     body: JSON.stringify(payload),
   });
 }
 
 export async function getTask(projectId, taskId) {
-  return api(`/projects/${projectId}/tasks/${taskId}`);
+  return api(`/projects/${projectId}/issues/${taskId}`);
 }
 
 export async function updateTask(projectId, taskId, payload) {
-  return api(`/projects/${projectId}/tasks/${taskId}`, {
+  return api(`/projects/${projectId}/issues/${taskId}`, {
     method: "PUT",
     body: JSON.stringify(payload),
   });
 }
 
 export async function deleteTask(projectId, taskId) {
-  return api(`/projects/${projectId}/tasks/${taskId}`, {
+  return api(`/projects/${projectId}/issues/${taskId}`, {
     method: "DELETE",
   });
 }
 
 export async function addTaskLink(projectId, taskId, payload) {
-  return api(`/projects/${projectId}/tasks/${taskId}/links`, {
+  return api(`/projects/${projectId}/issues/${taskId}/links`, {
     method: "POST",
     body: JSON.stringify(payload),
   });
 }
 
 export async function deleteTaskLink(projectId, taskId, linkId) {
-  return api(`/projects/${projectId}/tasks/${taskId}/links/${linkId}`, {
+  return api(`/projects/${projectId}/issues/${taskId}/links/${linkId}`, {
     method: "DELETE",
   });
 }

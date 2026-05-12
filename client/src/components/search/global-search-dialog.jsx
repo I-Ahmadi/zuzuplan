@@ -1,13 +1,22 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { FileText, FolderKanban, ListTodo, MessageSquare, Search, UserCircle, X } from "lucide-react";
+import { Boxes, FileText, FolderKanban, Github, GitPullRequest, Inbox, ListTodo, MessageSquare, Rocket, Search, Ship, UserCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { globalSearch } from "@/lib/search-api";
 import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
 import { cn } from "@/lib/utils";
 
 const RECENT_SEARCHES_KEY = STORAGE_KEYS.recentSearches;
+const COMMANDS = [
+  { id: "new-issue", title: "Create issue", subtitle: "Open the issue list for quick creation", to: "/issues?view=list", icon: ListTodo },
+  { id: "inbox", title: "Open inbox", subtitle: "Review assignments, comments, blockers, and reminders", to: "/inbox", icon: Inbox },
+  { id: "pull-requests", title: "Open pull requests", subtitle: "Review PRs, CI status, and merge readiness in GitHub", to: "/github?tab=pull-requests", icon: GitPullRequest },
+  { id: "github", title: "Open GitHub", subtitle: "Connect repositories, sync issues, and configure webhooks", to: "/github", icon: Github },
+  { id: "deployments", title: "Open deployments", subtitle: "Inspect staging, preview, and production deploys in GitHub", to: "/github?tab=deployments", icon: Rocket },
+  { id: "releases", title: "Open releases", subtitle: "Plan shipped versions and release notes in GitHub", to: "/github?tab=releases", icon: Ship },
+  { id: "integrations", title: "Open integrations", subtitle: "Connect non-GitHub engineering systems", to: "/integrations", icon: Boxes },
+];
 
 function readRecentSearches() {
   try {
@@ -37,14 +46,19 @@ function useDebouncedValue(value, delay = 220) {
 }
 
 function resultPath(result) {
+  if (result.type === "command") return result.item.to;
   if (result.type === "space") return `/spaces/${result.item.id}`;
-  if (result.type === "task") return `/spaces/${result.item.projectId}/tasks/${result.item.id}`;
-  if (result.type === "doc") return `/spaces/${result.item.projectId}/tasks?view=docs`;
-  if (result.type === "comment") return `/spaces/${result.item.task.projectId}/tasks/${result.item.taskId}`;
+  if (result.type === "task") return `/spaces/${result.item.projectId}/issues/${result.item.id}`;
+  if (result.type === "doc") return `/spaces/${result.item.projectId}/issues?view=docs`;
+  if (result.type === "comment") return `/spaces/${result.item.task.projectId}/issues/${result.item.taskId}`;
   return "/team-members";
 }
 
-function ResultIcon({ type }) {
+function ResultIcon({ result }) {
+  if (result.type === "command") {
+    const Icon = result.item.icon || Search;
+    return <Icon className="h-4 w-4" />;
+  }
   const icons = {
     space: FolderKanban,
     task: ListTodo,
@@ -52,16 +66,17 @@ function ResultIcon({ type }) {
     comment: MessageSquare,
     member: UserCircle,
   };
-  const Icon = icons[type] || Search;
+  const Icon = icons[result.type] || Search;
   return <Icon className="h-4 w-4" />;
 }
 
 function resultSubtitle(result) {
   const item = result.item;
+  if (result.type === "command") return item.subtitle;
   if (result.type === "space") return `${item.key || "SP"} - ${item.status || "active"}`;
   if (result.type === "task") return `${item.project?.key || "SP"} - ${item.status}`;
   if (result.type === "doc") return item.project?.name || "Document";
-  if (result.type === "comment") return `${item.user?.name || item.user?.email || "Comment"} on ${item.task?.title || "task"}`;
+  if (result.type === "comment") return `${item.user?.name || item.user?.email || "Comment"} on ${item.task?.title || "issue"}`;
   return `${item.role || "Member"} - ${item.project?.name || "Team"}`;
 }
 
@@ -73,6 +88,13 @@ function flattenResults(results) {
     ...(results.comments || []).map((item) => ({ type: "comment", title: item.content, item })),
     ...(results.members || []).map((item) => ({ type: "member", title: item.user?.name || item.user?.email || "Member", item })),
   ];
+}
+
+function commandResults(query) {
+  const normalized = query.trim().toLowerCase();
+  return COMMANDS
+    .filter((command) => !normalized || `${command.title} ${command.subtitle}`.toLowerCase().includes(normalized))
+    .map((item) => ({ type: "command", title: item.title, item }));
 }
 
 export default function GlobalSearchDialog({ open, initialQuery, onClose }) {
@@ -91,8 +113,11 @@ export default function GlobalSearchDialog({ open, initialQuery, onClose }) {
   });
 
   const results = useMemo(() => {
-    return flattenResults(searchQuery.data?.data || { projects: [], tasks: [], docs: [], comments: [], members: [] });
-  }, [searchQuery.data]);
+    return [
+      ...commandResults(debouncedQuery),
+      ...flattenResults(searchQuery.data?.data || { projects: [], tasks: [], docs: [], comments: [], members: [] }),
+    ];
+  }, [debouncedQuery, searchQuery.data]);
 
   useEffect(() => {
     if (!open) return;
@@ -151,7 +176,7 @@ export default function GlobalSearchDialog({ open, initialQuery, onClose }) {
               setQuery(event.target.value);
               setActiveIndex(0);
             }}
-            placeholder="Search tasks, spaces, docs, comments, people..."
+            placeholder="Search issues, spaces, docs, comments, people..."
             type="search"
           />
           <kbd className="hidden rounded border bg-secondary px-1.5 py-0.5 text-[11px] text-muted-foreground sm:inline">Esc</kbd>
@@ -162,7 +187,20 @@ export default function GlobalSearchDialog({ open, initialQuery, onClose }) {
 
         <div className="max-h-[70vh] overflow-y-auto p-2">
           {query.trim().length < 2 ? (
-            <div className="space-y-2 p-2">
+            <div className="space-y-4 p-2">
+              <div className="space-y-1">
+                <p className="px-1 text-xs font-semibold uppercase text-muted-foreground">Commands</p>
+                {commandResults("").map((result) => (
+                  <button key={result.item.id} className="flex w-full items-center gap-3 rounded-md px-2 py-2 text-left text-sm hover:bg-accent" onClick={() => openResult(result)}>
+                    <span className="flex h-8 w-8 items-center justify-center rounded-md bg-secondary text-muted-foreground"><ResultIcon result={result} /></span>
+                    <span className="min-w-0">
+                      <span className="block truncate font-medium">{result.title}</span>
+                      <span className="block truncate text-xs text-muted-foreground">{resultSubtitle(result)}</span>
+                    </span>
+                  </button>
+                ))}
+              </div>
+              <div className="space-y-1">
               <p className="px-1 text-xs font-semibold uppercase text-muted-foreground">Recent searches</p>
               {recentSearches.length ? (
                 recentSearches.map((item) => (
@@ -174,6 +212,7 @@ export default function GlobalSearchDialog({ open, initialQuery, onClose }) {
               ) : (
                 <p className="px-2 py-6 text-center text-sm text-muted-foreground">No recent searches yet.</p>
               )}
+              </div>
             </div>
           ) : null}
 
@@ -191,7 +230,7 @@ export default function GlobalSearchDialog({ open, initialQuery, onClose }) {
                   onClick={() => openResult(result)}
                 >
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-secondary text-muted-foreground">
-                    <ResultIcon type={result.type} />
+                    <ResultIcon result={result} />
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-sm font-medium">{result.title}</span>

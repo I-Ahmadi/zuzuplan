@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import {
@@ -16,20 +16,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { PAGE_SIZE } from "@/components/ui/pagination";
+import { getClientPagination, PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
 import { UserAvatar } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/auth-context";
 import { getProjects } from "@/lib/project-api";
 import { getProjectTasks, updateTask } from "@/lib/task-api";
+import { ISSUE_STATUSES } from "@/lib/issue-constants";
 import { cn } from "@/lib/utils";
 
 const DAY_MS = 1000 * 60 * 60 * 24;
-const STATUSES = [
-  { value: "TODO", label: "To Do" },
-  { value: "IN_PROGRESS", label: "In Progress" },
-  { value: "IN_REVIEW", label: "In Review" },
-  { value: "DONE", label: "Done" },
-];
+const STATUSES = ISSUE_STATUSES;
 const PRIORITIES = ["LOW", "MEDIUM", "HIGH", "URGENT"];
 const PRIORITY_RANK = { URGENT: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
 const PRIORITY_TONES = {
@@ -83,7 +79,7 @@ function issueKey(task) {
 }
 
 function taskPath(task) {
-  return `/spaces/${task.space?.id || task.projectId}/tasks/${task.id}`;
+  return `/spaces/${task.space?.id || task.projectId}/issues/${task.id}`;
 }
 
 function isCreatedBy(task, userId) {
@@ -203,7 +199,7 @@ function TaskTable({ groups, onSelectTask, onUpdateTask, updating }) {
         <section key={label} className="overflow-hidden rounded-md border">
           <div className="flex items-center justify-between border-b bg-muted/25 px-3 py-2">
             <h2 className="text-sm font-semibold">{label}</h2>
-            <span className="text-xs text-muted-foreground">{tasks.length} work items</span>
+            <span className="text-xs text-muted-foreground">{tasks.length} issues</span>
           </div>
           <div className="overflow-x-auto">
             <table className="w-full min-w-[980px] text-left text-sm">
@@ -278,13 +274,13 @@ function TaskDetailDrawer({ task, onClose, onUpdateTask, updating }) {
   if (!task) return null;
 
   return (
-    <aside className="fixed bottom-0 right-0 top-14 z-40 flex w-full flex-col border-l bg-background shadow-2xl sm:w-[82vw] lg:w-[520px]" aria-label="Task details">
+    <aside className="fixed bottom-0 right-0 top-14 z-40 flex w-full flex-col border-l bg-background shadow-2xl sm:w-[82vw] lg:w-[520px]" aria-label="Issue details">
       <div className="flex h-12 items-center justify-between border-b px-4">
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold">{issueKey(task)}</p>
           <p className="truncate text-xs text-muted-foreground">{task.space?.name || "Space"}</p>
         </div>
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose} aria-label="Close task details">
+        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose} aria-label="Close issue details">
           <X className="h-4 w-4" />
         </Button>
       </div>
@@ -297,11 +293,11 @@ function TaskDetailDrawer({ task, onClose, onUpdateTask, updating }) {
         <div className="grid gap-3 rounded-md border p-3 text-sm">
           <div className="flex items-center justify-between gap-3">
             <span className="text-muted-foreground">Status</span>
-            <InlineSelect value={task.status} options={STATUSES} disabled={updating} ariaLabel="Update task status" onChange={(status) => onUpdateTask(task, { status })} />
+            <InlineSelect value={task.status} options={STATUSES} disabled={updating} ariaLabel="Update issue status" onChange={(status) => onUpdateTask(task, { status })} />
           </div>
           <div className="flex items-center justify-between gap-3">
             <span className="text-muted-foreground">Priority</span>
-            <InlineSelect value={task.priority} options={PRIORITIES} disabled={updating} ariaLabel="Update task priority" onChange={(priority) => onUpdateTask(task, { priority })} />
+            <InlineSelect value={task.priority} options={PRIORITIES} disabled={updating} ariaLabel="Update issue priority" onChange={(priority) => onUpdateTask(task, { priority })} />
           </div>
           <div className="flex items-center justify-between gap-3">
             <span className="text-muted-foreground">Due date</span>
@@ -328,7 +324,7 @@ function TaskDetailDrawer({ task, onClose, onUpdateTask, updating }) {
         <Button asChild variant="outline" className="w-full">
           <Link to={taskPath(task)}>
             <ExternalLink className="h-4 w-4" />
-            Open full task
+            Open full issue
           </Link>
         </Button>
       </div>
@@ -348,6 +344,7 @@ export default function MyTasks() {
   const [reporterFilter, setReporterFilter] = useState("");
   const [sortBy, setSortBy] = useState("due");
   const [groupBy, setGroupBy] = useState("status");
+  const [page, setPage] = useState(1);
   const [selectedTask, setSelectedTask] = useState(null);
   const [error, setError] = useState("");
 
@@ -366,7 +363,7 @@ export default function MyTasks() {
     mutationFn: ({ task, payload }) => updateTask(task.space.id, task.id, payload),
     onSuccess: (result, variables) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not update task."));
+        setError(resultMessage(result, "Could not update issue."));
         return;
       }
 
@@ -376,13 +373,17 @@ export default function MyTasks() {
       queryClient.invalidateQueries({ queryKey: ["my-tasks-tasks"] });
       queryClient.invalidateQueries({ queryKey: ["project-tasks", variables.task.space.id] });
     },
-    onError: () => setError("Could not update task."),
+    onError: () => setError("Could not update issue."),
   });
 
   function updateTaskField(task, payload) {
     setError("");
     updateMutation.mutate({ task, payload });
   }
+
+  useEffect(() => {
+    setPage(1);
+  }, [bucket, dueFilter, groupBy, priorityFilter, reporterFilter, search, sortBy, spaceFilter, statusFilter]);
 
   const data = useMemo(() => {
     const tasks = taskQueries.flatMap((query, index) => (query.data?.data || []).map((task) => ({ ...task, space: spaces[index] })));
@@ -418,27 +419,28 @@ export default function MyTasks() {
     });
 
     filtered = sortTasks(filtered, sortBy);
-    const grouped = Object.entries(filtered.reduce((acc, task) => {
+    const { items: pagedTasks, pagination } = getClientPagination(filtered, page, PAGE_SIZE);
+    const grouped = Object.entries(pagedTasks.reduce((acc, task) => {
       const label = groupLabel(task, groupBy);
       acc[label] = acc[label] || [];
       acc[label].push(task);
       return acc;
     }, {}));
 
-    return { tasks, openAssigned, dueToday, overdue, completed, inReview, reporters, filtered, grouped };
-  }, [bucket, dueFilter, groupBy, priorityFilter, reporterFilter, search, sortBy, spaceFilter, spaces, statusFilter, taskQueries, user?.id]);
+    return { tasks, openAssigned, dueToday, overdue, completed, inReview, reporters, filtered, grouped, pagination };
+  }, [bucket, dueFilter, groupBy, page, priorityFilter, reporterFilter, search, sortBy, spaceFilter, spaces, statusFilter, taskQueries, user?.id]);
 
   return (
     <div className="space-y-4 px-3 py-4 sm:px-4 lg:px-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">My Tasks</h1>
-          <p className="mt-1 text-sm text-muted-foreground">A focused workbench for assigned, created, due-soon, and completed work across spaces.</p>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">My Issues</h1>
+          <p className="mt-1 text-sm text-muted-foreground">A focused workbench for assigned, created, due-soon, and completed engineering issues across spaces.</p>
         </div>
         <Button asChild variant="outline" size="sm">
-          <Link to="/tasks">
+          <Link to="/issues">
             <FolderKanban className="h-4 w-4" />
-            Open board
+            Open issues
           </Link>
         </Button>
       </div>
@@ -465,7 +467,7 @@ export default function MyTasks() {
           <div className="grid gap-2 lg:grid-cols-[minmax(240px,1fr)_repeat(6,minmax(130px,auto))]">
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input className="pl-9" placeholder="Search tasks, keys, spaces, reporters..." value={search} onChange={(event) => setSearch(event.target.value)} />
+              <Input className="pl-9" placeholder="Search issues, keys, spaces, reporters..." value={search} onChange={(event) => setSearch(event.target.value)} />
             </div>
             <select className="h-9 rounded-md border bg-background px-3 text-sm" value={spaceFilter} onChange={(event) => setSpaceFilter(event.target.value)} aria-label="Filter by space">
               <option value="">All spaces</option>
@@ -490,7 +492,7 @@ export default function MyTasks() {
               <option value="">All reporters</option>
               {data.reporters.map((reporter) => <option key={reporter.id || reporter.email} value={reporter.id || reporter.email}>{reporter.name || reporter.email}</option>)}
             </select>
-            <select className="h-9 rounded-md border bg-background px-3 text-sm" value={sortBy} onChange={(event) => setSortBy(event.target.value)} aria-label="Sort tasks">
+            <select className="h-9 rounded-md border bg-background px-3 text-sm" value={sortBy} onChange={(event) => setSortBy(event.target.value)} aria-label="Sort issues">
               <option value="due">Sort by due date</option>
               <option value="priority">Sort by priority</option>
               <option value="updated">Sort by updated</option>
@@ -501,29 +503,32 @@ export default function MyTasks() {
           <div className="flex flex-wrap items-center gap-2 border-t pt-3">
             <Filter className="h-4 w-4 text-muted-foreground" />
             <span className="text-sm text-muted-foreground">Group by</span>
-            <select className="h-8 rounded-md border bg-background px-2 text-sm" value={groupBy} onChange={(event) => setGroupBy(event.target.value)} aria-label="Group tasks">
+            <select className="h-8 rounded-md border bg-background px-2 text-sm" value={groupBy} onChange={(event) => setGroupBy(event.target.value)} aria-label="Group issues">
               <option value="status">Status</option>
               <option value="due">Due date</option>
               <option value="space">Space</option>
               <option value="priority">Priority</option>
             </select>
-            <span className="ml-auto text-sm text-muted-foreground">{data.filtered.length} matching tasks</span>
+            <span className="ml-auto text-sm text-muted-foreground">{data.filtered.length} matching issues</span>
           </div>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader className="border-b px-4 py-3">
-          <CardTitle className="text-base">Task List</CardTitle>
-          <p className="text-sm text-muted-foreground">Click a task title for a quick drawer, or update status, priority, and due date inline.</p>
+          <CardTitle className="text-base">Issue List</CardTitle>
+          <p className="text-sm text-muted-foreground">Click an issue title for a quick drawer, or update status, priority, and due date inline.</p>
         </CardHeader>
         <CardContent className="p-4">
           {data.grouped.length ? (
-            <TaskTable groups={data.grouped} onSelectTask={setSelectedTask} onUpdateTask={updateTaskField} updating={updateMutation.isPending} />
+            <div className="space-y-3">
+              <TaskTable groups={data.grouped} onSelectTask={setSelectedTask} onUpdateTask={updateTaskField} updating={updateMutation.isPending} />
+              <PaginationControls pagination={data.pagination} onPageChange={setPage} />
+            </div>
           ) : (
             <EmptyState
-              title={loading ? "Loading your tasks..." : bucket === "watching" ? "Watching is planned" : "No tasks found"}
-              description={loading ? "Gathering work across your spaces." : bucket === "watching" ? "Followed tasks and saved task watches will appear here when that feature is enabled." : "Try changing filters, or open a space to create and assign work."}
+              title={loading ? "Loading your issues..." : bucket === "watching" ? "Watching is planned" : "No issues found"}
+              description={loading ? "Gathering work across your spaces." : bucket === "watching" ? "Followed issues and saved issue watches will appear here when that feature is enabled." : "Try changing filters, or open a space to create and assign work."}
               action={
                 <Button asChild size="sm">
                   <Link to="/spaces">Open spaces</Link>

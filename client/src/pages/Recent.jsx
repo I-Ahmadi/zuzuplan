@@ -18,23 +18,19 @@ import { useAuth } from "@/contexts/auth-context";
 import { getProjectDocs } from "@/lib/doc-api";
 import { getProjects } from "@/lib/project-api";
 import { getProjectTasks } from "@/lib/task-api";
+import { ISSUE_STATUS_LABELS } from "@/lib/issue-constants";
 import { cn } from "@/lib/utils";
 
 const DAY_MS = 1000 * 60 * 60 * 24;
 const FILTERS = [
   { value: "all", label: "All" },
-  { value: "task", label: "Tasks" },
+  { value: "task", label: "Issues" },
   { value: "doc", label: "Docs" },
   { value: "space", label: "Spaces" },
   { value: "assigned", label: "Assigned to me" },
   { value: "created", label: "Created by me" },
 ];
-const STATUS_LABELS = {
-  TODO: "To Do",
-  IN_PROGRESS: "In Progress",
-  IN_REVIEW: "In Review",
-  DONE: "Done",
-};
+const STATUS_LABELS = ISSUE_STATUS_LABELS;
 const PRIORITY_TONES = {
   URGENT: "border-red-500/30 bg-red-500/10 text-red-500",
   HIGH: "border-red-500/30 bg-red-500/10 text-red-500",
@@ -203,7 +199,7 @@ function SpaceActivityRow({ space, tasks, docs }) {
   const progress = total ? Math.round((done / total) * 100) : 0;
 
   return (
-    <Link to={`/spaces/${space.id}/tasks`} className="block rounded-md border p-3 text-sm transition-colors hover:border-primary/60 hover:bg-accent/45">
+    <Link to={`/spaces/${space.id}/issues`} className="block rounded-md border p-3 text-sm transition-colors hover:border-primary/60 hover:bg-accent/45">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate font-semibold">{space.name}</p>
@@ -248,10 +244,10 @@ export default function Recent() {
       return {
         ...task,
         type: "task",
-        typeLabel: "Task",
+        typeLabel: "Issue",
         title: task.title,
         key: issueKey({ ...task, space }),
-        to: `/spaces/${space.id}/tasks/${task.id}`,
+        to: `/spaces/${space.id}/issues/${task.id}`,
         space,
       };
     }));
@@ -263,7 +259,7 @@ export default function Recent() {
         typeLabel: "Doc",
         title: doc.title,
         key: space?.key,
-        to: `/spaces/${space.id}/tasks?view=docs`,
+        to: `/spaces/${space.id}/issues?view=docs`,
         space,
       };
     }));
@@ -273,7 +269,7 @@ export default function Recent() {
       typeLabel: "Space",
       title: space.name,
       key: space.key,
-      to: `/spaces/${space.id}/tasks`,
+      to: `/spaces/${space.id}/issues`,
       space,
       ownerId: space.ownerId,
       owner: space.owner,
@@ -313,7 +309,7 @@ export default function Recent() {
       </div>
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <MetricCard label="Recent items" value={recentData.allItems.length} detail="Tasks, docs, and spaces" icon={Clock3} />
+        <MetricCard label="Recent items" value={recentData.allItems.length} detail="Issues, docs, and spaces" icon={Clock3} />
         <MetricCard label="Updated tasks" value={recentData.tasks.length} detail="From accessible spaces" icon={ListTodo} />
         <MetricCard label="Recent docs" value={recentData.docs.length} detail="Recently edited documents" icon={FileText} />
         <MetricCard label="Active spaces" value={spaces.length} detail="Included in this view" icon={FolderKanban} />

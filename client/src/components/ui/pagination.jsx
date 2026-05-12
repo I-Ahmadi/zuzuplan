@@ -24,10 +24,11 @@ export function getClientPagination(items = [], page = 1, limit = PAGE_SIZE) {
 }
 
 export function PaginationControls({ pagination, onPageChange, className }) {
-  if (!pagination || pagination.total <= pagination.limit) return null;
+  if (!pagination) return null;
 
-  const start = (pagination.page - 1) * pagination.limit + 1;
+  const start = pagination.total ? (pagination.page - 1) * pagination.limit + 1 : 0;
   const end = Math.min(pagination.page * pagination.limit, pagination.total);
+  const totalPages = Math.max(1, pagination.totalPages || 1);
 
   return (
     <div className={cn("flex flex-col gap-2 rounded-md border bg-background px-3 py-2 text-sm sm:flex-row sm:items-center sm:justify-between", className)}>
@@ -47,7 +48,7 @@ export function PaginationControls({ pagination, onPageChange, className }) {
           Previous
         </Button>
         <span className="min-w-20 text-center text-xs text-muted-foreground">
-          Page {pagination.page} of {pagination.totalPages}
+          Page {pagination.page} of {totalPages}
         </span>
         <Button
           type="button"

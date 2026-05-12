@@ -5,6 +5,8 @@ import { PROJECT_PERMISSIONS } from '../utils/constants.js';
 import { ensureTaskAccess } from './taskService.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { getProjectRole, hasProjectPermission } from '../utils/permissions.js';
+import { createActivityEvent } from './activityService.js';
+import { createInboxItem } from './inboxService.js';
 
 function requireProjectPermission(project, userId, permission) {
   const role = getProjectRole(project, userId);
@@ -21,6 +23,31 @@ export async function createComment(taskId, userId, content) {
     data: { taskId, userId, content },
     include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
   });
+  const activity = await createActivityEvent({
+    projectId: task.projectId,
+    taskId,
+    actorId: userId,
+    targetUserId: task.assigneeId || task.createdById,
+    type: 'comment.created',
+    entityType: 'comment',
+    entityId: comment.id,
+    title: 'Comment added',
+    description: content.slice(0, 240),
+    metadata: { issueTitle: task.title },
+  });
+  const recipients = new Set([task.assigneeId, task.createdById].filter((id) => id && id !== userId));
+  await Promise.all(Array.from(recipients).map((recipientId) => createInboxItem({
+    userId: recipientId,
+    projectId: task.projectId,
+    taskId,
+    activityEventId: activity.id,
+    type: 'comment',
+    title: `Comment: ${task.title}`,
+    description: content.slice(0, 240),
+    priority: 'NORMAL',
+    actionUrl: `/spaces/${task.projectId}/issues/${taskId}`,
+    source: 'comment',
+  })));
   try {
     notifyCommentUpdate(task.projectId, taskId, comment.id, comment);
   } catch (_) {}

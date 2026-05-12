@@ -414,7 +414,7 @@ export default function Setting() {
                     <select className="h-9 w-full rounded-md border bg-background px-3 text-sm" value={preferences.defaultView} onChange={(event) => setPreferences((current) => ({ ...current, defaultView: event.target.value }))}>
                       <option value="for-you">For You</option>
                       <option value="spaces">Spaces</option>
-                      <option value="board">Board</option>
+                      <option value="board">Issues</option>
                       <option value="recent">Recent</option>
                     </select>
                   </div>

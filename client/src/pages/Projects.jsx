@@ -418,7 +418,7 @@ export default function Projects() {
               <th className="px-3 py-2">Key</th>
               <th className="px-3 py-2">Visibility</th>
               <th className="px-3 py-2">Members</th>
-              <th className="px-3 py-2">Tasks</th>
+              <th className="px-3 py-2">Issues</th>
               <th className="px-3 py-2">Progress</th>
               <th className="px-3 py-2">Status</th>
               <th className="w-12 px-3 py-2" aria-label="Actions" />
@@ -462,7 +462,7 @@ export default function Projects() {
                   <td className="px-3 py-2 text-right" onClick={(event) => event.stopPropagation()}>
                     <SpaceActionsMenu
                       space={space}
-                      onOpen={(path) => navigate(path || `/spaces/${space.id}/tasks`)}
+                      onOpen={(path) => navigate(path || `/spaces/${space.id}/issues`)}
                       onEdit={() => openEditDialog(space)}
                       onDelete={() => deleteSpace(space)}
                     />

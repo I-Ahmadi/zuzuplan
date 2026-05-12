@@ -424,8 +424,8 @@ export default function ProjectSettings() {
           <main className="space-y-4">
             <Card>
               <CardContent className="grid gap-3 p-4 md:grid-cols-4">
-                <StatCard icon={ClipboardList} label="Tasks" value={countText(stats?.totalTasks ?? project._count?.tasks, "task")} />
-                <StatCard icon={Check} label="Completed" value={countText(stats?.completedTasks, "task")} />
+                <StatCard icon={ClipboardList} label="Issues" value={countText(stats?.totalTasks ?? project._count?.tasks, "issue")} />
+                <StatCard icon={Check} label="Completed" value={countText(stats?.completedTasks, "issue")} />
                 <StatCard icon={Users} label="Members" value={countText(members.length, "member")} />
                 <StatCard icon={Gauge} label="Progress" value={`${stats?.progress ?? project.progress ?? 0}%`} />
               </CardContent>
@@ -599,7 +599,7 @@ export default function ProjectSettings() {
                     <div className="space-y-2">
                       <Label>Default board view</Label>
                       <select className="h-9 w-full rounded-md border bg-background px-3 text-sm" value={localSettings.defaultBoardView} onChange={(event) => saveLocalSettings({ ...localSettings, defaultBoardView: event.target.value })}>
-                        <option value="board">Board</option>
+                        <option value="board">Issues</option>
                         <option value="list">List</option>
                         <option value="backlog">Backlog</option>
                       </select>

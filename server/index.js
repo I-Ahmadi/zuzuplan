@@ -17,6 +17,11 @@ import attachmentRoutes from './routes/attachments.js';
 import sprintRoutes from './routes/sprints.js';
 import docRoutes from './routes/docs.js';
 import searchRoutes from './routes/search.js';
+import activityRoutes from './routes/activity.js';
+import inboxRoutes from './routes/inbox.js';
+import integrationRoutes from './routes/integrations.js';
+import deliveryRoutes from './routes/delivery.js';
+import githubRoutes from './routes/github.js';
 
 const PORT = process.env.PORT || 3000;
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
@@ -37,6 +42,7 @@ app.use(cors({
   },
   credentials: true,
 }));
+app.use('/api/github', githubRoutes);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -53,14 +59,22 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/projects/:projectId/tasks', taskRoutes);
+app.use('/api/projects/:projectId/issues', taskRoutes);
 app.use('/api/projects/:projectId/sprints', sprintRoutes);
 app.use('/api/projects/:projectId/docs', docRoutes);
+app.use('/api/projects/:projectId/integrations', integrationRoutes);
+app.use('/api/projects/:projectId/delivery', deliveryRoutes);
 app.use('/api/spaces', projectRoutes);
 app.use('/api/spaces/:projectId/tasks', taskRoutes);
+app.use('/api/spaces/:projectId/issues', taskRoutes);
 app.use('/api/spaces/:projectId/sprints', sprintRoutes);
 app.use('/api/spaces/:projectId/docs', docRoutes);
+app.use('/api/spaces/:projectId/integrations', integrationRoutes);
+app.use('/api/spaces/:projectId/delivery', deliveryRoutes);
 app.use('/api/tasks/:taskId/comments', commentRoutes);
 app.use('/api/tasks/:taskId/attachments', attachmentRoutes);
+app.use('/api/activity', activityRoutes);
+app.use('/api/inbox', inboxRoutes);
 app.use('/api/search', searchRoutes);
 
 app.use('/uploads', express.static(UPLOAD_DIR));

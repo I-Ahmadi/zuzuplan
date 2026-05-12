@@ -21,7 +21,7 @@ export default function TaskBoard({ tasks, onDelete }) {
               </div>
             ))}
             {!tasks.some((task) => task.status === column) && (
-              <p className="text-sm text-muted-foreground">No tasks in this column.</p>
+              <p className="text-sm text-muted-foreground">No issues in this column.</p>
             )}
           </CardContent>
         </Card>

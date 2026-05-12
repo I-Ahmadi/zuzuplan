@@ -5,7 +5,7 @@ import { Sidebar } from "@/components/board/sidebar";
 import { SidebarProvider, useSidebar } from "@/contexts/sidebar-context";
 import { cleanupLegacyStorage } from "@/lib/storage-keys";
 
-const SIDEBAR_WIDTH_EXPANDED = 320;
+const SIDEBAR_WIDTH_EXPANDED = 300;
 const SIDEBAR_WIDTH_COLLAPSED = 56;
 const AUTH_PATHS = ["/login", "/signup", "/verify-email", "/forgot-password", "/reset-password"];
 

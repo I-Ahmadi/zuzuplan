@@ -17,6 +17,9 @@ export const PROJECT_PERMISSIONS = {
   TASK_UPDATE_OWN: 'task.update.own',
   TASK_ASSIGN: 'task.assign',
   TASK_DELETE: 'task.delete',
+  INTEGRATION_MANAGE: 'integration.manage',
+  DELIVERY_READ: 'delivery.read',
+  DELIVERY_WRITE: 'delivery.write',
   COMMENT_CREATE: 'comment.create',
   COMMENT_UPDATE_OWN: 'comment.update.own',
   COMMENT_DELETE_ANY: 'comment.delete.any',
@@ -24,11 +27,25 @@ export const PROJECT_PERMISSIONS = {
 };
 
 export const TASK_STATUS = {
-  TODO: 'TODO',
+  BACKLOG: 'BACKLOG',
+  READY: 'READY',
   IN_PROGRESS: 'IN_PROGRESS',
   IN_REVIEW: 'IN_REVIEW',
+  READY_TO_MERGE: 'READY_TO_MERGE',
+  MERGED: 'MERGED',
+  DEPLOYED: 'DEPLOYED',
   DONE: 'DONE',
-  CANCELLED: 'CANCELLED',
+  BLOCKED: 'BLOCKED',
+  CANCELED: 'CANCELED',
+};
+
+export const ISSUE_TYPE = {
+  BUG: 'BUG',
+  FEATURE: 'FEATURE',
+  CHORE: 'CHORE',
+  TECH_DEBT: 'TECH_DEBT',
+  SPIKE: 'SPIKE',
+  INCIDENT: 'INCIDENT',
 };
 
 export const TASK_PRIORITY = {

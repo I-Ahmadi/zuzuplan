@@ -6,7 +6,7 @@ export default function TaskOverview({ tasks }) {
   const inProgress = tasks.filter((task) => task.status === "in-progress").length;
 
   const stats = [
-    { label: "Total Tasks", value: total },
+    { label: "Total Issues", value: total },
     { label: "In Progress", value: inProgress },
     { label: "Completed", value: completed },
   ];

@@ -22,6 +22,7 @@ import { UserAvatar } from "@/components/ui/avatar";
 import { useAuth } from "@/contexts/auth-context";
 import { getProjects } from "@/lib/project-api";
 import { getProjectTasks, updateTask } from "@/lib/task-api";
+import { ISSUE_STATUSES, ISSUE_STATUS_LABELS } from "@/lib/issue-constants";
 import { cn } from "@/lib/utils";
 
 const DAY_MS = 1000 * 60 * 60 * 24;
@@ -34,13 +35,8 @@ const FILTERS = [
   { value: "overdue", label: "Overdue" },
   { value: "archived", label: "Archived" },
 ];
-const STATUSES = [
-  { value: "TODO", label: "To Do" },
-  { value: "IN_PROGRESS", label: "In Progress" },
-  { value: "IN_REVIEW", label: "In Review" },
-  { value: "DONE", label: "Done" },
-];
-const STATUS_LABELS = Object.fromEntries(STATUSES.map((status) => [status.value, status.label]));
+const STATUSES = ISSUE_STATUSES;
+const STATUS_LABELS = ISSUE_STATUS_LABELS;
 const PRIORITIES = ["LOW", "MEDIUM", "HIGH", "URGENT"];
 const PRIORITY_TONES = {
   URGENT: "border-red-500/30 bg-red-500/10 text-red-500",
@@ -98,7 +94,7 @@ function issueKey(task) {
 }
 
 function taskPath(task) {
-  return `/spaces/${task.space?.id || task.projectId}/tasks/${task.id}`;
+  return `/spaces/${task.space?.id || task.projectId}/issues/${task.id}`;
 }
 
 function isOverdue(task) {
@@ -262,7 +258,7 @@ function PreviewPanel({ item, read, archived, onMarkRead, onArchive, onUpdateSta
 
         <div className="rounded-md border bg-muted/20 p-3 text-sm">
           <p className="font-medium">Comments and mentions</p>
-          <p className="mt-1 text-xs text-muted-foreground">Direct mention parsing and comment reply threads will appear here when persistent notification events are added.</p>
+          <p className="mt-1 text-xs text-muted-foreground">Direct mention parsing and deeper comment reply threads can now build on the persisted inbox event model.</p>
         </div>
 
         <div className="flex flex-wrap gap-2">
@@ -275,7 +271,7 @@ function PreviewPanel({ item, read, archived, onMarkRead, onArchive, onUpdateSta
             Archive
           </Button>
           <Button asChild size="sm">
-            <Link to={taskPath(item.task)}>Open task</Link>
+            <Link to={taskPath(item.task)}>Open issue</Link>
           </Button>
         </div>
       </CardContent>
@@ -312,14 +308,14 @@ export default function Inbox() {
     mutationFn: ({ task, payload }) => updateTask(task.space.id, task.id, payload),
     onSuccess: (result, variables) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not update task."));
+        setError(resultMessage(result, "Could not update issue."));
         return;
       }
       setError("");
       queryClient.invalidateQueries({ queryKey: ["inbox-tasks"] });
       queryClient.invalidateQueries({ queryKey: ["project-tasks", variables.task.space.id] });
     },
-    onError: () => setError("Could not update task."),
+    onError: () => setError("Could not update issue."),
   });
 
   const data = useMemo(() => {
@@ -366,7 +362,7 @@ export default function Inbox() {
         entries.push({
           id: `comment-${task.id}`,
           type: "comment",
-          label: "Task update",
+          label: "Issue update",
           title: `Updated work you created: ${task.title}`,
           reason: "Created by you and recently updated",
           task,
@@ -452,7 +448,7 @@ export default function Inbox() {
         <MetricCard label="Unread" value={data.unread} detail="Active inbox items" icon={InboxIcon} />
         <MetricCard label="Overdue" value={data.overdue} detail="Assigned past due" icon={AlertTriangle} />
         <MetricCard label="Due today" value={data.dueToday} detail="Needs action today" icon={CalendarClock} />
-        <MetricCard label="Updates" value={data.comments} detail="Task updates for your work" icon={MessageSquare} />
+        <MetricCard label="Updates" value={data.comments} detail="Issue updates for your work" icon={MessageSquare} />
       </div>
 
       {error ? <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">{error}</p> : null}
@@ -497,7 +493,7 @@ export default function Inbox() {
               <ListTodo className="h-4 w-4 text-muted-foreground" />
               Inbox Items
             </CardTitle>
-            <p className="text-sm text-muted-foreground">Grouped by activity date. Read/archive state is local until notification persistence is added.</p>
+            <p className="text-sm text-muted-foreground">Grouped by activity date for fast engineering triage.</p>
           </CardHeader>
           <CardContent className="space-y-5 p-4">
             {["Today", "Yesterday", "This week", "Older"].map((label) => {

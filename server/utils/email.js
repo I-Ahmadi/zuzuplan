@@ -2,6 +2,7 @@ import nodemailer from 'nodemailer';
 
 const CLIENT_URL     = process.env.CLIENT_URL || 'http://localhost:5173';
 const EMAIL_DEV_MODE = process.env.EMAIL_DEV_MODE === 'true';
+const IS_PRODUCTION  = process.env.NODE_ENV === 'production';
 
 let transporter = null;
 
@@ -47,8 +48,16 @@ export async function verifyEmailTransport() {
     throw new Error('SMTP is not configured. Set EMAIL_HOST, EMAIL_PORT, EMAIL_USER, EMAIL_PASS, and EMAIL_FROM.');
   }
 
-  await transporter.verify();
-  console.info('Email transport: SMTP connection verified successfully.');
+  try {
+    await transporter.verify();
+    console.info('Email transport: SMTP connection verified successfully.');
+  } catch (error) {
+    if (IS_PRODUCTION) {
+      throw error;
+    }
+
+    console.warn(`Email transport: SMTP verification failed (${error.code || error.message}). Continuing without blocking startup.`);
+  }
 }
 
 export function sendVerificationEmail(email, token) {

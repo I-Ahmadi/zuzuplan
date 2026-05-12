@@ -50,14 +50,10 @@ import {
 } from "@/lib/sprint-api";
 import { addTaskLink, createTask, deleteTask, deleteTaskLink, getProjectTasks, getTask, updateTask } from "@/lib/task-api";
 import { useAuth } from "@/contexts/auth-context";
+import { BOARD_STATUSES, ISSUE_STATUSES, ISSUE_TYPES } from "@/lib/issue-constants";
 import { cn } from "@/lib/utils";
 
-const STATUSES = [
-  { value: "TODO", label: "To Do", color: "#fb8500" },
-  { value: "IN_PROGRESS", label: "In Progress", color: "#82b832" },
-  { value: "IN_REVIEW", label: "In Review", color: "#bf5af2" },
-  { value: "DONE", label: "Done", color: "#3478f6" },
-];
+const STATUSES = ISSUE_STATUSES;
 
 const PRIORITIES = ["LOW", "MEDIUM", "HIGH", "URGENT"];
 const PRIORITY_TONES = {
@@ -81,7 +77,11 @@ const CURRENT_PROJECT_CHANGE_EVENT = "current-project-change";
 const emptyTask = {
   title: "",
   description: "",
-  status: "TODO",
+  status: "BACKLOG",
+  type: "FEATURE",
+  estimate: "",
+  branchName: "",
+  blockedReason: "",
   priority: "MEDIUM",
   assigneeId: "",
   dueDate: "",
@@ -160,8 +160,9 @@ export default function Tasks() {
 
   useEffect(() => {
     const nextView = searchParams.get("view");
-    if (PROJECT_TABS.some((tab) => tab.value === nextView) && nextView !== activeView) {
-      setActiveView(nextView);
+    const resolvedView = PROJECT_TABS.some((tab) => tab.value === nextView) ? nextView : "summary";
+    if (resolvedView !== activeView) {
+      setActiveView(resolvedView);
     }
   }, [activeView, searchParams]);
 
@@ -369,7 +370,7 @@ export default function Tasks() {
     mutationFn: ({ sprintId, orderedTaskIds }) => reorderSprintTasks(projectId, sprintId, orderedTaskIds),
     onSuccess: (result) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not reorder tasks."));
+        setError(resultMessage(result, "Could not reorder issues."));
         return;
       }
       setError("");
@@ -381,7 +382,7 @@ export default function Tasks() {
     mutationFn: ({ sprintId, taskIds }) => addTasksToSprint(projectId, sprintId, taskIds),
     onSuccess: (result) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not move tasks to sprint."));
+        setError(resultMessage(result, "Could not move issues to sprint."));
         return;
       }
       setError("");
@@ -393,7 +394,7 @@ export default function Tasks() {
     mutationFn: ({ sprintId, taskId }) => removeTaskFromSprint(projectId, sprintId, taskId),
     onSuccess: (result) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not move task to backlog."));
+        setError(resultMessage(result, "Could not move issue to backlog."));
         return;
       }
       setError("");
@@ -441,7 +442,7 @@ export default function Tasks() {
     mutationFn: ({ taskId, targetTaskId }) => addTaskLink(projectId, taskId, { targetTaskId }),
     onSuccess: (result, variables) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not link work item."));
+        setError(resultMessage(result, "Could not link issue."));
         return;
       }
       setError("");
@@ -453,7 +454,7 @@ export default function Tasks() {
     mutationFn: ({ taskId, linkId }) => deleteTaskLink(projectId, taskId, linkId),
     onSuccess: (result, variables) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not remove linked work item."));
+        setError(resultMessage(result, "Could not remove linked issue."));
         return;
       }
       setError("");
@@ -465,7 +466,11 @@ export default function Tasks() {
     setActiveView(nextView);
     setSearchParams((current) => {
       const params = new URLSearchParams(current);
-      params.set("view", nextView);
+      if (nextView === "summary") {
+        params.delete("view");
+      } else {
+        params.set("view", nextView);
+      }
       return params;
     });
   }
@@ -496,7 +501,7 @@ export default function Tasks() {
     createMutation.mutate({
       title: payload.title,
       description: payload.description || undefined,
-      status: payload.status || "TODO",
+      status: payload.status || "BACKLOG",
       priority: payload.priority || "MEDIUM",
       assigneeId: payload.assigneeId || undefined,
       dueDate: payload.dueDate || undefined,
@@ -708,7 +713,7 @@ export function TaskDetailPage() {
     mutationFn: ({ payload }) => updateTask(projectId, taskId, payload),
     onSuccess: (result) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not update work item."));
+        setError(resultMessage(result, "Could not update issue."));
         return;
       }
       setTaskDraft(result.data);
@@ -722,10 +727,10 @@ export function TaskDetailPage() {
     mutationFn: () => deleteTask(projectId, taskId),
     onSuccess: (result) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not delete work item."));
+        setError(resultMessage(result, "Could not delete issue."));
         return;
       }
-      navigate(`/spaces/${projectId}/tasks?view=list`);
+      navigate(`/spaces/${projectId}/issues?view=list`);
     },
   });
 
@@ -757,7 +762,7 @@ export function TaskDetailPage() {
     mutationFn: ({ targetTaskId }) => addTaskLink(projectId, taskId, { targetTaskId }),
     onSuccess: (result) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not link work item."));
+        setError(resultMessage(result, "Could not link issue."));
         return;
       }
       queryClient.invalidateQueries({ queryKey: ["task-detail", projectId, taskId] });
@@ -768,7 +773,7 @@ export function TaskDetailPage() {
     mutationFn: ({ linkId }) => deleteTaskLink(projectId, taskId, linkId),
     onSuccess: (result) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not remove linked work item."));
+        setError(resultMessage(result, "Could not remove linked issue."));
         return;
       }
       queryClient.invalidateQueries({ queryKey: ["task-detail", projectId, taskId] });
@@ -786,7 +791,7 @@ export function TaskDetailPage() {
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Work Item</h1>
           <p className="mt-1 text-sm text-muted-foreground">Review details, links, documents, activity, and ownership for this task.</p>
         </div>
-        <p className="rounded-md border p-6 text-sm text-muted-foreground">Loading work item...</p>
+        <p className="rounded-md border p-6 text-sm text-muted-foreground">Loading issue...</p>
       </div>
     );
   }
@@ -842,7 +847,7 @@ function ProjectHeader({ activeView, setActiveView }) {
   return (
     <div className="border-b bg-background px-3 pt-3 sm:px-4 lg:px-5">
       <div className="pb-3">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Board</h1>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Issues</h1>
         <p className="mt-1 text-sm text-muted-foreground">Plan backlog work, track sprint progress, manage docs, and review delivery status.</p>
       </div>
       <div className="flex min-h-10 items-center justify-between gap-3">
@@ -891,7 +896,7 @@ function SummaryView({ tasks, summary, activeProject, user }) {
       </div>
 
       <div className="grid gap-4 xl:grid-cols-2">
-        <Panel title="Status overview" subtitle="Get a snapshot of the status of your work items. View all work items">
+        <Panel title="Status overview" subtitle="Get a snapshot of the status of your issues. View all issues">
           <div className="flex flex-col items-center gap-5 py-2 md:flex-row md:justify-center">
             <div
               className="flex h-48 w-48 items-center justify-center rounded-full"
@@ -899,7 +904,7 @@ function SummaryView({ tasks, summary, activeProject, user }) {
             >
               <div className="flex h-32 w-32 flex-col items-center justify-center rounded-full bg-card text-center">
                 <p className="text-3xl font-bold">{summary.total}</p>
-                <p className="mt-1 max-w-24 text-sm font-semibold text-muted-foreground">Total work item...</p>
+                <p className="mt-1 max-w-24 text-sm font-semibold text-muted-foreground">Total issues</p>
               </div>
             </div>
             <div className="space-y-3">
@@ -955,7 +960,7 @@ function SummaryView({ tasks, summary, activeProject, user }) {
           </div>
         </Panel>
 
-        <Panel title="Types of work" subtitle="Get a breakdown of work items by their types. View all items">
+        <Panel title="Types of work" subtitle="Get a breakdown of issues by their types. View all items">
           <div className="pt-3">
             <div className="mb-3 grid grid-cols-[1fr_2fr] text-sm font-medium text-muted-foreground">
               <span>Type</span>
@@ -964,7 +969,7 @@ function SummaryView({ tasks, summary, activeProject, user }) {
             <div className="grid grid-cols-[1fr_2fr] items-center gap-4">
               <span className="inline-flex items-center gap-2 text-sm">
                 <ListTodo className="h-4 w-4 text-primary" />
-                Task
+                Issue
               </span>
               <div className="h-7 overflow-hidden rounded bg-secondary">
                 <div className="flex h-full items-center justify-center bg-muted-foreground/70 text-xs font-semibold text-background">
@@ -990,7 +995,7 @@ function BoardView({ tasks, pagination, onPageChange, activeProject, members, sp
 
       <div className="overflow-x-auto pb-2">
         <div className="grid min-w-[960px] grid-cols-[repeat(4,minmax(200px,1fr))] gap-7 xl:min-w-0">
-        {STATUSES.map((column) => {
+        {BOARD_STATUSES.map((column) => {
           const columnTasks = tasks.filter((task) => task.status === column.value);
           return (
             <section
@@ -1010,7 +1015,7 @@ function BoardView({ tasks, pagination, onPageChange, activeProject, members, sp
                       <h2 className="text-xs font-semibold uppercase text-muted-foreground">{column.label}</h2>
                       <span className="rounded bg-secondary px-1.5 py-0.5 text-xs font-medium">{columnTasks.length}</span>
                     </div>
-                    <p className="mt-0.5 text-[11px] text-muted-foreground">{columnTasks.length} work items</p>
+                    <p className="mt-0.5 text-[11px] text-muted-foreground">{columnTasks.length} issues</p>
                   </div>
                   <Button variant="ghost" size="icon" className="h-7 w-7" aria-label={`${column.label} actions`}>
                     <MoreHorizontal className="h-4 w-4" />
@@ -1055,7 +1060,7 @@ function BoardView({ tasks, pagination, onPageChange, activeProject, members, sp
                   ))
                 ) : (
                   <div className="rounded-md border border-dashed bg-background/60 p-4 text-center text-sm text-muted-foreground">
-                    No work items
+                    No issues
                   </div>
                 )}
               </div>
@@ -1247,7 +1252,7 @@ function BacklogView({
           canManageSprints={canManageSprints}
           onToggleSection={toggleSection}
           onToggleTask={toggleTask}
-          onCreate={(title) => createInlineTask({ title, status: "TODO", sprintId: primarySprint.id })}
+          onCreate={(title) => createInlineTask({ title, status: "BACKLOG", sprintId: primarySprint.id })}
           onOpenTask={setSelectedTask}
           onPrimaryAction={() =>
             primarySprint.status === "ACTIVE"
@@ -1283,7 +1288,7 @@ function BacklogView({
           <GripVertical className="h-4 w-4" />
         </div>
         <p>
-          {visibleTasks} of {tasks.length} work item{tasks.length === 1 ? "" : "s"} visible
+          {visibleTasks} of {tasks.length} issue{tasks.length === 1 ? "" : "s"} visible
         </p>
       </div>
 
@@ -1299,7 +1304,7 @@ function BacklogView({
         canManageSprints={canManageSprints}
         onToggleSection={toggleSection}
         onToggleTask={toggleTask}
-        onCreate={(title) => createInlineTask({ title, status: "TODO" })}
+        onCreate={(title) => createInlineTask({ title, status: "BACKLOG" })}
         onOpenTask={setSelectedTask}
         onPrimaryAction={primarySprint ? moveSelectedToSprint : createSprintFromBacklog}
         onUpdateTask={(task, payload) => updateTaskMutation.mutate({ taskId: task.id, payload })}
@@ -1447,7 +1452,7 @@ function SprintDialog({ state, onClose, onSubmit, pending }) {
           ) : null}
           {type === "delete" ? (
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Tasks in this sprint will move back to the backlog.</p>
+              <p className="text-sm text-muted-foreground">Issues in this sprint will move back to the backlog.</p>
               <Label>Type {sprint?.name} to confirm</Label>
               <Input value={form.deleteConfirm} onChange={(event) => setForm((current) => ({ ...current, deleteConfirm: event.target.value }))} />
             </div>
@@ -1464,7 +1469,7 @@ function SprintDialog({ state, onClose, onSubmit, pending }) {
   );
 }
 
-function QuickCreateTask({ members, sprints, defaultStatus = "TODO", defaultSprintId = "", compact = false, onCreate }) {
+function QuickCreateTask({ members, sprints, defaultStatus = "BACKLOG", defaultSprintId = "", compact = false, onCreate }) {
   const [title, setTitle] = useState("");
   const [priority, setPriority] = useState("MEDIUM");
   const [assigneeId, setAssigneeId] = useState("");
@@ -1486,7 +1491,7 @@ function QuickCreateTask({ members, sprints, defaultStatus = "TODO", defaultSpri
       )}
       onSubmit={submit}
     >
-      <Input className="h-8" placeholder="Create task" value={title} onChange={(event) => setTitle(event.target.value)} />
+      <Input className="h-8" placeholder="Create issue" value={title} onChange={(event) => setTitle(event.target.value)} />
       {!compact ? (
         <>
           <select className="h-8 rounded border bg-background px-2 text-sm" value={priority} onChange={(event) => setPriority(event.target.value)}>
@@ -1541,7 +1546,7 @@ function ListView({ tasks, pagination, onPageChange, activeProject, members, spr
         <div className="flex items-center justify-between gap-3 rounded-md border bg-background px-3 py-2">
           <div>
             <h2 className="text-sm font-semibold">Work</h2>
-          <p className="text-xs text-muted-foreground">Track and update space work items.</p>
+          <p className="text-xs text-muted-foreground">Track and update space issues.</p>
           </div>
           <Button className="h-8 rounded px-2.5 text-sm" onClick={() => setCreating((current) => !current)}>
             <Plus className="h-4 w-4" />
@@ -1610,7 +1615,7 @@ function ListView({ tasks, pagination, onPageChange, activeProject, members, spr
               </tr>
             ))}
             {!sortedTasks.length ? (
-              <tr><td colSpan={11} className="px-3 py-8 text-center text-muted-foreground">No tasks match this view.</td></tr>
+              <tr><td colSpan={11} className="px-3 py-8 text-center text-muted-foreground">No issues match this view.</td></tr>
             ) : null}
           </tbody>
         </table>
@@ -1791,7 +1796,7 @@ function BacklogSection({
   actionPending,
 }) {
   const statusCounts = {
-    todo: items.filter((task) => task.status === "TODO").length,
+    todo: items.filter((task) => task.status === "BACKLOG").length,
     progress: items.filter((task) => task.status === "IN_PROGRESS").length,
     done: items.filter((task) => task.status === "DONE").length,
   };
@@ -1810,7 +1815,7 @@ function BacklogSection({
         <ChevronDown className="h-4 w-4 text-muted-foreground" />
         <div className="flex min-w-0 items-center gap-2">
           <h2 className="truncate text-sm font-semibold">{title}</h2>
-          <span className="shrink-0 text-sm text-muted-foreground">({count} work item{count === 1 ? "" : "s"})</span>
+          <span className="shrink-0 text-sm text-muted-foreground">({count} issue{count === 1 ? "" : "s"})</span>
           {sprint && canManageSprints ? (
             <div className="hidden items-center gap-1 text-sm text-muted-foreground sm:inline-flex">
               <CalendarPlus className="h-3.5 w-3.5" />
@@ -1868,7 +1873,7 @@ function BacklogSection({
           <div className="grid h-10 grid-cols-[26px_18px_minmax(0,1fr)_360px] items-center gap-2 border-b px-2 text-sm text-muted-foreground">
             <span />
             <span />
-            <span>No work items yet</span>
+            <span>No issues yet</span>
             <span />
           </div>
         )}
@@ -1887,7 +1892,7 @@ function BacklogSection({
           }}
         >
           <Plus className="h-4 w-4 text-muted-foreground" />
-          <input name="title" className="h-8 flex-1 bg-transparent text-sm outline-none" placeholder="Create task" />
+          <input name="title" className="h-8 flex-1 bg-transparent text-sm outline-none" placeholder="Create issue" />
           <Button type="submit" variant="ghost" className="h-8 rounded px-2.5 text-sm">Create</Button>
         </form>
       ) : null}
@@ -2150,8 +2155,17 @@ function IssueCreateDialog({ open, setOpen, taskForm, setTaskForm, members, spri
             <Textarea id="task-description" value={taskForm.description} onChange={(event) => setTaskForm((current) => ({ ...current, description: event.target.value }))} />
           </div>
           <div className="grid gap-3 md:grid-cols-2">
+            <SelectField label="Type" value={taskForm.type} onChange={(value) => setTaskForm((current) => ({ ...current, type: value }))} options={ISSUE_TYPES.map((item) => [item, item.replaceAll("_", " ")])} />
             <SelectField label="Status" value={taskForm.status} onChange={(value) => setTaskForm((current) => ({ ...current, status: value }))} options={STATUSES.map((item) => [item.value, item.label])} />
             <SelectField label="Priority" value={taskForm.priority} onChange={(value) => setTaskForm((current) => ({ ...current, priority: value }))} options={PRIORITIES.map((item) => [item, item])} />
+            <div className="space-y-2">
+              <Label>Estimate</Label>
+              <Input type="number" min="0" value={taskForm.estimate} onChange={(event) => setTaskForm((current) => ({ ...current, estimate: event.target.value }))} />
+            </div>
+            <div className="space-y-2">
+              <Label>Branch</Label>
+              <Input placeholder="feature/issue-key" value={taskForm.branchName} onChange={(event) => setTaskForm((current) => ({ ...current, branchName: event.target.value }))} />
+            </div>
             <div className="space-y-2">
               <Label>Sprint</Label>
               <select className="h-9 w-full rounded-md border bg-background px-3 text-sm" value={taskForm.sprintId} onChange={(event) => setTaskForm((current) => ({ ...current, sprintId: event.target.value }))}>
@@ -2206,7 +2220,7 @@ function WorkItemView({
   compact = false,
 }) {
   const planningSprints = sprints.filter((sprint) => sprint.status !== "COMPLETED");
-  const taskUrl = `/spaces/${task.projectId}/tasks/${task.id}`;
+  const taskUrl = `/spaces/${task.projectId}/issues/${task.id}`;
   const reporter = task.createdBy;
   const [linkedTaskId, setLinkedTaskId] = useState("");
   const [quickDocTitle, setQuickDocTitle] = useState("");
@@ -2343,10 +2357,10 @@ function WorkItemView({
         </section>
 
         <section id="work-item-links" className="space-y-2">
-          <h2 className="text-sm font-semibold">Linked work items</h2>
+          <h2 className="text-sm font-semibold">Linked issues</h2>
           <div className="flex gap-2">
             <select className="h-9 flex-1 rounded border bg-background px-2 text-sm" value={linkedTaskId} onChange={(event) => setLinkedTaskId(event.target.value)}>
-              <option value="">Select work item to link...</option>
+              <option value="">Select issue to link...</option>
               {linkOptions.map((item) => (
                 <option key={item.id} value={item.id}>{issueKey(activeProject, item)} {item.title}</option>
               ))}
@@ -2370,12 +2384,12 @@ function WorkItemView({
                   <span className="font-medium">{issueKey(activeProject, link.linkedTask)}</span>
                   <span className="ml-2">{link.linkedTask?.title}</span>
                 </button>
-                <Button variant="ghost" size="icon" className="h-7 w-7" disabled={deleteTaskLinkMutation?.isPending} onClick={() => deleteTaskLinkMutation?.mutate({ taskId: task.id, linkId: link.id })} aria-label="Remove linked work item">
+                <Button variant="ghost" size="icon" className="h-7 w-7" disabled={deleteTaskLinkMutation?.isPending} onClick={() => deleteTaskLinkMutation?.mutate({ taskId: task.id, linkId: link.id })} aria-label="Remove linked issue">
                   <X className="h-4 w-4" />
                 </Button>
               </div>
             )) : (
-              <p className="px-3 py-3 text-sm text-muted-foreground">No linked work items yet.</p>
+              <p className="px-3 py-3 text-sm text-muted-foreground">No linked issues yet.</p>
             )}
           </div>
         </section>
@@ -2396,7 +2410,7 @@ function WorkItemView({
           </form>
           <div className="overflow-hidden rounded-md border">
             {projectDocs.length ? projectDocs.map((doc) => (
-              <a key={doc.id} className="block border-b px-3 py-2 text-sm hover:bg-accent last:border-b-0" href={`/spaces/${task.projectId}/tasks?view=docs`}>
+              <a key={doc.id} className="block border-b px-3 py-2 text-sm hover:bg-accent last:border-b-0" href={`/spaces/${task.projectId}/issues?view=docs`}>
                 <FileText className="mr-2 inline h-4 w-4 text-primary" />
                 {doc.title}
               </a>
@@ -2516,14 +2530,14 @@ function IssueDetailDialog({
     <aside
       className="fixed bottom-0 right-0 top-14 z-40 flex w-full flex-col border-l bg-background shadow-2xl sm:w-[82vw] lg:w-[var(--task-detail-width)]"
       style={{ "--task-detail-width": TASK_DETAIL_PANEL_WIDTH }}
-      aria-label="Jira work item"
+      aria-label="Issue details"
     >
         <div className="sticky top-0 z-10 flex h-12 shrink-0 items-center justify-between border-b bg-background/95 px-4 backdrop-blur">
           <div className="flex items-center gap-2 text-sm font-semibold">
             <CheckCircle2 className="h-4 w-4" />
-            Jira work item
+            Issue details
           </div>
-          <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Close work item" onClick={() => setSelectedTask(null)}>
+          <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Close issue" onClick={() => setSelectedTask(null)}>
             <X className="h-4 w-4" />
           </Button>
         </div>
