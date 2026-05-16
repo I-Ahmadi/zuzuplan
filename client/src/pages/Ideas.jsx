@@ -144,7 +144,7 @@ function IdeaList({ ideas, activeId, filters, setFilters, onCreate, creating }) 
   }
 
   return (
-    <aside className="flex min-h-0 w-full shrink-0 flex-col overflow-hidden rounded-md border bg-card lg:w-80">
+    <aside className="flex min-h-0 w-full shrink-0 flex-col overflow-hidden rounded-md border bg-board-column lg:w-80">
       <div className="border-b p-3">
         <form className="flex gap-2" onSubmit={submit}>
           <Input className="h-9" value={title} placeholder="Capture an idea" onChange={(event) => setTitle(event.target.value)} />
@@ -517,7 +517,7 @@ function ConversionPreview({ preview }) {
 function MetadataPanel({ idea }) {
   const tags = idea.tags || [];
   return (
-    <aside className="hidden w-72 shrink-0 rounded-md border bg-card p-4 xl:block">
+    <aside className="hidden w-72 shrink-0 rounded-md border bg-board-column p-4 xl:block">
       <div className="space-y-5">
         <section>
           <p className="text-xs font-medium uppercase text-muted-foreground">Stage</p>
@@ -654,9 +654,9 @@ export default function Ideas() {
 
       <div className="flex h-[calc(100vh-10.5rem)] min-h-[560px] gap-3 overflow-hidden rounded-none bg-background">
         <IdeaList ideas={ideas} activeId={activeIdeaId} filters={filters} setFilters={setFilters} onCreate={(payload) => createIdeaMutation.mutate(payload)} creating={createIdeaMutation.isPending} />
-        <main className="min-w-0 flex-1 overflow-y-auto rounded-md border bg-card">
+        <main className="min-w-0 flex-1 overflow-y-auto rounded-md border bg-board-column">
           {idea ? (
-            <div className="sticky top-0 z-10 border-b bg-card/95 px-5 py-4 backdrop-blur">
+            <div className="sticky top-0 z-10 border-b bg-board-column/95 px-5 py-4 backdrop-blur">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="min-w-0">
                   <div className="mb-1 flex items-center gap-2">
