@@ -41,7 +41,6 @@ async function list(model, projectId, userId, filters, include = {}, searchField
 export async function listPullRequests(projectId, userId, filters = {}) {
   return list('pullRequest', projectId, userId, filters, {
     task: { select: { id: true, title: true, type: true, status: true, priority: true } },
-    integration: { select: { id: true, provider: true, name: true, repository: true } },
   }, ['title', 'repository', 'branch', 'author']);
 }
 
@@ -51,8 +50,7 @@ export async function createPullRequest(projectId, userId, data) {
     data: {
       projectId,
       taskId: data.taskId || null,
-      integrationId: data.integrationId || null,
-      provider: data.provider || 'GITHUB',
+      provider: data.provider || 'MANUAL',
       repository: data.repository,
       number: Number(data.number),
       title: data.title,
@@ -123,7 +121,6 @@ export async function createDeployment(projectId, userId, data) {
       projectId,
       taskId: data.taskId || null,
       pullRequestId: data.pullRequestId || null,
-      integrationId: data.integrationId || null,
       environment: data.environment || 'staging',
       status: data.status || 'PENDING',
       version: data.version || null,
@@ -177,55 +174,6 @@ export async function updateDeployment(projectId, id, userId, data) {
       url: data.url,
       deployedBy: data.deployedBy,
       deployedAt: data.deployedAt ? new Date(data.deployedAt) : undefined,
-    },
-  });
-}
-
-export async function listReleases(projectId, userId, filters = {}) {
-  return list('release', projectId, userId, filters, {
-    createdBy: { select: { id: true, name: true, email: true, avatar: true } },
-  }, ['title', 'version', 'summary']);
-}
-
-export async function createRelease(projectId, userId, data) {
-  await getProject(projectId, userId, PROJECT_PERMISSIONS.DELIVERY_WRITE);
-  const release = await prisma.release.create({
-    data: {
-      projectId,
-      title: data.title,
-      version: data.version || null,
-      status: data.status || 'PLANNED',
-      summary: data.summary || null,
-      createdById: userId,
-      shippedAt: data.shippedAt ? new Date(data.shippedAt) : null,
-    },
-  });
-  await createActivityEvent({
-    projectId,
-    actorId: userId,
-    type: 'release.created',
-    entityType: 'release',
-    entityId: release.id,
-    title: 'Release created',
-    description: release.title,
-    severity: release.status === 'SHIPPED' ? 'SUCCESS' : 'INFO',
-    metadata: { version: release.version, status: release.status },
-  });
-  return release;
-}
-
-export async function updateRelease(projectId, id, userId, data) {
-  await getProject(projectId, userId, PROJECT_PERMISSIONS.DELIVERY_WRITE);
-  const release = await prisma.release.findFirst({ where: { id, projectId } });
-  if (!release) throw new AppError('Release not found', 404);
-  return prisma.release.update({
-    where: { id },
-    data: {
-      title: data.title,
-      version: data.version,
-      status: data.status,
-      summary: data.summary,
-      shippedAt: data.shippedAt ? new Date(data.shippedAt) : undefined,
     },
   });
 }

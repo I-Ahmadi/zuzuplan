@@ -25,11 +25,4 @@ router.post('/deployments', [
 ], validate, deliveryController.createDeployment);
 router.put('/deployments/:id', deliveryController.updateDeployment);
 
-router.get('/releases', deliveryController.listReleases);
-router.post('/releases', [
-  body('title').trim().notEmpty(),
-  body('status').optional().isIn(['PLANNED', 'SHIPPING', 'SHIPPED', 'CANCELED']),
-], validate, deliveryController.createRelease);
-router.put('/releases/:id', deliveryController.updateRelease);
-
 export default router;

@@ -1,52 +1,35 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import {
-  Clock3,
   Activity,
   BarChart3,
   BookOpen,
-  Boxes,
-  Check,
-  ChevronDown,
   FolderKanban,
   Home,
+  Inbox,
+  Lightbulb,
   ListTodo,
   LogOut,
   Moon,
   PanelLeftClose,
-  ScrollText,
   Settings,
   Sun,
   UserCheck,
   Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { PAGE_SIZE } from "@/components/ui/pagination";
 import { UserAvatar } from "@/components/ui/avatar";
+import { CURRENT_PROJECT_CHANGE_EVENT, CURRENT_PROJECT_KEY } from "@/components/board/project-switcher";
 import { useAuth } from "@/contexts/auth-context";
 import { useTheme } from "@/contexts/theme-context";
-import { getProject, getProjects } from "@/lib/project-api";
-import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
+import { LEGACY_STORAGE_KEYS, migrateStorageKey } from "@/lib/storage-keys";
 import { cn } from "@/lib/utils";
 import { useSidebar } from "@/contexts/sidebar-context";
 
-const SIDEBAR_WIDTH_EXPANDED = 300;
+const SIDEBAR_WIDTH_EXPANDED = 280;
 const SIDEBAR_WIDTH_COLLAPSED = 56;
-const CURRENT_PROJECT_KEY = STORAGE_KEYS.currentProjectId;
-const CURRENT_PROJECT_CHANGE_EVENT = "current-project-change";
 
-function getSwitchedProjectPath(pathname, currentProjectId, nextProjectId) {
-  const segments = pathname.split("/");
-  const projectScope = segments[1] === "spaces" || segments[1] === "projects";
-  if (!projectScope || segments[2] !== currentProjectId) return null;
-
-  const nextSegments = [...segments];
-  nextSegments[2] = nextProjectId;
-  return nextSegments.join("/") || "/";
-}
-
-function SidebarLink({ item, pathname, collapsed = false, onNavigate }) {
+function SidebarLink({ item, pathname, collapsed = false, onNavigate, className }) {
   const Icon = item.icon;
   const active = item.match(pathname);
 
@@ -57,7 +40,8 @@ function SidebarLink({ item, pathname, collapsed = false, onNavigate }) {
         "group relative flex min-h-9 w-full items-center gap-2 rounded-md text-sm transition-colors",
         "text-muted-foreground hover:bg-accent hover:text-foreground",
         collapsed ? "h-9 justify-center px-0" : "min-h-9 px-2.5 py-1",
-        active && "bg-sidebar-active font-medium text-primary"
+        active && "bg-sidebar-active font-medium text-primary",
+        className
       )}
       aria-label={item.label}
       title={collapsed ? item.label : undefined}
@@ -104,147 +88,17 @@ function FooterAction({ icon: Icon, label, collapsed, onClick }) {
 
 function SidebarNavGroups({ groups, pathname, collapsed }) {
   return (
-    <div className="space-y-2">
-      {groups.map((group, index) => (
-        <div key={group.title} className={cn(index > 0 && "border-t border-border/70 pt-2")}>
+    <div className="space-y-4">
+      {groups.map((group) => (
+        <div key={group.title} className="space-y-1">
+          {!collapsed ? (
+            <p className="px-2.5 text-[10px] font-medium uppercase text-muted-foreground/60">
+              {group.title}
+            </p>
+          ) : null}
           <NavSection items={group.items} pathname={pathname} collapsed={collapsed} />
         </div>
       ))}
-    </div>
-  );
-}
-
-function SidebarProjectSwitcher({ collapsed, pathname, search, routeProjectId, currentProjectId, onProjectChange }) {
-  const navigate = useNavigate();
-  const [open, setOpen] = useState(false);
-  const switcherRef = useRef(null);
-  const projectsQuery = useQuery({
-    queryKey: ["projects", "sidebar-switcher"],
-    queryFn: () => getProjects({ limit: PAGE_SIZE }),
-    staleTime: 60 * 1000,
-  });
-  const projects = useMemo(() => projectsQuery.data?.data || [], [projectsQuery.data]);
-  const resolvedProjectId = currentProjectId || projects[0]?.id || "";
-  const projectQuery = useQuery({
-    queryKey: ["sidebar-project", resolvedProjectId],
-    queryFn: () => getProject(resolvedProjectId),
-    enabled: Boolean(resolvedProjectId),
-    staleTime: 60 * 1000,
-  });
-  const currentProject = projectQuery.data?.data || projects.find((project) => project.id === resolvedProjectId);
-
-  useEffect(() => {
-    if (currentProjectId || !projects[0]?.id) return;
-    localStorage.setItem(CURRENT_PROJECT_KEY, projects[0].id);
-    onProjectChange(projects[0].id);
-  }, [currentProjectId, onProjectChange, projects]);
-
-  useEffect(() => {
-    function closeOnOutsideClick(event) {
-      if (!switcherRef.current?.contains(event.target)) setOpen(false);
-    }
-
-    function closeOnEscape(event) {
-      if (event.key === "Escape") setOpen(false);
-    }
-
-    document.addEventListener("mousedown", closeOnOutsideClick);
-    document.addEventListener("keydown", closeOnEscape);
-    return () => {
-      document.removeEventListener("mousedown", closeOnOutsideClick);
-      document.removeEventListener("keydown", closeOnEscape);
-    };
-  }, []);
-
-  function switchProject(nextProjectId) {
-    localStorage.setItem(CURRENT_PROJECT_KEY, nextProjectId);
-    onProjectChange(nextProjectId);
-    window.dispatchEvent(new CustomEvent(CURRENT_PROJECT_CHANGE_EVENT, { detail: nextProjectId }));
-    setOpen(false);
-    if (routeProjectId) {
-      const nextPath = getSwitchedProjectPath(pathname, routeProjectId, nextProjectId);
-      if (nextPath && nextPath !== pathname) {
-        navigate(`${nextPath}${search}`);
-      }
-    }
-  }
-
-  if (!currentProject && !projectsQuery.isLoading) return null;
-
-  return (
-    <div className="relative" ref={switcherRef}>
-      <button
-        type="button"
-        className={cn(
-          "flex w-full min-w-0 items-center rounded-md border border-border bg-transparent text-left shadow-none transition-colors hover:bg-accent",
-          collapsed ? "h-9 justify-center p-1" : "h-9 gap-2 px-2.5"
-        )}
-        aria-label="Switch project"
-        aria-expanded={open}
-        aria-haspopup="menu"
-        title={collapsed ? currentProject?.name || "Switch project" : undefined}
-        onClick={() => setOpen((current) => !current)}
-      >
-        <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded border bg-background text-[10px] font-bold text-primary">
-          {currentProject?.key?.slice(0, 2).toUpperCase() || "SP"}
-        </span>
-        {!collapsed ? (
-          <>
-            <span className="min-w-0 flex-1">
-              <span className="block truncate text-sm font-medium">{currentProject?.name || "Switch project"}</span>
-            </span>
-            <ChevronDown className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", open && "rotate-180")} />
-          </>
-        ) : null}
-      </button>
-
-      {open ? (
-        <div
-          className={cn(
-            "absolute bottom-full left-0 z-50 mb-2 w-72 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg",
-            collapsed && "left-full bottom-0 ml-2"
-          )}
-          role="menu"
-        >
-          <div className="border-b px-3 py-2">
-            <p className="text-xs font-medium uppercase text-muted-foreground">Switch project</p>
-          </div>
-          <div className="max-h-72 overflow-y-auto p-1">
-            {projects.map((project) => {
-              const active = project.id === currentProject?.id;
-              return (
-                <button
-                  key={project.id}
-                  type="button"
-                  className={cn(
-                    "flex w-full items-center gap-2 rounded px-2 py-2 text-left text-sm transition-colors hover:bg-accent",
-                    active && "bg-accent"
-                  )}
-                  onClick={() => switchProject(project.id)}
-                  role="menuitem"
-                >
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary text-[10px] font-bold text-primary-foreground">
-                    {project.key?.slice(0, 2).toUpperCase() || "SP"}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate font-medium">{project.name}</span>
-                    <span className="block truncate text-xs text-muted-foreground">{project.key}</span>
-                  </span>
-                  {active ? <Check className="h-4 w-4 shrink-0 text-primary" /> : null}
-                </button>
-              );
-            })}
-            {!projectsQuery.isLoading && projects.length === 0 ? (
-              <p className="px-2 py-6 text-center text-sm text-muted-foreground">No spaces yet.</p>
-            ) : null}
-          </div>
-          <div className="border-t p-1">
-            <Link className="block rounded px-2 py-2 text-sm hover:bg-accent" to="/spaces" onClick={() => setOpen(false)}>
-              View all spaces
-            </Link>
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }
@@ -339,7 +193,7 @@ function SidebarAccountMenu({ user, collapsed }) {
 }
 
 export function Sidebar() {
-  const { pathname, search } = useLocation();
+  const { pathname } = useLocation();
   const { collapsed, setCollapsed } = useSidebar();
   const { user } = useAuth();
   const routeProjectId = pathname.match(/^\/(?:projects|spaces)\/([^/]+)/)?.[1];
@@ -348,6 +202,8 @@ export function Sidebar() {
   const issuesPath = currentProjectId ? `/spaces/${currentProjectId}/issues` : "/issues";
   const spacesActive = pathname === "/spaces" || pathname === "/projects" || /^\/(?:projects|spaces)\/[^/]+$/.test(pathname);
   const issuesActive = pathname === "/issues" || pathname === "/tasks" || /^\/(?:projects|spaces)\/[^/]+\/(?:issues|tasks)/.test(pathname);
+  const ideasActive = pathname === "/ideas" || pathname.startsWith("/ideas/");
+  const inboxActive = pathname === "/inbox";
 
   const issueItem = {
     label: "Issues",
@@ -379,14 +235,14 @@ export function Sidebar() {
       items: [
         { label: "For You", to: "/for-you", icon: Home, match: (currentPath) => currentPath === "/" || currentPath === "/for-you" || currentPath === "/dashboard" },
         { label: "My Issues", to: "/my-issues", icon: UserCheck, match: (currentPath) => currentPath === "/my-issues" || currentPath === "/my-tasks" },
-        { label: "Recent", to: "/recent", icon: Clock3, match: (currentPath) => currentPath === "/recent" },
       ],
     },
     {
       title: "Work",
       items: [
-        issueItem,
         spacesItem,
+        issueItem,
+        { label: "Ideas", to: "/ideas", icon: Lightbulb, match: () => ideasActive },
         { label: "Knowledge", to: "/knowledge", icon: BookOpen, match: (currentPath) => currentPath === "/knowledge" },
         teamsItem,
       ],
@@ -400,11 +256,7 @@ export function Sidebar() {
     },
     {
       title: "System",
-      items: [
-        { label: "Integrations", to: "/integrations", icon: Boxes, match: (currentPath) => currentPath === "/integrations" },
-        settingItem,
-        { label: "Audit Log", to: "/audit-log", icon: ScrollText, match: (currentPath) => currentPath === "/audit-log" },
-      ],
+      items: [settingItem],
     },
   ];
 
@@ -413,6 +265,15 @@ export function Sidebar() {
     localStorage.setItem(CURRENT_PROJECT_KEY, routeProjectId);
     setStoredProjectId(routeProjectId);
   }, [routeProjectId]);
+
+  useEffect(() => {
+    function handleProjectChange(event) {
+      setStoredProjectId(event.detail || localStorage.getItem(CURRENT_PROJECT_KEY) || "");
+    }
+
+    window.addEventListener(CURRENT_PROJECT_CHANGE_EVENT, handleProjectChange);
+    return () => window.removeEventListener(CURRENT_PROJECT_CHANGE_EVENT, handleProjectChange);
+  }, []);
 
   if (collapsed) {
     return (
@@ -436,13 +297,11 @@ export function Sidebar() {
 
         <div className="border-t">
           <div className="p-2 pb-0">
-            <SidebarProjectSwitcher
-              collapsed
+            <SidebarLink
+              item={{ label: "Inbox", to: "/inbox", icon: Inbox, match: () => inboxActive }}
               pathname={pathname}
-              search={search}
-              routeProjectId={routeProjectId}
-              currentProjectId={currentProjectId}
-              onProjectChange={setStoredProjectId}
+              collapsed
+              className="border border-border bg-transparent"
             />
           </div>
           <SidebarAccountMenu user={user} collapsed />
@@ -475,12 +334,10 @@ export function Sidebar() {
 
       <div className="border-t">
         <div className="px-3 pt-3">
-          <SidebarProjectSwitcher
+          <SidebarLink
+            item={{ label: "Inbox", to: "/inbox", icon: Inbox, match: () => inboxActive }}
             pathname={pathname}
-            search={search}
-            routeProjectId={routeProjectId}
-            currentProjectId={currentProjectId}
-            onProjectChange={setStoredProjectId}
+            className="border border-border bg-transparent"
           />
         </div>
         <SidebarAccountMenu user={user} />

@@ -17,7 +17,6 @@ export const PROJECT_PERMISSIONS = {
   TASK_UPDATE_OWN: 'task.update.own',
   TASK_ASSIGN: 'task.assign',
   TASK_DELETE: 'task.delete',
-  INTEGRATION_MANAGE: 'integration.manage',
   DELIVERY_READ: 'delivery.read',
   DELIVERY_WRITE: 'delivery.write',
   COMMENT_CREATE: 'comment.create',

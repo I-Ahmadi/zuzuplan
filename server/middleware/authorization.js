@@ -3,16 +3,6 @@ import { AppError } from './errorHandler.js';
 import { PROJECT_PERMISSIONS } from '../utils/constants.js';
 import { getProjectPermissions, getProjectRole, hasProjectPermission } from '../utils/permissions.js';
 
-export function requireRole(...allowedRoles) {
-  return (req, res, next) => {
-    const role = req.user?.role;
-    if (!role || !allowedRoles.includes(role)) {
-      return next(new AppError('Forbidden', 403));
-    }
-    next();
-  };
-}
-
 export async function resolveProjectAccess(req) {
   const projectId = req.params.projectId || req.params.id || req.body?.projectId;
   if (!projectId) {

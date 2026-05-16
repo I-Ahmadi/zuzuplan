@@ -112,10 +112,19 @@
     font-weight: 400;
     letter-spacing: 0;
     text-rendering: optimizeLegibility;
+    max-width: 100%;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
   }
 
   body {
     background: hsl(var(--background));
+  }
+  html,
+  #root {
+    max-width: 100%;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
   }
   code {
     font-family: "JetBrains Mono", ui-monospace, monospace;

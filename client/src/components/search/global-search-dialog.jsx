@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { Boxes, FileText, FolderKanban, Github, GitPullRequest, Inbox, ListTodo, MessageSquare, Rocket, Search, Ship, UserCircle, X } from "lucide-react";
+import { FileText, FolderKanban, Inbox, ListTodo, MessageSquare, Search, UserCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { globalSearch } from "@/lib/search-api";
 import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
@@ -11,11 +11,6 @@ const RECENT_SEARCHES_KEY = STORAGE_KEYS.recentSearches;
 const COMMANDS = [
   { id: "new-issue", title: "Create issue", subtitle: "Open the issue list for quick creation", to: "/issues?view=list", icon: ListTodo },
   { id: "inbox", title: "Open inbox", subtitle: "Review assignments, comments, blockers, and reminders", to: "/inbox", icon: Inbox },
-  { id: "pull-requests", title: "Open pull requests", subtitle: "Review PRs, CI status, and merge readiness in GitHub", to: "/github?tab=pull-requests", icon: GitPullRequest },
-  { id: "github", title: "Open GitHub", subtitle: "Connect repositories, sync issues, and configure webhooks", to: "/github", icon: Github },
-  { id: "deployments", title: "Open deployments", subtitle: "Inspect staging, preview, and production deploys in GitHub", to: "/github?tab=deployments", icon: Rocket },
-  { id: "releases", title: "Open releases", subtitle: "Plan shipped versions and release notes in GitHub", to: "/github?tab=releases", icon: Ship },
-  { id: "integrations", title: "Open integrations", subtitle: "Connect non-GitHub engineering systems", to: "/integrations", icon: Boxes },
 ];
 
 function readRecentSearches() {

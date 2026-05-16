@@ -2,7 +2,6 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import { body } from 'express-validator';
 import * as authController from '../controllers/authController.js';
-import * as githubController from '../controllers/githubController.js';
 import { validate } from '../middleware/validation.js';
 
 const router = express.Router();
@@ -32,6 +31,5 @@ router.post('/logout', authController.logout);
 router.post('/verify-email', authController.verifyEmail);
 router.post('/forgot-password', forgotResetLimiter, authController.forgotPassword);
 router.post('/reset-password', forgotResetLimiter, authController.resetPassword);
-router.get('/github/callback', githubController.callback);
 
 export default router;

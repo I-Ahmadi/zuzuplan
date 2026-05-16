@@ -5,7 +5,7 @@ import { Sidebar } from "@/components/board/sidebar";
 import { SidebarProvider, useSidebar } from "@/contexts/sidebar-context";
 import { cleanupLegacyStorage } from "@/lib/storage-keys";
 
-const SIDEBAR_WIDTH_EXPANDED = 300;
+const SIDEBAR_WIDTH_EXPANDED = 280;
 const SIDEBAR_WIDTH_COLLAPSED = 56;
 const AUTH_PATHS = ["/login", "/signup", "/verify-email", "/forgot-password", "/reset-password"];
 
@@ -24,11 +24,16 @@ function BoardLayoutInner({ children }) {
   }
 
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="min-h-screen overflow-x-hidden bg-background">
       <Sidebar />
-      <main className="flex-1 min-h-screen transition-[margin-left] duration-300 ease-in-out" style={{ marginLeft: sidebarWidth }}>
+      <main
+        className="min-w-0 min-h-screen max-w-full overflow-x-hidden transition-[margin-left,width] duration-300 ease-in-out"
+        style={{ marginLeft: sidebarWidth, width: `calc(100% - ${sidebarWidth}px)` }}
+      >
         <Header />
-        {children}
+        <div className="mx-auto w-full max-w-[1600px] min-w-0 overflow-x-hidden">
+          {children}
+        </div>
       </main>
     </div>
   );

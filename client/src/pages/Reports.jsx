@@ -639,8 +639,8 @@ export default function Reports() {
   }, [filters]);
 
   return (
-    <div className="min-h-[calc(100vh-3.5rem)] bg-muted/20 px-3 py-4 sm:px-4 lg:px-5">
-      <div className="space-y-4">
+    <div className="min-w-0 min-h-[calc(100vh-3.5rem)] bg-muted/20 px-3 py-4 sm:px-4 lg:px-5">
+      <div className="min-w-0 space-y-4">
         <section className="overflow-hidden rounded-md border bg-card">
           <div className="flex flex-wrap items-start justify-between gap-4 border-b p-4">
             <div className="min-w-0">
@@ -689,7 +689,7 @@ export default function Reports() {
           <div className="border-b px-3 py-2">
             <p className="text-sm font-semibold">Report criteria</p>
           </div>
-          <div className="grid gap-2 p-3 lg:grid-cols-[minmax(240px,1fr)_170px_170px_160px_160px_150px_auto]">
+          <div className="grid gap-2 p-3 md:grid-cols-2 xl:grid-cols-[minmax(240px,1fr)_170px_170px_160px_160px_150px_auto]">
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input className="pl-9" value={filters.search} onChange={(event) => setFilters((current) => ({ ...current, search: event.target.value }))} placeholder="Search issues, spaces, assignees..." />

@@ -3,17 +3,13 @@ import { useQueries, useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import {
   AlertTriangle,
-  Bell,
   CalendarClock,
   CheckCircle2,
   Clock3,
   FileText,
   FolderKanban,
-  Inbox,
   ListTodo,
-  MessageSquare,
   Plus,
-  Rocket,
   Sparkles,
   UserPlus,
 } from "lucide-react";
@@ -329,7 +325,7 @@ export default function ForYou() {
           </SectionCard>
 
           <SectionCard title="My Work Queue" description="Assigned, created, and recently touched work across spaces." icon={ListTodo}>
-            <div className="grid gap-3 lg:grid-cols-3">
+            <div className="grid gap-3 lg:grid-cols-2">
               <div className="space-y-2">
                 <p className="text-xs font-semibold uppercase text-muted-foreground">Assigned to me</p>
                 {dashboard.assigned.slice(0, 3).map((task) => <TaskRow key={task.id} task={task} compact />)}
@@ -339,10 +335,6 @@ export default function ForYou() {
                 <p className="text-xs font-semibold uppercase text-muted-foreground">Created by me</p>
                 {dashboard.createdByMe.slice(0, 3).map((task) => <TaskRow key={task.id} task={task} compact />)}
                 {!dashboard.createdByMe.length ? <EmptyState title="No created work" description="Work you report or create will appear here." /> : null}
-              </div>
-              <div className="space-y-2">
-                <p className="text-xs font-semibold uppercase text-muted-foreground">Following</p>
-                <EmptyState title="Watching planned" description="Followed issues and saved views will appear here once enabled." />
               </div>
             </div>
           </SectionCard>
@@ -360,41 +352,6 @@ export default function ForYou() {
             <div className="space-y-2">
               {dashboard.dueSoon.slice(0, 4).map((task) => <TaskRow key={task.id} task={task} compact />)}
               {!dashboard.dueSoon.length ? <EmptyState title="No due-soon issues" description="Issues due in the next 7 days will appear here." /> : null}
-              <div className="rounded-md border bg-muted/20 p-3 text-sm">
-                <div className="flex items-center gap-2 font-medium">
-                  <Rocket className="h-4 w-4 text-primary" />
-                  Sprint and milestone reminders
-                </div>
-                <p className="mt-1 text-xs text-muted-foreground">Sprint endings, launch dates, and scheduled reminders will appear here as planning data expands.</p>
-              </div>
-            </div>
-          </SectionCard>
-
-          <SectionCard
-            title="Inbox Preview"
-            description="Mentions, replies, assignments, and review requests."
-            icon={Inbox}
-            action={
-              <Button asChild variant="ghost" size="sm">
-                <Link to="/inbox">Open inbox</Link>
-              </Button>
-            }
-          >
-            <div className="space-y-2">
-              <div className="rounded-md border p-3 text-sm">
-                <div className="flex items-center gap-2 font-medium">
-                  <Bell className="h-4 w-4 text-primary" />
-                  Notification center planned
-                </div>
-                <p className="mt-1 text-xs text-muted-foreground">Mentions, comment replies, and assignment changes will show here when notification events are enabled.</p>
-              </div>
-              <div className="rounded-md border p-3 text-sm">
-                <div className="flex items-center gap-2 font-medium">
-                  <MessageSquare className="h-4 w-4 text-primary" />
-                  No unread messages
-                </div>
-                <p className="mt-1 text-xs text-muted-foreground">You have no pending replies in this preview.</p>
-              </div>
             </div>
           </SectionCard>
 

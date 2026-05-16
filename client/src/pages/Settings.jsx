@@ -127,6 +127,12 @@ export default function Setting() {
   }, [user]);
 
   useEffect(() => {
+    window.scrollTo({ left: 0 });
+    document.documentElement.scrollLeft = 0;
+    document.body.scrollLeft = 0;
+  }, [activeSection]);
+
+  useEffect(() => {
     if (preferencesQuery.data?.data) {
       const nextPreferences = { ...preferenceDefaults, ...preferencesQuery.data.data };
       setPreferences(nextPreferences);
@@ -272,9 +278,9 @@ export default function Setting() {
   const sessions = sessionsQuery.data?.data || [];
 
   return (
-    <div className="space-y-3 px-3 py-3 sm:px-4 lg:px-5">
-      <div className="flex flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
-        <div>
+    <div className="w-full min-w-0 max-w-full overflow-x-hidden space-y-3 px-3 py-3 sm:px-4 lg:px-5">
+      <div className="flex min-w-0 flex-col gap-3 xl:flex-row xl:items-end xl:justify-between">
+        <div className="min-w-0">
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Settings</h1>
           <p className="mt-1 text-sm text-muted-foreground">Manage your account, preferences, notifications, and security.</p>
         </div>
@@ -291,8 +297,8 @@ export default function Setting() {
         ) : null}
       </div>
 
-      <div className="space-y-4">
-        <Card>
+      <div className="min-w-0 max-w-full space-y-4 overflow-x-hidden">
+        <Card className="min-w-0 max-w-full overflow-hidden">
           <CardContent className="p-3">
             <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
               <div className="flex min-w-0 items-center gap-3">
@@ -307,8 +313,8 @@ export default function Setting() {
                 <span className="rounded border px-1.5 py-0.5 capitalize text-foreground">{preferences.theme} theme</span>
               </div>
             </div>
-            <div className="mt-3 overflow-x-auto border-t">
-              <nav className="flex min-w-max gap-1" aria-label="Settings sections">
+            <div className="mt-3 border-t">
+              <nav className="flex flex-wrap gap-1" aria-label="Settings sections">
                 {SECTIONS.map((section) => {
                   const Icon = section.icon;
                   const active = activeSection === section.id;
@@ -332,48 +338,48 @@ export default function Setting() {
           </CardContent>
         </Card>
 
-        <main className="space-y-4">
+        <main className="min-w-0 max-w-full space-y-4 overflow-x-hidden">
           {activeSection === "profile" ? (
-            <Card>
+            <Card className="min-w-0 overflow-hidden">
               <CardHeader className="border-b">
                 <CardTitle className="flex items-center gap-2 text-base">
                   <UserCircle className="h-4 w-4" />
                   Profile
                 </CardTitle>
-                <CardDescription>Update the identity shown across spaces, tasks, docs, and comments.</CardDescription>
+                <CardDescription className="break-words">Update the identity shown across spaces, tasks, docs, and comments.</CardDescription>
               </CardHeader>
               <CardContent className="p-4">
                 <form
-                  className="space-y-4"
+                  className="min-w-0 space-y-4"
                   onSubmit={(event) => {
                     event.preventDefault();
                     setMessage("");
                     profileMutation.mutate();
                   }}
                 >
-                  <div className="flex flex-col gap-4 md:flex-row md:items-start">
-                    <UserAvatar user={profile} fallback="ME" className="h-24 w-24 rounded-md" fallbackClassName="rounded-md bg-secondary text-2xl text-foreground" />
+                  <div className="flex min-w-0 flex-col gap-4 md:flex-row md:items-start">
+                    <UserAvatar user={profile} fallback="ME" className="h-24 w-24 shrink-0 rounded-md" fallbackClassName="rounded-md bg-secondary text-2xl text-foreground" />
                     <div className="grid min-w-0 flex-1 gap-4 md:grid-cols-2">
-                      <div className="space-y-2">
+                      <div className="min-w-0 space-y-2">
                         <Label htmlFor="name">Name</Label>
                         <Input id="name" value={profile.name} onChange={(event) => setProfile((current) => ({ ...current, name: event.target.value }))} />
                       </div>
-                      <div className="space-y-2">
+                      <div className="min-w-0 space-y-2">
                         <Label htmlFor="email">Email</Label>
                         <Input id="email" type="email" value={profile.email} onChange={(event) => setProfile((current) => ({ ...current, email: event.target.value }))} />
                         {profile.email !== (user?.email || "") ? <p className="text-xs text-destructive">Changing your email will require verification again.</p> : null}
                       </div>
-                      <div className="space-y-2 md:col-span-2">
+                      <div className="min-w-0 space-y-2 md:col-span-2">
                         <Label htmlFor="avatar">Avatar</Label>
-                        <div className="grid gap-2 lg:grid-cols-[minmax(0,1fr)_auto_auto]">
-                          <Input id="avatar" value={profile.avatar} onChange={(event) => setProfile((current) => ({ ...current, avatar: event.target.value }))} placeholder="Paste image URL or upload an image" />
-                          <Button type="button" variant="outline" disabled={avatarUploading} asChild>
+                        <div className="flex min-w-0 flex-col gap-2 lg:flex-row">
+                          <Input className="min-w-0 lg:flex-1" id="avatar" value={profile.avatar} onChange={(event) => setProfile((current) => ({ ...current, avatar: event.target.value }))} placeholder="Paste image URL or upload an image" />
+                          <Button type="button" variant="outline" className="shrink-0" disabled={avatarUploading} asChild>
                             <label htmlFor="avatar-upload" className="cursor-pointer">
                               <ImagePlus className="h-4 w-4" />
                               {avatarUploading ? "Uploading..." : "Upload"}
                             </label>
                           </Button>
-                          <Button type="button" variant="outline" disabled={!profile.avatar} onClick={() => setProfile((current) => ({ ...current, avatar: "" }))}>
+                          <Button type="button" variant="outline" className="shrink-0" disabled={!profile.avatar} onClick={() => setProfile((current) => ({ ...current, avatar: "" }))}>
                             <Trash2 className="h-4 w-4" />
                             Remove
                           </Button>
@@ -384,7 +390,7 @@ export default function Setting() {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="min-w-0 space-y-2">
                     <Label htmlFor="bio">Profile note</Label>
                     <Textarea id="bio" className="min-h-24" value={preferences.profileNote} onChange={(event) => setPreferences((current) => ({ ...current, profileNote: event.target.value }))} placeholder="Role, focus area, or working notes" />
                   </div>

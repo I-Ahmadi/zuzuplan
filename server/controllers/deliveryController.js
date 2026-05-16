@@ -39,6 +39,3 @@ export const updatePullRequest = updateHandler(deliveryService.updatePullRequest
 export const listDeployments = listHandler(deliveryService.listDeployments);
 export const createDeployment = createHandler(deliveryService.createDeployment);
 export const updateDeployment = updateHandler(deliveryService.updateDeployment);
-export const listReleases = listHandler(deliveryService.listReleases);
-export const createRelease = createHandler(deliveryService.createRelease);
-export const updateRelease = updateHandler(deliveryService.updateRelease);

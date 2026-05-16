@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Activity as ActivityIcon, GitPullRequest, ListTodo, Search } from "lucide-react";
+import { Activity as ActivityIcon, ListTodo, Search } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
@@ -8,7 +8,6 @@ import { UserAvatar } from "@/components/ui/avatar";
 import { getActivityEvents } from "@/lib/activity-api";
 
 function iconFor(type) {
-  if (type?.includes("pull_request")) return GitPullRequest;
   if (type?.includes("issue")) return ListTodo;
   return ActivityIcon;
 }
@@ -27,7 +26,7 @@ export default function Activity() {
     <div className="space-y-4 px-3 py-4 sm:px-4 lg:px-5">
       <div>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Activity</h1>
-        <p className="mt-1 text-sm text-muted-foreground">A durable engineering timeline for issues, comments, PRs, deployments, releases, and integrations.</p>
+        <p className="mt-1 text-sm text-muted-foreground">A durable timeline for issues, comments, spaces, and team activity.</p>
       </div>
       <Card>
         <CardHeader className="border-b px-4 py-3">
