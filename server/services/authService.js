@@ -5,8 +5,6 @@ import { generateToken, hashToken } from '../utils/crypto.js';
 import { sendVerificationEmail, sendPasswordResetEmail } from '../utils/email.js';
 import { AppError } from '../middleware/errorHandler.js';
 
-const refreshExpiryMs = parseInt(process.env.JWT_REFRESH_EXPIRES_MS, 10);
-
 export async function register(name, email, password) {
   const existingUser = await prisma.user.findUnique({ where: { email } });
 
@@ -14,16 +12,16 @@ export async function register(name, email, password) {
     throw new AppError('User with this email is already registered.', 409);
   }
 
-  const hashedPassword         = await bcrypt.hash(password, 12);
-  const rawToken               = generateToken();
-  const emailVerificationToken = hashToken(rawToken);
+  const hashedPassword = await bcrypt.hash(password, 12);
+  const rawToken = generateToken();
+  const hashedEmailVerificationToken = hashToken(rawToken);
 
   const newUser = await prisma.user.create({
     data: {
       name,
       email,
       password: hashedPassword,
-      emailVerificationToken,
+      emailVerificationToken: hashedEmailVerificationToken,
     },
   });
 
@@ -35,10 +33,10 @@ export async function register(name, email, password) {
   }
   
   const { 
-    password: _pw,
-    emailVerificationToken: _evt,
-    passwordResetToken: _prt,
-    passwordResetExpires: _pre,
+    password: __password,
+    emailVerificationToken: _evToken,
+    passwordResetToken: _prToken,
+    passwordResetExpires: _prExpires,
     ...rest
   } = newUser;
 
@@ -53,16 +51,16 @@ export async function login(email, password) {
   }
 
   if (!await bcrypt.compare(password, user.password)) {
-    throw new AppError('Invalid email or password.', 401);
+    throw new AppError('Invalid password. Please try again.', 401);
   }
 
   if (!user.emailVerified) {
     throw new AppError('The user email is not verified.', 403);
   }
 
-  const accessToken  = generateAccessToken({ userId: user.id });
+  const accessToken = generateAccessToken({ userId: user.id });
   const refreshToken = generateRefreshToken({ userId: user.id });
-  const expiresAt    = new Date(Date.now() + refreshExpiryMs);
+  const expiresAt = new Date(Date.now() + parseInt(process.env.JWT_REFRESH_EXPIRES_MS, 10));
   
   await prisma.refreshToken.create({
     data: { 
@@ -73,10 +71,10 @@ export async function login(email, password) {
   });
 
   const { 
-    password: _pw,
-    emailVerificationToken: _evt,
-    passwordResetToken: _prt,
-    passwordResetExpires: _pre,
+    password: __password,
+    emailVerificationToken: _evToken,
+    passwordResetToken: _prToken,
+    passwordResetExpires: _prExpires,
     ...rest
   } = user;
 
@@ -84,8 +82,12 @@ export async function login(email, password) {
     user: rest,
     accessToken: accessToken,
     refreshToken: refreshToken,
-    expiresIn: refreshExpiryMs / 1000,
+    expiresIn: parseInt(process.env.JWT_REFRESH_EXPIRES_MS, 10) / 1000,
   };
+}
+
+export async function logout(token) {
+  await prisma.refreshToken.deleteMany({ where: { token } });
 }
 
 export async function refreshToken(token) {
@@ -110,9 +112,9 @@ export async function refreshToken(token) {
   
   await prisma.refreshToken.delete({ where: { id: stored.id } });
   
-  const newAccessToken  = generateAccessToken({ userId: payload.userId });
+  const newAccessToken = generateAccessToken({ userId: payload.userId });
   const newRefreshToken = generateRefreshToken({ userId: payload.userId });
-  const expiresAt       = new Date(Date.now() + refreshExpiryMs);
+  const expiresAt = new Date(Date.now() + parseInt(process.env.JWT_REFRESH_EXPIRES_MS, 10));
 
   await prisma.refreshToken.create({
     data: {
@@ -125,19 +127,15 @@ export async function refreshToken(token) {
   return { 
     accessToken: newAccessToken,
     refreshToken: newRefreshToken,
-    expiresIn: refreshExpiryMs / 1000,
+    expiresIn: parseInt(process.env.JWT_REFRESH_EXPIRES_MS, 10) / 1000,
   };
 }
 
-export async function logout(token) {
-  await prisma.refreshToken.deleteMany({ where: { token } });
-}
-
 export async function verifyEmail(token) {
-  const hashed = hashToken(token);
+  const hashedEmailToken = hashToken(token);
 
   const user = await prisma.user.findFirst({
-    where: { emailVerificationToken: hashed },
+    where: { emailVerificationToken: hashedEmailToken },
   });
   
   if (!user) {
@@ -150,10 +148,10 @@ export async function verifyEmail(token) {
   });
 
   const { 
-    password: _pw, 
-    emailVerificationToken: _evt, 
-    passwordResetToken: _prt, 
-    passwordResetExpires: _pre, 
+    password: _password, 
+    emailVerificationToken: _evToken, 
+    passwordResetToken: _prToken, 
+    passwordResetExpires: _prExpires, 
     ...rest 
   } = user;
   
@@ -167,8 +165,8 @@ export async function forgotPassword(email) {
     throw new AppError(`No account found with this email ${email}`, 500);
   };
 
-  const rawToken             = generateToken();
-  const passwordResetToken   = hashToken(rawToken);
+  const rawToken = generateToken();
+  const passwordResetToken = hashToken(rawToken);
   const passwordResetExpires = new Date(Date.now() + 60 * 60 * 1000);
 
   await prisma.user.update({

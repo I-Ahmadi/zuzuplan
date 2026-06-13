@@ -8,21 +8,22 @@ import { errorHandler } from './middleware/errorHandler.js';
 import notFoundHandler from './middleware/notFoundHandler.js';
 import { verifyEmailTransport } from './utils/email.js';
 
-import authRoutes from './routes/auth.js';
-import userRoutes from './routes/users.js';
-import projectRoutes from './routes/projects.js';
-import taskRoutes from './routes/tasks.js';
-import commentRoutes from './routes/comments.js';
-import attachmentRoutes from './routes/attachments.js';
-import sprintRoutes from './routes/sprints.js';
-import docRoutes from './routes/docs.js';
-import searchRoutes from './routes/search.js';
-import activityRoutes from './routes/activity.js';
-import inboxRoutes from './routes/inbox.js';
-import deliveryRoutes from './routes/delivery.js';
-import ideaRoutes from './routes/ideas.js';
+import authRoutes from './routes/authRoutes.js';
+import userRoutes from './routes/usersRoutes.js';
+import projectRoutes from './routes/projectsRoutes.js';
+import taskRoutes from './routes/tasksRoutes.js';
+import commentRoutes from './routes/commentsRoutes.js';
+import attachmentRoutes from './routes/attachmentsRoutes.js';
+import sprintRoutes from './routes/sprintsRoutes.js';
+import docRoutes from './routes/docsRoutes.js';
+import searchRoutes from './routes/searchRoutes.js';
+import activityRoutes from './routes/activityRoutes.js';
+import inboxRoutes from './routes/inboxRoutes.js';
+import deliveryRoutes from './routes/deliveryRoutes.js';
+import ideaRoutes from './routes/ideasRoutes.js';
 
-const PORT = process.env.PORT || 3000;
+// App Configuration
+const PORT = process.env.PORT;
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
 
 if (!fs.existsSync(UPLOAD_DIR)) {
@@ -30,17 +31,20 @@ if (!fs.existsSync(UPLOAD_DIR)) {
   console.log('Created uploads directory:', UPLOAD_DIR);
 }
 
+// Initialize Express Application
 const app = express();
 
-// Allow localhost origins (Next.js may use 3000, 3001, etc.)
+// CORS Configuration
 app.use(cors({
   origin: (origin, cb) => {
     if (!origin) return cb(null, true);
-    const allowed = origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:');
+    const allowed = origin.startsWith('http://localhost:');
     cb(null, allowed ? origin : false);
   },
   credentials: true,
 }));
+
+// Body Parsers
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -49,10 +53,12 @@ app.use((req, res, next) => {
   next();
 });
 
+// Health Check Route
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
+// API Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
@@ -79,6 +85,7 @@ app.use('/uploads', express.static(UPLOAD_DIR));
 app.use(notFoundHandler);
 app.use(errorHandler);
 
+// Server Startup
 async function start() {
   await connectDB();
   await verifyEmailTransport();
@@ -87,6 +94,7 @@ async function start() {
   });
 }
 
+// Start Application
 start().catch((err) => {
   console.error('Failed to start:', err);
   process.exit(1);

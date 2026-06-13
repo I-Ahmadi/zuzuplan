@@ -31,7 +31,7 @@ function BoardLayoutInner({ children }) {
         style={{ marginLeft: sidebarWidth, width: `calc(100% - ${sidebarWidth}px)` }}
       >
         <Header />
-        <div className="mx-auto w-full max-w-[1600px] min-w-0 overflow-x-hidden">
+        <div className="w-full min-w-0 overflow-x-hidden">
           {children}
         </div>
       </main>

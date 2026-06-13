@@ -29,7 +29,7 @@ export default function Header() {
 
   return (
     <header className="sticky top-0 z-30 h-14 border-b bg-topbar">
-      <div className="mx-auto grid h-full w-full max-w-[1600px] grid-cols-[auto_minmax(0,1fr)] items-center gap-3 px-3 sm:px-4 lg:grid-cols-[minmax(260px,560px)_minmax(0,1fr)_auto] lg:px-5">
+      <div className="grid h-full w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-3 px-3 sm:px-4 lg:grid-cols-[minmax(260px,560px)_minmax(0,1fr)_auto] lg:px-5">
         <form className="relative min-w-0 justify-self-start lg:w-full" onSubmit={submitSearch}>
           <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           <input

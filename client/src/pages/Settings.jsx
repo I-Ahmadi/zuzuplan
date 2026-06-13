@@ -136,9 +136,8 @@ export default function Setting() {
     if (preferencesQuery.data?.data) {
       const nextPreferences = { ...preferenceDefaults, ...preferencesQuery.data.data };
       setPreferences(nextPreferences);
-      setCollapsed(nextPreferences.sidebarDefault === "collapsed");
     }
-  }, [preferencesQuery.data?.data, setCollapsed]);
+  }, [preferencesQuery.data?.data]);
 
   const strength = passwordStrength(passwordForm.password);
 

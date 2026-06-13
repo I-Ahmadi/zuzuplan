@@ -114,7 +114,6 @@
     text-rendering: optimizeLegibility;
     max-width: 100%;
     overflow-x: hidden;
-    scrollbar-gutter: stable;
   }
 
   body {
@@ -124,7 +123,6 @@
   #root {
     max-width: 100%;
     overflow-x: hidden;
-    scrollbar-gutter: stable;
   }
   code {
     font-family: "JetBrains Mono", ui-monospace, monospace;
@@ -146,5 +144,20 @@
   }
   ::-webkit-scrollbar-thumb:hover {
     background: hsl(var(--muted-foreground) / 0.42);
+  }
+
+  .sidebar-native-scroll {
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+  }
+
+  .sidebar-native-scroll::-webkit-scrollbar {
+    height: 0;
+    width: 0;
+  }
+
+  .sidebar-native-scroll::-webkit-scrollbar-track,
+  .sidebar-native-scroll::-webkit-scrollbar-thumb {
+    background: transparent;
   }
 }

@@ -1,20 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  Activity,
-  BarChart3,
-  BookOpen,
   FolderKanban,
-  Home,
-  Inbox,
-  Lightbulb,
   ListTodo,
   LogOut,
   Moon,
   PanelLeftClose,
   Settings,
   Sun,
-  UserCheck,
   Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -31,21 +24,35 @@ const SIDEBAR_WIDTH_COLLAPSED = 56;
 
 function SidebarLink({ item, pathname, collapsed = false, onNavigate, className }) {
   const Icon = item.icon;
-  const active = item.match(pathname);
+  const disabled = Boolean(item.disabled);
+  const active = !disabled && item.match(pathname);
+
+  function handleClick(event) {
+    if (disabled) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
+    onNavigate?.(event);
+  }
 
   return (
     <Link
-      to={item.to}
+      to={disabled ? pathname : item.to}
       className={cn(
         "group relative flex min-h-9 w-full items-center gap-2 rounded-md text-sm transition-colors",
         "text-muted-foreground hover:bg-accent hover:text-foreground",
-        collapsed ? "h-9 justify-center px-0" : "min-h-9 px-2.5 py-1",
+        collapsed ? "h-9 w-9 justify-center px-0 py-0" : "min-h-9 px-[7px] py-1",
         active && "bg-sidebar-active font-medium text-primary",
+        disabled && "cursor-not-allowed opacity-45 hover:bg-transparent hover:text-muted-foreground",
         className
       )}
       aria-label={item.label}
+      aria-disabled={disabled || undefined}
+      tabIndex={disabled ? -1 : undefined}
       title={collapsed ? item.label : undefined}
-      onClick={onNavigate}
+      onClick={handleClick}
     >
       <span
         className={cn(
@@ -53,19 +60,9 @@ function SidebarLink({ item, pathname, collapsed = false, onNavigate, className 
           active && "opacity-100"
         )}
       />
-      <Icon className={cn("h-[18px] w-[18px] shrink-0", active ? "text-primary" : "text-muted-foreground group-hover:text-foreground")} />
+      <Icon className={cn("h-[18px] w-[18px] shrink-0", active ? "text-primary" : "text-muted-foreground", !disabled && "group-hover:text-foreground")} />
       {!collapsed ? <span className="min-w-0 flex-1 truncate">{item.label}</span> : null}
     </Link>
-  );
-}
-
-function NavSection({ items, pathname, collapsed, onNavigate }) {
-  return (
-    <div className="space-y-1">
-      {items.map((item) => (
-        <SidebarLink key={item.to} item={item} pathname={pathname} collapsed={collapsed} onNavigate={onNavigate} />
-      ))}
-    </div>
   );
 }
 
@@ -75,29 +72,27 @@ function FooterAction({ icon: Icon, label, collapsed, onClick }) {
       type="button"
       variant="outline"
       size="icon"
-      className={cn("w-full border border-border bg-transparent shadow-none", collapsed ? "h-9" : "h-9 justify-start px-2.5")}
+      className={cn(
+        "h-9 border border-border bg-transparent shadow-none",
+        collapsed ? "w-9 justify-center px-0" : "w-full justify-start px-[7px]"
+      )}
       aria-label={label}
       title={collapsed ? label : undefined}
       onClick={onClick}
     >
-      <Icon className="h-4 w-4" />
+      <Icon className="h-[18px] w-[18px]" />
       {!collapsed ? <span className="text-sm">{label}</span> : null}
     </Button>
   );
 }
 
 function SidebarNavGroups({ groups, pathname, collapsed }) {
+  const items = groups.flatMap((group) => group.items);
+
   return (
-    <div className="space-y-4">
-      {groups.map((group) => (
-        <div key={group.title} className="space-y-1">
-          {!collapsed ? (
-            <p className="px-2.5 text-[10px] font-medium uppercase text-muted-foreground/60">
-              {group.title}
-            </p>
-          ) : null}
-          <NavSection items={group.items} pathname={pathname} collapsed={collapsed} />
-        </div>
+    <div className="space-y-1">
+      {items.map((item) => (
+        <SidebarLink key={item.to} item={item} pathname={pathname} collapsed={collapsed} />
       ))}
     </div>
   );
@@ -126,14 +121,14 @@ function SidebarAccountMenu({ user, collapsed }) {
   }
 
   return (
-    <div className={cn("relative space-y-2", collapsed ? "p-2" : "p-3")} ref={menuRef}>
+    <div className="relative space-y-2" ref={menuRef}>
       <FooterAction icon={resolvedTheme === "dark" ? Sun : Moon} label={resolvedTheme === "dark" ? "Light mode" : "Dark mode"} collapsed={collapsed} onClick={toggleTheme} />
 
       <button
         type="button"
         className={cn(
           "flex w-full min-w-0 items-center rounded-md border border-border bg-transparent text-left shadow-none transition-colors hover:bg-accent",
-          collapsed ? "h-9 justify-center p-1" : "h-9 gap-2 px-2.5"
+          collapsed ? "h-9 w-9 justify-center p-0" : "h-9 gap-2 px-[7px]"
         )}
         onClick={() => setOpen((current) => !current)}
         aria-expanded={open}
@@ -192,6 +187,133 @@ function SidebarAccountMenu({ user, collapsed }) {
   );
 }
 
+function SidebarMenuScroll({ collapsed, children }) {
+  const scrollRef = useRef(null);
+  const dragOffsetRef = useRef(0);
+  const [scrollState, setScrollState] = useState({
+    clientHeight: 0,
+    scrollHeight: 0,
+    scrollTop: 0,
+  });
+
+  function syncScrollState() {
+    const element = scrollRef.current;
+    if (!element) return;
+
+    setScrollState({
+      clientHeight: element.clientHeight,
+      scrollHeight: element.scrollHeight,
+      scrollTop: element.scrollTop,
+    });
+  }
+
+  useEffect(() => {
+    syncScrollState();
+
+    const element = scrollRef.current;
+    if (!element) return undefined;
+
+    window.addEventListener("resize", syncScrollState);
+
+    if (typeof ResizeObserver === "undefined") {
+      return () => window.removeEventListener("resize", syncScrollState);
+    }
+
+    const observer = new ResizeObserver(syncScrollState);
+    observer.observe(element);
+    if (element.firstElementChild) observer.observe(element.firstElementChild);
+
+    return () => {
+      window.removeEventListener("resize", syncScrollState);
+      observer.disconnect();
+    };
+  }, [collapsed]);
+
+  const canScroll = scrollState.scrollHeight > scrollState.clientHeight + 1;
+  const thumbHeight = canScroll
+    ? Math.max(36, (scrollState.clientHeight / scrollState.scrollHeight) * scrollState.clientHeight)
+    : 0;
+  const thumbTop = canScroll
+    ? (scrollState.scrollTop / (scrollState.scrollHeight - scrollState.clientHeight)) * (scrollState.clientHeight - thumbHeight)
+    : 0;
+
+  function scrollToPointer(clientY, railElement, offset = thumbHeight / 2) {
+    const element = scrollRef.current;
+    if (!element || !canScroll) return;
+
+    const rect = railElement.getBoundingClientRect();
+    const maxThumbTop = scrollState.clientHeight - thumbHeight;
+    const nextThumbTop = Math.min(Math.max(clientY - rect.top - offset, 0), maxThumbTop);
+    element.scrollTop = (nextThumbTop / maxThumbTop) * (scrollState.scrollHeight - scrollState.clientHeight);
+  }
+
+  function handleRailPointerDown(event) {
+    if (!canScroll) return;
+
+    const railElement = event.currentTarget;
+    scrollToPointer(event.clientY, railElement);
+    railElement.setPointerCapture(event.pointerId);
+  }
+
+  function handleThumbPointerDown(event) {
+    if (!canScroll) return;
+
+    event.stopPropagation();
+    const rect = event.currentTarget.getBoundingClientRect();
+    dragOffsetRef.current = event.clientY - rect.top;
+    event.currentTarget.setPointerCapture(event.pointerId);
+  }
+
+  function handleThumbPointerMove(event) {
+    if (!canScroll || !event.currentTarget.hasPointerCapture(event.pointerId)) return;
+
+    const railElement = event.currentTarget.parentElement;
+    if (!railElement) return;
+
+    scrollToPointer(event.clientY, railElement, dragOffsetRef.current);
+  }
+
+  return (
+    <div className="relative min-h-0 flex-1">
+      <div
+        ref={scrollRef}
+        className={cn(
+          "sidebar-native-scroll h-full overflow-y-auto overflow-x-hidden",
+          collapsed ? "px-2.5 py-2" : "px-3 py-2"
+        )}
+        onScroll={syncScrollState}
+      >
+        {children}
+      </div>
+      {canScroll ? (
+        <div
+          className="absolute bottom-0 right-px top-0 z-50 w-2 cursor-pointer bg-sidebar"
+          aria-hidden="true"
+          onPointerDown={handleRailPointerDown}
+        >
+          <span
+            className="absolute left-1/2 w-1.5 cursor-grab bg-muted-foreground/55 active:cursor-grabbing"
+            style={{ height: thumbHeight, transform: `translate(-50%, ${thumbTop}px)` }}
+            onPointerDown={handleThumbPointerDown}
+            onPointerMove={handleThumbPointerMove}
+          />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function SidebarShell({ collapsed, children }) {
+  return (
+    <aside
+      className="fixed left-0 top-0 z-40 flex h-screen flex-col overflow-hidden border-r bg-sidebar text-sidebar-foreground"
+      style={{ width: collapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH_EXPANDED }}
+    >
+      {children}
+    </aside>
+  );
+}
+
 export function Sidebar() {
   const { pathname } = useLocation();
   const { collapsed, setCollapsed } = useSidebar();
@@ -202,8 +324,6 @@ export function Sidebar() {
   const issuesPath = currentProjectId ? `/spaces/${currentProjectId}/issues` : "/issues";
   const spacesActive = pathname === "/spaces" || pathname === "/projects" || /^\/(?:projects|spaces)\/[^/]+$/.test(pathname);
   const issuesActive = pathname === "/issues" || pathname === "/tasks" || /^\/(?:projects|spaces)\/[^/]+\/(?:issues|tasks)/.test(pathname);
-  const ideasActive = pathname === "/ideas" || pathname.startsWith("/ideas/");
-  const inboxActive = pathname === "/inbox";
 
   const issueItem = {
     label: "Issues",
@@ -231,27 +351,11 @@ export function Sidebar() {
   };
   const navGroups = [
     {
-      title: "Personal",
-      items: [
-        { label: "For You", to: "/for-you", icon: Home, match: (currentPath) => currentPath === "/" || currentPath === "/for-you" || currentPath === "/dashboard" },
-        { label: "My Issues", to: "/my-issues", icon: UserCheck, match: (currentPath) => currentPath === "/my-issues" || currentPath === "/my-tasks" },
-      ],
-    },
-    {
       title: "Work",
       items: [
         spacesItem,
         issueItem,
-        { label: "Ideas", to: "/ideas", icon: Lightbulb, match: () => ideasActive },
-        { label: "Knowledge", to: "/knowledge", icon: BookOpen, match: (currentPath) => currentPath === "/knowledge" },
         teamsItem,
-      ],
-    },
-    {
-      title: "Insights",
-      items: [
-        { label: "Reports", to: "/reports", icon: BarChart3, match: (currentPath) => currentPath === "/reports" },
-        { label: "Activity", to: "/activity", icon: Activity, match: (currentPath) => currentPath === "/activity" },
       ],
     },
     {
@@ -277,72 +381,53 @@ export function Sidebar() {
 
   if (collapsed) {
     return (
-      <aside
-        className="fixed left-0 top-0 z-40 flex h-screen flex-col border-r bg-sidebar text-sidebar-foreground"
-        style={{ width: SIDEBAR_WIDTH_COLLAPSED }}
-      >
+      <SidebarShell collapsed>
         <div className="flex h-14 items-center justify-center border-b px-2">
           <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setCollapsed(false)} aria-label="Expand sidebar">
             <PanelLeftClose className="h-4 w-4 rotate-180" />
           </Button>
         </div>
 
-        <div className="min-h-0 flex-1 px-2 py-2">
-          <div className="flex h-full min-h-0 flex-col">
-            <div className="min-h-0 flex-1 overflow-y-auto">
+        <SidebarMenuScroll collapsed>
+          <div className="flex min-h-0 flex-col">
+            <div className="min-h-0 overflow-x-hidden">
               <SidebarNavGroups groups={navGroups} pathname={pathname} collapsed />
             </div>
           </div>
-        </div>
+        </SidebarMenuScroll>
 
-        <div className="border-t">
-          <div className="p-2 pb-0">
-            <SidebarLink
-              item={{ label: "Inbox", to: "/inbox", icon: Inbox, match: () => inboxActive }}
-              pathname={pathname}
-              collapsed
-              className="border border-border bg-transparent"
-            />
+        <div className="mt-auto border-t p-2.5">
+          <div className="space-y-2">
+            <SidebarAccountMenu user={user} collapsed />
           </div>
-          <SidebarAccountMenu user={user} collapsed />
         </div>
-      </aside>
+      </SidebarShell>
     );
   }
 
   return (
-    <aside
-      className="fixed left-0 top-0 z-40 flex h-screen flex-col border-r bg-sidebar text-sidebar-foreground"
-      style={{ width: SIDEBAR_WIDTH_EXPANDED }}
-    >
+    <SidebarShell collapsed={false}>
       <div className="flex h-14 items-center justify-between border-b px-3">
-        <Link to="/for-you" className="rounded-md px-1 py-1 text-sm font-semibold hover:bg-accent">
-          Workspace
-        </Link>
+        <div className="h-8 w-8" aria-hidden="true" />
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setCollapsed(true)} aria-label="Collapse sidebar">
           <PanelLeftClose className="h-4 w-4" />
         </Button>
       </div>
 
-      <div className="min-h-0 flex-1 px-3 py-2">
-        <div className="flex h-full min-h-0 flex-col">
-          <div className="min-h-0 flex-1 overflow-y-auto">
+      <SidebarMenuScroll collapsed={false}>
+        <div className="flex min-h-0 flex-col">
+          <div className="min-h-0 overflow-x-hidden">
             <SidebarNavGroups groups={navGroups} pathname={pathname} />
           </div>
         </div>
-      </div>
+      </SidebarMenuScroll>
 
-      <div className="border-t">
-        <div className="px-3 pt-3">
-          <SidebarLink
-            item={{ label: "Inbox", to: "/inbox", icon: Inbox, match: () => inboxActive }}
-            pathname={pathname}
-            className="border border-border bg-transparent"
-          />
+      <div className="mt-auto border-t px-3 py-2.5">
+        <div className="space-y-2">
+          <SidebarAccountMenu user={user} />
         </div>
-        <SidebarAccountMenu user={user} />
       </div>
-    </aside>
+    </SidebarShell>
   );
 }
 

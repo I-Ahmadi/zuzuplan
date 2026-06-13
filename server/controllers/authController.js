@@ -10,7 +10,7 @@ export async function register(req, res, next) {
       message: 'User registered successfully',
       data: result,
     });
-
+    
   } catch (err) {
     console.error(`An error occurred during registration: ${err.message}`);
     next(err);
@@ -34,6 +34,22 @@ export async function login(req, res, next) {
   }
 }
 
+export async function logout(req, res, next) {
+  try {
+    const { token } = req.body;
+    await authService.logout(token);
+
+    res.status(200).json({ 
+      success: true, 
+      message: 'Logged out successfully' 
+    });
+
+  } catch (err) {
+    console.error(`An error occurred during logout: ${err.message}`);
+    next(err);
+  }
+}
+
 export async function refresh(req, res, next) {
   try {
     const { token } = req.body;
@@ -47,22 +63,6 @@ export async function refresh(req, res, next) {
 
   } catch (err) {
     console.error(`An error occurred during token refresh: ${err.message}`);
-    next(err);
-  }
-}
-
-export async function logout(req, res, next) {
-  try {
-    const { token } = req.body;
-    await authService.logout(token);
-
-    res.status(200).json({ 
-      success: true, 
-      message: 'Logged out successfully' 
-    });
-
-  } catch (err) {
-    console.error(`An error occurred during logout: ${err.message}`);
     next(err);
   }
 }
