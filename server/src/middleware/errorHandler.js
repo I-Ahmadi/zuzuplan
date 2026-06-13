@@ -1,4 +1,4 @@
-import { Prisma } from '../generated/client/index.js';
+import { Prisma } from '../../generated/client/index.js';
 
 export class AppError extends Error {
   constructor(message, statusCode = 500, isOperational = true) {
