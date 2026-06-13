@@ -1,6 +1,6 @@
 import * as projectService from '../services/projectService.js';
 
-async function list(req, res, next) {
+export async function listProjects(req, res, next) {
   try {
     const result = await projectService.getProjects(req.user.id, req.query);
     res.json({ success: true, data: result.data, pagination: result.pagination });
@@ -9,7 +9,7 @@ async function list(req, res, next) {
   }
 }
 
-async function getById(req, res, next) {
+export async function getProjectById(req, res, next) {
   try {
     const project = await projectService.getProjectById(req.params.id, req.user.id);
     res.json({ success: true, data: project });
@@ -18,7 +18,7 @@ async function getById(req, res, next) {
   }
 }
 
-async function create(req, res, next) {
+export async function createProject(req, res, next) {
   try {
     const project = await projectService.createProject(req.user.id, req.body);
     res.status(201).json({ success: true, data: project });
@@ -27,7 +27,7 @@ async function create(req, res, next) {
   }
 }
 
-async function update(req, res, next) {
+export async function updateProject(req, res, next) {
   try {
     const project = await projectService.updateProject(req.params.id, req.user.id, req.body);
     res.json({ success: true, data: project });
@@ -36,7 +36,7 @@ async function update(req, res, next) {
   }
 }
 
-async function remove(req, res, next) {
+export async function removeProject(req, res, next) {
   try {
     await projectService.deleteProject(req.params.id, req.user.id);
     res.json({ success: true, message: 'Project deleted' });
@@ -45,7 +45,7 @@ async function remove(req, res, next) {
   }
 }
 
-async function getMembers(req, res, next) {
+export async function getMembers(req, res, next) {
   try {
     const members = await projectService.getMembers(req.params.id, req.user.id);
     res.json({ success: true, data: members });
@@ -54,7 +54,7 @@ async function getMembers(req, res, next) {
   }
 }
 
-async function addMember(req, res, next) {
+export async function addMember(req, res, next) {
   try {
     const members = await projectService.addMember(
       req.params.id,
@@ -68,7 +68,7 @@ async function addMember(req, res, next) {
   }
 }
 
-async function getInvites(req, res, next) {
+export async function getInvites(req, res, next) {
   try {
     const invites = await projectService.getInvites(req.params.id, req.user.id);
     res.json({ success: true, data: invites });
@@ -77,7 +77,7 @@ async function getInvites(req, res, next) {
   }
 }
 
-async function createInvite(req, res, next) {
+export async function createInvite(req, res, next) {
   try {
     const invite = await projectService.createInvite(req.params.id, req.user.id, req.body);
     res.status(201).json({ success: true, data: invite });
@@ -86,7 +86,7 @@ async function createInvite(req, res, next) {
   }
 }
 
-async function revokeInvite(req, res, next) {
+export async function revokeInvite(req, res, next) {
   try {
     await projectService.revokeInvite(req.params.id, req.params.inviteId, req.user.id);
     res.json({ success: true, message: 'Invite revoked' });
@@ -95,7 +95,7 @@ async function revokeInvite(req, res, next) {
   }
 }
 
-async function getInviteByToken(req, res, next) {
+export async function getInviteByToken(req, res, next) {
   try {
     const invite = await projectService.getInviteByToken(req.params.token);
     res.json({ success: true, data: invite });
@@ -104,7 +104,7 @@ async function getInviteByToken(req, res, next) {
   }
 }
 
-async function acceptInvite(req, res, next) {
+export async function acceptInvite(req, res, next) {
   try {
     const project = await projectService.acceptInvite(req.params.token, req.user.id);
     res.json({ success: true, data: project });
@@ -113,7 +113,7 @@ async function acceptInvite(req, res, next) {
   }
 }
 
-async function updateMemberRole(req, res, next) {
+export async function updateMemberRole(req, res, next) {
   try {
     const member = await projectService.updateMemberRole(
       req.params.id,
@@ -127,7 +127,7 @@ async function updateMemberRole(req, res, next) {
   }
 }
 
-async function removeMember(req, res, next) {
+export async function removeMember(req, res, next) {
   try {
     await projectService.removeMember(req.params.id, req.user.id, req.params.userId);
     res.json({ success: true, message: 'Member removed' });
@@ -136,7 +136,7 @@ async function removeMember(req, res, next) {
   }
 }
 
-async function getStats(req, res, next) {
+export async function getStats(req, res, next) {
   try {
     const stats = await projectService.getProjectStats(req.params.id, req.user.id);
     res.json({ success: true, data: stats });
@@ -144,21 +144,3 @@ async function getStats(req, res, next) {
     next(err);
   }
 }
-
-export {
-  list,
-  getById,
-  create,
-  update,
-  remove,
-  getMembers,
-  addMember,
-  getInvites,
-  createInvite,
-  revokeInvite,
-  getInviteByToken,
-  acceptInvite,
-  updateMemberRole,
-  removeMember,
-  getStats,
-};

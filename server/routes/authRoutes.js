@@ -1,7 +1,7 @@
 import express from 'express';
 import rateLimit from 'express-rate-limit';
-import { body } from 'express-validator';
 import * as authController from '../controllers/authController.js';
+import * as authValidators from '../validators/authValidator.js';
 import { validate } from '../middleware/validation.js';
 
 const router = express.Router();
@@ -18,18 +18,12 @@ const forgotResetLimiter = rateLimit({
   message: { success: false, error: { message: 'Too many attempts', statusCode: 429 } },
 });
 
-const registerValidation = [
-  body('email').isEmail().normalizeEmail().withMessage('Valid email is required'),
-  body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
-  body('name').trim().notEmpty().withMessage('Name is required'),
-];
-
-router.post('/register', registerValidation, validate, authController.register);
-router.post('/login', authController.login);
-router.post('/refresh', authController.refresh);
-router.post('/logout', authController.logout);
-router.post('/verify-email', authController.verifyEmail);
-router.post('/forgot-password', forgotResetLimiter, authController.forgotPassword);
-router.post('/reset-password', forgotResetLimiter, authController.resetPassword);
+router.post('/register', authValidators.register, validate, authController.register);
+router.post('/login', validate, authController.login);
+router.post('/refresh', authValidators.refresh, validate, authController.refresh);
+router.post('/logout', authValidators.logout, validate, authController.logout);
+router.post('/verify-email', authValidators.verifyEmail, validate, authController.verifyEmail);
+router.post('/forgot-password', authValidators.forgotPassword, forgotResetLimiter, authController.forgotPassword);
+router.post('/reset-password', authValidators.resetPassword, validate, authController.resetPassword);
 
 export default router;
