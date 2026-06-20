@@ -1,11 +1,11 @@
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
-import { body } from 'express-validator';
 import { authenticate } from '../middleware/auth.js';
 import { validate } from '../middleware/validation.js';
 import * as userController from '../controllers/userController.js';
 import { AppError } from '../middleware/errorHandler.js';
+import * as userValidators from '../validators/userValidators.js';
 
 const router = express.Router();
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
@@ -39,28 +39,13 @@ router.use(authenticate);
 
 router.get('/me', userController.getMe);
 router.get('/me/sessions', userController.getSessions);
-router.delete('/me/sessions/others', userController.revokeOtherSessions);
+router.delete('/me/sessions/others', userValidators.revokeOtherSessions, validate, userController.revokeOtherSessions);
 router.post('/me/resend-verification', userController.resendVerification);
 router.get('/me/preferences', userController.getPreferences);
-router.put('/me/preferences', userController.updatePreferences);
-router.put(
-  '/me',
-  [
-    body('name').optional().trim().notEmpty(),
-    body('email').optional().isEmail().normalizeEmail(),
-    body('currentPassword').optional().isString(),
-    body('password').optional().isLength({ min: 6 }),
-  ],
-  validate,
-  userController.updateMe
-);
-router.put(
-  '/me/avatar',
-  [body('avatarUrl').optional({ nullable: true }).isString()],
-  validate,
-  userController.updateAvatar
-);
+router.put('/me/preferences', userValidators.updatePreferences, validate, userController.updatePreferences);
+router.put('/me', userValidators.updateMe, validate, userController.updateMe);
+router.put('/me/avatar', userValidators.updateAvatar, validate, userController.updateAvatar);
 router.post('/me/avatar/upload', avatarUpload.single('avatar'), userController.uploadAvatar);
-router.get('/:id', userController.getUserById);
+router.get('/:id', userValidators.userId, validate, userController.getUserById);
 
 export default router;

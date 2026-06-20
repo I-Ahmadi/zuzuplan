@@ -182,123 +182,6 @@ exports.Prisma.ProjectScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.IdeaWorkspaceScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  summary: 'summary',
-  problem: 'problem',
-  opportunity: 'opportunity',
-  stage: 'stage',
-  confidence: 'confidence',
-  tags: 'tags',
-  ownerId: 'ownerId',
-  convertedProjectId: 'convertedProjectId',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.IdeaMemberScalarFieldEnum = {
-  id: 'id',
-  ideaId: 'ideaId',
-  userId: 'userId',
-  role: 'role',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.IdeaSectionScalarFieldEnum = {
-  id: 'id',
-  ideaId: 'ideaId',
-  type: 'type',
-  title: 'title',
-  contentJson: 'contentJson',
-  plainText: 'plainText',
-  order: 'order',
-  updatedById: 'updatedById',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.IdeaExperimentScalarFieldEnum = {
-  id: 'id',
-  ideaId: 'ideaId',
-  title: 'title',
-  hypothesis: 'hypothesis',
-  method: 'method',
-  status: 'status',
-  result: 'result',
-  evidence: 'evidence',
-  ownerId: 'ownerId',
-  dueDate: 'dueDate',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.IdeaRequirementScalarFieldEnum = {
-  id: 'id',
-  ideaId: 'ideaId',
-  type: 'type',
-  title: 'title',
-  description: 'description',
-  priority: 'priority',
-  acceptanceNotes: 'acceptanceNotes',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.IdeaGoalScalarFieldEnum = {
-  id: 'id',
-  ideaId: 'ideaId',
-  title: 'title',
-  metric: 'metric',
-  target: 'target',
-  status: 'status',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.IdeaCommentScalarFieldEnum = {
-  id: 'id',
-  ideaId: 'ideaId',
-  sectionId: 'sectionId',
-  userId: 'userId',
-  parentId: 'parentId',
-  content: 'content',
-  resolvedAt: 'resolvedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.IdeaVersionScalarFieldEnum = {
-  id: 'id',
-  ideaId: 'ideaId',
-  label: 'label',
-  snapshotJson: 'snapshotJson',
-  createdById: 'createdById',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.IdeaConversionScalarFieldEnum = {
-  id: 'id',
-  ideaId: 'ideaId',
-  projectId: 'projectId',
-  conversionPlanJson: 'conversionPlanJson',
-  createdById: 'createdById',
-  createdAt: 'createdAt'
-};
-
-exports.Prisma.IdeaLinkScalarFieldEnum = {
-  id: 'id',
-  ideaId: 'ideaId',
-  targetType: 'targetType',
-  targetId: 'targetId',
-  url: 'url',
-  title: 'title',
-  description: 'description',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.ProjectInviteScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
@@ -310,17 +193,6 @@ exports.Prisma.ProjectInviteScalarFieldEnum = {
   acceptedById: 'acceptedById',
   expiresAt: 'expiresAt',
   acceptedAt: 'acceptedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.ProjectDocScalarFieldEnum = {
-  id: 'id',
-  title: 'title',
-  content: 'content',
-  projectId: 'projectId',
-  createdById: 'createdById',
-  pinned: 'pinned',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -490,10 +362,6 @@ exports.Prisma.NullableJsonNullValueInput = {
   JsonNull: Prisma.JsonNull
 };
 
-exports.Prisma.JsonNullValueInput = {
-  JsonNull: Prisma.JsonNull
-};
-
 exports.Prisma.QueryMode = {
   default: 'default',
   insensitive: 'insensitive'
@@ -516,18 +384,7 @@ exports.Prisma.ModelName = {
   UserPreference: 'UserPreference',
   RefreshToken: 'RefreshToken',
   Project: 'Project',
-  IdeaWorkspace: 'IdeaWorkspace',
-  IdeaMember: 'IdeaMember',
-  IdeaSection: 'IdeaSection',
-  IdeaExperiment: 'IdeaExperiment',
-  IdeaRequirement: 'IdeaRequirement',
-  IdeaGoal: 'IdeaGoal',
-  IdeaComment: 'IdeaComment',
-  IdeaVersion: 'IdeaVersion',
-  IdeaConversion: 'IdeaConversion',
-  IdeaLink: 'IdeaLink',
   ProjectInvite: 'ProjectInvite',
-  ProjectDoc: 'ProjectDoc',
   ProjectMember: 'ProjectMember',
   Task: 'Task',
   TaskLink: 'TaskLink',

@@ -37,7 +37,7 @@ export default function Header() {
             value={searchValue}
             onChange={(event) => setSearchValue(event.target.value)}
             onFocus={() => openSearch(searchValue)}
-            placeholder="Search issues, spaces, docs..."
+            placeholder="Search issues, spaces, comments..."
             type="search"
           />
           <Button type="button" variant="ghost" size="icon" className="h-9 w-9 lg:hidden" aria-label="Search" onClick={() => openSearch()}>

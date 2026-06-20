@@ -1,28 +1,19 @@
 import express from 'express';
-import { body } from 'express-validator';
 import { authenticate } from '../middleware/auth.js';
-import { requireProjectAccess } from '../middleware/authorization.js';
 import { validate } from '../middleware/validation.js';
 import * as deliveryController from '../controllers/deliveryController.js';
+import * as deliveryValidators from '../validators/deliveryValidators.js';
 
 const router = express.Router({ mergeParams: true });
 
 router.use(authenticate);
-router.use(requireProjectAccess());
+router.use(deliveryValidators.projectId, validate);
 
-router.get('/pull-requests', deliveryController.listPullRequests);
-router.post('/pull-requests', [
-  body('repository').trim().notEmpty(),
-  body('number').isInt({ min: 1 }),
-  body('title').trim().notEmpty(),
-], validate, deliveryController.createPullRequest);
-router.put('/pull-requests/:id', deliveryController.updatePullRequest);
-
-router.get('/deployments', deliveryController.listDeployments);
-router.post('/deployments', [
-  body('environment').optional().isIn(['production', 'staging', 'preview']),
-  body('status').optional().isIn(['PENDING', 'RUNNING', 'SUCCESS', 'FAILED', 'ROLLED_BACK']),
-], validate, deliveryController.createDeployment);
-router.put('/deployments/:id', deliveryController.updateDeployment);
+router.get('/pull-requests', deliveryValidators.listPullRequests, validate, deliveryController.listPullRequests);
+router.post('/pull-requests', deliveryValidators.createPullRequest, validate, deliveryController.createPullRequest);
+router.put('/pull-requests/:id', deliveryValidators.updatePullRequest, validate, deliveryController.updatePullRequest);
+router.get('/deployments', deliveryValidators.listDeployments, validate, deliveryController.listDeployments);
+router.post('/deployments', deliveryValidators.createDeployment, validate, deliveryController.createDeployment);
+router.put('/deployments/:id', deliveryValidators.updateDeployment, validate, deliveryController.updateDeployment);
 
 export default router;

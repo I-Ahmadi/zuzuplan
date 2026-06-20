@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import {
   Bell,
   Check,
@@ -17,6 +18,7 @@ import {
   X,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LogoutConfirmationDialog } from "@/components/auth/LogoutConfirmationDialog";
 import { UserAvatar } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -99,6 +101,7 @@ function passwordStrength(password) {
 
 export default function Setting() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { user, refreshSession, logout } = useAuth();
   const { setTheme } = useTheme();
   const { setCollapsed } = useSidebar();
@@ -108,11 +111,26 @@ export default function Setting() {
   const [preferences, setPreferences] = useState(preferenceDefaults);
   const [message, setMessage] = useState("");
   const [avatarUploading, setAvatarUploading] = useState(false);
+  const [confirmLogout, setConfirmLogout] = useState(false);
+  const [logoutPending, setLogoutPending] = useState(false);
 
   const preferencesQuery = useQuery({
     queryKey: ["user-preferences"],
     queryFn: getUserPreferences,
   });
+
+  async function confirmLogoutAction() {
+    if (logoutPending) return;
+
+    setLogoutPending(true);
+    try {
+      await logout();
+    } finally {
+      setLogoutPending(false);
+      setConfirmLogout(false);
+      navigate("/login", { replace: true });
+    }
+  }
   const sessionsQuery = useQuery({
     queryKey: ["user-sessions"],
     queryFn: getUserSessions,
@@ -345,7 +363,7 @@ export default function Setting() {
                   <UserCircle className="h-4 w-4" />
                   Profile
                 </CardTitle>
-                <CardDescription className="break-words">Update the identity shown across spaces, tasks, docs, and comments.</CardDescription>
+                <CardDescription className="break-words">Update the identity shown across spaces, tasks, and comments.</CardDescription>
               </CardHeader>
               <CardContent className="p-4">
                 <form
@@ -583,7 +601,7 @@ export default function Setting() {
                     <ShieldCheck className="h-4 w-4" />
                     {revokeSessionsMutation.isPending ? "Revoking..." : "Revoke other sessions"}
                   </Button>
-                  <Button variant="outline" onClick={logout}>
+                  <Button variant="outline" onClick={() => setConfirmLogout(true)}>
                     <X className="h-4 w-4" />
                     Logout from this device
                   </Button>
@@ -627,6 +645,12 @@ export default function Setting() {
           ) : null}
         </main>
       </div>
+      <LogoutConfirmationDialog
+        open={confirmLogout}
+        pending={logoutPending}
+        onCancel={() => setConfirmLogout(false)}
+        onConfirm={confirmLogoutAction}
+      />
     </div>
   );
 }

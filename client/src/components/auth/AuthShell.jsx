@@ -20,7 +20,7 @@ export function AuthShell({ title, description, children, footer }) {
         </section>
 
         <footer className="text-center text-xs text-[#626f86]">
-          <p>One account for spaces, tasks, docs, and delivery planning.</p>
+          <p>One account for spaces, tasks, teams, and delivery planning.</p>
           <div className="mt-2 flex items-center justify-center gap-3">
             <Link to="/login" className="hover:text-[#0c66e4] hover:underline">Login</Link>
             <span aria-hidden="true">.</span>

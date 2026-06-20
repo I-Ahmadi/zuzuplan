@@ -1,6 +1,5 @@
 import { prisma } from '../config/database.js';
 import { getPageAndLimit, getSkip, createPaginationResult } from '../utils/pagination.js';
-import { notifyCommentUpdate } from '../utils/realtime.js';
 import { PROJECT_PERMISSIONS } from '../utils/constants.js';
 import { ensureTaskAccess } from './taskService.js';
 import { AppError } from '../middleware/errorHandler.js';
@@ -48,9 +47,6 @@ export async function createComment(taskId, userId, content) {
     actionUrl: `/spaces/${task.projectId}/issues/${taskId}`,
     source: 'comment',
   })));
-  try {
-    notifyCommentUpdate(task.projectId, taskId, comment.id, comment);
-  } catch (_) {}
   return comment;
 }
 
@@ -90,9 +86,6 @@ export async function updateComment(commentId, userId, content) {
     data: { content },
     include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
   });
-  try {
-    notifyCommentUpdate(comment.task.projectId, comment.taskId, commentId, updated);
-  } catch (_) {}
   return updated;
 }
 

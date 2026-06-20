@@ -15,12 +15,10 @@ import taskRoutes from './routes/tasksRoutes.js';
 import commentRoutes from './routes/commentsRoutes.js';
 import attachmentRoutes from './routes/attachmentsRoutes.js';
 import sprintRoutes from './routes/sprintsRoutes.js';
-import docRoutes from './routes/docsRoutes.js';
 import searchRoutes from './routes/searchRoutes.js';
 import activityRoutes from './routes/activityRoutes.js';
 import inboxRoutes from './routes/inboxRoutes.js';
 import deliveryRoutes from './routes/deliveryRoutes.js';
-import ideaRoutes from './routes/ideasRoutes.js';
 
 // App Configuration
 const PORT = process.env.PORT;
@@ -65,20 +63,17 @@ app.use('/api/projects', projectRoutes);
 app.use('/api/projects/:projectId/tasks', taskRoutes);
 app.use('/api/projects/:projectId/issues', taskRoutes);
 app.use('/api/projects/:projectId/sprints', sprintRoutes);
-app.use('/api/projects/:projectId/docs', docRoutes);
 app.use('/api/projects/:projectId/delivery', deliveryRoutes);
 app.use('/api/spaces', projectRoutes);
 app.use('/api/spaces/:projectId/tasks', taskRoutes);
 app.use('/api/spaces/:projectId/issues', taskRoutes);
 app.use('/api/spaces/:projectId/sprints', sprintRoutes);
-app.use('/api/spaces/:projectId/docs', docRoutes);
 app.use('/api/spaces/:projectId/delivery', deliveryRoutes);
 app.use('/api/tasks/:taskId/comments', commentRoutes);
 app.use('/api/tasks/:taskId/attachments', attachmentRoutes);
 app.use('/api/activity', activityRoutes);
 app.use('/api/inbox', inboxRoutes);
 app.use('/api/search', searchRoutes);
-app.use('/api/ideas', ideaRoutes);
 
 app.use('/uploads', express.static(UPLOAD_DIR));
 

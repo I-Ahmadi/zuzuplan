@@ -4,11 +4,13 @@ import { ROLES } from "../utils/constants.js";
 export const listProjects = [
   query("page")
     .optional()
-    .isInt({ min: 1 }),
+    .isInt({ min: 1 })
+    .withMessage("Page must be a positive integer"),
 
   query("limit")
     .optional()
-    .isInt({ min: 1, max: 100 }),
+    .isInt({ min: 1, max: 100 })
+    .withMessage("Limit must be between 1 and 100"),
 
   query("status")
     .optional()
@@ -16,17 +18,27 @@ export const listProjects = [
 ];
 
 export const projectId = [
-  param("id").isUUID(),
+  param("id")
+    .matches(/^c[a-z0-9]{24}$/)
+    .withMessage("Project id must be a valid id"),
 ];
 
 export const member = [
-  param("id").isUUID(),
-  param("userId").isUUID(),
+  param("id")
+    .matches(/^c[a-z0-9]{24}$/)
+    .withMessage("Project id must be a valid id"),
+  param("userId")
+    .matches(/^c[a-z0-9]{24}$/)
+    .withMessage("User id must be a valid id"),
 ];
 
 export const invite = [
-  param("id").isUUID(),
-  param("inviteId").isUUID(),
+  param("id")
+    .matches(/^c[a-z0-9]{24}$/)
+    .withMessage("Project id must be a valid id"),
+  param("inviteId")
+    .matches(/^c[a-z0-9]{24}$/)
+    .withMessage("Invite id must be a valid id"),
 ];
 
 export const token = [
@@ -34,7 +46,10 @@ export const token = [
 ];
 
 export const createProject = [
-  body("name").trim().notEmpty(),
+  body("name")
+    .trim()
+    .notEmpty()
+    .withMessage("Name is required"),
 
   body("key")
     .trim()
@@ -53,15 +68,19 @@ export const createProject = [
 
   body("startDate")
     .optional({ nullable: true, checkFalsy: true })
-    .isISO8601(),
+    .isISO8601()
+    .withMessage("startDate must be a valid ISO 8601 date"),
 
   body("endDate")
     .optional({ nullable: true, checkFalsy: true })
-    .isISO8601(),
+    .isISO8601()
+    .withMessage("endDate must be a valid ISO 8601 date"),
 ];
 
 export const updateProject = [
-  param("id").isUUID(),
+  param("id")
+    .matches(/^c[a-z0-9]{24}$/)
+    .withMessage("Project id must be a valid id"),
 
   body("name").optional().trim().notEmpty(),
 
@@ -79,17 +98,23 @@ export const updateProject = [
 
   body("startDate")
     .optional({ nullable: true, checkFalsy: true })
-    .isISO8601(),
+    .isISO8601()
+    .withMessage("startDate must be a valid ISO 8601 date"),
 
   body("endDate")
     .optional({ nullable: true, checkFalsy: true })
-    .isISO8601(),
+    .isISO8601()
+    .withMessage("endDate must be a valid ISO 8601 date"),
 ];
 
 export const addMember = [
-  param("id").isUUID(),
+  param("id")
+    .matches(/^c[a-z0-9]{24}$/)
+    .withMessage("Project id must be a valid id"),
 
-  body("userId").isUUID(),
+  body("userId")
+    .matches(/^c[a-z0-9]{24}$/)
+    .withMessage("User id must be a valid id"),
 
   body("role")
     .optional()
@@ -97,14 +122,20 @@ export const addMember = [
 ];
 
 export const updateMemberRole = [
-  param("id").isUUID(),
-  param("userId").isUUID(),
+  param("id")
+    .matches(/^c[a-z0-9]{24}$/)
+    .withMessage("Project id must be a valid id"),
+  param("userId")
+    .matches(/^c[a-z0-9]{24}$/)
+    .withMessage("User id must be a valid id"),
 
   body("role").isIn(Object.values(ROLES)),
 ];
 
 export const createInvite = [
-  param("id").isUUID(),
+  param("id")
+    .matches(/^c[a-z0-9]{24}$/)
+    .withMessage("Project id must be a valid id"),
 
   body("email").isEmail().normalizeEmail(),
 
@@ -114,15 +145,25 @@ export const createInvite = [
 ];
 
 export const removeMember = [
-  param("id").isUUID(),
-  param("userId").isUUID(),
+  param("id")
+    .matches(/^c[a-z0-9]{24}$/)
+    .withMessage("Project id must be a valid id"),
+  param("userId")
+    .matches(/^c[a-z0-9]{24}$/)
+    .withMessage("User id must be a valid id"),
 ];
 
 export const revokeInvite = [
-  param("id").isUUID(),
-  param("inviteId").isUUID(),
+  param("id")
+    .matches(/^c[a-z0-9]{24}$/)
+    .withMessage("Project id must be a valid id"),
+  param("inviteId")
+    .matches(/^c[a-z0-9]{24}$/)
+    .withMessage("Invite id must be a valid id"),
 ];
 
 export const stats = [
-  param("id").isUUID(),
+  param("id")
+    .matches(/^c[a-z0-9]{24}$/)
+    .withMessage("Project id must be a valid id"),
 ];

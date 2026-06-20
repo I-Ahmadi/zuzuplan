@@ -6,7 +6,6 @@ import {
   CalendarClock,
   CheckCircle2,
   Clock3,
-  FileText,
   FolderKanban,
   ListTodo,
   Plus,
@@ -275,12 +274,6 @@ export default function ForYou() {
             <Link to="/spaces">
               <FolderKanban className="h-4 w-4" />
               Create space
-            </Link>
-          </Button>
-          <Button asChild variant="outline" size="sm">
-            <Link to={`${primarySpaceTasksPath}?view=docs`}>
-              <FileText className="h-4 w-4" />
-              Create doc
             </Link>
           </Button>
           <Button asChild variant="outline" size="sm">

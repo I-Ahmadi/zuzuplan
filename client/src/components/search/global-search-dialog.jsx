@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { FileText, FolderKanban, Inbox, ListTodo, MessageSquare, Search, UserCircle, X } from "lucide-react";
+import { FolderKanban, Inbox, ListTodo, MessageSquare, Search, UserCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { globalSearch } from "@/lib/search-api";
 import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
@@ -44,7 +44,6 @@ function resultPath(result) {
   if (result.type === "command") return result.item.to;
   if (result.type === "space") return `/spaces/${result.item.id}`;
   if (result.type === "task") return `/spaces/${result.item.projectId}/issues/${result.item.id}`;
-  if (result.type === "doc") return `/spaces/${result.item.projectId}/issues?view=docs`;
   if (result.type === "comment") return `/spaces/${result.item.task.projectId}/issues/${result.item.taskId}`;
   return "/team-members";
 }
@@ -57,7 +56,6 @@ function ResultIcon({ result }) {
   const icons = {
     space: FolderKanban,
     task: ListTodo,
-    doc: FileText,
     comment: MessageSquare,
     member: UserCircle,
   };
@@ -70,7 +68,6 @@ function resultSubtitle(result) {
   if (result.type === "command") return item.subtitle;
   if (result.type === "space") return `${item.key || "SP"} - ${item.status || "active"}`;
   if (result.type === "task") return `${item.project?.key || "SP"} - ${item.status}`;
-  if (result.type === "doc") return item.project?.name || "Document";
   if (result.type === "comment") return `${item.user?.name || item.user?.email || "Comment"} on ${item.task?.title || "issue"}`;
   return `${item.role || "Member"} - ${item.project?.name || "Team"}`;
 }
@@ -79,7 +76,6 @@ function flattenResults(results) {
   return [
     ...(results.projects || []).map((item) => ({ type: "space", title: item.name, item })),
     ...(results.tasks || []).map((item) => ({ type: "task", title: item.title, item })),
-    ...(results.docs || []).map((item) => ({ type: "doc", title: item.title, item })),
     ...(results.comments || []).map((item) => ({ type: "comment", title: item.content, item })),
     ...(results.members || []).map((item) => ({ type: "member", title: item.user?.name || item.user?.email || "Member", item })),
   ];
@@ -110,7 +106,7 @@ export default function GlobalSearchDialog({ open, initialQuery, onClose }) {
   const results = useMemo(() => {
     return [
       ...commandResults(debouncedQuery),
-      ...flattenResults(searchQuery.data?.data || { projects: [], tasks: [], docs: [], comments: [], members: [] }),
+      ...flattenResults(searchQuery.data?.data || { projects: [], tasks: [], comments: [], members: [] }),
     ];
   }, [debouncedQuery, searchQuery.data]);
 
@@ -171,7 +167,7 @@ export default function GlobalSearchDialog({ open, initialQuery, onClose }) {
               setQuery(event.target.value);
               setActiveIndex(0);
             }}
-            placeholder="Search issues, spaces, docs, comments, people..."
+            placeholder="Search issues, spaces, comments, people..."
             type="search"
           />
           <kbd className="hidden rounded border bg-secondary px-1.5 py-0.5 text-[11px] text-muted-foreground sm:inline">Esc</kbd>

@@ -676,7 +676,7 @@ export default function ProjectSettings() {
                   <div className="flex flex-col gap-3 rounded-md border border-destructive/30 p-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                       <p className="font-medium text-destructive">Delete project</p>
-                      <p className="mt-1 text-sm text-muted-foreground">This permanently removes tasks, docs, sprints, comments, and attachment metadata.</p>
+                      <p className="mt-1 text-sm text-muted-foreground">This permanently removes tasks, sprints, comments, and attachment metadata.</p>
                     </div>
                     <Button variant="destructive" disabled={!canDelete} onClick={() => setConfirmDelete(true)}>
                       <Trash2 className="h-4 w-4" />

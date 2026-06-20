@@ -18,7 +18,6 @@ Prefer TypeScript for new large modules or migration work only when the surround
 server/
   config/
     database.js
-    firebase.js
   controllers/
   middleware/
   prisma/
@@ -103,7 +102,7 @@ async function createTaskController(req, res, next) {
 - Service files live in `server/services`.
 - Services own business rules, permission checks, transactions, and orchestration.
 - Keep transaction boundaries in services.
-- Keep permission checks centralized and consistent with `server/utils/permissions.js`.
+- Keep permission checks centralized and consistent with `server/src/utils/permissions.js`.
 - Keep service function names intent-based, such as `createProjectTask`, `updateTaskStatus`, or `listProjectMembers`.
 - Avoid returning raw sensitive fields from service functions.
 
@@ -112,7 +111,6 @@ async function createTaskController(req, res, next) {
 Middleware files live in `server/middleware`.
 
 - `auth.js`: verifies identity and attaches the authenticated user.
-- `authorization.js`: checks roles, permissions, or resource access.
 - `validation.js`: validates payloads and returns structured errors.
 - `errorHandler.js`: central error response handling.
 - `notFoundHandler.js`: handles unmatched routes.

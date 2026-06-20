@@ -19,11 +19,11 @@ const forgotResetLimiter = rateLimit({
 });
 
 router.post('/register', authValidators.register, validate, authController.register);
-router.post('/login', validate, authController.login);
+router.post('/login', authValidators.login, validate, loginLimiter, authController.login);
 router.post('/refresh', authValidators.refresh, validate, authController.refresh);
 router.post('/logout', authValidators.logout, validate, authController.logout);
 router.post('/verify-email', authValidators.verifyEmail, validate, authController.verifyEmail);
-router.post('/forgot-password', authValidators.forgotPassword, forgotResetLimiter, authController.forgotPassword);
+router.post('/forgot-password', authValidators.forgotPassword, validate, forgotResetLimiter, authController.forgotPassword);
 router.post('/reset-password', authValidators.resetPassword, validate, authController.resetPassword);
 
 export default router;

@@ -4,6 +4,8 @@ import path from 'path';
 import { authenticate } from '../middleware/auth.js';
 import * as attachmentController from '../controllers/attachmentController.js';
 import { AppError } from '../middleware/errorHandler.js';
+import { validate } from '../middleware/validation.js';
+import * as attachmentValidators from '../validators/attachmentValidators.js';
 
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
 const MAX_FILE_SIZE = parseInt(process.env.MAX_FILE_SIZE, 10) || 10 * 1024 * 1024; // 10MB
@@ -39,9 +41,10 @@ const upload = multer({
 const router = express.Router({ mergeParams: true });
 
 router.use(authenticate);
+router.use(attachmentValidators.taskId, validate);
 
 router.get('/', attachmentController.list);
 router.post('/', upload.single('file'), attachmentController.upload);
-router.delete('/:id', attachmentController.remove);
+router.delete('/:id', attachmentValidators.attachmentId, validate, attachmentController.remove);
 
 export default router;

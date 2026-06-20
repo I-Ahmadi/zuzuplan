@@ -6,12 +6,10 @@ import {
   CalendarDays,
   CalendarPlus,
   TimerReset,
-  Check,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
   ChevronsUp,
-  FileText,
   ExternalLink,
   Filter,
   Globe2,
@@ -34,7 +32,6 @@ import { Label } from "@/components/ui/label";
 import { PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
 import { Textarea } from "@/components/ui/textarea";
 import { createComment, getTaskComments } from "@/lib/comment-api";
-import { createDoc, deleteDoc, getProjectDocs, updateDoc } from "@/lib/doc-api";
 import { getProject, getProjectMembers, getProjects } from "@/lib/project-api";
 import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
 import {
@@ -68,7 +65,6 @@ const PROJECT_TABS = [
   { value: "backlog", label: "Backlog", icon: ListTodo },
   { value: "list", label: "List", icon: List },
   { value: "board", label: "Board", icon: LayoutGrid },
-  { value: "docs", label: "Docs", icon: FileText },
 ];
 const TASK_DETAIL_PANEL_WIDTH = "clamp(560px, 42vw, 720px)";
 const CURRENT_PROJECT_KEY = STORAGE_KEYS.currentProjectId;
@@ -131,9 +127,7 @@ export default function Tasks() {
   const [taskForm, setTaskForm] = useState(emptyTask);
   const [comment, setComment] = useState("");
   const [error, setError] = useState("");
-  const [docSearch, setDocSearch] = useState("");
   const [taskPage, setTaskPage] = useState(1);
-  const [docPage, setDocPage] = useState(1);
 
   const projectsQuery = useQuery({ queryKey: ["projects"], queryFn: () => getProjects({ limit: PAGE_SIZE }) });
   const projects = projectsQuery.data?.data || [];
@@ -190,12 +184,6 @@ export default function Tasks() {
     enabled: Boolean(projectId),
   });
 
-  const docsQuery = useQuery({
-    queryKey: ["project-docs", projectId, docSearch, docPage],
-    queryFn: () => getProjectDocs(projectId, { search: docSearch, page: docPage, limit: PAGE_SIZE }),
-    enabled: Boolean(projectId),
-  });
-
   const commentsQuery = useQuery({
     queryKey: ["task-comments", selectedTask?.id],
     queryFn: () => getTaskComments(selectedTask.id),
@@ -205,9 +193,7 @@ export default function Tasks() {
   const members = membersQuery.data?.data || [];
   const tasks = tasksQuery.data?.data || [];
   const sprints = sprintsQuery.data?.data || [];
-  const docs = docsQuery.data?.data || [];
   const tasksPagination = tasksQuery.data?.pagination;
-  const docsPagination = docsQuery.data?.pagination;
   const activeProject = projectQuery.data?.data;
   const currentPermissions = activeProject?.currentUserPermissions || [];
 
@@ -238,10 +224,6 @@ export default function Tasks() {
   useEffect(() => {
     setTaskPage(1);
   }, [activeView, filters, projectId]);
-
-  useEffect(() => {
-    setDocPage(1);
-  }, [docSearch, projectId]);
 
   const createMutation = useMutation({
     mutationFn: (payload) => createTask(projectId, payload),
@@ -300,10 +282,6 @@ export default function Tasks() {
     queryClient.invalidateQueries({ queryKey: ["project-tasks", projectId] });
     queryClient.invalidateQueries({ queryKey: ["project-sprints", projectId] });
     queryClient.invalidateQueries({ queryKey: ["project", projectId] });
-  }
-
-  function refreshDocs() {
-    queryClient.invalidateQueries({ queryKey: ["project-docs", projectId] });
   }
 
   const createSprintMutation = useMutation({
@@ -399,42 +377,6 @@ export default function Tasks() {
       }
       setError("");
       refreshPlanningData();
-    },
-  });
-
-  const createDocMutation = useMutation({
-    mutationFn: (payload) => createDoc(projectId, payload),
-    onSuccess: (result) => {
-      if (!result?.success) {
-        setError(resultMessage(result, "Could not create document."));
-        return;
-      }
-      setError("");
-      refreshDocs();
-    },
-  });
-
-  const updateDocMutation = useMutation({
-    mutationFn: ({ docId, payload }) => updateDoc(projectId, docId, payload),
-    onSuccess: (result) => {
-      if (!result?.success) {
-        setError(resultMessage(result, "Could not update document."));
-        return;
-      }
-      setError("");
-      refreshDocs();
-    },
-  });
-
-  const deleteDocMutation = useMutation({
-    mutationFn: (docId) => deleteDoc(projectId, docId),
-    onSuccess: (result) => {
-      if (!result?.success) {
-        setError(resultMessage(result, "Could not delete document."));
-        return;
-      }
-      setError("");
-      refreshDocs();
     },
   });
 
@@ -599,20 +541,6 @@ export default function Tasks() {
               }}
             />
           ) : null}
-          {activeView === "docs" ? (
-            <DocsView
-              docs={docs}
-              pagination={docsPagination}
-              onPageChange={setDocPage}
-              docSearch={docSearch}
-              setDocSearch={setDocSearch}
-              canManage={canManageSprints}
-              createDocMutation={createDocMutation}
-              updateDocMutation={updateDocMutation}
-              deleteDocMutation={deleteDocMutation}
-              refetch={() => docsQuery.refetch()}
-            />
-          ) : null}
         </div>
       </div>
 
@@ -647,8 +575,6 @@ export default function Tasks() {
         addTaskLinkMutation={addTaskLinkMutation}
         deleteTaskLinkMutation={deleteTaskLinkMutation}
         projectTasks={tasks}
-        projectDocs={docs}
-        createDocMutation={createDocMutation}
       />
     </div>
   );
@@ -690,11 +616,6 @@ export function TaskDetailPage() {
   const tasksQuery = useQuery({
     queryKey: ["project-tasks", projectId, { limit: PAGE_SIZE }],
     queryFn: () => getProjectTasks(projectId, { limit: PAGE_SIZE }),
-    enabled: Boolean(projectId),
-  });
-  const docsQuery = useQuery({
-    queryKey: ["project-docs", projectId],
-    queryFn: () => getProjectDocs(projectId),
     enabled: Boolean(projectId),
   });
   useEffect(() => {
@@ -747,17 +668,6 @@ export function TaskDetailPage() {
     },
   });
 
-  const createDocMutation = useMutation({
-    mutationFn: (payload) => createDoc(projectId, payload),
-    onSuccess: (result) => {
-      if (!result?.success) {
-        setError(resultMessage(result, "Could not create document."));
-        return;
-      }
-      queryClient.invalidateQueries({ queryKey: ["project-docs", projectId] });
-    },
-  });
-
   const addTaskLinkMutation = useMutation({
     mutationFn: ({ targetTaskId }) => addTaskLink(projectId, taskId, { targetTaskId }),
     onSuccess: (result) => {
@@ -789,7 +699,7 @@ export function TaskDetailPage() {
       <div className="space-y-3 px-3 py-3 sm:px-4 lg:px-5">
         <div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Work Item</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Review details, links, documents, activity, and ownership for this task.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Review details, links, activity, and ownership for this task.</p>
         </div>
         <p className="rounded-md border p-6 text-sm text-muted-foreground">Loading issue...</p>
       </div>
@@ -801,7 +711,7 @@ export function TaskDetailPage() {
       <div className="space-y-3 px-3 py-3 sm:px-4 lg:px-5">
         <div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Work Item</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Review details, links, documents, activity, and ownership for this task.</p>
+          <p className="mt-1 text-sm text-muted-foreground">Review details, links, activity, and ownership for this task.</p>
         </div>
         <p className="rounded-md border p-6 text-sm text-muted-foreground">Work item not found.</p>
       </div>
@@ -812,7 +722,7 @@ export function TaskDetailPage() {
     <div className="min-h-[calc(100vh-3rem)] bg-background px-3 py-3 sm:px-4 lg:px-5">
       <div className="mb-4">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Work Item</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Review details, links, documents, activity, and ownership for this task.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Review details, links, activity, and ownership for this task.</p>
       </div>
       {error ? (
         <p className="mb-3 rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">{error}</p>
@@ -834,8 +744,6 @@ export function TaskDetailPage() {
         addTaskLinkMutation={addTaskLinkMutation}
         deleteTaskLinkMutation={deleteTaskLinkMutation}
         projectTasks={tasksQuery.data?.data || []}
-        projectDocs={docsQuery.data?.data || []}
-        createDocMutation={createDocMutation}
         setSelectedTask={setTaskDraft}
         standalone
       />
@@ -848,7 +756,7 @@ function ProjectHeader({ activeView, setActiveView }) {
     <div className="border-b bg-background px-3 pt-3 sm:px-4 lg:px-5">
       <div className="pb-3">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Issues</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Plan backlog work, track sprint progress, manage docs, and review delivery status.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Plan backlog work, track sprint progress, and review delivery status.</p>
       </div>
       <div className="flex min-h-10 items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2">
@@ -2002,91 +1910,6 @@ function CountPill({ value, tone, label }) {
   );
 }
 
-function DocsView({ docs, pagination, onPageChange, docSearch, setDocSearch, canManage, createDocMutation, updateDocMutation, deleteDocMutation, refetch }) {
-  const [selectedDocId, setSelectedDocId] = useState("");
-  const selectedDoc = docs.find((doc) => doc.id === selectedDocId) || docs[0] || null;
-  const [draft, setDraft] = useState({ title: "", content: "" });
-
-  useEffect(() => {
-    if (selectedDoc) setDraft({ title: selectedDoc.title, content: selectedDoc.content || "" });
-    else setDraft({ title: "", content: "" });
-  }, [selectedDoc?.id]);
-
-  function createNewDoc() {
-    createDocMutation.mutate({ title: "Untitled document", content: "" }, {
-      onSuccess: (result) => {
-        if (result?.success) setSelectedDocId(result.data.id);
-      },
-    });
-  }
-
-  function saveDoc() {
-    if (!selectedDoc || !draft.title.trim()) return;
-    updateDocMutation.mutate({ docId: selectedDoc.id, payload: { title: draft.title.trim(), content: draft.content } });
-  }
-
-  return (
-    <div className="grid gap-3 lg:grid-cols-[280px_minmax(0,1fr)]">
-      <aside className="rounded-md border">
-        <div className="border-b p-2">
-          <div className="flex w-full items-center gap-2">
-            <div className="relative min-w-0 flex-1">
-              <Search className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input className="h-8 pl-8" placeholder="Search docs" value={docSearch} onChange={(event) => setDocSearch(event.target.value)} />
-            </div>
-            <Button variant="outline" size="icon" className="h-8 w-8 rounded" aria-label="Refresh docs" onClick={refetch}>
-              <RefreshCcw className="h-3.5 w-3.5" />
-            </Button>
-          </div>
-          {canManage ? (
-            <Button className="mt-2 h-8 w-full rounded text-sm" onClick={createNewDoc} disabled={createDocMutation.isPending}>
-              <Plus className="h-4 w-4" />
-              New doc
-            </Button>
-          ) : null}
-        </div>
-        <div className="max-h-[520px] overflow-y-auto p-1">
-          {docs.map((doc) => (
-            <button
-              key={doc.id}
-              className={cn("block w-full rounded px-3 py-2 text-left text-sm transition-colors hover:bg-accent", selectedDoc?.id === doc.id && "bg-primary/10 text-primary")}
-              onClick={() => setSelectedDocId(doc.id)}
-            >
-              <span className="block truncate font-medium">{doc.title}</span>
-                <span className="block truncate text-xs text-muted-foreground">{doc.createdBy?.name || doc.createdBy?.email || "Space doc"}</span>
-            </button>
-          ))}
-          {!docs.length ? <p className="px-3 py-8 text-center text-sm text-muted-foreground">No documents yet.</p> : null}
-        </div>
-        <PaginationControls pagination={pagination} onPageChange={onPageChange} className="m-2 border-0 px-1" />
-      </aside>
-      <section className="rounded-md border bg-background">
-        {selectedDoc ? (
-          <div className="space-y-3 p-3">
-            <div className="flex items-center gap-2">
-              <Input className="h-10 text-lg font-semibold" value={draft.title} disabled={!canManage} onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))} />
-              {canManage ? (
-                <>
-                  <Button className="h-9 rounded px-3 text-sm" onClick={saveDoc} disabled={updateDocMutation.isPending}>Save</Button>
-                  <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => updateDocMutation.mutate({ docId: selectedDoc.id, payload: { pinned: !selectedDoc.pinned } })} aria-label="Pin document">
-                    <Check className={cn("h-4 w-4", selectedDoc.pinned && "text-primary")} />
-                  </Button>
-                  <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => deleteDocMutation.mutate(selectedDoc.id)} aria-label="Delete document">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </>
-              ) : null}
-            </div>
-          <Textarea className="min-h-[420px] resize-y" value={draft.content} disabled={!canManage} onChange={(event) => setDraft((current) => ({ ...current, content: event.target.value }))} placeholder="Write space notes, links, decisions, or specs..." />
-          </div>
-        ) : (
-          <div className="flex min-h-[480px] items-center justify-center text-sm text-muted-foreground">Select or create a document.</div>
-        )}
-      </section>
-    </div>
-  );
-}
-
 function Metric({ icon: Icon, color, value, caption }) {
   return (
     <div className="rounded-lg border bg-card p-3">
@@ -2213,8 +2036,6 @@ function WorkItemView({
   addTaskLinkMutation,
   deleteTaskLinkMutation,
   projectTasks = [],
-  projectDocs = [],
-  createDocMutation,
   setSelectedTask,
   standalone = false,
   compact = false,
@@ -2223,7 +2044,6 @@ function WorkItemView({
   const taskUrl = `/spaces/${task.projectId}/issues/${task.id}`;
   const reporter = task.createdBy;
   const [linkedTaskId, setLinkedTaskId] = useState("");
-  const [quickDocTitle, setQuickDocTitle] = useState("");
   const linkedItems = [
     ...(task.linkedFrom || []).map((link) => ({ ...link, linkedTask: link.targetTask, direction: "relates to" })),
     ...(task.linkedTo || []).map((link) => ({ ...link, linkedTask: link.sourceTask, direction: "is related by" })),
@@ -2301,7 +2121,6 @@ function WorkItemView({
             {[
               ["Description", "#work-item-description"],
               ["Linked work", "#work-item-links"],
-              ["Documents", "#work-item-docs"],
               ["Details", "#work-item-details"],
               ["Activity", "#work-item-activity"],
             ].map(([label, href]) => (
@@ -2394,32 +2213,6 @@ function WorkItemView({
           </div>
         </section>
 
-        <section id="work-item-docs" className="space-y-2">
-          <h2 className="text-sm font-semibold">Space documents</h2>
-          <form
-            className="flex gap-2"
-            onSubmit={(event) => {
-              event.preventDefault();
-              if (!quickDocTitle.trim()) return;
-              createDocMutation?.mutate({ title: quickDocTitle.trim(), content: "" });
-              setQuickDocTitle("");
-            }}
-          >
-            <Input className="h-9" placeholder="Create space document" value={quickDocTitle} onChange={(event) => setQuickDocTitle(event.target.value)} />
-            <Button className="h-9 rounded px-3 text-sm" disabled={!quickDocTitle.trim() || createDocMutation?.isPending}>Create</Button>
-          </form>
-          <div className="overflow-hidden rounded-md border">
-            {projectDocs.length ? projectDocs.map((doc) => (
-              <a key={doc.id} className="block border-b px-3 py-2 text-sm hover:bg-accent last:border-b-0" href={`/spaces/${task.projectId}/issues?view=docs`}>
-                <FileText className="mr-2 inline h-4 w-4 text-primary" />
-                {doc.title}
-              </a>
-            )) : (
-              <p className="px-3 py-3 text-sm text-muted-foreground">No space documents yet.</p>
-            )}
-          </div>
-        </section>
-
         {compact ? detailCard : null}
 
         <section id="work-item-activity" className="space-y-3">
@@ -2505,8 +2298,6 @@ function IssueDetailDialog({
   addTaskLinkMutation,
   deleteTaskLinkMutation,
   projectTasks = [],
-  projectDocs = [],
-  createDocMutation,
 }) {
   const detailQuery = useQuery({
     queryKey: ["task-detail", projectId, selectedTask?.id],
@@ -2560,8 +2351,6 @@ function IssueDetailDialog({
               addTaskLinkMutation={addTaskLinkMutation}
               deleteTaskLinkMutation={deleteTaskLinkMutation}
               projectTasks={projectTasks}
-              projectDocs={projectDocs}
-              createDocMutation={createDocMutation}
               setSelectedTask={setSelectedTask}
               compact
             />

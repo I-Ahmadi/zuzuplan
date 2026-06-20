@@ -1,16 +1,21 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
+  Activity,
+  BarChart3,
   FolderKanban,
+  Inbox,
   ListTodo,
   LogOut,
   Moon,
   PanelLeftClose,
   Settings,
   Sun,
+  UserCheck,
   Users,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { LogoutConfirmationDialog } from "@/components/auth/LogoutConfirmationDialog";
 import { UserAvatar } from "@/components/ui/avatar";
 import { CURRENT_PROJECT_CHANGE_EVENT, CURRENT_PROJECT_KEY } from "@/components/board/project-switcher";
 import { useAuth } from "@/contexts/auth-context";
@@ -103,6 +108,8 @@ function SidebarAccountMenu({ user, collapsed }) {
   const { logout } = useAuth();
   const { resolvedTheme, toggleTheme } = useTheme();
   const [open, setOpen] = useState(false);
+  const [confirmLogout, setConfirmLogout] = useState(false);
+  const [logoutPending, setLogoutPending] = useState(false);
   const menuRef = useRef(null);
 
   useEffect(() => {
@@ -114,76 +121,98 @@ function SidebarAccountMenu({ user, collapsed }) {
     return () => document.removeEventListener("mousedown", closeOnOutsideClick);
   }, []);
 
-  async function handleLogout() {
+  function requestLogout() {
     setOpen(false);
-    await logout();
-    navigate("/login", { replace: true });
+    setConfirmLogout(true);
+  }
+
+  async function confirmLogoutAction() {
+    if (logoutPending) return;
+
+    setLogoutPending(true);
+    try {
+      await logout();
+    } finally {
+      setLogoutPending(false);
+      setConfirmLogout(false);
+      navigate("/login", { replace: true });
+    }
   }
 
   return (
-    <div className="relative space-y-2" ref={menuRef}>
-      <FooterAction icon={resolvedTheme === "dark" ? Sun : Moon} label={resolvedTheme === "dark" ? "Light mode" : "Dark mode"} collapsed={collapsed} onClick={toggleTheme} />
+    <>
+      <div className="relative space-y-2" ref={menuRef}>
+        <FooterAction icon={resolvedTheme === "dark" ? Sun : Moon} label={resolvedTheme === "dark" ? "Light mode" : "Dark mode"} collapsed={collapsed} onClick={toggleTheme} />
 
-      <button
-        type="button"
-        className={cn(
-          "flex w-full min-w-0 items-center rounded-md border border-border bg-transparent text-left shadow-none transition-colors hover:bg-accent",
-          collapsed ? "h-9 w-9 justify-center p-0" : "h-9 gap-2 px-[7px]"
-        )}
-        onClick={() => setOpen((current) => !current)}
-        aria-expanded={open}
-        aria-haspopup="menu"
-        aria-label="Account menu"
-        title={collapsed ? user?.name || "Account menu" : undefined}
-      >
-        <UserAvatar user={user} fallback="ME" className={collapsed ? "h-7 w-7" : "h-6 w-6"} fallbackClassName="bg-primary text-primary-foreground" />
-        {!collapsed ? (
-          <span className="min-w-0 flex-1">
-            <span className="block truncate text-sm font-medium">{user?.name || "Your profile"}</span>
-          </span>
-        ) : null}
-      </button>
-
-      {open ? (
-        <div
+        <button
+          type="button"
           className={cn(
-            "absolute bottom-3 left-full z-50 ml-2 w-64 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg",
-            collapsed && "bottom-2"
+            "flex w-full min-w-0 items-center rounded-md border border-border bg-transparent text-left shadow-none transition-colors hover:bg-accent",
+            collapsed ? "h-9 w-9 justify-center p-0" : "h-9 gap-2 px-[7px]"
           )}
-          role="menu"
+          onClick={() => setOpen((current) => !current)}
+          aria-expanded={open}
+          aria-haspopup="menu"
+          aria-label="Account menu"
+          title={collapsed ? user?.name || "Account menu" : undefined}
         >
-          <div className="border-b px-3 py-2">
-            <div className="flex min-w-0 items-center gap-2">
-              <UserAvatar user={user} fallback="ME" className="h-8 w-8" fallbackClassName="bg-primary text-primary-foreground" />
-              <div className="min-w-0">
-                <p className="truncate text-sm font-medium">{user?.name || "Your profile"}</p>
-                <p className="truncate text-xs text-muted-foreground">{user?.email || "Account"}</p>
+          <UserAvatar user={user} fallback="ME" className={collapsed ? "h-7 w-7" : "h-6 w-6"} fallbackClassName="bg-primary text-primary-foreground" />
+          {!collapsed ? (
+            <span className="min-w-0 flex-1">
+              <span className="block truncate text-sm font-medium">{user?.name || "Your profile"}</span>
+            </span>
+          ) : null}
+        </button>
+
+        {open ? (
+          <div
+            className={cn(
+              "z-50 overflow-hidden rounded-md border bg-popover text-popover-foreground shadow-lg",
+              collapsed
+                ? "fixed bottom-3 left-[64px] w-64"
+                : "absolute bottom-full left-0 right-0 mb-2"
+            )}
+            role="menu"
+          >
+            <div className="border-b px-3 py-2">
+              <div className="flex min-w-0 items-center gap-2">
+                <UserAvatar user={user} fallback="ME" className="h-8 w-8" fallbackClassName="bg-primary text-primary-foreground" />
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium">{user?.name || "Your profile"}</p>
+                  <p className="truncate text-xs text-muted-foreground">{user?.email || "Account"}</p>
+                </div>
               </div>
             </div>
+            <div className="p-1">
+              <Link
+                to="/settting"
+                className="flex w-full items-center gap-2 rounded px-2 py-2 text-sm transition-colors hover:bg-accent"
+                role="menuitem"
+                onClick={() => setOpen(false)}
+              >
+                <Settings className="h-4 w-4 text-muted-foreground" />
+                Settings
+              </Link>
+              <button
+                type="button"
+                className="flex w-full items-center gap-2 rounded px-2 py-2 text-left text-sm text-destructive transition-colors hover:bg-destructive/10"
+                role="menuitem"
+                onClick={requestLogout}
+              >
+                <LogOut className="h-4 w-4" />
+                Log out
+              </button>
+            </div>
           </div>
-          <div className="p-1">
-            <Link
-              to="/settting"
-              className="flex w-full items-center gap-2 rounded px-2 py-2 text-sm transition-colors hover:bg-accent"
-              role="menuitem"
-              onClick={() => setOpen(false)}
-            >
-              <Settings className="h-4 w-4 text-muted-foreground" />
-              Settings
-            </Link>
-            <button
-              type="button"
-              className="flex w-full items-center gap-2 rounded px-2 py-2 text-left text-sm text-destructive transition-colors hover:bg-destructive/10"
-              role="menuitem"
-              onClick={handleLogout}
-            >
-              <LogOut className="h-4 w-4" />
-              Log out
-            </button>
-          </div>
-        </div>
-      ) : null}
-    </div>
+        ) : null}
+      </div>
+      <LogoutConfirmationDialog
+        open={confirmLogout}
+        pending={logoutPending}
+        onCancel={() => setConfirmLogout(false)}
+        onConfirm={confirmLogoutAction}
+      />
+    </>
   );
 }
 
@@ -325,17 +354,41 @@ export function Sidebar() {
   const spacesActive = pathname === "/spaces" || pathname === "/projects" || /^\/(?:projects|spaces)\/[^/]+$/.test(pathname);
   const issuesActive = pathname === "/issues" || pathname === "/tasks" || /^\/(?:projects|spaces)\/[^/]+\/(?:issues|tasks)/.test(pathname);
 
+  const forYouItem = {
+    label: "For You",
+    to: "/for-you",
+    icon: UserCheck,
+    match: (currentPath) => currentPath === "/" || currentPath === "/dashboard" || currentPath === "/for-you" || currentPath === "/recent",
+  };
   const issueItem = {
     label: "Issues",
     to: issuesPath,
     icon: ListTodo,
     match: () => issuesActive,
   };
+  const inboxItem = {
+    label: "Inbox",
+    to: "/inbox",
+    icon: Inbox,
+    match: (currentPath) => currentPath === "/inbox",
+  };
   const spacesItem = {
     label: "Spaces",
     to: "/spaces",
     icon: FolderKanban,
     match: () => spacesActive,
+  };
+  const activityItem = {
+    label: "Activity",
+    to: "/activity",
+    icon: Activity,
+    match: (currentPath) => currentPath === "/activity" || currentPath === "/pull-requests" || currentPath === "/deployments",
+  };
+  const reportsItem = {
+    label: "Reports",
+    to: "/reports",
+    icon: BarChart3,
+    match: (currentPath) => currentPath === "/reports" || currentPath === "/goals",
   };
   const teamsItem = {
     label: "Teams",
@@ -353,9 +406,13 @@ export function Sidebar() {
     {
       title: "Work",
       items: [
+        forYouItem,
+        inboxItem,
         spacesItem,
         issueItem,
         teamsItem,
+        reportsItem,
+        activityItem,
       ],
     },
     {

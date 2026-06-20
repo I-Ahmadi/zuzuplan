@@ -9,10 +9,7 @@ import Activity from "@/pages/Activity";
 import ForYou from "@/pages/ForYou";
 import ForgotPassword from "@/pages/ForgotPassword";
 import Inbox from "@/pages/Inbox";
-import Ideas from "@/pages/Ideas";
-import Knowledge from "@/pages/Knowledge";
 import Login from "@/pages/Login";
-import MyTasks from "@/pages/MyTasks";
 import Projects from "@/pages/Projects";
 import ProjectSettings from "@/pages/ProjectSettings";
 import Reports from "@/pages/Reports";
@@ -104,16 +101,11 @@ function AppRoutes() {
       <Route path="/dashboard" element={<ProtectedRoute><LandingRedirect /></ProtectedRoute>} />
       <Route path="/for-you" element={<ProtectedRoute><ForYou /></ProtectedRoute>} />
       <Route path="/recent" element={<Navigate to="/for-you" replace />} />
-      <Route path="/my-issues" element={<ProtectedRoute><MyTasks /></ProtectedRoute>} />
-      <Route path="/my-tasks" element={<Navigate to="/my-issues" replace />} />
       <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
-      <Route path="/ideas" element={<ProtectedRoute><Ideas /></ProtectedRoute>} />
-      <Route path="/ideas/:ideaId" element={<ProtectedRoute><Ideas /></ProtectedRoute>} />
       <Route path="/activity" element={<ProtectedRoute><Activity /></ProtectedRoute>} />
-      <Route path="/knowledge" element={<ProtectedRoute><Knowledge /></ProtectedRoute>} />
       <Route path="/pull-requests" element={<Navigate to="/activity" replace />} />
       <Route path="/deployments" element={<Navigate to="/activity" replace />} />
-      <Route path="/roadmaps" element={<Navigate to="/ideas" replace />} />
+      <Route path="/roadmaps" element={<Navigate to="/spaces" replace />} />
       <Route path="/goals" element={<Navigate to="/reports" replace />} />
       <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
       <Route path="/spaces" element={<ProtectedRoute><Projects /></ProtectedRoute>} />

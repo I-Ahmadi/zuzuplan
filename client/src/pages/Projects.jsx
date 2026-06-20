@@ -368,7 +368,7 @@ export default function Projects() {
   }
 
   function deleteSpace(space) {
-    if (!window.confirm(`Delete ${space.name}? This permanently removes its tasks, docs, sprints, comments, and attachments metadata.`)) return;
+    if (!window.confirm(`Delete ${space.name}? This permanently removes its tasks, sprints, comments, and attachments metadata.`)) return;
     deleteMutation.mutate(space.id);
   }
 

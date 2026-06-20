@@ -12,12 +12,12 @@ function accessibleProjectWhere(userId) {
 export async function globalSearch(userId, query) {
   const search = String(query || '').trim();
   if (!search) {
-    return { projects: [], tasks: [], docs: [], comments: [], members: [] };
+    return { projects: [], tasks: [], comments: [], members: [] };
   }
 
   const projectAccess = accessibleProjectWhere(userId);
 
-  const [projects, tasks, docs, comments, members] = await Promise.all([
+  const [projects, tasks, comments, members] = await Promise.all([
     prisma.project.findMany({
       where: {
         ...projectAccess,
@@ -45,18 +45,6 @@ export async function globalSearch(userId, query) {
         project: { select: { id: true, name: true, key: true } },
         assignee: { select: { id: true, name: true, email: true, avatar: true } },
       },
-    }),
-    prisma.projectDoc.findMany({
-      where: {
-        project: projectAccess,
-        OR: [
-          { title: { contains: search, mode: 'insensitive' } },
-          { content: { contains: search, mode: 'insensitive' } },
-        ],
-      },
-      take: 8,
-      orderBy: { updatedAt: 'desc' },
-      include: { project: { select: { id: true, name: true, key: true } } },
     }),
     prisma.comment.findMany({
       where: {
@@ -87,5 +75,5 @@ export async function globalSearch(userId, query) {
     }),
   ]);
 
-  return { projects, tasks, docs, comments, members };
+  return { projects, tasks, comments, members };
 }
