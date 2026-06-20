@@ -280,6 +280,17 @@ exports.Prisma.AttachmentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
+exports.Prisma.WikiPageScalarFieldEnum = {
+  id: 'id',
+  projectId: 'projectId',
+  title: 'title',
+  content: 'content',
+  createdById: 'createdById',
+  lastUpdatedById: 'lastUpdatedById',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+};
+
 exports.Prisma.ActivityEventScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
@@ -392,6 +403,7 @@ exports.Prisma.ModelName = {
   Subtask: 'Subtask',
   Comment: 'Comment',
   Attachment: 'Attachment',
+  WikiPage: 'WikiPage',
   ActivityEvent: 'ActivityEvent',
   InboxItem: 'InboxItem',
   PullRequest: 'PullRequest',

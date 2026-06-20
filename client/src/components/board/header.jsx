@@ -1,14 +1,19 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { Search } from "lucide-react";
-import { ProjectSwitcher } from "@/components/board/project-switcher";
+import { Link, useLocation } from "react-router-dom";
+import { BookOpen, Search } from "lucide-react";
+import { CURRENT_PROJECT_CHANGE_EVENT, CURRENT_PROJECT_KEY, ProjectSwitcher } from "@/components/board/project-switcher";
 import { Button } from "@/components/ui/button";
 import { useGlobalSearch } from "@/contexts/search-context";
+import { LEGACY_STORAGE_KEYS, migrateStorageKey } from "@/lib/storage-keys";
 
 export default function Header() {
   const { openSearch } = useGlobalSearch();
-  const { search } = useLocation();
+  const { pathname, search } = useLocation();
+  const routeProjectId = pathname.match(/^\/(?:projects|spaces)\/([^/]+)/)?.[1];
+  const [storedProjectId, setStoredProjectId] = useState(() => migrateStorageKey(LEGACY_STORAGE_KEYS.currentProjectId, CURRENT_PROJECT_KEY) || "");
   const [searchValue, setSearchValue] = useState(() => new URLSearchParams(search).get("q") || "");
+  const currentProjectId = routeProjectId || storedProjectId;
+  const wikiPath = currentProjectId ? `/spaces/${currentProjectId}/wiki` : "/spaces";
 
   function submitSearch(event) {
     event.preventDefault();
@@ -26,6 +31,21 @@ export default function Header() {
     document.addEventListener("keydown", handleShortcut);
     return () => document.removeEventListener("keydown", handleShortcut);
   }, [openSearch]);
+
+  useEffect(() => {
+    if (!routeProjectId) return;
+    localStorage.setItem(CURRENT_PROJECT_KEY, routeProjectId);
+    setStoredProjectId(routeProjectId);
+  }, [routeProjectId]);
+
+  useEffect(() => {
+    function handleProjectChange(event) {
+      setStoredProjectId(event.detail || localStorage.getItem(CURRENT_PROJECT_KEY) || "");
+    }
+
+    window.addEventListener(CURRENT_PROJECT_CHANGE_EVENT, handleProjectChange);
+    return () => window.removeEventListener(CURRENT_PROJECT_CHANGE_EVENT, handleProjectChange);
+  }, []);
 
   return (
     <header className="sticky top-0 z-30 h-14 border-b bg-topbar">
@@ -48,6 +68,12 @@ export default function Header() {
         <div className="hidden lg:block" />
 
         <div className="flex min-w-0 items-center justify-end gap-1.5">
+          <Button asChild variant="outline" size="sm" className="h-9 px-2.5">
+            <Link to={wikiPath} aria-label="Open Wiki">
+              <BookOpen className="h-4 w-4" />
+              <span className="hidden sm:inline">Wiki</span>
+            </Link>
+          </Button>
           <ProjectSwitcher compact className="w-9 sm:hidden" />
           <ProjectSwitcher className="hidden w-56 sm:block" />
         </div>

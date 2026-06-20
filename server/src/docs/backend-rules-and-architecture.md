@@ -64,6 +64,8 @@ Routes define HTTP method, path, middleware, and controller binding. Controllers
 ```txt
 GET /api/projects/:projectId/tasks
 POST /api/projects/:projectId/tasks
+GET /api/projects/:projectId/wiki
+POST /api/projects/:projectId/wiki
 GET /api/tasks/:taskId
 PATCH /api/tasks/:taskId
 DELETE /api/tasks/:taskId

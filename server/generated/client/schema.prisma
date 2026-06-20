@@ -33,6 +33,8 @@ model User {
   preferences            UserPreference?
   activityEvents         ActivityEvent[] @relation("ActivityActor")
   inboxItems             InboxItem[]
+  createdWikiPages       WikiPage[]      @relation("WikiPageCreator")
+  updatedWikiPages       WikiPage[]      @relation("WikiPageUpdater")
 }
 
 model UserPreference {
@@ -97,6 +99,7 @@ model Project {
   inboxItems     InboxItem[]
   pullRequests   PullRequest[]
   deployments    Deployment[]
+  wikiPages      WikiPage[]
 
   @@unique([ownerId, key])
   @@index([ownerId])
@@ -267,6 +270,27 @@ model Attachment {
 
   @@index([taskId])
   @@index([uploadedBy])
+}
+
+model WikiPage {
+  id              String   @id @default(cuid())
+  projectId       String
+  title           String
+  content         String   @default("")
+  createdById     String
+  lastUpdatedById String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  project       Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy     User    @relation("WikiPageCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  lastUpdatedBy User    @relation("WikiPageUpdater", fields: [lastUpdatedById], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, title])
+  @@index([projectId])
+  @@index([createdById])
+  @@index([lastUpdatedById])
+  @@index([updatedAt])
 }
 
 model ActivityEvent {

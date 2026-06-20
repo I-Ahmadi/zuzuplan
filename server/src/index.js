@@ -19,6 +19,7 @@ import searchRoutes from './routes/searchRoutes.js';
 import activityRoutes from './routes/activityRoutes.js';
 import inboxRoutes from './routes/inboxRoutes.js';
 import deliveryRoutes from './routes/deliveryRoutes.js';
+import wikiRoutes from './routes/wikiRoutes.js';
 
 // App Configuration
 const PORT = process.env.PORT;
@@ -64,11 +65,13 @@ app.use('/api/projects/:projectId/tasks', taskRoutes);
 app.use('/api/projects/:projectId/issues', taskRoutes);
 app.use('/api/projects/:projectId/sprints', sprintRoutes);
 app.use('/api/projects/:projectId/delivery', deliveryRoutes);
+app.use('/api/projects/:projectId/wiki', wikiRoutes);
 app.use('/api/spaces', projectRoutes);
 app.use('/api/spaces/:projectId/tasks', taskRoutes);
 app.use('/api/spaces/:projectId/issues', taskRoutes);
 app.use('/api/spaces/:projectId/sprints', sprintRoutes);
 app.use('/api/spaces/:projectId/delivery', deliveryRoutes);
+app.use('/api/spaces/:projectId/wiki', wikiRoutes);
 app.use('/api/tasks/:taskId/comments', commentRoutes);
 app.use('/api/tasks/:taskId/attachments', attachmentRoutes);
 app.use('/api/activity', activityRoutes);

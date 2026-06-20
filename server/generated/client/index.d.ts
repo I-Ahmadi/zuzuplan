@@ -74,6 +74,11 @@ export type Comment = $Result.DefaultSelection<Prisma.$CommentPayload>
  */
 export type Attachment = $Result.DefaultSelection<Prisma.$AttachmentPayload>
 /**
+ * Model WikiPage
+ * 
+ */
+export type WikiPage = $Result.DefaultSelection<Prisma.$WikiPagePayload>
+/**
  * Model ActivityEvent
  * 
  */
@@ -334,6 +339,16 @@ export class PrismaClient<
     * ```
     */
   get attachment(): Prisma.AttachmentDelegate<ExtArgs, ClientOptions>;
+
+  /**
+   * `prisma.wikiPage`: Exposes CRUD operations for the **WikiPage** model.
+    * Example usage:
+    * ```ts
+    * // Fetch zero or more WikiPages
+    * const wikiPages = await prisma.wikiPage.findMany()
+    * ```
+    */
+  get wikiPage(): Prisma.WikiPageDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.activityEvent`: Exposes CRUD operations for the **ActivityEvent** model.
@@ -820,6 +835,7 @@ export namespace Prisma {
     Subtask: 'Subtask',
     Comment: 'Comment',
     Attachment: 'Attachment',
+    WikiPage: 'WikiPage',
     ActivityEvent: 'ActivityEvent',
     InboxItem: 'InboxItem',
     PullRequest: 'PullRequest',
@@ -839,7 +855,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "userPreference" | "refreshToken" | "project" | "projectInvite" | "projectMember" | "task" | "taskLink" | "sprint" | "subtask" | "comment" | "attachment" | "activityEvent" | "inboxItem" | "pullRequest" | "deployment"
+      modelProps: "user" | "userPreference" | "refreshToken" | "project" | "projectInvite" | "projectMember" | "task" | "taskLink" | "sprint" | "subtask" | "comment" | "attachment" | "wikiPage" | "activityEvent" | "inboxItem" | "pullRequest" | "deployment"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1731,6 +1747,80 @@ export namespace Prisma {
           }
         }
       }
+      WikiPage: {
+        payload: Prisma.$WikiPagePayload<ExtArgs>
+        fields: Prisma.WikiPageFieldRefs
+        operations: {
+          findUnique: {
+            args: Prisma.WikiPageFindUniqueArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WikiPagePayload> | null
+          }
+          findUniqueOrThrow: {
+            args: Prisma.WikiPageFindUniqueOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WikiPagePayload>
+          }
+          findFirst: {
+            args: Prisma.WikiPageFindFirstArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WikiPagePayload> | null
+          }
+          findFirstOrThrow: {
+            args: Prisma.WikiPageFindFirstOrThrowArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WikiPagePayload>
+          }
+          findMany: {
+            args: Prisma.WikiPageFindManyArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WikiPagePayload>[]
+          }
+          create: {
+            args: Prisma.WikiPageCreateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WikiPagePayload>
+          }
+          createMany: {
+            args: Prisma.WikiPageCreateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          createManyAndReturn: {
+            args: Prisma.WikiPageCreateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WikiPagePayload>[]
+          }
+          delete: {
+            args: Prisma.WikiPageDeleteArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WikiPagePayload>
+          }
+          update: {
+            args: Prisma.WikiPageUpdateArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WikiPagePayload>
+          }
+          deleteMany: {
+            args: Prisma.WikiPageDeleteManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateMany: {
+            args: Prisma.WikiPageUpdateManyArgs<ExtArgs>
+            result: BatchPayload
+          }
+          updateManyAndReturn: {
+            args: Prisma.WikiPageUpdateManyAndReturnArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WikiPagePayload>[]
+          }
+          upsert: {
+            args: Prisma.WikiPageUpsertArgs<ExtArgs>
+            result: $Utils.PayloadToResult<Prisma.$WikiPagePayload>
+          }
+          aggregate: {
+            args: Prisma.WikiPageAggregateArgs<ExtArgs>
+            result: $Utils.Optional<AggregateWikiPage>
+          }
+          groupBy: {
+            args: Prisma.WikiPageGroupByArgs<ExtArgs>
+            result: $Utils.Optional<WikiPageGroupByOutputType>[]
+          }
+          count: {
+            args: Prisma.WikiPageCountArgs<ExtArgs>
+            result: $Utils.Optional<WikiPageCountAggregateOutputType> | number
+          }
+        }
+      }
       ActivityEvent: {
         payload: Prisma.$ActivityEventPayload<ExtArgs>
         fields: Prisma.ActivityEventFieldRefs
@@ -2147,6 +2237,7 @@ export namespace Prisma {
     subtask?: SubtaskOmit
     comment?: CommentOmit
     attachment?: AttachmentOmit
+    wikiPage?: WikiPageOmit
     activityEvent?: ActivityEventOmit
     inboxItem?: InboxItemOmit
     pullRequest?: PullRequestOmit
@@ -2242,6 +2333,8 @@ export namespace Prisma {
     acceptedProjectInvites: number
     activityEvents: number
     inboxItems: number
+    createdWikiPages: number
+    updatedWikiPages: number
   }
 
   export type UserCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2256,6 +2349,8 @@ export namespace Prisma {
     acceptedProjectInvites?: boolean | UserCountOutputTypeCountAcceptedProjectInvitesArgs
     activityEvents?: boolean | UserCountOutputTypeCountActivityEventsArgs
     inboxItems?: boolean | UserCountOutputTypeCountInboxItemsArgs
+    createdWikiPages?: boolean | UserCountOutputTypeCountCreatedWikiPagesArgs
+    updatedWikiPages?: boolean | UserCountOutputTypeCountUpdatedWikiPagesArgs
   }
 
   // Custom InputTypes
@@ -2346,6 +2441,20 @@ export namespace Prisma {
     where?: InboxItemWhereInput
   }
 
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountCreatedWikiPagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WikiPageWhereInput
+  }
+
+  /**
+   * UserCountOutputType without action
+   */
+  export type UserCountOutputTypeCountUpdatedWikiPagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WikiPageWhereInput
+  }
+
 
   /**
    * Count Type ProjectCountOutputType
@@ -2360,6 +2469,7 @@ export namespace Prisma {
     inboxItems: number
     pullRequests: number
     deployments: number
+    wikiPages: number
   }
 
   export type ProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2371,6 +2481,7 @@ export namespace Prisma {
     inboxItems?: boolean | ProjectCountOutputTypeCountInboxItemsArgs
     pullRequests?: boolean | ProjectCountOutputTypeCountPullRequestsArgs
     deployments?: boolean | ProjectCountOutputTypeCountDeploymentsArgs
+    wikiPages?: boolean | ProjectCountOutputTypeCountWikiPagesArgs
   }
 
   // Custom InputTypes
@@ -2438,6 +2549,13 @@ export namespace Prisma {
    */
   export type ProjectCountOutputTypeCountDeploymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: DeploymentWhereInput
+  }
+
+  /**
+   * ProjectCountOutputType without action
+   */
+  export type ProjectCountOutputTypeCountWikiPagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WikiPageWhereInput
   }
 
 
@@ -2873,6 +2991,8 @@ export namespace Prisma {
     preferences?: boolean | User$preferencesArgs<ExtArgs>
     activityEvents?: boolean | User$activityEventsArgs<ExtArgs>
     inboxItems?: boolean | User$inboxItemsArgs<ExtArgs>
+    createdWikiPages?: boolean | User$createdWikiPagesArgs<ExtArgs>
+    updatedWikiPages?: boolean | User$updatedWikiPagesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["user"]>
 
@@ -2935,6 +3055,8 @@ export namespace Prisma {
     preferences?: boolean | User$preferencesArgs<ExtArgs>
     activityEvents?: boolean | User$activityEventsArgs<ExtArgs>
     inboxItems?: boolean | User$inboxItemsArgs<ExtArgs>
+    createdWikiPages?: boolean | User$createdWikiPagesArgs<ExtArgs>
+    updatedWikiPages?: boolean | User$updatedWikiPagesArgs<ExtArgs>
     _count?: boolean | UserCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type UserIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {}
@@ -2955,6 +3077,8 @@ export namespace Prisma {
       preferences: Prisma.$UserPreferencePayload<ExtArgs> | null
       activityEvents: Prisma.$ActivityEventPayload<ExtArgs>[]
       inboxItems: Prisma.$InboxItemPayload<ExtArgs>[]
+      createdWikiPages: Prisma.$WikiPagePayload<ExtArgs>[]
+      updatedWikiPages: Prisma.$WikiPagePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -3375,6 +3499,8 @@ export namespace Prisma {
     preferences<T extends User$preferencesArgs<ExtArgs> = {}>(args?: Subset<T, User$preferencesArgs<ExtArgs>>): Prisma__UserPreferenceClient<$Result.GetResult<Prisma.$UserPreferencePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     activityEvents<T extends User$activityEventsArgs<ExtArgs> = {}>(args?: Subset<T, User$activityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActivityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     inboxItems<T extends User$inboxItemsArgs<ExtArgs> = {}>(args?: Subset<T, User$inboxItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InboxItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    createdWikiPages<T extends User$createdWikiPagesArgs<ExtArgs> = {}>(args?: Subset<T, User$createdWikiPagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WikiPagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    updatedWikiPages<T extends User$updatedWikiPagesArgs<ExtArgs> = {}>(args?: Subset<T, User$updatedWikiPagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WikiPagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4089,6 +4215,54 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: InboxItemScalarFieldEnum | InboxItemScalarFieldEnum[]
+  }
+
+  /**
+   * User.createdWikiPages
+   */
+  export type User$createdWikiPagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WikiPage
+     */
+    select?: WikiPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WikiPage
+     */
+    omit?: WikiPageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WikiPageInclude<ExtArgs> | null
+    where?: WikiPageWhereInput
+    orderBy?: WikiPageOrderByWithRelationInput | WikiPageOrderByWithRelationInput[]
+    cursor?: WikiPageWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WikiPageScalarFieldEnum | WikiPageScalarFieldEnum[]
+  }
+
+  /**
+   * User.updatedWikiPages
+   */
+  export type User$updatedWikiPagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WikiPage
+     */
+    select?: WikiPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WikiPage
+     */
+    omit?: WikiPageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WikiPageInclude<ExtArgs> | null
+    where?: WikiPageWhereInput
+    orderBy?: WikiPageOrderByWithRelationInput | WikiPageOrderByWithRelationInput[]
+    cursor?: WikiPageWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WikiPageScalarFieldEnum | WikiPageScalarFieldEnum[]
   }
 
   /**
@@ -6707,6 +6881,7 @@ export namespace Prisma {
     inboxItems?: boolean | Project$inboxItemsArgs<ExtArgs>
     pullRequests?: boolean | Project$pullRequestsArgs<ExtArgs>
     deployments?: boolean | Project$deploymentsArgs<ExtArgs>
+    wikiPages?: boolean | Project$wikiPagesArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -6768,6 +6943,7 @@ export namespace Prisma {
     inboxItems?: boolean | Project$inboxItemsArgs<ExtArgs>
     pullRequests?: boolean | Project$pullRequestsArgs<ExtArgs>
     deployments?: boolean | Project$deploymentsArgs<ExtArgs>
+    wikiPages?: boolean | Project$wikiPagesArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6789,6 +6965,7 @@ export namespace Prisma {
       inboxItems: Prisma.$InboxItemPayload<ExtArgs>[]
       pullRequests: Prisma.$PullRequestPayload<ExtArgs>[]
       deployments: Prisma.$DeploymentPayload<ExtArgs>[]
+      wikiPages: Prisma.$WikiPagePayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -7206,6 +7383,7 @@ export namespace Prisma {
     inboxItems<T extends Project$inboxItemsArgs<ExtArgs> = {}>(args?: Subset<T, Project$inboxItemsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$InboxItemPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     pullRequests<T extends Project$pullRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Project$pullRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     deployments<T extends Project$deploymentsArgs<ExtArgs> = {}>(args?: Subset<T, Project$deploymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DeploymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+    wikiPages<T extends Project$wikiPagesArgs<ExtArgs> = {}>(args?: Subset<T, Project$wikiPagesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WikiPagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7837,6 +8015,30 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: DeploymentScalarFieldEnum | DeploymentScalarFieldEnum[]
+  }
+
+  /**
+   * Project.wikiPages
+   */
+  export type Project$wikiPagesArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WikiPage
+     */
+    select?: WikiPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WikiPage
+     */
+    omit?: WikiPageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WikiPageInclude<ExtArgs> | null
+    where?: WikiPageWhereInput
+    orderBy?: WikiPageOrderByWithRelationInput | WikiPageOrderByWithRelationInput[]
+    cursor?: WikiPageWhereUniqueInput
+    take?: number
+    skip?: number
+    distinct?: WikiPageScalarFieldEnum | WikiPageScalarFieldEnum[]
   }
 
   /**
@@ -17294,6 +17496,1124 @@ export namespace Prisma {
 
 
   /**
+   * Model WikiPage
+   */
+
+  export type AggregateWikiPage = {
+    _count: WikiPageCountAggregateOutputType | null
+    _min: WikiPageMinAggregateOutputType | null
+    _max: WikiPageMaxAggregateOutputType | null
+  }
+
+  export type WikiPageMinAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    title: string | null
+    content: string | null
+    createdById: string | null
+    lastUpdatedById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type WikiPageMaxAggregateOutputType = {
+    id: string | null
+    projectId: string | null
+    title: string | null
+    content: string | null
+    createdById: string | null
+    lastUpdatedById: string | null
+    createdAt: Date | null
+    updatedAt: Date | null
+  }
+
+  export type WikiPageCountAggregateOutputType = {
+    id: number
+    projectId: number
+    title: number
+    content: number
+    createdById: number
+    lastUpdatedById: number
+    createdAt: number
+    updatedAt: number
+    _all: number
+  }
+
+
+  export type WikiPageMinAggregateInputType = {
+    id?: true
+    projectId?: true
+    title?: true
+    content?: true
+    createdById?: true
+    lastUpdatedById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type WikiPageMaxAggregateInputType = {
+    id?: true
+    projectId?: true
+    title?: true
+    content?: true
+    createdById?: true
+    lastUpdatedById?: true
+    createdAt?: true
+    updatedAt?: true
+  }
+
+  export type WikiPageCountAggregateInputType = {
+    id?: true
+    projectId?: true
+    title?: true
+    content?: true
+    createdById?: true
+    lastUpdatedById?: true
+    createdAt?: true
+    updatedAt?: true
+    _all?: true
+  }
+
+  export type WikiPageAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WikiPage to aggregate.
+     */
+    where?: WikiPageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WikiPages to fetch.
+     */
+    orderBy?: WikiPageOrderByWithRelationInput | WikiPageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the start position
+     */
+    cursor?: WikiPageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WikiPages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WikiPages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Count returned WikiPages
+    **/
+    _count?: true | WikiPageCountAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the minimum value
+    **/
+    _min?: WikiPageMinAggregateInputType
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
+     * 
+     * Select which fields to find the maximum value
+    **/
+    _max?: WikiPageMaxAggregateInputType
+  }
+
+  export type GetWikiPageAggregateType<T extends WikiPageAggregateArgs> = {
+        [P in keyof T & keyof AggregateWikiPage]: P extends '_count' | 'count'
+      ? T[P] extends true
+        ? number
+        : GetScalarType<T[P], AggregateWikiPage[P]>
+      : GetScalarType<T[P], AggregateWikiPage[P]>
+  }
+
+
+
+
+  export type WikiPageGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    where?: WikiPageWhereInput
+    orderBy?: WikiPageOrderByWithAggregationInput | WikiPageOrderByWithAggregationInput[]
+    by: WikiPageScalarFieldEnum[] | WikiPageScalarFieldEnum
+    having?: WikiPageScalarWhereWithAggregatesInput
+    take?: number
+    skip?: number
+    _count?: WikiPageCountAggregateInputType | true
+    _min?: WikiPageMinAggregateInputType
+    _max?: WikiPageMaxAggregateInputType
+  }
+
+  export type WikiPageGroupByOutputType = {
+    id: string
+    projectId: string
+    title: string
+    content: string
+    createdById: string
+    lastUpdatedById: string
+    createdAt: Date
+    updatedAt: Date
+    _count: WikiPageCountAggregateOutputType | null
+    _min: WikiPageMinAggregateOutputType | null
+    _max: WikiPageMaxAggregateOutputType | null
+  }
+
+  type GetWikiPageGroupByPayload<T extends WikiPageGroupByArgs> = Prisma.PrismaPromise<
+    Array<
+      PickEnumerable<WikiPageGroupByOutputType, T['by']> &
+        {
+          [P in ((keyof T) & (keyof WikiPageGroupByOutputType))]: P extends '_count'
+            ? T[P] extends boolean
+              ? number
+              : GetScalarType<T[P], WikiPageGroupByOutputType[P]>
+            : GetScalarType<T[P], WikiPageGroupByOutputType[P]>
+        }
+      >
+    >
+
+
+  export type WikiPageSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    title?: boolean
+    content?: boolean
+    createdById?: boolean
+    lastUpdatedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    lastUpdatedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["wikiPage"]>
+
+  export type WikiPageSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    title?: boolean
+    content?: boolean
+    createdById?: boolean
+    lastUpdatedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    lastUpdatedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["wikiPage"]>
+
+  export type WikiPageSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
+    id?: boolean
+    projectId?: boolean
+    title?: boolean
+    content?: boolean
+    createdById?: boolean
+    lastUpdatedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    lastUpdatedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }, ExtArgs["result"]["wikiPage"]>
+
+  export type WikiPageSelectScalar = {
+    id?: boolean
+    projectId?: boolean
+    title?: boolean
+    content?: boolean
+    createdById?: boolean
+    lastUpdatedById?: boolean
+    createdAt?: boolean
+    updatedAt?: boolean
+  }
+
+  export type WikiPageOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "title" | "content" | "createdById" | "lastUpdatedById" | "createdAt" | "updatedAt", ExtArgs["result"]["wikiPage"]>
+  export type WikiPageInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    lastUpdatedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type WikiPageIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    lastUpdatedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+  export type WikiPageIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    project?: boolean | ProjectDefaultArgs<ExtArgs>
+    createdBy?: boolean | UserDefaultArgs<ExtArgs>
+    lastUpdatedBy?: boolean | UserDefaultArgs<ExtArgs>
+  }
+
+  export type $WikiPagePayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    name: "WikiPage"
+    objects: {
+      project: Prisma.$ProjectPayload<ExtArgs>
+      createdBy: Prisma.$UserPayload<ExtArgs>
+      lastUpdatedBy: Prisma.$UserPayload<ExtArgs>
+    }
+    scalars: $Extensions.GetPayloadResult<{
+      id: string
+      projectId: string
+      title: string
+      content: string
+      createdById: string
+      lastUpdatedById: string
+      createdAt: Date
+      updatedAt: Date
+    }, ExtArgs["result"]["wikiPage"]>
+    composites: {}
+  }
+
+  type WikiPageGetPayload<S extends boolean | null | undefined | WikiPageDefaultArgs> = $Result.GetResult<Prisma.$WikiPagePayload, S>
+
+  type WikiPageCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
+    Omit<WikiPageFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
+      select?: WikiPageCountAggregateInputType | true
+    }
+
+  export interface WikiPageDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
+    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['WikiPage'], meta: { name: 'WikiPage' } }
+    /**
+     * Find zero or one WikiPage that matches the filter.
+     * @param {WikiPageFindUniqueArgs} args - Arguments to find a WikiPage
+     * @example
+     * // Get one WikiPage
+     * const wikiPage = await prisma.wikiPage.findUnique({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUnique<T extends WikiPageFindUniqueArgs>(args: SelectSubset<T, WikiPageFindUniqueArgs<ExtArgs>>): Prisma__WikiPageClient<$Result.GetResult<Prisma.$WikiPagePayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find one WikiPage that matches the filter or throw an error with `error.code='P2025'`
+     * if no matches were found.
+     * @param {WikiPageFindUniqueOrThrowArgs} args - Arguments to find a WikiPage
+     * @example
+     * // Get one WikiPage
+     * const wikiPage = await prisma.wikiPage.findUniqueOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findUniqueOrThrow<T extends WikiPageFindUniqueOrThrowArgs>(args: SelectSubset<T, WikiPageFindUniqueOrThrowArgs<ExtArgs>>): Prisma__WikiPageClient<$Result.GetResult<Prisma.$WikiPagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first WikiPage that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WikiPageFindFirstArgs} args - Arguments to find a WikiPage
+     * @example
+     * // Get one WikiPage
+     * const wikiPage = await prisma.wikiPage.findFirst({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirst<T extends WikiPageFindFirstArgs>(args?: SelectSubset<T, WikiPageFindFirstArgs<ExtArgs>>): Prisma__WikiPageClient<$Result.GetResult<Prisma.$WikiPagePayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find the first WikiPage that matches the filter or
+     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WikiPageFindFirstOrThrowArgs} args - Arguments to find a WikiPage
+     * @example
+     * // Get one WikiPage
+     * const wikiPage = await prisma.wikiPage.findFirstOrThrow({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     */
+    findFirstOrThrow<T extends WikiPageFindFirstOrThrowArgs>(args?: SelectSubset<T, WikiPageFindFirstOrThrowArgs<ExtArgs>>): Prisma__WikiPageClient<$Result.GetResult<Prisma.$WikiPagePayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Find zero or more WikiPages that matches the filter.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WikiPageFindManyArgs} args - Arguments to filter and select certain fields only.
+     * @example
+     * // Get all WikiPages
+     * const wikiPages = await prisma.wikiPage.findMany()
+     * 
+     * // Get first 10 WikiPages
+     * const wikiPages = await prisma.wikiPage.findMany({ take: 10 })
+     * 
+     * // Only select the `id`
+     * const wikiPageWithIdOnly = await prisma.wikiPage.findMany({ select: { id: true } })
+     * 
+     */
+    findMany<T extends WikiPageFindManyArgs>(args?: SelectSubset<T, WikiPageFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WikiPagePayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
+
+    /**
+     * Create a WikiPage.
+     * @param {WikiPageCreateArgs} args - Arguments to create a WikiPage.
+     * @example
+     * // Create one WikiPage
+     * const WikiPage = await prisma.wikiPage.create({
+     *   data: {
+     *     // ... data to create a WikiPage
+     *   }
+     * })
+     * 
+     */
+    create<T extends WikiPageCreateArgs>(args: SelectSubset<T, WikiPageCreateArgs<ExtArgs>>): Prisma__WikiPageClient<$Result.GetResult<Prisma.$WikiPagePayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Create many WikiPages.
+     * @param {WikiPageCreateManyArgs} args - Arguments to create many WikiPages.
+     * @example
+     * // Create many WikiPages
+     * const wikiPage = await prisma.wikiPage.createMany({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     *     
+     */
+    createMany<T extends WikiPageCreateManyArgs>(args?: SelectSubset<T, WikiPageCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Create many WikiPages and returns the data saved in the database.
+     * @param {WikiPageCreateManyAndReturnArgs} args - Arguments to create many WikiPages.
+     * @example
+     * // Create many WikiPages
+     * const wikiPage = await prisma.wikiPage.createManyAndReturn({
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Create many WikiPages and only return the `id`
+     * const wikiPageWithIdOnly = await prisma.wikiPage.createManyAndReturn({
+     *   select: { id: true },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    createManyAndReturn<T extends WikiPageCreateManyAndReturnArgs>(args?: SelectSubset<T, WikiPageCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WikiPagePayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Delete a WikiPage.
+     * @param {WikiPageDeleteArgs} args - Arguments to delete one WikiPage.
+     * @example
+     * // Delete one WikiPage
+     * const WikiPage = await prisma.wikiPage.delete({
+     *   where: {
+     *     // ... filter to delete one WikiPage
+     *   }
+     * })
+     * 
+     */
+    delete<T extends WikiPageDeleteArgs>(args: SelectSubset<T, WikiPageDeleteArgs<ExtArgs>>): Prisma__WikiPageClient<$Result.GetResult<Prisma.$WikiPagePayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Update one WikiPage.
+     * @param {WikiPageUpdateArgs} args - Arguments to update one WikiPage.
+     * @example
+     * // Update one WikiPage
+     * const wikiPage = await prisma.wikiPage.update({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    update<T extends WikiPageUpdateArgs>(args: SelectSubset<T, WikiPageUpdateArgs<ExtArgs>>): Prisma__WikiPageClient<$Result.GetResult<Prisma.$WikiPagePayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+    /**
+     * Delete zero or more WikiPages.
+     * @param {WikiPageDeleteManyArgs} args - Arguments to filter WikiPages to delete.
+     * @example
+     * // Delete a few WikiPages
+     * const { count } = await prisma.wikiPage.deleteMany({
+     *   where: {
+     *     // ... provide filter here
+     *   }
+     * })
+     * 
+     */
+    deleteMany<T extends WikiPageDeleteManyArgs>(args?: SelectSubset<T, WikiPageDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WikiPages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WikiPageUpdateManyArgs} args - Arguments to update one or more rows.
+     * @example
+     * // Update many WikiPages
+     * const wikiPage = await prisma.wikiPage.updateMany({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: {
+     *     // ... provide data here
+     *   }
+     * })
+     * 
+     */
+    updateMany<T extends WikiPageUpdateManyArgs>(args: SelectSubset<T, WikiPageUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
+
+    /**
+     * Update zero or more WikiPages and returns the data updated in the database.
+     * @param {WikiPageUpdateManyAndReturnArgs} args - Arguments to update many WikiPages.
+     * @example
+     * // Update many WikiPages
+     * const wikiPage = await prisma.wikiPage.updateManyAndReturn({
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * 
+     * // Update zero or more WikiPages and only return the `id`
+     * const wikiPageWithIdOnly = await prisma.wikiPage.updateManyAndReturn({
+     *   select: { id: true },
+     *   where: {
+     *     // ... provide filter here
+     *   },
+     *   data: [
+     *     // ... provide data here
+     *   ]
+     * })
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * 
+     */
+    updateManyAndReturn<T extends WikiPageUpdateManyAndReturnArgs>(args: SelectSubset<T, WikiPageUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$WikiPagePayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
+
+    /**
+     * Create or update one WikiPage.
+     * @param {WikiPageUpsertArgs} args - Arguments to update or create a WikiPage.
+     * @example
+     * // Update or create a WikiPage
+     * const wikiPage = await prisma.wikiPage.upsert({
+     *   create: {
+     *     // ... data to create a WikiPage
+     *   },
+     *   update: {
+     *     // ... in case it already exists, update
+     *   },
+     *   where: {
+     *     // ... the filter for the WikiPage we want to update
+     *   }
+     * })
+     */
+    upsert<T extends WikiPageUpsertArgs>(args: SelectSubset<T, WikiPageUpsertArgs<ExtArgs>>): Prisma__WikiPageClient<$Result.GetResult<Prisma.$WikiPagePayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
+
+
+    /**
+     * Count the number of WikiPages.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WikiPageCountArgs} args - Arguments to filter WikiPages to count.
+     * @example
+     * // Count the number of WikiPages
+     * const count = await prisma.wikiPage.count({
+     *   where: {
+     *     // ... the filter for the WikiPages we want to count
+     *   }
+     * })
+    **/
+    count<T extends WikiPageCountArgs>(
+      args?: Subset<T, WikiPageCountArgs>,
+    ): Prisma.PrismaPromise<
+      T extends $Utils.Record<'select', any>
+        ? T['select'] extends true
+          ? number
+          : GetScalarType<T['select'], WikiPageCountAggregateOutputType>
+        : number
+    >
+
+    /**
+     * Allows you to perform aggregations operations on a WikiPage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WikiPageAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
+     * @example
+     * // Ordered by age ascending
+     * // Where email contains prisma.io
+     * // Limited to the 10 users
+     * const aggregations = await prisma.user.aggregate({
+     *   _avg: {
+     *     age: true,
+     *   },
+     *   where: {
+     *     email: {
+     *       contains: "prisma.io",
+     *     },
+     *   },
+     *   orderBy: {
+     *     age: "asc",
+     *   },
+     *   take: 10,
+     * })
+    **/
+    aggregate<T extends WikiPageAggregateArgs>(args: Subset<T, WikiPageAggregateArgs>): Prisma.PrismaPromise<GetWikiPageAggregateType<T>>
+
+    /**
+     * Group by WikiPage.
+     * Note, that providing `undefined` is treated as the value not being there.
+     * Read more here: https://pris.ly/d/null-undefined
+     * @param {WikiPageGroupByArgs} args - Group by arguments.
+     * @example
+     * // Group by city, order by createdAt, get count
+     * const result = await prisma.user.groupBy({
+     *   by: ['city', 'createdAt'],
+     *   orderBy: {
+     *     createdAt: true
+     *   },
+     *   _count: {
+     *     _all: true
+     *   },
+     * })
+     * 
+    **/
+    groupBy<
+      T extends WikiPageGroupByArgs,
+      HasSelectOrTake extends Or<
+        Extends<'skip', Keys<T>>,
+        Extends<'take', Keys<T>>
+      >,
+      OrderByArg extends True extends HasSelectOrTake
+        ? { orderBy: WikiPageGroupByArgs['orderBy'] }
+        : { orderBy?: WikiPageGroupByArgs['orderBy'] },
+      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
+      ByFields extends MaybeTupleToUnion<T['by']>,
+      ByValid extends Has<ByFields, OrderFields>,
+      HavingFields extends GetHavingFields<T['having']>,
+      HavingValid extends Has<ByFields, HavingFields>,
+      ByEmpty extends T['by'] extends never[] ? True : False,
+      InputErrors extends ByEmpty extends True
+      ? `Error: "by" must not be empty.`
+      : HavingValid extends False
+      ? {
+          [P in HavingFields]: P extends ByFields
+            ? never
+            : P extends string
+            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
+            : [
+                Error,
+                'Field ',
+                P,
+                ` in "having" needs to be provided in "by"`,
+              ]
+        }[HavingFields]
+      : 'take' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "take", you also need to provide "orderBy"'
+      : 'skip' extends Keys<T>
+      ? 'orderBy' extends Keys<T>
+        ? ByValid extends True
+          ? {}
+          : {
+              [P in OrderFields]: P extends ByFields
+                ? never
+                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+            }[OrderFields]
+        : 'Error: If you provide "skip", you also need to provide "orderBy"'
+      : ByValid extends True
+      ? {}
+      : {
+          [P in OrderFields]: P extends ByFields
+            ? never
+            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
+        }[OrderFields]
+    >(args: SubsetIntersection<T, WikiPageGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetWikiPageGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
+  /**
+   * Fields of the WikiPage model
+   */
+  readonly fields: WikiPageFieldRefs;
+  }
+
+  /**
+   * The delegate class that acts as a "Promise-like" for WikiPage.
+   * Why is this prefixed with `Prisma__`?
+   * Because we want to prevent naming conflicts as mentioned in
+   * https://github.com/prisma/prisma-client-js/issues/707
+   */
+  export interface Prisma__WikiPageClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
+    readonly [Symbol.toStringTag]: "PrismaPromise"
+    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    lastUpdatedBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+    /**
+     * Attaches callbacks for the resolution and/or rejection of the Promise.
+     * @param onfulfilled The callback to execute when the Promise is resolved.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of which ever callback is executed.
+     */
+    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
+    /**
+     * Attaches a callback for only the rejection of the Promise.
+     * @param onrejected The callback to execute when the Promise is rejected.
+     * @returns A Promise for the completion of the callback.
+     */
+    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
+    /**
+     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
+     * resolved value cannot be modified from the callback.
+     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
+     * @returns A Promise for the completion of the callback.
+     */
+    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
+  }
+
+
+
+
+  /**
+   * Fields of the WikiPage model
+   */
+  interface WikiPageFieldRefs {
+    readonly id: FieldRef<"WikiPage", 'String'>
+    readonly projectId: FieldRef<"WikiPage", 'String'>
+    readonly title: FieldRef<"WikiPage", 'String'>
+    readonly content: FieldRef<"WikiPage", 'String'>
+    readonly createdById: FieldRef<"WikiPage", 'String'>
+    readonly lastUpdatedById: FieldRef<"WikiPage", 'String'>
+    readonly createdAt: FieldRef<"WikiPage", 'DateTime'>
+    readonly updatedAt: FieldRef<"WikiPage", 'DateTime'>
+  }
+    
+
+  // Custom InputTypes
+  /**
+   * WikiPage findUnique
+   */
+  export type WikiPageFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WikiPage
+     */
+    select?: WikiPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WikiPage
+     */
+    omit?: WikiPageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WikiPageInclude<ExtArgs> | null
+    /**
+     * Filter, which WikiPage to fetch.
+     */
+    where: WikiPageWhereUniqueInput
+  }
+
+  /**
+   * WikiPage findUniqueOrThrow
+   */
+  export type WikiPageFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WikiPage
+     */
+    select?: WikiPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WikiPage
+     */
+    omit?: WikiPageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WikiPageInclude<ExtArgs> | null
+    /**
+     * Filter, which WikiPage to fetch.
+     */
+    where: WikiPageWhereUniqueInput
+  }
+
+  /**
+   * WikiPage findFirst
+   */
+  export type WikiPageFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WikiPage
+     */
+    select?: WikiPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WikiPage
+     */
+    omit?: WikiPageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WikiPageInclude<ExtArgs> | null
+    /**
+     * Filter, which WikiPage to fetch.
+     */
+    where?: WikiPageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WikiPages to fetch.
+     */
+    orderBy?: WikiPageOrderByWithRelationInput | WikiPageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WikiPages.
+     */
+    cursor?: WikiPageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WikiPages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WikiPages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WikiPages.
+     */
+    distinct?: WikiPageScalarFieldEnum | WikiPageScalarFieldEnum[]
+  }
+
+  /**
+   * WikiPage findFirstOrThrow
+   */
+  export type WikiPageFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WikiPage
+     */
+    select?: WikiPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WikiPage
+     */
+    omit?: WikiPageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WikiPageInclude<ExtArgs> | null
+    /**
+     * Filter, which WikiPage to fetch.
+     */
+    where?: WikiPageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WikiPages to fetch.
+     */
+    orderBy?: WikiPageOrderByWithRelationInput | WikiPageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for searching for WikiPages.
+     */
+    cursor?: WikiPageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WikiPages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WikiPages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WikiPages.
+     */
+    distinct?: WikiPageScalarFieldEnum | WikiPageScalarFieldEnum[]
+  }
+
+  /**
+   * WikiPage findMany
+   */
+  export type WikiPageFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WikiPage
+     */
+    select?: WikiPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WikiPage
+     */
+    omit?: WikiPageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WikiPageInclude<ExtArgs> | null
+    /**
+     * Filter, which WikiPages to fetch.
+     */
+    where?: WikiPageWhereInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
+     * 
+     * Determine the order of WikiPages to fetch.
+     */
+    orderBy?: WikiPageOrderByWithRelationInput | WikiPageOrderByWithRelationInput[]
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
+     * 
+     * Sets the position for listing WikiPages.
+     */
+    cursor?: WikiPageWhereUniqueInput
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Take `±n` WikiPages from the position of the cursor.
+     */
+    take?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
+     * 
+     * Skip the first `n` WikiPages.
+     */
+    skip?: number
+    /**
+     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
+     * 
+     * Filter by unique combinations of WikiPages.
+     */
+    distinct?: WikiPageScalarFieldEnum | WikiPageScalarFieldEnum[]
+  }
+
+  /**
+   * WikiPage create
+   */
+  export type WikiPageCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WikiPage
+     */
+    select?: WikiPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WikiPage
+     */
+    omit?: WikiPageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WikiPageInclude<ExtArgs> | null
+    /**
+     * The data needed to create a WikiPage.
+     */
+    data: XOR<WikiPageCreateInput, WikiPageUncheckedCreateInput>
+  }
+
+  /**
+   * WikiPage createMany
+   */
+  export type WikiPageCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to create many WikiPages.
+     */
+    data: WikiPageCreateManyInput | WikiPageCreateManyInput[]
+    skipDuplicates?: boolean
+  }
+
+  /**
+   * WikiPage createManyAndReturn
+   */
+  export type WikiPageCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WikiPage
+     */
+    select?: WikiPageSelectCreateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WikiPage
+     */
+    omit?: WikiPageOmit<ExtArgs> | null
+    /**
+     * The data used to create many WikiPages.
+     */
+    data: WikiPageCreateManyInput | WikiPageCreateManyInput[]
+    skipDuplicates?: boolean
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WikiPageIncludeCreateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * WikiPage update
+   */
+  export type WikiPageUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WikiPage
+     */
+    select?: WikiPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WikiPage
+     */
+    omit?: WikiPageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WikiPageInclude<ExtArgs> | null
+    /**
+     * The data needed to update a WikiPage.
+     */
+    data: XOR<WikiPageUpdateInput, WikiPageUncheckedUpdateInput>
+    /**
+     * Choose, which WikiPage to update.
+     */
+    where: WikiPageWhereUniqueInput
+  }
+
+  /**
+   * WikiPage updateMany
+   */
+  export type WikiPageUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * The data used to update WikiPages.
+     */
+    data: XOR<WikiPageUpdateManyMutationInput, WikiPageUncheckedUpdateManyInput>
+    /**
+     * Filter which WikiPages to update
+     */
+    where?: WikiPageWhereInput
+    /**
+     * Limit how many WikiPages to update.
+     */
+    limit?: number
+  }
+
+  /**
+   * WikiPage updateManyAndReturn
+   */
+  export type WikiPageUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WikiPage
+     */
+    select?: WikiPageSelectUpdateManyAndReturn<ExtArgs> | null
+    /**
+     * Omit specific fields from the WikiPage
+     */
+    omit?: WikiPageOmit<ExtArgs> | null
+    /**
+     * The data used to update WikiPages.
+     */
+    data: XOR<WikiPageUpdateManyMutationInput, WikiPageUncheckedUpdateManyInput>
+    /**
+     * Filter which WikiPages to update
+     */
+    where?: WikiPageWhereInput
+    /**
+     * Limit how many WikiPages to update.
+     */
+    limit?: number
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WikiPageIncludeUpdateManyAndReturn<ExtArgs> | null
+  }
+
+  /**
+   * WikiPage upsert
+   */
+  export type WikiPageUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WikiPage
+     */
+    select?: WikiPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WikiPage
+     */
+    omit?: WikiPageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WikiPageInclude<ExtArgs> | null
+    /**
+     * The filter to search for the WikiPage to update in case it exists.
+     */
+    where: WikiPageWhereUniqueInput
+    /**
+     * In case the WikiPage found by the `where` argument doesn't exist, create a new WikiPage with this data.
+     */
+    create: XOR<WikiPageCreateInput, WikiPageUncheckedCreateInput>
+    /**
+     * In case the WikiPage was found with the provided `where` argument, update it with this data.
+     */
+    update: XOR<WikiPageUpdateInput, WikiPageUncheckedUpdateInput>
+  }
+
+  /**
+   * WikiPage delete
+   */
+  export type WikiPageDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WikiPage
+     */
+    select?: WikiPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WikiPage
+     */
+    omit?: WikiPageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WikiPageInclude<ExtArgs> | null
+    /**
+     * Filter which WikiPage to delete.
+     */
+    where: WikiPageWhereUniqueInput
+  }
+
+  /**
+   * WikiPage deleteMany
+   */
+  export type WikiPageDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Filter which WikiPages to delete
+     */
+    where?: WikiPageWhereInput
+    /**
+     * Limit how many WikiPages to delete.
+     */
+    limit?: number
+  }
+
+  /**
+   * WikiPage without action
+   */
+  export type WikiPageDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
+    /**
+     * Select specific fields to fetch from the WikiPage
+     */
+    select?: WikiPageSelect<ExtArgs> | null
+    /**
+     * Omit specific fields from the WikiPage
+     */
+    omit?: WikiPageOmit<ExtArgs> | null
+    /**
+     * Choose, which related nodes to fetch as well
+     */
+    include?: WikiPageInclude<ExtArgs> | null
+  }
+
+
+  /**
    * Model ActivityEvent
    */
 
@@ -22600,6 +23920,20 @@ export namespace Prisma {
   export type AttachmentScalarFieldEnum = (typeof AttachmentScalarFieldEnum)[keyof typeof AttachmentScalarFieldEnum]
 
 
+  export const WikiPageScalarFieldEnum: {
+    id: 'id',
+    projectId: 'projectId',
+    title: 'title',
+    content: 'content',
+    createdById: 'createdById',
+    lastUpdatedById: 'lastUpdatedById',
+    createdAt: 'createdAt',
+    updatedAt: 'updatedAt'
+  };
+
+  export type WikiPageScalarFieldEnum = (typeof WikiPageScalarFieldEnum)[keyof typeof WikiPageScalarFieldEnum]
+
+
   export const ActivityEventScalarFieldEnum: {
     id: 'id',
     projectId: 'projectId',
@@ -22838,6 +24172,8 @@ export namespace Prisma {
     preferences?: XOR<UserPreferenceNullableScalarRelationFilter, UserPreferenceWhereInput> | null
     activityEvents?: ActivityEventListRelationFilter
     inboxItems?: InboxItemListRelationFilter
+    createdWikiPages?: WikiPageListRelationFilter
+    updatedWikiPages?: WikiPageListRelationFilter
   }
 
   export type UserOrderByWithRelationInput = {
@@ -22865,6 +24201,8 @@ export namespace Prisma {
     preferences?: UserPreferenceOrderByWithRelationInput
     activityEvents?: ActivityEventOrderByRelationAggregateInput
     inboxItems?: InboxItemOrderByRelationAggregateInput
+    createdWikiPages?: WikiPageOrderByRelationAggregateInput
+    updatedWikiPages?: WikiPageOrderByRelationAggregateInput
   }
 
   export type UserWhereUniqueInput = Prisma.AtLeast<{
@@ -22895,6 +24233,8 @@ export namespace Prisma {
     preferences?: XOR<UserPreferenceNullableScalarRelationFilter, UserPreferenceWhereInput> | null
     activityEvents?: ActivityEventListRelationFilter
     inboxItems?: InboxItemListRelationFilter
+    createdWikiPages?: WikiPageListRelationFilter
+    updatedWikiPages?: WikiPageListRelationFilter
   }, "id" | "email">
 
   export type UserOrderByWithAggregationInput = {
@@ -23148,6 +24488,7 @@ export namespace Prisma {
     inboxItems?: InboxItemListRelationFilter
     pullRequests?: PullRequestListRelationFilter
     deployments?: DeploymentListRelationFilter
+    wikiPages?: WikiPageListRelationFilter
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -23172,6 +24513,7 @@ export namespace Prisma {
     inboxItems?: InboxItemOrderByRelationAggregateInput
     pullRequests?: PullRequestOrderByRelationAggregateInput
     deployments?: DeploymentOrderByRelationAggregateInput
+    wikiPages?: WikiPageOrderByRelationAggregateInput
   }
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -23200,6 +24542,7 @@ export namespace Prisma {
     inboxItems?: InboxItemListRelationFilter
     pullRequests?: PullRequestListRelationFilter
     deployments?: DeploymentListRelationFilter
+    wikiPages?: WikiPageListRelationFilter
   }, "id" | "ownerId_key">
 
   export type ProjectOrderByWithAggregationInput = {
@@ -23913,6 +25256,83 @@ export namespace Prisma {
     updatedAt?: DateTimeWithAggregatesFilter<"Attachment"> | Date | string
   }
 
+  export type WikiPageWhereInput = {
+    AND?: WikiPageWhereInput | WikiPageWhereInput[]
+    OR?: WikiPageWhereInput[]
+    NOT?: WikiPageWhereInput | WikiPageWhereInput[]
+    id?: StringFilter<"WikiPage"> | string
+    projectId?: StringFilter<"WikiPage"> | string
+    title?: StringFilter<"WikiPage"> | string
+    content?: StringFilter<"WikiPage"> | string
+    createdById?: StringFilter<"WikiPage"> | string
+    lastUpdatedById?: StringFilter<"WikiPage"> | string
+    createdAt?: DateTimeFilter<"WikiPage"> | Date | string
+    updatedAt?: DateTimeFilter<"WikiPage"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    lastUpdatedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }
+
+  export type WikiPageOrderByWithRelationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    createdById?: SortOrder
+    lastUpdatedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    project?: ProjectOrderByWithRelationInput
+    createdBy?: UserOrderByWithRelationInput
+    lastUpdatedBy?: UserOrderByWithRelationInput
+  }
+
+  export type WikiPageWhereUniqueInput = Prisma.AtLeast<{
+    id?: string
+    projectId_title?: WikiPageProjectIdTitleCompoundUniqueInput
+    AND?: WikiPageWhereInput | WikiPageWhereInput[]
+    OR?: WikiPageWhereInput[]
+    NOT?: WikiPageWhereInput | WikiPageWhereInput[]
+    projectId?: StringFilter<"WikiPage"> | string
+    title?: StringFilter<"WikiPage"> | string
+    content?: StringFilter<"WikiPage"> | string
+    createdById?: StringFilter<"WikiPage"> | string
+    lastUpdatedById?: StringFilter<"WikiPage"> | string
+    createdAt?: DateTimeFilter<"WikiPage"> | Date | string
+    updatedAt?: DateTimeFilter<"WikiPage"> | Date | string
+    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
+    createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+    lastUpdatedBy?: XOR<UserScalarRelationFilter, UserWhereInput>
+  }, "id" | "projectId_title">
+
+  export type WikiPageOrderByWithAggregationInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    createdById?: SortOrder
+    lastUpdatedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+    _count?: WikiPageCountOrderByAggregateInput
+    _max?: WikiPageMaxOrderByAggregateInput
+    _min?: WikiPageMinOrderByAggregateInput
+  }
+
+  export type WikiPageScalarWhereWithAggregatesInput = {
+    AND?: WikiPageScalarWhereWithAggregatesInput | WikiPageScalarWhereWithAggregatesInput[]
+    OR?: WikiPageScalarWhereWithAggregatesInput[]
+    NOT?: WikiPageScalarWhereWithAggregatesInput | WikiPageScalarWhereWithAggregatesInput[]
+    id?: StringWithAggregatesFilter<"WikiPage"> | string
+    projectId?: StringWithAggregatesFilter<"WikiPage"> | string
+    title?: StringWithAggregatesFilter<"WikiPage"> | string
+    content?: StringWithAggregatesFilter<"WikiPage"> | string
+    createdById?: StringWithAggregatesFilter<"WikiPage"> | string
+    lastUpdatedById?: StringWithAggregatesFilter<"WikiPage"> | string
+    createdAt?: DateTimeWithAggregatesFilter<"WikiPage"> | Date | string
+    updatedAt?: DateTimeWithAggregatesFilter<"WikiPage"> | Date | string
+  }
+
   export type ActivityEventWhereInput = {
     AND?: ActivityEventWhereInput | ActivityEventWhereInput[]
     OR?: ActivityEventWhereInput[]
@@ -24391,6 +25811,8 @@ export namespace Prisma {
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserUncheckedCreateInput = {
@@ -24418,6 +25840,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageUncheckedCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserUpdateInput = {
@@ -24445,6 +25869,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateInput = {
@@ -24472,6 +25898,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUncheckedUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserCreateManyInput = {
@@ -24762,6 +26190,7 @@ export namespace Prisma {
     inboxItems?: InboxItemCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
     deployments?: DeploymentCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -24785,6 +26214,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
     deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUpdateInput = {
@@ -24808,6 +26238,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -24831,6 +26262,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUncheckedUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyInput = {
@@ -25586,6 +27018,80 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type WikiPageCreateInput = {
+    id?: string
+    title: string
+    content?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutWikiPagesInput
+    createdBy: UserCreateNestedOneWithoutCreatedWikiPagesInput
+    lastUpdatedBy: UserCreateNestedOneWithoutUpdatedWikiPagesInput
+  }
+
+  export type WikiPageUncheckedCreateInput = {
+    id?: string
+    projectId: string
+    title: string
+    content?: string
+    createdById: string
+    lastUpdatedById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WikiPageUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutWikiPagesNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutCreatedWikiPagesNestedInput
+    lastUpdatedBy?: UserUpdateOneRequiredWithoutUpdatedWikiPagesNestedInput
+  }
+
+  export type WikiPageUncheckedUpdateInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    lastUpdatedById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WikiPageCreateManyInput = {
+    id?: string
+    projectId: string
+    title: string
+    content?: string
+    createdById: string
+    lastUpdatedById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WikiPageUpdateManyMutationInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WikiPageUncheckedUpdateManyInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    lastUpdatedById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ActivityEventCreateInput = {
     id?: string
     targetUserId?: string | null
@@ -26202,6 +27708,12 @@ export namespace Prisma {
     none?: InboxItemWhereInput
   }
 
+  export type WikiPageListRelationFilter = {
+    every?: WikiPageWhereInput
+    some?: WikiPageWhereInput
+    none?: WikiPageWhereInput
+  }
+
   export type SortOrderInput = {
     sort: SortOrder
     nulls?: NullsOrder
@@ -26240,6 +27752,10 @@ export namespace Prisma {
   }
 
   export type InboxItemOrderByRelationAggregateInput = {
+    _count?: SortOrder
+  }
+
+  export type WikiPageOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -26994,6 +28510,44 @@ export namespace Prisma {
   export type AttachmentSumOrderByAggregateInput = {
     fileSize?: SortOrder
   }
+
+  export type WikiPageProjectIdTitleCompoundUniqueInput = {
+    projectId: string
+    title: string
+  }
+
+  export type WikiPageCountOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    createdById?: SortOrder
+    lastUpdatedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type WikiPageMaxOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    createdById?: SortOrder
+    lastUpdatedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
+
+  export type WikiPageMinOrderByAggregateInput = {
+    id?: SortOrder
+    projectId?: SortOrder
+    title?: SortOrder
+    content?: SortOrder
+    createdById?: SortOrder
+    lastUpdatedById?: SortOrder
+    createdAt?: SortOrder
+    updatedAt?: SortOrder
+  }
   export type JsonNullableFilter<$PrismaModel = never> =
     | PatchUndefined<
         Either<Required<JsonNullableFilterBase<$PrismaModel>>, Exclude<keyof Required<JsonNullableFilterBase<$PrismaModel>>, 'path'>>,
@@ -27376,6 +28930,20 @@ export namespace Prisma {
     connect?: InboxItemWhereUniqueInput | InboxItemWhereUniqueInput[]
   }
 
+  export type WikiPageCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<WikiPageCreateWithoutCreatedByInput, WikiPageUncheckedCreateWithoutCreatedByInput> | WikiPageCreateWithoutCreatedByInput[] | WikiPageUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: WikiPageCreateOrConnectWithoutCreatedByInput | WikiPageCreateOrConnectWithoutCreatedByInput[]
+    createMany?: WikiPageCreateManyCreatedByInputEnvelope
+    connect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+  }
+
+  export type WikiPageCreateNestedManyWithoutLastUpdatedByInput = {
+    create?: XOR<WikiPageCreateWithoutLastUpdatedByInput, WikiPageUncheckedCreateWithoutLastUpdatedByInput> | WikiPageCreateWithoutLastUpdatedByInput[] | WikiPageUncheckedCreateWithoutLastUpdatedByInput[]
+    connectOrCreate?: WikiPageCreateOrConnectWithoutLastUpdatedByInput | WikiPageCreateOrConnectWithoutLastUpdatedByInput[]
+    createMany?: WikiPageCreateManyLastUpdatedByInputEnvelope
+    connect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+  }
+
   export type RefreshTokenUncheckedCreateNestedManyWithoutUserInput = {
     create?: XOR<RefreshTokenCreateWithoutUserInput, RefreshTokenUncheckedCreateWithoutUserInput> | RefreshTokenCreateWithoutUserInput[] | RefreshTokenUncheckedCreateWithoutUserInput[]
     connectOrCreate?: RefreshTokenCreateOrConnectWithoutUserInput | RefreshTokenCreateOrConnectWithoutUserInput[]
@@ -27457,6 +29025,20 @@ export namespace Prisma {
     connectOrCreate?: InboxItemCreateOrConnectWithoutUserInput | InboxItemCreateOrConnectWithoutUserInput[]
     createMany?: InboxItemCreateManyUserInputEnvelope
     connect?: InboxItemWhereUniqueInput | InboxItemWhereUniqueInput[]
+  }
+
+  export type WikiPageUncheckedCreateNestedManyWithoutCreatedByInput = {
+    create?: XOR<WikiPageCreateWithoutCreatedByInput, WikiPageUncheckedCreateWithoutCreatedByInput> | WikiPageCreateWithoutCreatedByInput[] | WikiPageUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: WikiPageCreateOrConnectWithoutCreatedByInput | WikiPageCreateOrConnectWithoutCreatedByInput[]
+    createMany?: WikiPageCreateManyCreatedByInputEnvelope
+    connect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+  }
+
+  export type WikiPageUncheckedCreateNestedManyWithoutLastUpdatedByInput = {
+    create?: XOR<WikiPageCreateWithoutLastUpdatedByInput, WikiPageUncheckedCreateWithoutLastUpdatedByInput> | WikiPageCreateWithoutLastUpdatedByInput[] | WikiPageUncheckedCreateWithoutLastUpdatedByInput[]
+    connectOrCreate?: WikiPageCreateOrConnectWithoutLastUpdatedByInput | WikiPageCreateOrConnectWithoutLastUpdatedByInput[]
+    createMany?: WikiPageCreateManyLastUpdatedByInputEnvelope
+    connect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
   }
 
   export type StringFieldUpdateOperationsInput = {
@@ -27643,6 +29225,34 @@ export namespace Prisma {
     deleteMany?: InboxItemScalarWhereInput | InboxItemScalarWhereInput[]
   }
 
+  export type WikiPageUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<WikiPageCreateWithoutCreatedByInput, WikiPageUncheckedCreateWithoutCreatedByInput> | WikiPageCreateWithoutCreatedByInput[] | WikiPageUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: WikiPageCreateOrConnectWithoutCreatedByInput | WikiPageCreateOrConnectWithoutCreatedByInput[]
+    upsert?: WikiPageUpsertWithWhereUniqueWithoutCreatedByInput | WikiPageUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: WikiPageCreateManyCreatedByInputEnvelope
+    set?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    disconnect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    delete?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    connect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    update?: WikiPageUpdateWithWhereUniqueWithoutCreatedByInput | WikiPageUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: WikiPageUpdateManyWithWhereWithoutCreatedByInput | WikiPageUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: WikiPageScalarWhereInput | WikiPageScalarWhereInput[]
+  }
+
+  export type WikiPageUpdateManyWithoutLastUpdatedByNestedInput = {
+    create?: XOR<WikiPageCreateWithoutLastUpdatedByInput, WikiPageUncheckedCreateWithoutLastUpdatedByInput> | WikiPageCreateWithoutLastUpdatedByInput[] | WikiPageUncheckedCreateWithoutLastUpdatedByInput[]
+    connectOrCreate?: WikiPageCreateOrConnectWithoutLastUpdatedByInput | WikiPageCreateOrConnectWithoutLastUpdatedByInput[]
+    upsert?: WikiPageUpsertWithWhereUniqueWithoutLastUpdatedByInput | WikiPageUpsertWithWhereUniqueWithoutLastUpdatedByInput[]
+    createMany?: WikiPageCreateManyLastUpdatedByInputEnvelope
+    set?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    disconnect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    delete?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    connect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    update?: WikiPageUpdateWithWhereUniqueWithoutLastUpdatedByInput | WikiPageUpdateWithWhereUniqueWithoutLastUpdatedByInput[]
+    updateMany?: WikiPageUpdateManyWithWhereWithoutLastUpdatedByInput | WikiPageUpdateManyWithWhereWithoutLastUpdatedByInput[]
+    deleteMany?: WikiPageScalarWhereInput | WikiPageScalarWhereInput[]
+  }
+
   export type RefreshTokenUncheckedUpdateManyWithoutUserNestedInput = {
     create?: XOR<RefreshTokenCreateWithoutUserInput, RefreshTokenUncheckedCreateWithoutUserInput> | RefreshTokenCreateWithoutUserInput[] | RefreshTokenUncheckedCreateWithoutUserInput[]
     connectOrCreate?: RefreshTokenCreateOrConnectWithoutUserInput | RefreshTokenCreateOrConnectWithoutUserInput[]
@@ -27807,6 +29417,34 @@ export namespace Prisma {
     deleteMany?: InboxItemScalarWhereInput | InboxItemScalarWhereInput[]
   }
 
+  export type WikiPageUncheckedUpdateManyWithoutCreatedByNestedInput = {
+    create?: XOR<WikiPageCreateWithoutCreatedByInput, WikiPageUncheckedCreateWithoutCreatedByInput> | WikiPageCreateWithoutCreatedByInput[] | WikiPageUncheckedCreateWithoutCreatedByInput[]
+    connectOrCreate?: WikiPageCreateOrConnectWithoutCreatedByInput | WikiPageCreateOrConnectWithoutCreatedByInput[]
+    upsert?: WikiPageUpsertWithWhereUniqueWithoutCreatedByInput | WikiPageUpsertWithWhereUniqueWithoutCreatedByInput[]
+    createMany?: WikiPageCreateManyCreatedByInputEnvelope
+    set?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    disconnect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    delete?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    connect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    update?: WikiPageUpdateWithWhereUniqueWithoutCreatedByInput | WikiPageUpdateWithWhereUniqueWithoutCreatedByInput[]
+    updateMany?: WikiPageUpdateManyWithWhereWithoutCreatedByInput | WikiPageUpdateManyWithWhereWithoutCreatedByInput[]
+    deleteMany?: WikiPageScalarWhereInput | WikiPageScalarWhereInput[]
+  }
+
+  export type WikiPageUncheckedUpdateManyWithoutLastUpdatedByNestedInput = {
+    create?: XOR<WikiPageCreateWithoutLastUpdatedByInput, WikiPageUncheckedCreateWithoutLastUpdatedByInput> | WikiPageCreateWithoutLastUpdatedByInput[] | WikiPageUncheckedCreateWithoutLastUpdatedByInput[]
+    connectOrCreate?: WikiPageCreateOrConnectWithoutLastUpdatedByInput | WikiPageCreateOrConnectWithoutLastUpdatedByInput[]
+    upsert?: WikiPageUpsertWithWhereUniqueWithoutLastUpdatedByInput | WikiPageUpsertWithWhereUniqueWithoutLastUpdatedByInput[]
+    createMany?: WikiPageCreateManyLastUpdatedByInputEnvelope
+    set?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    disconnect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    delete?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    connect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    update?: WikiPageUpdateWithWhereUniqueWithoutLastUpdatedByInput | WikiPageUpdateWithWhereUniqueWithoutLastUpdatedByInput[]
+    updateMany?: WikiPageUpdateManyWithWhereWithoutLastUpdatedByInput | WikiPageUpdateManyWithWhereWithoutLastUpdatedByInput[]
+    deleteMany?: WikiPageScalarWhereInput | WikiPageScalarWhereInput[]
+  }
+
   export type UserCreateNestedOneWithoutPreferencesInput = {
     create?: XOR<UserCreateWithoutPreferencesInput, UserUncheckedCreateWithoutPreferencesInput>
     connectOrCreate?: UserCreateOrConnectWithoutPreferencesInput
@@ -27897,6 +29535,13 @@ export namespace Prisma {
     connect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
   }
 
+  export type WikiPageCreateNestedManyWithoutProjectInput = {
+    create?: XOR<WikiPageCreateWithoutProjectInput, WikiPageUncheckedCreateWithoutProjectInput> | WikiPageCreateWithoutProjectInput[] | WikiPageUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: WikiPageCreateOrConnectWithoutProjectInput | WikiPageCreateOrConnectWithoutProjectInput[]
+    createMany?: WikiPageCreateManyProjectInputEnvelope
+    connect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+  }
+
   export type ProjectMemberUncheckedCreateNestedManyWithoutProjectInput = {
     create?: XOR<ProjectMemberCreateWithoutProjectInput, ProjectMemberUncheckedCreateWithoutProjectInput> | ProjectMemberCreateWithoutProjectInput[] | ProjectMemberUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: ProjectMemberCreateOrConnectWithoutProjectInput | ProjectMemberCreateOrConnectWithoutProjectInput[]
@@ -27951,6 +29596,13 @@ export namespace Prisma {
     connectOrCreate?: DeploymentCreateOrConnectWithoutProjectInput | DeploymentCreateOrConnectWithoutProjectInput[]
     createMany?: DeploymentCreateManyProjectInputEnvelope
     connect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
+  }
+
+  export type WikiPageUncheckedCreateNestedManyWithoutProjectInput = {
+    create?: XOR<WikiPageCreateWithoutProjectInput, WikiPageUncheckedCreateWithoutProjectInput> | WikiPageCreateWithoutProjectInput[] | WikiPageUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: WikiPageCreateOrConnectWithoutProjectInput | WikiPageCreateOrConnectWithoutProjectInput[]
+    createMany?: WikiPageCreateManyProjectInputEnvelope
+    connect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -28081,6 +29733,20 @@ export namespace Prisma {
     deleteMany?: DeploymentScalarWhereInput | DeploymentScalarWhereInput[]
   }
 
+  export type WikiPageUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<WikiPageCreateWithoutProjectInput, WikiPageUncheckedCreateWithoutProjectInput> | WikiPageCreateWithoutProjectInput[] | WikiPageUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: WikiPageCreateOrConnectWithoutProjectInput | WikiPageCreateOrConnectWithoutProjectInput[]
+    upsert?: WikiPageUpsertWithWhereUniqueWithoutProjectInput | WikiPageUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: WikiPageCreateManyProjectInputEnvelope
+    set?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    disconnect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    delete?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    connect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    update?: WikiPageUpdateWithWhereUniqueWithoutProjectInput | WikiPageUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: WikiPageUpdateManyWithWhereWithoutProjectInput | WikiPageUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: WikiPageScalarWhereInput | WikiPageScalarWhereInput[]
+  }
+
   export type ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput = {
     create?: XOR<ProjectMemberCreateWithoutProjectInput, ProjectMemberUncheckedCreateWithoutProjectInput> | ProjectMemberCreateWithoutProjectInput[] | ProjectMemberUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: ProjectMemberCreateOrConnectWithoutProjectInput | ProjectMemberCreateOrConnectWithoutProjectInput[]
@@ -28191,6 +29857,20 @@ export namespace Prisma {
     update?: DeploymentUpdateWithWhereUniqueWithoutProjectInput | DeploymentUpdateWithWhereUniqueWithoutProjectInput[]
     updateMany?: DeploymentUpdateManyWithWhereWithoutProjectInput | DeploymentUpdateManyWithWhereWithoutProjectInput[]
     deleteMany?: DeploymentScalarWhereInput | DeploymentScalarWhereInput[]
+  }
+
+  export type WikiPageUncheckedUpdateManyWithoutProjectNestedInput = {
+    create?: XOR<WikiPageCreateWithoutProjectInput, WikiPageUncheckedCreateWithoutProjectInput> | WikiPageCreateWithoutProjectInput[] | WikiPageUncheckedCreateWithoutProjectInput[]
+    connectOrCreate?: WikiPageCreateOrConnectWithoutProjectInput | WikiPageCreateOrConnectWithoutProjectInput[]
+    upsert?: WikiPageUpsertWithWhereUniqueWithoutProjectInput | WikiPageUpsertWithWhereUniqueWithoutProjectInput[]
+    createMany?: WikiPageCreateManyProjectInputEnvelope
+    set?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    disconnect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    delete?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    connect?: WikiPageWhereUniqueInput | WikiPageWhereUniqueInput[]
+    update?: WikiPageUpdateWithWhereUniqueWithoutProjectInput | WikiPageUpdateWithWhereUniqueWithoutProjectInput[]
+    updateMany?: WikiPageUpdateManyWithWhereWithoutProjectInput | WikiPageUpdateManyWithWhereWithoutProjectInput[]
+    deleteMany?: WikiPageScalarWhereInput | WikiPageScalarWhereInput[]
   }
 
   export type ProjectCreateNestedOneWithoutInvitesInput = {
@@ -28873,6 +30553,48 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutAttachmentsInput, UserUpdateWithoutAttachmentsInput>, UserUncheckedUpdateWithoutAttachmentsInput>
   }
 
+  export type ProjectCreateNestedOneWithoutWikiPagesInput = {
+    create?: XOR<ProjectCreateWithoutWikiPagesInput, ProjectUncheckedCreateWithoutWikiPagesInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutWikiPagesInput
+    connect?: ProjectWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutCreatedWikiPagesInput = {
+    create?: XOR<UserCreateWithoutCreatedWikiPagesInput, UserUncheckedCreateWithoutCreatedWikiPagesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCreatedWikiPagesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type UserCreateNestedOneWithoutUpdatedWikiPagesInput = {
+    create?: XOR<UserCreateWithoutUpdatedWikiPagesInput, UserUncheckedCreateWithoutUpdatedWikiPagesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutUpdatedWikiPagesInput
+    connect?: UserWhereUniqueInput
+  }
+
+  export type ProjectUpdateOneRequiredWithoutWikiPagesNestedInput = {
+    create?: XOR<ProjectCreateWithoutWikiPagesInput, ProjectUncheckedCreateWithoutWikiPagesInput>
+    connectOrCreate?: ProjectCreateOrConnectWithoutWikiPagesInput
+    upsert?: ProjectUpsertWithoutWikiPagesInput
+    connect?: ProjectWhereUniqueInput
+    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutWikiPagesInput, ProjectUpdateWithoutWikiPagesInput>, ProjectUncheckedUpdateWithoutWikiPagesInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutCreatedWikiPagesNestedInput = {
+    create?: XOR<UserCreateWithoutCreatedWikiPagesInput, UserUncheckedCreateWithoutCreatedWikiPagesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutCreatedWikiPagesInput
+    upsert?: UserUpsertWithoutCreatedWikiPagesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCreatedWikiPagesInput, UserUpdateWithoutCreatedWikiPagesInput>, UserUncheckedUpdateWithoutCreatedWikiPagesInput>
+  }
+
+  export type UserUpdateOneRequiredWithoutUpdatedWikiPagesNestedInput = {
+    create?: XOR<UserCreateWithoutUpdatedWikiPagesInput, UserUncheckedCreateWithoutUpdatedWikiPagesInput>
+    connectOrCreate?: UserCreateOrConnectWithoutUpdatedWikiPagesInput
+    upsert?: UserUpsertWithoutUpdatedWikiPagesInput
+    connect?: UserWhereUniqueInput
+    update?: XOR<XOR<UserUpdateToOneWithWhereWithoutUpdatedWikiPagesInput, UserUpdateWithoutUpdatedWikiPagesInput>, UserUncheckedUpdateWithoutUpdatedWikiPagesInput>
+  }
+
   export type ProjectCreateNestedOneWithoutActivityEventsInput = {
     create?: XOR<ProjectCreateWithoutActivityEventsInput, ProjectUncheckedCreateWithoutActivityEventsInput>
     connectOrCreate?: ProjectCreateOrConnectWithoutActivityEventsInput
@@ -29427,6 +31149,7 @@ export namespace Prisma {
     inboxItems?: InboxItemCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
     deployments?: DeploymentCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutOwnerInput = {
@@ -29449,6 +31172,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
     deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutOwnerInput = {
@@ -29910,6 +31634,66 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type WikiPageCreateWithoutCreatedByInput = {
+    id?: string
+    title: string
+    content?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutWikiPagesInput
+    lastUpdatedBy: UserCreateNestedOneWithoutUpdatedWikiPagesInput
+  }
+
+  export type WikiPageUncheckedCreateWithoutCreatedByInput = {
+    id?: string
+    projectId: string
+    title: string
+    content?: string
+    lastUpdatedById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WikiPageCreateOrConnectWithoutCreatedByInput = {
+    where: WikiPageWhereUniqueInput
+    create: XOR<WikiPageCreateWithoutCreatedByInput, WikiPageUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type WikiPageCreateManyCreatedByInputEnvelope = {
+    data: WikiPageCreateManyCreatedByInput | WikiPageCreateManyCreatedByInput[]
+    skipDuplicates?: boolean
+  }
+
+  export type WikiPageCreateWithoutLastUpdatedByInput = {
+    id?: string
+    title: string
+    content?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    project: ProjectCreateNestedOneWithoutWikiPagesInput
+    createdBy: UserCreateNestedOneWithoutCreatedWikiPagesInput
+  }
+
+  export type WikiPageUncheckedCreateWithoutLastUpdatedByInput = {
+    id?: string
+    projectId: string
+    title: string
+    content?: string
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WikiPageCreateOrConnectWithoutLastUpdatedByInput = {
+    where: WikiPageWhereUniqueInput
+    create: XOR<WikiPageCreateWithoutLastUpdatedByInput, WikiPageUncheckedCreateWithoutLastUpdatedByInput>
+  }
+
+  export type WikiPageCreateManyLastUpdatedByInputEnvelope = {
+    data: WikiPageCreateManyLastUpdatedByInput | WikiPageCreateManyLastUpdatedByInput[]
+    skipDuplicates?: boolean
+  }
+
   export type RefreshTokenUpsertWithWhereUniqueWithoutUserInput = {
     where: RefreshTokenWhereUniqueInput
     update: XOR<RefreshTokenUpdateWithoutUserInput, RefreshTokenUncheckedUpdateWithoutUserInput>
@@ -30298,6 +32082,52 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"InboxItem"> | Date | string
   }
 
+  export type WikiPageUpsertWithWhereUniqueWithoutCreatedByInput = {
+    where: WikiPageWhereUniqueInput
+    update: XOR<WikiPageUpdateWithoutCreatedByInput, WikiPageUncheckedUpdateWithoutCreatedByInput>
+    create: XOR<WikiPageCreateWithoutCreatedByInput, WikiPageUncheckedCreateWithoutCreatedByInput>
+  }
+
+  export type WikiPageUpdateWithWhereUniqueWithoutCreatedByInput = {
+    where: WikiPageWhereUniqueInput
+    data: XOR<WikiPageUpdateWithoutCreatedByInput, WikiPageUncheckedUpdateWithoutCreatedByInput>
+  }
+
+  export type WikiPageUpdateManyWithWhereWithoutCreatedByInput = {
+    where: WikiPageScalarWhereInput
+    data: XOR<WikiPageUpdateManyMutationInput, WikiPageUncheckedUpdateManyWithoutCreatedByInput>
+  }
+
+  export type WikiPageScalarWhereInput = {
+    AND?: WikiPageScalarWhereInput | WikiPageScalarWhereInput[]
+    OR?: WikiPageScalarWhereInput[]
+    NOT?: WikiPageScalarWhereInput | WikiPageScalarWhereInput[]
+    id?: StringFilter<"WikiPage"> | string
+    projectId?: StringFilter<"WikiPage"> | string
+    title?: StringFilter<"WikiPage"> | string
+    content?: StringFilter<"WikiPage"> | string
+    createdById?: StringFilter<"WikiPage"> | string
+    lastUpdatedById?: StringFilter<"WikiPage"> | string
+    createdAt?: DateTimeFilter<"WikiPage"> | Date | string
+    updatedAt?: DateTimeFilter<"WikiPage"> | Date | string
+  }
+
+  export type WikiPageUpsertWithWhereUniqueWithoutLastUpdatedByInput = {
+    where: WikiPageWhereUniqueInput
+    update: XOR<WikiPageUpdateWithoutLastUpdatedByInput, WikiPageUncheckedUpdateWithoutLastUpdatedByInput>
+    create: XOR<WikiPageCreateWithoutLastUpdatedByInput, WikiPageUncheckedCreateWithoutLastUpdatedByInput>
+  }
+
+  export type WikiPageUpdateWithWhereUniqueWithoutLastUpdatedByInput = {
+    where: WikiPageWhereUniqueInput
+    data: XOR<WikiPageUpdateWithoutLastUpdatedByInput, WikiPageUncheckedUpdateWithoutLastUpdatedByInput>
+  }
+
+  export type WikiPageUpdateManyWithWhereWithoutLastUpdatedByInput = {
+    where: WikiPageScalarWhereInput
+    data: XOR<WikiPageUpdateManyMutationInput, WikiPageUncheckedUpdateManyWithoutLastUpdatedByInput>
+  }
+
   export type UserCreateWithoutPreferencesInput = {
     id?: string
     email: string
@@ -30322,6 +32152,8 @@ export namespace Prisma {
     acceptedProjectInvites?: ProjectInviteCreateNestedManyWithoutAcceptedByInput
     activityEvents?: ActivityEventCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutPreferencesInput = {
@@ -30348,6 +32180,8 @@ export namespace Prisma {
     acceptedProjectInvites?: ProjectInviteUncheckedCreateNestedManyWithoutAcceptedByInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageUncheckedCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutPreferencesInput = {
@@ -30390,6 +32224,8 @@ export namespace Prisma {
     acceptedProjectInvites?: ProjectInviteUpdateManyWithoutAcceptedByNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutPreferencesInput = {
@@ -30416,6 +32252,8 @@ export namespace Prisma {
     acceptedProjectInvites?: ProjectInviteUncheckedUpdateManyWithoutAcceptedByNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUncheckedUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserCreateWithoutRefreshTokensInput = {
@@ -30442,6 +32280,8 @@ export namespace Prisma {
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutRefreshTokensInput = {
@@ -30468,6 +32308,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageUncheckedCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutRefreshTokensInput = {
@@ -30510,6 +32352,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutRefreshTokensInput = {
@@ -30536,6 +32380,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUncheckedUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserCreateWithoutOwnedProjectsInput = {
@@ -30562,6 +32408,8 @@ export namespace Prisma {
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutOwnedProjectsInput = {
@@ -30588,6 +32436,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageUncheckedCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutOwnedProjectsInput = {
@@ -30947,6 +32797,36 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
+  export type WikiPageCreateWithoutProjectInput = {
+    id?: string
+    title: string
+    content?: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    createdBy: UserCreateNestedOneWithoutCreatedWikiPagesInput
+    lastUpdatedBy: UserCreateNestedOneWithoutUpdatedWikiPagesInput
+  }
+
+  export type WikiPageUncheckedCreateWithoutProjectInput = {
+    id?: string
+    title: string
+    content?: string
+    createdById: string
+    lastUpdatedById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WikiPageCreateOrConnectWithoutProjectInput = {
+    where: WikiPageWhereUniqueInput
+    create: XOR<WikiPageCreateWithoutProjectInput, WikiPageUncheckedCreateWithoutProjectInput>
+  }
+
+  export type WikiPageCreateManyProjectInputEnvelope = {
+    data: WikiPageCreateManyProjectInput | WikiPageCreateManyProjectInput[]
+    skipDuplicates?: boolean
+  }
+
   export type UserUpsertWithoutOwnedProjectsInput = {
     update: XOR<UserUpdateWithoutOwnedProjectsInput, UserUncheckedUpdateWithoutOwnedProjectsInput>
     create: XOR<UserCreateWithoutOwnedProjectsInput, UserUncheckedCreateWithoutOwnedProjectsInput>
@@ -30982,6 +32862,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutOwnedProjectsInput = {
@@ -31008,6 +32890,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUncheckedUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type ProjectMemberUpsertWithWhereUniqueWithoutProjectInput = {
@@ -31195,6 +33079,22 @@ export namespace Prisma {
     updatedAt?: DateTimeFilter<"Deployment"> | Date | string
   }
 
+  export type WikiPageUpsertWithWhereUniqueWithoutProjectInput = {
+    where: WikiPageWhereUniqueInput
+    update: XOR<WikiPageUpdateWithoutProjectInput, WikiPageUncheckedUpdateWithoutProjectInput>
+    create: XOR<WikiPageCreateWithoutProjectInput, WikiPageUncheckedCreateWithoutProjectInput>
+  }
+
+  export type WikiPageUpdateWithWhereUniqueWithoutProjectInput = {
+    where: WikiPageWhereUniqueInput
+    data: XOR<WikiPageUpdateWithoutProjectInput, WikiPageUncheckedUpdateWithoutProjectInput>
+  }
+
+  export type WikiPageUpdateManyWithWhereWithoutProjectInput = {
+    where: WikiPageScalarWhereInput
+    data: XOR<WikiPageUpdateManyMutationInput, WikiPageUncheckedUpdateManyWithoutProjectInput>
+  }
+
   export type ProjectCreateWithoutInvitesInput = {
     id?: string
     name: string
@@ -31215,6 +33115,7 @@ export namespace Prisma {
     inboxItems?: InboxItemCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
     deployments?: DeploymentCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutInvitesInput = {
@@ -31237,6 +33138,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
     deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutInvitesInput = {
@@ -31268,6 +33170,8 @@ export namespace Prisma {
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutSentProjectInvitesInput = {
@@ -31294,6 +33198,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageUncheckedCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutSentProjectInvitesInput = {
@@ -31325,6 +33231,8 @@ export namespace Prisma {
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutAcceptedProjectInvitesInput = {
@@ -31351,6 +33259,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageUncheckedCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutAcceptedProjectInvitesInput = {
@@ -31389,6 +33299,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutInvitesInput = {
@@ -31411,6 +33322,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUncheckedUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutSentProjectInvitesInput = {
@@ -31448,6 +33360,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutSentProjectInvitesInput = {
@@ -31474,6 +33388,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUncheckedUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserUpsertWithoutAcceptedProjectInvitesInput = {
@@ -31511,6 +33427,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAcceptedProjectInvitesInput = {
@@ -31537,6 +33455,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUncheckedUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type ProjectCreateWithoutMembersInput = {
@@ -31559,6 +33479,7 @@ export namespace Prisma {
     inboxItems?: InboxItemCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
     deployments?: DeploymentCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutMembersInput = {
@@ -31581,6 +33502,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
     deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutMembersInput = {
@@ -31612,6 +33534,8 @@ export namespace Prisma {
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutProjectMembersInput = {
@@ -31638,6 +33562,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageUncheckedCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutProjectMembersInput = {
@@ -31676,6 +33602,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutMembersInput = {
@@ -31698,6 +33625,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUncheckedUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutProjectMembersInput = {
@@ -31735,6 +33663,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutProjectMembersInput = {
@@ -31761,6 +33691,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUncheckedUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type ProjectCreateWithoutTasksInput = {
@@ -31783,6 +33715,7 @@ export namespace Prisma {
     inboxItems?: InboxItemCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
     deployments?: DeploymentCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutTasksInput = {
@@ -31805,6 +33738,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
     deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutTasksInput = {
@@ -31865,6 +33799,8 @@ export namespace Prisma {
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutAssignedTasksInput = {
@@ -31891,6 +33827,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageUncheckedCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutAssignedTasksInput = {
@@ -31922,6 +33860,8 @@ export namespace Prisma {
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutCreatedTasksInput = {
@@ -31948,6 +33888,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageUncheckedCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutCreatedTasksInput = {
@@ -32298,6 +34240,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutTasksInput = {
@@ -32320,6 +34263,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUncheckedUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type SprintUpsertWithoutTasksInput = {
@@ -32392,6 +34336,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAssignedTasksInput = {
@@ -32418,6 +34364,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUncheckedUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserUpsertWithoutCreatedTasksInput = {
@@ -32455,6 +34403,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCreatedTasksInput = {
@@ -32481,6 +34431,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUncheckedUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type SubtaskUpsertWithWhereUniqueWithoutTaskInput = {
@@ -32958,6 +34910,7 @@ export namespace Prisma {
     inboxItems?: InboxItemCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
     deployments?: DeploymentCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutSprintsInput = {
@@ -32980,6 +34933,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
     deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutSprintsInput = {
@@ -33092,6 +35046,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutSprintsInput = {
@@ -33114,6 +35069,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUncheckedUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type TaskUpsertWithWhereUniqueWithoutSprintInput = {
@@ -33369,6 +35325,8 @@ export namespace Prisma {
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutCommentsInput = {
@@ -33395,6 +35353,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageUncheckedCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutCommentsInput = {
@@ -33512,6 +35472,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutCommentsInput = {
@@ -33538,6 +35500,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUncheckedUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type TaskCreateWithoutAttachmentsInput = {
@@ -33633,6 +35597,8 @@ export namespace Prisma {
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutAttachmentsInput = {
@@ -33659,6 +35625,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutActorInput
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageUncheckedCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutAttachmentsInput = {
@@ -33776,6 +35744,8 @@ export namespace Prisma {
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutAttachmentsInput = {
@@ -33802,6 +35772,372 @@ export namespace Prisma {
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutActorNestedInput
     inboxItems?: InboxItemUncheckedUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  }
+
+  export type ProjectCreateWithoutWikiPagesInput = {
+    id?: string
+    name: string
+    key: string
+    description?: string | null
+    status?: string
+    visibility?: string
+    startDate?: Date | string | null
+    endDate?: Date | string | null
+    progress?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    owner: UserCreateNestedOneWithoutOwnedProjectsInput
+    members?: ProjectMemberCreateNestedManyWithoutProjectInput
+    tasks?: TaskCreateNestedManyWithoutProjectInput
+    sprints?: SprintCreateNestedManyWithoutProjectInput
+    invites?: ProjectInviteCreateNestedManyWithoutProjectInput
+    activityEvents?: ActivityEventCreateNestedManyWithoutProjectInput
+    inboxItems?: InboxItemCreateNestedManyWithoutProjectInput
+    pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
+    deployments?: DeploymentCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectUncheckedCreateWithoutWikiPagesInput = {
+    id?: string
+    name: string
+    key: string
+    description?: string | null
+    ownerId: string
+    status?: string
+    visibility?: string
+    startDate?: Date | string | null
+    endDate?: Date | string | null
+    progress?: number
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
+    tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
+    sprints?: SprintUncheckedCreateNestedManyWithoutProjectInput
+    invites?: ProjectInviteUncheckedCreateNestedManyWithoutProjectInput
+    activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutProjectInput
+    inboxItems?: InboxItemUncheckedCreateNestedManyWithoutProjectInput
+    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
+    deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
+  }
+
+  export type ProjectCreateOrConnectWithoutWikiPagesInput = {
+    where: ProjectWhereUniqueInput
+    create: XOR<ProjectCreateWithoutWikiPagesInput, ProjectUncheckedCreateWithoutWikiPagesInput>
+  }
+
+  export type UserCreateWithoutCreatedWikiPagesInput = {
+    id?: string
+    email: string
+    password: string
+    name: string
+    avatar?: string | null
+    emailVerified?: boolean
+    emailVerificationToken?: string | null
+    passwordResetToken?: string | null
+    passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
+    ownedProjects?: ProjectCreateNestedManyWithoutOwnerInput
+    projectMembers?: ProjectMemberCreateNestedManyWithoutUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssigneeInput
+    comments?: CommentCreateNestedManyWithoutUserInput
+    attachments?: AttachmentCreateNestedManyWithoutUserInput
+    sentProjectInvites?: ProjectInviteCreateNestedManyWithoutInvitedByInput
+    acceptedProjectInvites?: ProjectInviteCreateNestedManyWithoutAcceptedByInput
+    preferences?: UserPreferenceCreateNestedOneWithoutUserInput
+    activityEvents?: ActivityEventCreateNestedManyWithoutActorInput
+    inboxItems?: InboxItemCreateNestedManyWithoutUserInput
+    updatedWikiPages?: WikiPageCreateNestedManyWithoutLastUpdatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutCreatedWikiPagesInput = {
+    id?: string
+    email: string
+    password: string
+    name: string
+    avatar?: string | null
+    emailVerified?: boolean
+    emailVerificationToken?: string | null
+    passwordResetToken?: string | null
+    passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+    ownedProjects?: ProjectUncheckedCreateNestedManyWithoutOwnerInput
+    projectMembers?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssigneeInput
+    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
+    attachments?: AttachmentUncheckedCreateNestedManyWithoutUserInput
+    sentProjectInvites?: ProjectInviteUncheckedCreateNestedManyWithoutInvitedByInput
+    acceptedProjectInvites?: ProjectInviteUncheckedCreateNestedManyWithoutAcceptedByInput
+    preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
+    activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutActorInput
+    inboxItems?: InboxItemUncheckedCreateNestedManyWithoutUserInput
+    updatedWikiPages?: WikiPageUncheckedCreateNestedManyWithoutLastUpdatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutCreatedWikiPagesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutCreatedWikiPagesInput, UserUncheckedCreateWithoutCreatedWikiPagesInput>
+  }
+
+  export type UserCreateWithoutUpdatedWikiPagesInput = {
+    id?: string
+    email: string
+    password: string
+    name: string
+    avatar?: string | null
+    emailVerified?: boolean
+    emailVerificationToken?: string | null
+    passwordResetToken?: string | null
+    passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    refreshTokens?: RefreshTokenCreateNestedManyWithoutUserInput
+    ownedProjects?: ProjectCreateNestedManyWithoutOwnerInput
+    projectMembers?: ProjectMemberCreateNestedManyWithoutUserInput
+    createdTasks?: TaskCreateNestedManyWithoutCreatedByInput
+    assignedTasks?: TaskCreateNestedManyWithoutAssigneeInput
+    comments?: CommentCreateNestedManyWithoutUserInput
+    attachments?: AttachmentCreateNestedManyWithoutUserInput
+    sentProjectInvites?: ProjectInviteCreateNestedManyWithoutInvitedByInput
+    acceptedProjectInvites?: ProjectInviteCreateNestedManyWithoutAcceptedByInput
+    preferences?: UserPreferenceCreateNestedOneWithoutUserInput
+    activityEvents?: ActivityEventCreateNestedManyWithoutActorInput
+    inboxItems?: InboxItemCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserUncheckedCreateWithoutUpdatedWikiPagesInput = {
+    id?: string
+    email: string
+    password: string
+    name: string
+    avatar?: string | null
+    emailVerified?: boolean
+    emailVerificationToken?: string | null
+    passwordResetToken?: string | null
+    passwordResetExpires?: Date | string | null
+    passwordChangedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+    refreshTokens?: RefreshTokenUncheckedCreateNestedManyWithoutUserInput
+    ownedProjects?: ProjectUncheckedCreateNestedManyWithoutOwnerInput
+    projectMembers?: ProjectMemberUncheckedCreateNestedManyWithoutUserInput
+    createdTasks?: TaskUncheckedCreateNestedManyWithoutCreatedByInput
+    assignedTasks?: TaskUncheckedCreateNestedManyWithoutAssigneeInput
+    comments?: CommentUncheckedCreateNestedManyWithoutUserInput
+    attachments?: AttachmentUncheckedCreateNestedManyWithoutUserInput
+    sentProjectInvites?: ProjectInviteUncheckedCreateNestedManyWithoutInvitedByInput
+    acceptedProjectInvites?: ProjectInviteUncheckedCreateNestedManyWithoutAcceptedByInput
+    preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
+    activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutActorInput
+    inboxItems?: InboxItemUncheckedCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageUncheckedCreateNestedManyWithoutCreatedByInput
+  }
+
+  export type UserCreateOrConnectWithoutUpdatedWikiPagesInput = {
+    where: UserWhereUniqueInput
+    create: XOR<UserCreateWithoutUpdatedWikiPagesInput, UserUncheckedCreateWithoutUpdatedWikiPagesInput>
+  }
+
+  export type ProjectUpsertWithoutWikiPagesInput = {
+    update: XOR<ProjectUpdateWithoutWikiPagesInput, ProjectUncheckedUpdateWithoutWikiPagesInput>
+    create: XOR<ProjectCreateWithoutWikiPagesInput, ProjectUncheckedCreateWithoutWikiPagesInput>
+    where?: ProjectWhereInput
+  }
+
+  export type ProjectUpdateToOneWithWhereWithoutWikiPagesInput = {
+    where?: ProjectWhereInput
+    data: XOR<ProjectUpdateWithoutWikiPagesInput, ProjectUncheckedUpdateWithoutWikiPagesInput>
+  }
+
+  export type ProjectUpdateWithoutWikiPagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    status?: StringFieldUpdateOperationsInput | string
+    visibility?: StringFieldUpdateOperationsInput | string
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    progress?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    owner?: UserUpdateOneRequiredWithoutOwnedProjectsNestedInput
+    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
+    tasks?: TaskUpdateManyWithoutProjectNestedInput
+    sprints?: SprintUpdateManyWithoutProjectNestedInput
+    invites?: ProjectInviteUpdateManyWithoutProjectNestedInput
+    activityEvents?: ActivityEventUpdateManyWithoutProjectNestedInput
+    inboxItems?: InboxItemUpdateManyWithoutProjectNestedInput
+    pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
+    deployments?: DeploymentUpdateManyWithoutProjectNestedInput
+  }
+
+  export type ProjectUncheckedUpdateWithoutWikiPagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    key?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
+    ownerId?: StringFieldUpdateOperationsInput | string
+    status?: StringFieldUpdateOperationsInput | string
+    visibility?: StringFieldUpdateOperationsInput | string
+    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    progress?: IntFieldUpdateOperationsInput | number
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
+    tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
+    sprints?: SprintUncheckedUpdateManyWithoutProjectNestedInput
+    invites?: ProjectInviteUncheckedUpdateManyWithoutProjectNestedInput
+    activityEvents?: ActivityEventUncheckedUpdateManyWithoutProjectNestedInput
+    inboxItems?: InboxItemUncheckedUpdateManyWithoutProjectNestedInput
+    pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
+    deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
+  }
+
+  export type UserUpsertWithoutCreatedWikiPagesInput = {
+    update: XOR<UserUpdateWithoutCreatedWikiPagesInput, UserUncheckedUpdateWithoutCreatedWikiPagesInput>
+    create: XOR<UserCreateWithoutCreatedWikiPagesInput, UserUncheckedCreateWithoutCreatedWikiPagesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutCreatedWikiPagesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutCreatedWikiPagesInput, UserUncheckedUpdateWithoutCreatedWikiPagesInput>
+  }
+
+  export type UserUpdateWithoutCreatedWikiPagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
+    ownedProjects?: ProjectUpdateManyWithoutOwnerNestedInput
+    projectMembers?: ProjectMemberUpdateManyWithoutUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssigneeNestedInput
+    comments?: CommentUpdateManyWithoutUserNestedInput
+    attachments?: AttachmentUpdateManyWithoutUserNestedInput
+    sentProjectInvites?: ProjectInviteUpdateManyWithoutInvitedByNestedInput
+    acceptedProjectInvites?: ProjectInviteUpdateManyWithoutAcceptedByNestedInput
+    preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
+    activityEvents?: ActivityEventUpdateManyWithoutActorNestedInput
+    inboxItems?: InboxItemUpdateManyWithoutUserNestedInput
+    updatedWikiPages?: WikiPageUpdateManyWithoutLastUpdatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutCreatedWikiPagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+    ownedProjects?: ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+    projectMembers?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
+    attachments?: AttachmentUncheckedUpdateManyWithoutUserNestedInput
+    sentProjectInvites?: ProjectInviteUncheckedUpdateManyWithoutInvitedByNestedInput
+    acceptedProjectInvites?: ProjectInviteUncheckedUpdateManyWithoutAcceptedByNestedInput
+    preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
+    activityEvents?: ActivityEventUncheckedUpdateManyWithoutActorNestedInput
+    inboxItems?: InboxItemUncheckedUpdateManyWithoutUserNestedInput
+    updatedWikiPages?: WikiPageUncheckedUpdateManyWithoutLastUpdatedByNestedInput
+  }
+
+  export type UserUpsertWithoutUpdatedWikiPagesInput = {
+    update: XOR<UserUpdateWithoutUpdatedWikiPagesInput, UserUncheckedUpdateWithoutUpdatedWikiPagesInput>
+    create: XOR<UserCreateWithoutUpdatedWikiPagesInput, UserUncheckedCreateWithoutUpdatedWikiPagesInput>
+    where?: UserWhereInput
+  }
+
+  export type UserUpdateToOneWithWhereWithoutUpdatedWikiPagesInput = {
+    where?: UserWhereInput
+    data: XOR<UserUpdateWithoutUpdatedWikiPagesInput, UserUncheckedUpdateWithoutUpdatedWikiPagesInput>
+  }
+
+  export type UserUpdateWithoutUpdatedWikiPagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    refreshTokens?: RefreshTokenUpdateManyWithoutUserNestedInput
+    ownedProjects?: ProjectUpdateManyWithoutOwnerNestedInput
+    projectMembers?: ProjectMemberUpdateManyWithoutUserNestedInput
+    createdTasks?: TaskUpdateManyWithoutCreatedByNestedInput
+    assignedTasks?: TaskUpdateManyWithoutAssigneeNestedInput
+    comments?: CommentUpdateManyWithoutUserNestedInput
+    attachments?: AttachmentUpdateManyWithoutUserNestedInput
+    sentProjectInvites?: ProjectInviteUpdateManyWithoutInvitedByNestedInput
+    acceptedProjectInvites?: ProjectInviteUpdateManyWithoutAcceptedByNestedInput
+    preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
+    activityEvents?: ActivityEventUpdateManyWithoutActorNestedInput
+    inboxItems?: InboxItemUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUpdateManyWithoutCreatedByNestedInput
+  }
+
+  export type UserUncheckedUpdateWithoutUpdatedWikiPagesInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    email?: StringFieldUpdateOperationsInput | string
+    password?: StringFieldUpdateOperationsInput | string
+    name?: StringFieldUpdateOperationsInput | string
+    avatar?: NullableStringFieldUpdateOperationsInput | string | null
+    emailVerified?: BoolFieldUpdateOperationsInput | boolean
+    emailVerificationToken?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordResetToken?: NullableStringFieldUpdateOperationsInput | string | null
+    passwordResetExpires?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    passwordChangedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    refreshTokens?: RefreshTokenUncheckedUpdateManyWithoutUserNestedInput
+    ownedProjects?: ProjectUncheckedUpdateManyWithoutOwnerNestedInput
+    projectMembers?: ProjectMemberUncheckedUpdateManyWithoutUserNestedInput
+    createdTasks?: TaskUncheckedUpdateManyWithoutCreatedByNestedInput
+    assignedTasks?: TaskUncheckedUpdateManyWithoutAssigneeNestedInput
+    comments?: CommentUncheckedUpdateManyWithoutUserNestedInput
+    attachments?: AttachmentUncheckedUpdateManyWithoutUserNestedInput
+    sentProjectInvites?: ProjectInviteUncheckedUpdateManyWithoutInvitedByNestedInput
+    acceptedProjectInvites?: ProjectInviteUncheckedUpdateManyWithoutAcceptedByNestedInput
+    preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
+    activityEvents?: ActivityEventUncheckedUpdateManyWithoutActorNestedInput
+    inboxItems?: InboxItemUncheckedUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUncheckedUpdateManyWithoutCreatedByNestedInput
   }
 
   export type ProjectCreateWithoutActivityEventsInput = {
@@ -33824,6 +36160,7 @@ export namespace Prisma {
     inboxItems?: InboxItemCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
     deployments?: DeploymentCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutActivityEventsInput = {
@@ -33846,6 +36183,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
     deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutActivityEventsInput = {
@@ -33946,6 +36284,8 @@ export namespace Prisma {
     acceptedProjectInvites?: ProjectInviteCreateNestedManyWithoutAcceptedByInput
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
     inboxItems?: InboxItemCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutActivityEventsInput = {
@@ -33972,6 +36312,8 @@ export namespace Prisma {
     acceptedProjectInvites?: ProjectInviteUncheckedCreateNestedManyWithoutAcceptedByInput
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutUserInput
+    createdWikiPages?: WikiPageUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageUncheckedCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutActivityEventsInput = {
@@ -34058,6 +36400,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutActivityEventsInput = {
@@ -34080,6 +36423,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUncheckedUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type TaskUpsertWithoutActivityEventsInput = {
@@ -34192,6 +36536,8 @@ export namespace Prisma {
     acceptedProjectInvites?: ProjectInviteUpdateManyWithoutAcceptedByNestedInput
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
     inboxItems?: InboxItemUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutActivityEventsInput = {
@@ -34218,6 +36564,8 @@ export namespace Prisma {
     acceptedProjectInvites?: ProjectInviteUncheckedUpdateManyWithoutAcceptedByNestedInput
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
     inboxItems?: InboxItemUncheckedUpdateManyWithoutUserNestedInput
+    createdWikiPages?: WikiPageUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type InboxItemUpsertWithWhereUniqueWithoutActivityEventInput = {
@@ -34260,6 +36608,8 @@ export namespace Prisma {
     acceptedProjectInvites?: ProjectInviteCreateNestedManyWithoutAcceptedByInput
     preferences?: UserPreferenceCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventCreateNestedManyWithoutActorInput
+    createdWikiPages?: WikiPageCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserUncheckedCreateWithoutInboxItemsInput = {
@@ -34286,6 +36636,8 @@ export namespace Prisma {
     acceptedProjectInvites?: ProjectInviteUncheckedCreateNestedManyWithoutAcceptedByInput
     preferences?: UserPreferenceUncheckedCreateNestedOneWithoutUserInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutActorInput
+    createdWikiPages?: WikiPageUncheckedCreateNestedManyWithoutCreatedByInput
+    updatedWikiPages?: WikiPageUncheckedCreateNestedManyWithoutLastUpdatedByInput
   }
 
   export type UserCreateOrConnectWithoutInboxItemsInput = {
@@ -34313,6 +36665,7 @@ export namespace Prisma {
     activityEvents?: ActivityEventCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
     deployments?: DeploymentCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutInboxItemsInput = {
@@ -34335,6 +36688,7 @@ export namespace Prisma {
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
     deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutInboxItemsInput = {
@@ -34483,6 +36837,8 @@ export namespace Prisma {
     acceptedProjectInvites?: ProjectInviteUpdateManyWithoutAcceptedByNestedInput
     preferences?: UserPreferenceUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutActorNestedInput
+    createdWikiPages?: WikiPageUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type UserUncheckedUpdateWithoutInboxItemsInput = {
@@ -34509,6 +36865,8 @@ export namespace Prisma {
     acceptedProjectInvites?: ProjectInviteUncheckedUpdateManyWithoutAcceptedByNestedInput
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutActorNestedInput
+    createdWikiPages?: WikiPageUncheckedUpdateManyWithoutCreatedByNestedInput
+    updatedWikiPages?: WikiPageUncheckedUpdateManyWithoutLastUpdatedByNestedInput
   }
 
   export type ProjectUpsertWithoutInboxItemsInput = {
@@ -34542,6 +36900,7 @@ export namespace Prisma {
     activityEvents?: ActivityEventUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutInboxItemsInput = {
@@ -34564,6 +36923,7 @@ export namespace Prisma {
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type TaskUpsertWithoutInboxItemsInput = {
@@ -34704,6 +37064,7 @@ export namespace Prisma {
     activityEvents?: ActivityEventCreateNestedManyWithoutProjectInput
     inboxItems?: InboxItemCreateNestedManyWithoutProjectInput
     deployments?: DeploymentCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutPullRequestsInput = {
@@ -34726,6 +37087,7 @@ export namespace Prisma {
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutProjectInput
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutProjectInput
     deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutPullRequestsInput = {
@@ -34871,6 +37233,7 @@ export namespace Prisma {
     activityEvents?: ActivityEventUpdateManyWithoutProjectNestedInput
     inboxItems?: InboxItemUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutPullRequestsInput = {
@@ -34893,6 +37256,7 @@ export namespace Prisma {
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutProjectNestedInput
     inboxItems?: InboxItemUncheckedUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type TaskUpsertWithoutPullRequestsInput = {
@@ -35006,6 +37370,7 @@ export namespace Prisma {
     activityEvents?: ActivityEventCreateNestedManyWithoutProjectInput
     inboxItems?: InboxItemCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutDeploymentsInput = {
@@ -35028,6 +37393,7 @@ export namespace Prisma {
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutProjectInput
     inboxItems?: InboxItemUncheckedCreateNestedManyWithoutProjectInput
     pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
+    wikiPages?: WikiPageUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutDeploymentsInput = {
@@ -35182,6 +37548,7 @@ export namespace Prisma {
     activityEvents?: ActivityEventUpdateManyWithoutProjectNestedInput
     inboxItems?: InboxItemUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutDeploymentsInput = {
@@ -35204,6 +37571,7 @@ export namespace Prisma {
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutProjectNestedInput
     inboxItems?: InboxItemUncheckedUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type TaskUpsertWithoutDeploymentsInput = {
@@ -35490,6 +37858,26 @@ export namespace Prisma {
     updatedAt?: Date | string
   }
 
+  export type WikiPageCreateManyCreatedByInput = {
+    id?: string
+    projectId: string
+    title: string
+    content?: string
+    lastUpdatedById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WikiPageCreateManyLastUpdatedByInput = {
+    id?: string
+    projectId: string
+    title: string
+    content?: string
+    createdById: string
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
   export type RefreshTokenUpdateWithoutUserInput = {
     id?: StringFieldUpdateOperationsInput | string
     token?: StringFieldUpdateOperationsInput | string
@@ -35531,6 +37919,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutOwnerInput = {
@@ -35553,6 +37942,7 @@ export namespace Prisma {
     inboxItems?: InboxItemUncheckedUpdateManyWithoutProjectNestedInput
     pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
     deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
+    wikiPages?: WikiPageUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateManyWithoutOwnerInput = {
@@ -36012,6 +38402,66 @@ export namespace Prisma {
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
+  export type WikiPageUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutWikiPagesNestedInput
+    lastUpdatedBy?: UserUpdateOneRequiredWithoutUpdatedWikiPagesNestedInput
+  }
+
+  export type WikiPageUncheckedUpdateWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    lastUpdatedById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WikiPageUncheckedUpdateManyWithoutCreatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    lastUpdatedById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WikiPageUpdateWithoutLastUpdatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    project?: ProjectUpdateOneRequiredWithoutWikiPagesNestedInput
+    createdBy?: UserUpdateOneRequiredWithoutCreatedWikiPagesNestedInput
+  }
+
+  export type WikiPageUncheckedUpdateWithoutLastUpdatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WikiPageUncheckedUpdateManyWithoutLastUpdatedByInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    projectId?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
   export type ProjectMemberCreateManyProjectInput = {
     id?: string
     userId: string
@@ -36132,6 +38582,16 @@ export namespace Prisma {
     url?: string | null
     deployedBy?: string | null
     deployedAt?: Date | string | null
+    createdAt?: Date | string
+    updatedAt?: Date | string
+  }
+
+  export type WikiPageCreateManyProjectInput = {
+    id?: string
+    title: string
+    content?: string
+    createdById: string
+    lastUpdatedById: string
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -36528,6 +38988,36 @@ export namespace Prisma {
     url?: NullableStringFieldUpdateOperationsInput | string | null
     deployedBy?: NullableStringFieldUpdateOperationsInput | string | null
     deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WikiPageUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    createdBy?: UserUpdateOneRequiredWithoutCreatedWikiPagesNestedInput
+    lastUpdatedBy?: UserUpdateOneRequiredWithoutUpdatedWikiPagesNestedInput
+  }
+
+  export type WikiPageUncheckedUpdateWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    lastUpdatedById?: StringFieldUpdateOperationsInput | string
+    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
+    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
+  }
+
+  export type WikiPageUncheckedUpdateManyWithoutProjectInput = {
+    id?: StringFieldUpdateOperationsInput | string
+    title?: StringFieldUpdateOperationsInput | string
+    content?: StringFieldUpdateOperationsInput | string
+    createdById?: StringFieldUpdateOperationsInput | string
+    lastUpdatedById?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

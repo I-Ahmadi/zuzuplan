@@ -19,6 +19,7 @@ import Signup from "@/pages/Signup";
 import Tasks, { TaskDetailPage } from "@/pages/Tasks";
 import TeamMembers from "@/pages/TeamMembers";
 import VerifyEmail from "@/pages/VerifyEmail";
+import Wiki from "@/pages/Wiki";
 
 function FullScreenMessage({ message }) {
   return (
@@ -111,6 +112,7 @@ function AppRoutes() {
       <Route path="/spaces" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
       <Route path="/spaces/:projectId" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
       <Route path="/spaces/:projectId/settings" element={<ProtectedRoute><ProjectSettings /></ProtectedRoute>} />
+      <Route path="/spaces/:projectId/wiki" element={<ProtectedRoute><Wiki /></ProtectedRoute>} />
       <Route path="/spaces/:projectId/issues/:taskId" element={<ProtectedRoute><TaskDetailPage /></ProtectedRoute>} />
       <Route path="/spaces/:projectId/issues" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
       <Route path="/spaces/:projectId/tasks/:taskId" element={<ProtectedRoute><ProjectTaskRedirect /></ProtectedRoute>} />
@@ -118,6 +120,7 @@ function AppRoutes() {
       <Route path="/projects" element={<Navigate to="/spaces" replace />} />
       <Route path="/projects/:projectId" element={<ProtectedRoute><ProjectRedirect /></ProtectedRoute>} />
       <Route path="/projects/:projectId/settings" element={<ProtectedRoute><ProjectRedirect suffix="/settings" /></ProtectedRoute>} />
+      <Route path="/projects/:projectId/wiki" element={<ProtectedRoute><ProjectRedirect suffix="/wiki" /></ProtectedRoute>} />
       <Route path="/projects/:projectId/issues/:taskId" element={<ProtectedRoute><ProjectTaskRedirect /></ProtectedRoute>} />
       <Route path="/projects/:projectId/issues" element={<ProtectedRoute><ProjectRedirect suffix="/issues" /></ProtectedRoute>} />
       <Route path="/projects/:projectId/tasks/:taskId" element={<ProtectedRoute><ProjectTaskRedirect /></ProtectedRoute>} />

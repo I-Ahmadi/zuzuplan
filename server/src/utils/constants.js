@@ -23,6 +23,11 @@ export const PROJECT_PERMISSIONS = {
   COMMENT_UPDATE_OWN: 'comment.update.own',
   COMMENT_DELETE_ANY: 'comment.delete.any',
   COMMENT_DELETE_OWN: 'comment.delete.own',
+  WIKI_READ: 'wiki.read',
+  WIKI_CREATE: 'wiki.create',
+  WIKI_UPDATE_ANY: 'wiki.update.any',
+  WIKI_UPDATE_OWN: 'wiki.update.own',
+  WIKI_DELETE_ANY: 'wiki.delete.any',
 };
 
 export const TASK_STATUS = {
