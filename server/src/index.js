@@ -12,14 +12,17 @@ import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/usersRoutes.js';
 import projectRoutes from './routes/projectsRoutes.js';
 import taskRoutes from './routes/tasksRoutes.js';
+import listRoutes from './routes/listRoutes.js';
+import backlogRoutes from './routes/backlogRoutes.js';
+import boardRoutes from './routes/boardRoutes.js';
+import timelineRoutes from './routes/timelineRoutes.js';
 import commentRoutes from './routes/commentsRoutes.js';
-import attachmentRoutes from './routes/attachmentsRoutes.js';
 import sprintRoutes from './routes/sprintsRoutes.js';
 import searchRoutes from './routes/searchRoutes.js';
 import activityRoutes from './routes/activityRoutes.js';
-import inboxRoutes from './routes/inboxRoutes.js';
 import deliveryRoutes from './routes/deliveryRoutes.js';
-import wikiRoutes from './routes/wikiRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
+import reportRoutes from './routes/reportRoutes.js';
 
 // App Configuration
 const PORT = process.env.PORT;
@@ -37,7 +40,7 @@ const app = express();
 app.use(cors({
   origin: (origin, cb) => {
     if (!origin) return cb(null, true);
-    const allowed = origin.startsWith('http://localhost:');
+    const allowed = /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/.test(origin);
     cb(null, allowed ? origin : false);
   },
   credentials: true,
@@ -63,20 +66,26 @@ app.use('/api/users', userRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api/projects/:projectId/tasks', taskRoutes);
 app.use('/api/projects/:projectId/issues', taskRoutes);
+app.use('/api/projects/:projectId/list', listRoutes);
+app.use('/api/projects/:projectId/backlog', backlogRoutes);
+app.use('/api/projects/:projectId/board', boardRoutes);
+app.use('/api/projects/:projectId/timeline', timelineRoutes);
 app.use('/api/projects/:projectId/sprints', sprintRoutes);
 app.use('/api/projects/:projectId/delivery', deliveryRoutes);
-app.use('/api/projects/:projectId/wiki', wikiRoutes);
 app.use('/api/spaces', projectRoutes);
 app.use('/api/spaces/:projectId/tasks', taskRoutes);
 app.use('/api/spaces/:projectId/issues', taskRoutes);
+app.use('/api/spaces/:projectId/list', listRoutes);
+app.use('/api/spaces/:projectId/backlog', backlogRoutes);
+app.use('/api/spaces/:projectId/board', boardRoutes);
+app.use('/api/spaces/:projectId/timeline', timelineRoutes);
 app.use('/api/spaces/:projectId/sprints', sprintRoutes);
 app.use('/api/spaces/:projectId/delivery', deliveryRoutes);
-app.use('/api/spaces/:projectId/wiki', wikiRoutes);
 app.use('/api/tasks/:taskId/comments', commentRoutes);
-app.use('/api/tasks/:taskId/attachments', attachmentRoutes);
 app.use('/api/activity', activityRoutes);
-app.use('/api/inbox', inboxRoutes);
 app.use('/api/search', searchRoutes);
+app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/reports', reportRoutes);
 
 app.use('/uploads', express.static(UPLOAD_DIR));
 

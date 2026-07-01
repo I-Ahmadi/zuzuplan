@@ -12,12 +12,16 @@ export async function getProjects(params = {}) {
   return api(`/projects${query ? `?${query}` : ""}`);
 }
 
-export async function getProject(projectId) {
-  return api(`/projects/${projectId}`);
-}
+export async function getProject(projectId, params = {}) {
+  const searchParams = new URLSearchParams();
+  Object.entries(params).forEach(([key, value]) => {
+    if (value !== undefined && value !== null && value !== "") {
+      searchParams.set(key, value);
+    }
+  });
 
-export async function getProjectStats(projectId) {
-  return api(`/projects/${projectId}/stats`);
+  const query = searchParams.toString();
+  return api(`/projects/${projectId}${query ? `?${query}` : ""}`);
 }
 
 export async function createProject(payload) {

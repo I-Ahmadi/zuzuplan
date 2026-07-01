@@ -8,11 +8,6 @@ export function SidebarProvider({ children }) {
   const [collapsed, setCollapsed] = React.useState(false);
 
   React.useEffect(() => {
-    const stored = localStorage.getItem("sidebar-collapsed");
-    if (stored !== null) setCollapsed(JSON.parse(stored));
-  }, []);
-
-  React.useEffect(() => {
     localStorage.setItem("sidebar-collapsed", JSON.stringify(collapsed));
   }, [collapsed]);
 

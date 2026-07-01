@@ -1,10 +1,87 @@
 import { prisma } from '../config/database.js';
 import { getSkip, getPageAndLimit, createPaginationResult } from '../utils/pagination.js';
-import { PROJECT_INVITE_STATUS, PROJECT_PERMISSIONS, ROLES } from '../utils/constants.js';
+import { PROJECT_INVITE_STATUS, PROJECT_PERMISSIONS, ROLES, TASK_STATUS, taskStatusFilterValues } from '../utils/constants.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { getProjectPermissions, getProjectRole, hasProjectPermission, normalizeRole } from '../utils/permissions.js';
 import { generateToken, hashToken } from '../utils/crypto.js';
 import { sendProjectInviteEmail } from '../utils/email.js';
+
+const USER_SUMMARY_SELECT = { id: true, name: true, email: true, avatar: true };
+
+const PROJECT_LIST_SELECT = {
+  id: true,
+  name: true,
+  key: true,
+  description: true,
+  status: true,
+  visibility: true,
+  progress: true,
+  _count: { select: { tasks: true, members: true } },
+};
+
+const PROJECT_SWITCHER_SELECT = {
+  id: true,
+  name: true,
+  key: true,
+};
+
+const PROJECT_ACCESS_SELECT = {
+  ownerId: true,
+  members: { select: { userId: true, role: true } },
+};
+
+const PROJECT_DETAIL_SELECTS = {
+  detail: {
+    ...PROJECT_LIST_SELECT,
+    ownerId: true,
+    startDate: true,
+    endDate: true,
+    createdAt: true,
+    updatedAt: true,
+    owner: { select: USER_SUMMARY_SELECT },
+    ...PROJECT_ACCESS_SELECT,
+  },
+  planning: {
+    id: true,
+    name: true,
+    key: true,
+    ...PROJECT_ACCESS_SELECT,
+  },
+  team: {
+    id: true,
+    name: true,
+    key: true,
+    ownerId: true,
+    ...PROJECT_ACCESS_SELECT,
+  },
+  edit: {
+    id: true,
+    name: true,
+    key: true,
+    description: true,
+    status: true,
+    visibility: true,
+    ...PROJECT_ACCESS_SELECT,
+  },
+  switcher: {
+    ...PROJECT_SWITCHER_SELECT,
+    ...PROJECT_ACCESS_SELECT,
+  },
+};
+
+const PROJECT_DETAIL_SELECT = {
+  ...PROJECT_LIST_SELECT,
+  ownerId: true,
+  ...PROJECT_ACCESS_SELECT,
+};
+
+const MEMBER_SELECT = {
+  id: true,
+  projectId: true,
+  userId: true,
+  role: true,
+  user: { select: USER_SUMMARY_SELECT },
+};
 
 function requireProjectPermission(project, userId, permission) {
   const role = getProjectRole(project, userId);
@@ -26,28 +103,36 @@ function inviteSelect() {
     role: true,
     status: true,
     expiresAt: true,
-    acceptedAt: true,
     createdAt: true,
-    invitedBy: { select: { id: true, name: true, email: true, avatar: true } },
-    acceptedBy: { select: { id: true, name: true, email: true, avatar: true } },
   };
 }
 
-export async function getProjectById(projectId, userId) {
+function projectListSelect(fields) {
+  return fields === 'switcher' ? PROJECT_SWITCHER_SELECT : PROJECT_LIST_SELECT;
+}
+
+function projectDetailSelect(fields) {
+  return PROJECT_DETAIL_SELECTS[fields] || PROJECT_DETAIL_SELECTS.detail;
+}
+
+export async function getProjectById(projectId, userId, options = {}) {
   const project = await prisma.project.findUnique({
     where: { id: projectId },
-    include: {
-      owner: { select: { id: true, name: true, email: true, avatar: true } },
-      members: { include: { user: { select: { id: true, name: true, email: true, avatar: true } } } },
-      _count: { select: { tasks: true } },
-    },
+    select: projectDetailSelect(options.fields),
   });
   if (!project) throw new AppError('Project not found', 404);
   const isOwner = project.ownerId === userId;
   const isMember = project.members.some((m) => m.userId === userId);
   if (!isOwner && !isMember) throw new AppError('Access denied', 403);
   const role = getProjectRole(project, userId);
-  return { ...project, currentUserRole: role, currentUserPermissions: getProjectPermissions(role) };
+  const { members, ...publicProject } = project;
+  if (options.fields === 'planning' || options.fields === 'switcher' || options.fields === 'edit') {
+    delete publicProject.ownerId;
+  }
+  if (options.fields === 'switcher' || options.fields === 'edit') {
+    return publicProject;
+  }
+  return { ...publicProject, currentUserRole: role, currentUserPermissions: getProjectPermissions(role) };
 }
 
 export async function createProject(userId, data) {
@@ -61,10 +146,6 @@ export async function createProject(userId, data) {
       visibility: data.visibility || 'private',
       startDate: data.startDate ? new Date(data.startDate) : null,
       endDate: data.endDate ? new Date(data.endDate) : null,
-    },
-    include: {
-      owner: { select: { id: true, name: true, email: true, avatar: true } },
-      members: { include: { user: { select: { id: true, name: true, email: true, avatar: true } } } },
     },
   });
   await prisma.projectMember.create({
@@ -101,10 +182,7 @@ export async function getProjects(userId, options = {}) {
       skip,
       take: limit,
       orderBy: { updatedAt: 'desc' },
-      include: {
-        owner: { select: { id: true, name: true, email: true, avatar: true } },
-        _count: { select: { tasks: true, members: true } },
-      },
+      select: projectListSelect(options.fields),
     }),
     prisma.project.count({ where }),
   ]);
@@ -129,15 +207,11 @@ export async function updateProject(projectId, userId, data) {
   if (data.startDate !== undefined) updateData.startDate = data.startDate ? new Date(data.startDate) : null;
   if (data.endDate !== undefined) updateData.endDate = data.endDate ? new Date(data.endDate) : null;
 
-  const project = await prisma.project.update({
+  await prisma.project.update({
     where: { id: projectId },
     data: updateData,
-    include: {
-      owner: { select: { id: true, name: true, email: true, avatar: true } },
-      members: { include: { user: { select: { id: true, name: true, email: true, avatar: true } } } },
-    },
   });
-  return project;
+  return getProjectById(projectId, userId);
 }
 
 export async function deleteProject(projectId, userId) {
@@ -159,7 +233,7 @@ export async function getMembers(projectId, userId) {
   requireProjectPermission(project, userId, PROJECT_PERMISSIONS.MEMBERS_READ);
   return prisma.projectMember.findMany({
     where: { projectId },
-    include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
+    select: MEMBER_SELECT,
   });
 }
 
@@ -181,7 +255,7 @@ export async function getInvites(projectId, userId) {
   });
 
   return prisma.projectInvite.findMany({
-    where: { projectId },
+    where: { projectId, status: PROJECT_INVITE_STATUS.PENDING },
     orderBy: { createdAt: 'desc' },
     select: inviteSelect(),
   });
@@ -197,7 +271,7 @@ export async function createInvite(projectId, userId, data) {
     where: { id: projectId },
     include: {
       members: true,
-      owner: { select: { id: true, name: true, email: true, avatar: true } },
+      owner: { select: USER_SUMMARY_SELECT },
     },
   });
   if (!project) throw new AppError('Project not found', 404);
@@ -340,7 +414,11 @@ export async function addMember(projectId, userId, memberUserId, role) {
 }
 
 export async function updateMemberRole(projectId, userId, memberUserId, role) {
-  const project = await getProjectById(projectId, userId);
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: { members: true },
+  });
+  if (!project) throw new AppError('Project not found', 404);
   if (project.ownerId === memberUserId) {
     throw new AppError('Cannot change owner role', 403);
   }
@@ -351,13 +429,17 @@ export async function updateMemberRole(projectId, userId, memberUserId, role) {
   const updated = await prisma.projectMember.update({
     where: { projectId_userId: { projectId, userId: memberUserId } },
     data: { role: normalizedRole },
-    include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
+    select: MEMBER_SELECT,
   });
   return updated;
 }
 
 export async function removeMember(projectId, userId, memberUserId) {
-  const project = await getProjectById(projectId, userId);
+  const project = await prisma.project.findUnique({
+    where: { id: projectId },
+    include: { members: true },
+  });
+  if (!project) throw new AppError('Project not found', 404);
   if (project.ownerId === memberUserId) {
     throw new AppError('Cannot remove project owner', 403);
   }
@@ -371,7 +453,7 @@ export async function removeMember(projectId, userId, memberUserId) {
 export async function calculateProgress(projectId) {
   const [total, done] = await Promise.all([
     prisma.task.count({ where: { projectId } }),
-    prisma.task.count({ where: { projectId, status: 'DONE' } }),
+    prisma.task.count({ where: { projectId, status: { in: taskStatusFilterValues(TASK_STATUS.DONE) } } }),
   ]);
   const progress = total === 0 ? 0 : Math.round((done / total) * 100);
   await prisma.project.update({
@@ -379,25 +461,4 @@ export async function calculateProgress(projectId) {
     data: { progress },
   });
   return progress;
-}
-
-export async function getProjectStats(projectId, userId) {
-  await getProjectById(projectId, userId);
-  const now = new Date();
-  const [totalTasks, completedTasks, inProgressTasks, overdueTasks] = await Promise.all([
-    prisma.task.count({ where: { projectId } }),
-    prisma.task.count({ where: { projectId, status: 'DONE' } }),
-    prisma.task.count({ where: { projectId, status: 'IN_PROGRESS' } }),
-    prisma.task.count({
-      where: { projectId, dueDate: { lt: now }, status: { not: 'DONE' } },
-    }),
-  ]);
-  const progress = totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
-  return {
-    totalTasks,
-    completedTasks,
-    inProgressTasks,
-    overdueTasks,
-    progress,
-  };
 }

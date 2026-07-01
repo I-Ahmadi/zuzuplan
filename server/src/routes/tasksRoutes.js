@@ -34,6 +34,8 @@ async function requireTaskInProject(req, res, next) {
 
 router.get('/', taskValidators.listTasks, validate, taskController.list);
 router.post('/', taskValidators.createTask, validate, taskController.create);
+router.get('/summary', taskController.summary);
+router.get('/workload', taskController.workload);
 router.get('/:id', taskValidators.taskId, validate, requireTaskInProject, taskController.getById);
 router.put('/:id', taskValidators.updateTask, validate, requireTaskInProject, taskController.update);
 router.delete('/:id', taskValidators.taskId, validate, requireTaskInProject, taskController.remove);

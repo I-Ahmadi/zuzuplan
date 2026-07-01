@@ -13,4 +13,5 @@ export const listActivity = [
     .withMessage('Task id must be a valid id'),
   query('type').optional().trim(),
   query('entityType').optional().trim(),
+  query('search').optional().trim(),
 ];

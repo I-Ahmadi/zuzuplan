@@ -11,7 +11,7 @@ export async function listProjects(req, res, next) {
 
 export async function getProjectById(req, res, next) {
   try {
-    const project = await projectService.getProjectById(req.params.id, req.user.id);
+    const project = await projectService.getProjectById(req.params.id, req.user.id, req.query);
     res.json({ success: true, data: project });
   } catch (err) {
     next(err);
@@ -131,15 +131,6 @@ export async function removeMember(req, res, next) {
   try {
     await projectService.removeMember(req.params.id, req.user.id, req.params.userId);
     res.json({ success: true, message: 'Member removed' });
-  } catch (err) {
-    next(err);
-  }
-}
-
-export async function getStats(req, res, next) {
-  try {
-    const stats = await projectService.getProjectStats(req.params.id, req.user.id);
-    res.json({ success: true, data: stats });
   } catch (err) {
     next(err);
   }

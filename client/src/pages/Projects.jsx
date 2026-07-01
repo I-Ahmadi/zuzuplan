@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { useNavigate, useParams } from "react-router-dom";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Eye, FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from "lucide-react";
+import { FolderKanban, MoreHorizontal, Pencil, Plus, Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
 import { Textarea } from "@/components/ui/textarea";
+import { emitApiResourceRefresh, useApiAction, useApiResource } from "@/lib/api-hooks";
 import { createProject, deleteProject, getProject, getProjects, updateProject } from "@/lib/project-api";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +17,7 @@ const emptySpaceForm = {
   key: "",
   description: "",
   visibility: "private",
+  status: "active",
 };
 
 const STATUS_OPTIONS = [
@@ -40,6 +41,7 @@ function normalizeSpaceForm(form) {
     key: form.key.trim().toUpperCase(),
     description: form.description.trim(),
     visibility: form.visibility,
+    status: form.status,
   };
 }
 
@@ -120,6 +122,17 @@ function SpaceDialog({ mode, open, form, setForm, pending, onClose, onSubmit }) 
             </div>
           </div>
           <div className="space-y-2">
+            <Label htmlFor="space-status">Status</Label>
+            <select
+              id="space-status"
+              className="h-9 w-full rounded-md border bg-background px-3 text-sm"
+              value={form.status}
+              onChange={(event) => setForm((current) => ({ ...current, status: event.target.value }))}
+            >
+              {STATUS_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+            </select>
+          </div>
+          <div className="space-y-2">
             <Label htmlFor="space-description">Description</Label>
             <Textarea
               id="space-description"
@@ -142,7 +155,7 @@ function SpaceDialog({ mode, open, form, setForm, pending, onClose, onSubmit }) 
   );
 }
 
-function SpaceActionsMenu({ space, onOpen, onEdit, onDelete }) {
+function SpaceActionsMenu({ space, onEdit, onDelete }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   const triggerRef = useRef(null);
@@ -153,7 +166,7 @@ function SpaceActionsMenu({ space, onOpen, onEdit, onDelete }) {
     if (!rect) return;
 
     const menuWidth = 176;
-    const menuHeight = 132;
+    const menuHeight = 92;
     const left = Math.min(Math.max(rect.right - menuWidth, 8), window.innerWidth - menuWidth - 8);
     const opensUp = rect.bottom + menuHeight + 8 > window.innerHeight;
     const top = opensUp ? Math.max(rect.top - menuHeight - 4, 8) : rect.bottom + 4;
@@ -216,10 +229,6 @@ function SpaceActionsMenu({ space, onOpen, onEdit, onDelete }) {
             <Pencil className="h-3.5 w-3.5" />
             Edit
           </button>
-          <button type="button" className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left hover:bg-accent" onClick={() => select(() => onOpen(`/spaces/${space.id}/settings`))}>
-            <Eye className="h-3.5 w-3.5" />
-            View
-          </button>
           <button type="button" className="flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-destructive hover:bg-accent" onClick={() => select(onDelete)}>
             <Trash2 className="h-3.5 w-3.5" />
             Delete
@@ -234,7 +243,6 @@ function SpaceActionsMenu({ space, onOpen, onEdit, onDelete }) {
 export default function Projects() {
   const { projectId } = useParams();
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
   const [visibility, setVisibility] = useState("");
   const [status, setStatus] = useState("");
@@ -244,14 +252,14 @@ export default function Projects() {
   const [message, setMessage] = useState("");
   const [page, setPage] = useState(1);
 
-  const projectsQuery = useQuery({
-    queryKey: ["projects", { search, visibility, status, page }],
-    queryFn: () => getProjects({ search, visibility, status, page, limit: PAGE_SIZE }),
-  });
+  const projectsQuery = useApiResource(() => getProjects({ search, visibility, status, page, limit: PAGE_SIZE }), [
+    search,
+    visibility,
+    status,
+    page,
+  ]);
 
-  const editProjectQuery = useQuery({
-    queryKey: ["project", editingSpaceId],
-    queryFn: () => getProject(editingSpaceId),
+  const editProjectQuery = useApiResource(() => getProject(editingSpaceId, { fields: "edit" }), [editingSpaceId, dialogMode], {
     enabled: Boolean(editingSpaceId && dialogMode === "edit"),
   });
 
@@ -270,17 +278,17 @@ export default function Projects() {
       key: editingSpace.key || "",
       description: editingSpace.description || "",
       visibility: editingSpace.visibility || "private",
+      status: editingSpace.status || "active",
     });
   }, [dialogMode, editingSpace]);
 
   function refreshSpaces() {
-    queryClient.invalidateQueries({ queryKey: ["projects"] });
-    queryClient.invalidateQueries({ queryKey: ["projects", "sidebar"] });
-    if (editingSpaceId) queryClient.invalidateQueries({ queryKey: ["project", editingSpaceId] });
+    projectsQuery.reload();
+    if (editingSpaceId) editProjectQuery.reload();
+    emitApiResourceRefresh("projects");
   }
 
-  const createMutation = useMutation({
-    mutationFn: createProject,
+  const createAction = useApiAction(createProject, {
     onSuccess: (result) => {
       if (!result?.success) {
         setMessage(getErrorMessage(result, "Could not create space."));
@@ -289,14 +297,17 @@ export default function Projects() {
       setMessage("Space created.");
       setDialogMode(null);
       setForm(emptySpaceForm);
+      setSearch("");
+      setVisibility("");
+      setStatus("");
+      setPage(1);
       refreshSpaces();
       if (result.data?.id) navigate(`/spaces/${result.data.id}`);
     },
     onError: (error) => setMessage(error.message),
   });
 
-  const updateMutation = useMutation({
-    mutationFn: ({ id, payload }) => updateProject(id, payload),
+  const updateAction = useApiAction(({ id, payload }) => updateProject(id, payload), {
     onSuccess: (result) => {
       if (!result?.success) {
         setMessage(getErrorMessage(result, "Could not update space."));
@@ -311,8 +322,7 @@ export default function Projects() {
     onError: (error) => setMessage(error.message),
   });
 
-  const deleteMutation = useMutation({
-    mutationFn: (id) => deleteProject(id),
+  const deleteAction = useApiAction((id) => deleteProject(id), {
     onSuccess: (result, id) => {
       if (!result?.success) {
         setMessage(getErrorMessage(result, "Could not delete space."));
@@ -340,6 +350,7 @@ export default function Projects() {
       key: space.key || "",
       description: space.description || "",
       visibility: space.visibility || "private",
+      status: space.status || "active",
     });
     setDialogMode("edit");
   }
@@ -360,16 +371,16 @@ export default function Projects() {
     }
 
     if (dialogMode === "edit") {
-      updateMutation.mutate({ id: editingSpaceId, payload });
+      updateAction.run({ id: editingSpaceId, payload });
       return;
     }
 
-    createMutation.mutate(payload);
+    createAction.run(payload);
   }
 
   function deleteSpace(space) {
-    if (!window.confirm(`Delete ${space.name}? This permanently removes its tasks, sprints, comments, and attachments metadata.`)) return;
-    deleteMutation.mutate(space.id);
+    if (!window.confirm(`Delete ${space.name}? This permanently removes its tasks, sprints, and comments.`)) return;
+    deleteAction.run(space.id);
   }
 
   return (
@@ -435,7 +446,7 @@ export default function Projects() {
                   key={space.id}
                   className={cn("cursor-pointer border-t transition-colors hover:bg-accent/40", space.id === projectId && "bg-primary/10")}
                   onClick={() => navigate(`/spaces/${space.id}`)}
-                  onDoubleClick={() => navigate(`/spaces/${space.id}/settings`)}
+                  onDoubleClick={() => navigate(`/spaces/${space.id}`)}
                 >
                   <td className="px-3 py-2" onClick={(event) => event.stopPropagation()}>
                     <input type="checkbox" aria-label={`Select ${space.name}`} />
@@ -462,7 +473,6 @@ export default function Projects() {
                   <td className="px-3 py-2 text-right" onClick={(event) => event.stopPropagation()}>
                     <SpaceActionsMenu
                       space={space}
-                      onOpen={(path) => navigate(path || `/spaces/${space.id}/issues`)}
                       onEdit={() => openEditDialog(space)}
                       onDelete={() => deleteSpace(space)}
                     />
@@ -483,7 +493,7 @@ export default function Projects() {
         open={Boolean(dialogMode)}
         form={form}
         setForm={setForm}
-        pending={createMutation.isPending || updateMutation.isPending || editProjectQuery.isLoading}
+        pending={createAction.isPending || updateAction.isPending || editProjectQuery.isLoading}
         onClose={closeDialog}
         onSubmit={submitSpace}
       />

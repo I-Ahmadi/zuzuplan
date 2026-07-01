@@ -43,6 +43,20 @@ export async function listActivityEvents(userId, filters = {}) {
   if (filters.taskId) where.taskId = filters.taskId;
   if (filters.type) where.type = filters.type;
   if (filters.entityType) where.entityType = filters.entityType;
+  if (filters.search) {
+    const search = String(filters.search).trim();
+    where.AND = [{
+      OR: [
+        { title: { contains: search, mode: 'insensitive' } },
+        { description: { contains: search, mode: 'insensitive' } },
+        { type: { contains: search, mode: 'insensitive' } },
+        { task: { is: { title: { contains: search, mode: 'insensitive' } } } },
+        { project: { is: { name: { contains: search, mode: 'insensitive' } } } },
+        { actor: { is: { name: { contains: search, mode: 'insensitive' } } } },
+        { actor: { is: { email: { contains: search, mode: 'insensitive' } } } },
+      ],
+    }];
+  }
 
   const [items, total] = await Promise.all([
     prisma.activityEvent.findMany({
@@ -50,7 +64,15 @@ export async function listActivityEvents(userId, filters = {}) {
       skip,
       take: limit,
       orderBy: { createdAt: 'desc' },
-      include: {
+      select: {
+        id: true,
+        type: true,
+        entityType: true,
+        entityId: true,
+        title: true,
+        description: true,
+        severity: true,
+        createdAt: true,
         project: { select: { id: true, name: true, key: true } },
         task: { select: { id: true, title: true, type: true, priority: true, status: true } },
         actor: { select: { id: true, name: true, email: true, avatar: true } },

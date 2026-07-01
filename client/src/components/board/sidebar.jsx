@@ -4,7 +4,6 @@ import {
   Activity,
   BarChart3,
   FolderKanban,
-  Inbox,
   ListTodo,
   LogOut,
   Moon,
@@ -92,14 +91,25 @@ function FooterAction({ icon: Icon, label, collapsed, onClick }) {
 }
 
 function SidebarNavGroups({ groups, pathname, collapsed }) {
-  const items = groups.flatMap((group) => group.items);
-
   return (
-    <div className="space-y-1">
-      {items.map((item) => (
-        <SidebarLink key={item.to} item={item} pathname={pathname} collapsed={collapsed} />
+    <nav className={cn("space-y-4", collapsed && "space-y-2")} aria-label="Sidebar navigation">
+      {groups.map((group, index) => (
+        <section key={group.title} className={cn("space-y-1", collapsed && "space-y-1.5")} aria-label={group.title}>
+          {index === 0 ? null : collapsed ? (
+            <div className="mx-auto h-px w-7 bg-border/80" aria-hidden="true" />
+          ) : (
+            <h2 className="px-[7px] text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/80">
+              {group.title}
+            </h2>
+          )}
+          <div className="space-y-1">
+            {group.items.map((item) => (
+              <SidebarLink key={item.to} item={item} pathname={pathname} collapsed={collapsed} />
+            ))}
+          </div>
+        </section>
       ))}
-    </div>
+    </nav>
   );
 }
 
@@ -366,12 +376,6 @@ export function Sidebar() {
     icon: ListTodo,
     match: () => issuesActive,
   };
-  const inboxItem = {
-    label: "Inbox",
-    to: "/inbox",
-    icon: Inbox,
-    match: (currentPath) => currentPath === "/inbox",
-  };
   const spacesItem = {
     label: "Spaces",
     to: "/spaces",
@@ -404,19 +408,31 @@ export function Sidebar() {
   };
   const navGroups = [
     {
-      title: "Work",
+      title: "Overview",
       items: [
         forYouItem,
-        inboxItem,
+      ],
+    },
+    {
+      title: "Projects",
+      items: [
         spacesItem,
         issueItem,
+      ],
+    },
+    {
+      title: "Team",
+      items: [
         teamsItem,
-        reportsItem,
         activityItem,
       ],
     },
     {
-      title: "System",
+      title: "Insights",
+      items: [reportsItem],
+    },
+    {
+      title: "Manage",
       items: [settingItem],
     },
   ];
@@ -425,6 +441,7 @@ export function Sidebar() {
     if (!routeProjectId) return;
     localStorage.setItem(CURRENT_PROJECT_KEY, routeProjectId);
     setStoredProjectId(routeProjectId);
+    window.dispatchEvent(new CustomEvent(CURRENT_PROJECT_CHANGE_EVENT, { detail: routeProjectId }));
   }, [routeProjectId]);
 
   useEffect(() => {

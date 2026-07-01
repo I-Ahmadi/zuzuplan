@@ -1,5 +1,6 @@
-import { createContext, useCallback, useContext, useMemo, useState } from "react";
-import GlobalSearchDialog from "@/components/search/global-search-dialog";
+import { createContext, lazy, Suspense, useCallback, useContext, useMemo, useState } from "react";
+
+const GlobalSearchDialog = lazy(() => import("@/components/search/global-search-dialog"));
 
 const SearchContext = createContext(undefined);
 
@@ -19,7 +20,11 @@ export function SearchProvider({ children }) {
   return (
     <SearchContext.Provider value={value}>
       {children}
-      <GlobalSearchDialog open={open} initialQuery={initialQuery} onClose={closeSearch} />
+      {open ? (
+        <Suspense fallback={null}>
+          <GlobalSearchDialog open={open} initialQuery={initialQuery} onClose={closeSearch} />
+        </Suspense>
+      ) : null}
     </SearchContext.Provider>
   );
 }

@@ -1,4 +1,4 @@
-import { body, param } from 'express-validator';
+import { body, param, query } from 'express-validator';
 
 export const updateMe = [
   body('name').optional().trim().notEmpty(),
@@ -17,6 +17,10 @@ export const revokeOtherSessions = [
 
 export const userId = [
   param('id').matches(/^c[a-z0-9]{24}$/).withMessage('User id must be a valid id'),
+];
+
+export const getPreferences = [
+  query('scope').optional().isIn(['default', 'profile', 'workspace', 'notifications', 'all']),
 ];
 
 export const updatePreferences = [

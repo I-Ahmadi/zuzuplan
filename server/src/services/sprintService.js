@@ -1,7 +1,19 @@
 import { prisma } from '../config/database.js';
-import { PROJECT_PERMISSIONS, SPRINT_STATUS } from '../utils/constants.js';
+import { PROJECT_PERMISSIONS, SPRINT_STATUS, TASK_STATUS, normalizeTaskStatus, taskStatusFilterValues } from '../utils/constants.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { getProjectRole, hasProjectPermission } from '../utils/permissions.js';
+
+const SPRINT_SUMMARY_SELECT = {
+  id: true,
+  name: true,
+  goal: true,
+  status: true,
+  startDate: true,
+  endDate: true,
+  createdAt: true,
+  updatedAt: true,
+  _count: { select: { tasks: true } },
+};
 
 function requirePermission(project, userId, permission) {
   const role = getProjectRole(project, userId);
@@ -23,15 +35,7 @@ async function getProject(projectId, userId, permission = PROJECT_PERMISSIONS.TA
 async function getSprintInProject(projectId, sprintId) {
   const sprint = await prisma.sprint.findFirst({
     where: { id: sprintId, projectId },
-    include: {
-      tasks: {
-        include: {
-          assignee: { select: { id: true, name: true, email: true, avatar: true } },
-          _count: { select: { comments: true, attachments: true } },
-        },
-        orderBy: [{ sprintOrder: 'asc' }, { updatedAt: 'desc' }],
-      },
-    },
+    select: SPRINT_SUMMARY_SELECT,
   });
   if (!sprint) throw new AppError('Sprint not found', 404);
   return sprint;
@@ -46,21 +50,47 @@ function sprintPayload(data) {
   return payload;
 }
 
+function normalizeSprintTaskStatuses(sprint) {
+  if (!sprint?.tasks) return sprint;
+  return {
+    ...sprint,
+    tasks: sprint.tasks.map((task) => ({ ...task, status: normalizeTaskStatus(task.status) })),
+  };
+}
+
 export async function listSprints(projectId, userId) {
   await getProject(projectId, userId);
-  return prisma.sprint.findMany({
+  const sprints = await prisma.sprint.findMany({
     where: { projectId },
-    include: {
-      _count: { select: { tasks: true } },
-      tasks: {
-        select: { id: true, status: true },
-      },
-    },
+    select: SPRINT_SUMMARY_SELECT,
     orderBy: [
       { status: 'asc' },
       { createdAt: 'desc' },
     ],
   });
+  return sprints;
+}
+
+export async function listSprintTasks(projectId, sprintId, userId) {
+  await getProject(projectId, userId);
+  const sprint = await prisma.sprint.findFirst({
+    where: { id: sprintId, projectId },
+    select: { id: true },
+  });
+  if (!sprint) throw new AppError('Sprint not found', 404);
+  const tasks = await prisma.task.findMany({
+    where: { projectId, sprintId },
+    select: {
+      id: true,
+      title: true,
+      status: true,
+      priority: true,
+      type: true,
+      assignee: { select: { id: true, name: true, email: true, avatar: true } },
+    },
+    orderBy: [{ sprintOrder: 'asc' }, { updatedAt: 'desc' }],
+  });
+  return tasks.map((task) => ({ ...task, status: normalizeTaskStatus(task.status) }));
 }
 
 export async function createSprint(projectId, userId, data) {
@@ -75,7 +105,7 @@ export async function createSprint(projectId, userId, data) {
       endDate: data.endDate ? new Date(data.endDate) : null,
     },
   });
-  return getSprintInProject(projectId, sprint.id);
+  return normalizeSprintTaskStatuses(await getSprintInProject(projectId, sprint.id));
 }
 
 export async function updateSprint(projectId, sprintId, userId, data) {
@@ -85,13 +115,13 @@ export async function updateSprint(projectId, sprintId, userId, data) {
     where: { id: sprintId },
     data: sprintPayload(data),
   });
-  return getSprintInProject(projectId, sprintId);
+  return normalizeSprintTaskStatuses(await getSprintInProject(projectId, sprintId));
 }
 
 export async function startSprint(projectId, sprintId, userId, data = {}) {
   await getProject(projectId, userId, PROJECT_PERMISSIONS.TASK_UPDATE_ANY);
   const sprint = await getSprintInProject(projectId, sprintId);
-  if (!sprint.tasks.length) throw new AppError('Add at least one task before starting a sprint', 400);
+  if (!sprint._count.tasks) throw new AppError('Add at least one task before starting a sprint', 400);
   const activeSprint = await prisma.sprint.findFirst({
     where: { projectId, status: SPRINT_STATUS.ACTIVE, id: { not: sprintId } },
   });
@@ -106,7 +136,7 @@ export async function startSprint(projectId, sprintId, userId, data = {}) {
       goal: data.goal !== undefined ? data.goal || null : sprint.goal,
     },
   });
-  return getSprintInProject(projectId, sprintId);
+  return normalizeSprintTaskStatuses(await getSprintInProject(projectId, sprintId));
 }
 
 export async function completeSprint(projectId, sprintId, userId, data = {}) {
@@ -121,13 +151,13 @@ export async function completeSprint(projectId, sprintId, userId, data = {}) {
     });
     if (moveOpenToBacklog) {
       await tx.task.updateMany({
-        where: { sprintId, status: { not: 'DONE' } },
+        where: { sprintId, status: { notIn: taskStatusFilterValues(TASK_STATUS.DONE) } },
         data: { sprintId: null, sprintOrder: 0 },
       });
     }
   });
 
-  return getSprintInProject(projectId, sprintId);
+  return normalizeSprintTaskStatuses(await getSprintInProject(projectId, sprintId));
 }
 
 export async function deleteSprint(projectId, sprintId, userId) {
@@ -161,7 +191,7 @@ export async function addTasksToSprint(projectId, sprintId, userId, taskIds) {
       })
     )
   );
-  return getSprintInProject(projectId, sprintId);
+  return normalizeSprintTaskStatuses(await getSprintInProject(projectId, sprintId));
 }
 
 export async function removeTaskFromSprint(projectId, sprintId, taskId, userId) {

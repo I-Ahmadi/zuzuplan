@@ -41,7 +41,7 @@ router.get('/me', userController.getMe);
 router.get('/me/sessions', userController.getSessions);
 router.delete('/me/sessions/others', userValidators.revokeOtherSessions, validate, userController.revokeOtherSessions);
 router.post('/me/resend-verification', userController.resendVerification);
-router.get('/me/preferences', userController.getPreferences);
+router.get('/me/preferences', userValidators.getPreferences, validate, userController.getPreferences);
 router.put('/me/preferences', userValidators.updatePreferences, validate, userController.updatePreferences);
 router.put('/me', userValidators.updateMe, validate, userController.updateMe);
 router.put('/me/avatar', userValidators.updateAvatar, validate, userController.updateAvatar);

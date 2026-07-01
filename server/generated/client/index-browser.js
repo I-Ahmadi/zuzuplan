@@ -268,29 +268,6 @@ exports.Prisma.CommentScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.AttachmentScalarFieldEnum = {
-  id: 'id',
-  taskId: 'taskId',
-  fileName: 'fileName',
-  fileUrl: 'fileUrl',
-  fileType: 'fileType',
-  fileSize: 'fileSize',
-  uploadedBy: 'uploadedBy',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.WikiPageScalarFieldEnum = {
-  id: 'id',
-  projectId: 'projectId',
-  title: 'title',
-  content: 'content',
-  createdById: 'createdById',
-  lastUpdatedById: 'lastUpdatedById',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
 exports.Prisma.ActivityEventScalarFieldEnum = {
   id: 'id',
   projectId: 'projectId',
@@ -305,26 +282,6 @@ exports.Prisma.ActivityEventScalarFieldEnum = {
   severity: 'severity',
   metadata: 'metadata',
   createdAt: 'createdAt'
-};
-
-exports.Prisma.InboxItemScalarFieldEnum = {
-  id: 'id',
-  userId: 'userId',
-  projectId: 'projectId',
-  taskId: 'taskId',
-  activityEventId: 'activityEventId',
-  type: 'type',
-  title: 'title',
-  description: 'description',
-  priority: 'priority',
-  status: 'status',
-  actionUrl: 'actionUrl',
-  source: 'source',
-  readAt: 'readAt',
-  archivedAt: 'archivedAt',
-  snoozedUntil: 'snoozedUntil',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.PullRequestScalarFieldEnum = {
@@ -402,10 +359,7 @@ exports.Prisma.ModelName = {
   Sprint: 'Sprint',
   Subtask: 'Subtask',
   Comment: 'Comment',
-  Attachment: 'Attachment',
-  WikiPage: 'WikiPage',
   ActivityEvent: 'ActivityEvent',
-  InboxItem: 'InboxItem',
   PullRequest: 'PullRequest',
   Deployment: 'Deployment'
 };

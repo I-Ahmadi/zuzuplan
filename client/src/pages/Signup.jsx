@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
 import { AuthNotice, AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
+import { useApiAction } from "@/lib/api-hooks";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -15,8 +15,7 @@ export default function Signup() {
   const [error, setError] = useState("");
   const { signup } = useAuth();
 
-  const registerMutation = useMutation({
-    mutationFn: signup,
+  const registerAction = useApiAction(signup, {
     onSuccess: () => {
       setName("");
       setEmail("");
@@ -32,10 +31,10 @@ export default function Signup() {
     e.preventDefault();
     setError("");
 
-    registerMutation.mutate({ name, email, password });
+    registerAction.run({ name, email, password });
   };
 
-  const isLoading = registerMutation.isPending;
+  const isLoading = registerAction.isPending;
 
   return (
     <AuthShell

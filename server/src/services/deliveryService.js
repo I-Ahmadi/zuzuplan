@@ -4,7 +4,45 @@ import { PROJECT_PERMISSIONS } from '../utils/constants.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { getProjectRole, hasProjectPermission } from '../utils/permissions.js';
 import { createActivityEvent } from './activityService.js';
-import { createInboxItem } from './inboxService.js';
+
+const TASK_SUMMARY_SELECT = { id: true, title: true, type: true, status: true, priority: true };
+const PULL_REQUEST_SELECT = {
+  id: true,
+  projectId: true,
+  taskId: true,
+  provider: true,
+  repository: true,
+  number: true,
+  title: true,
+  url: true,
+  branch: true,
+  targetBranch: true,
+  status: true,
+  reviewState: true,
+  ciStatus: true,
+  author: true,
+  openedAt: true,
+  mergedAt: true,
+  createdAt: true,
+  updatedAt: true,
+  task: { select: TASK_SUMMARY_SELECT },
+};
+const DEPLOYMENT_SELECT = {
+  id: true,
+  projectId: true,
+  taskId: true,
+  pullRequestId: true,
+  environment: true,
+  status: true,
+  version: true,
+  url: true,
+  deployedBy: true,
+  deployedAt: true,
+  createdAt: true,
+  updatedAt: true,
+  task: { select: TASK_SUMMARY_SELECT },
+  pullRequest: { select: { id: true, title: true, repository: true, number: true } },
+};
 
 async function getProject(projectId, userId, permission = PROJECT_PERMISSIONS.DELIVERY_READ) {
   const project = await prisma.project.findUnique({ where: { id: projectId }, include: { members: true } });
@@ -19,7 +57,7 @@ function pagination(filters) {
   return { page, limit, skip: getSkip(page, limit) };
 }
 
-async function list(model, projectId, userId, filters, include = {}, searchFields = []) {
+async function list(model, projectId, userId, filters, select, searchFields = []) {
   await getProject(projectId, userId);
   const { page, limit, skip } = pagination(filters);
   const where = { projectId };
@@ -32,16 +70,14 @@ async function list(model, projectId, userId, filters, include = {}, searchField
   }
   const delegate = prisma[model];
   const [items, total] = await Promise.all([
-    delegate.findMany({ where, skip, take: limit, orderBy: { updatedAt: 'desc' }, include }),
+    delegate.findMany({ where, skip, take: limit, orderBy: { updatedAt: 'desc' }, select }),
     delegate.count({ where }),
   ]);
   return createPaginationResult(items, total, page, limit);
 }
 
 export async function listPullRequests(projectId, userId, filters = {}) {
-  return list('pullRequest', projectId, userId, filters, {
-    task: { select: { id: true, title: true, type: true, status: true, priority: true } },
-  }, ['title', 'repository', 'branch', 'author']);
+  return list('pullRequest', projectId, userId, filters, PULL_REQUEST_SELECT, ['title', 'repository', 'branch', 'author']);
 }
 
 export async function createPullRequest(projectId, userId, data) {
@@ -64,6 +100,7 @@ export async function createPullRequest(projectId, userId, data) {
       openedAt: data.openedAt ? new Date(data.openedAt) : new Date(),
       mergedAt: data.mergedAt ? new Date(data.mergedAt) : null,
     },
+    select: PULL_REQUEST_SELECT,
   });
   await createActivityEvent({
     projectId,
@@ -92,6 +129,7 @@ export async function updatePullRequest(projectId, id, userId, data) {
       ciStatus: data.ciStatus,
       mergedAt: data.status === 'MERGED' && !current.mergedAt ? new Date() : data.mergedAt ? new Date(data.mergedAt) : undefined,
     },
+    select: PULL_REQUEST_SELECT,
   });
   await createActivityEvent({
     projectId,
@@ -108,10 +146,7 @@ export async function updatePullRequest(projectId, id, userId, data) {
 }
 
 export async function listDeployments(projectId, userId, filters = {}) {
-  return list('deployment', projectId, userId, filters, {
-    task: { select: { id: true, title: true, type: true, status: true, priority: true } },
-    pullRequest: { select: { id: true, title: true, repository: true, number: true } },
-  }, ['version', 'url', 'deployedBy']);
+  return list('deployment', projectId, userId, filters, DEPLOYMENT_SELECT, ['version', 'url', 'deployedBy']);
 }
 
 export async function createDeployment(projectId, userId, data) {
@@ -128,8 +163,9 @@ export async function createDeployment(projectId, userId, data) {
       deployedBy: data.deployedBy || null,
       deployedAt: data.deployedAt ? new Date(data.deployedAt) : null,
     },
+    select: DEPLOYMENT_SELECT,
   });
-  const activity = await createActivityEvent({
+  await createActivityEvent({
     projectId,
     taskId: deployment.taskId,
     actorId: userId,
@@ -141,23 +177,6 @@ export async function createDeployment(projectId, userId, data) {
     severity: deployment.status === 'FAILED' ? 'CRITICAL' : deployment.status === 'SUCCESS' ? 'SUCCESS' : 'INFO',
     metadata: { environment: deployment.environment, status: deployment.status, version: deployment.version },
   });
-  if (deployment.taskId && deployment.status === 'FAILED') {
-    const task = await prisma.task.findUnique({ where: { id: deployment.taskId }, select: { assigneeId: true, title: true } });
-    if (task?.assigneeId) {
-      await createInboxItem({
-        userId: task.assigneeId,
-        projectId,
-        taskId: deployment.taskId,
-        activityEventId: activity.id,
-        type: 'deployment_failed',
-        title: `Deployment failed: ${task.title}`,
-        description: `${deployment.environment} deployment failed.`,
-        priority: 'URGENT',
-        actionUrl: `/spaces/${projectId}/issues/${deployment.taskId}`,
-        source: 'deployment',
-      });
-    }
-  }
   return deployment;
 }
 
@@ -175,5 +194,6 @@ export async function updateDeployment(projectId, id, userId, data) {
       deployedBy: data.deployedBy,
       deployedAt: data.deployedAt ? new Date(data.deployedAt) : undefined,
     },
+    select: DEPLOYMENT_SELECT,
   });
 }

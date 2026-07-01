@@ -33,10 +33,9 @@ REST API for the ZuzuPlan task management system. Built with **Node.js**, **Expr
 
 - **Auth**: `POST /api/auth/register`, `POST /api/auth/login`, refresh, logout, verify-email, forgot/reset password
 - **Users**: `GET/PUT /api/users/me`, `GET /api/users/:id`
-- **Projects**: CRUD at `/api/projects`, members at `/:id/members`, stats at `/:id/stats`
+- **Projects**: CRUD at `/api/projects`, members at `/:id/members`, invites at `/:id/invites`
 - **Tasks**: `/api/projects/:projectId/tasks` (CRUD, subtasks)
 - **Comments**: `/api/tasks/:taskId/comments`
-- **Attachments**: `/api/tasks/:taskId/attachments` (multipart upload)
 
 Protected routes require header: `Authorization: Bearer <accessToken>`.
 

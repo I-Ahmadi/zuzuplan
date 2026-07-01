@@ -1,25 +1,25 @@
+import { lazy, Suspense } from "react";
 import { Navigate, Route, Routes, useParams } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import BoardLayout from "@/components/board/board-layout";
 import Providers from "@/components/providers/providers";
 import { useAuth } from "@/contexts/auth-context";
+import { useApiResource } from "@/lib/api-hooks";
 import { getUserPreferences } from "@/lib/user-api";
-import AcceptInvite from "@/pages/AcceptInvite";
-import Activity from "@/pages/Activity";
-import ForYou from "@/pages/ForYou";
-import ForgotPassword from "@/pages/ForgotPassword";
-import Inbox from "@/pages/Inbox";
-import Login from "@/pages/Login";
-import Projects from "@/pages/Projects";
-import ProjectSettings from "@/pages/ProjectSettings";
-import Reports from "@/pages/Reports";
-import ResetPassword from "@/pages/ResetPassword";
-import Setting from "@/pages/Settings";
-import Signup from "@/pages/Signup";
-import Tasks, { TaskDetailPage } from "@/pages/Tasks";
-import TeamMembers from "@/pages/TeamMembers";
-import VerifyEmail from "@/pages/VerifyEmail";
-import Wiki from "@/pages/Wiki";
+
+const AcceptInvite = lazy(() => import("@/pages/AcceptInvite"));
+const Activity = lazy(() => import("@/pages/Activity"));
+const ForYou = lazy(() => import("@/pages/ForYou"));
+const ForgotPassword = lazy(() => import("@/pages/ForgotPassword"));
+const Login = lazy(() => import("@/pages/Login"));
+const Projects = lazy(() => import("@/pages/Projects"));
+const Reports = lazy(() => import("@/pages/Reports"));
+const ResetPassword = lazy(() => import("@/pages/ResetPassword"));
+const Setting = lazy(() => import("@/pages/Settings"));
+const Signup = lazy(() => import("@/pages/Signup"));
+const Tasks = lazy(() => import("@/pages/Tasks"));
+const TaskDetailPage = lazy(() => import("@/pages/Tasks").then((module) => ({ default: module.TaskDetailPage })));
+const TeamMembers = lazy(() => import("@/pages/TeamMembers"));
+const VerifyEmail = lazy(() => import("@/pages/VerifyEmail"));
 
 function FullScreenMessage({ message }) {
   return (
@@ -58,10 +58,7 @@ function GuestRoute({ children }) {
 }
 
 function LandingRedirect() {
-  const preferencesQuery = useQuery({
-    queryKey: ["user-preferences"],
-    queryFn: getUserPreferences,
-  });
+  const preferencesQuery = useApiResource(() => getUserPreferences("default"), []);
   const defaultView = preferencesQuery.data?.data?.defaultView || "for-you";
   const destination = {
     "for-you": "/for-you",
@@ -102,7 +99,6 @@ function AppRoutes() {
       <Route path="/dashboard" element={<ProtectedRoute><LandingRedirect /></ProtectedRoute>} />
       <Route path="/for-you" element={<ProtectedRoute><ForYou /></ProtectedRoute>} />
       <Route path="/recent" element={<Navigate to="/for-you" replace />} />
-      <Route path="/inbox" element={<ProtectedRoute><Inbox /></ProtectedRoute>} />
       <Route path="/activity" element={<ProtectedRoute><Activity /></ProtectedRoute>} />
       <Route path="/pull-requests" element={<Navigate to="/activity" replace />} />
       <Route path="/deployments" element={<Navigate to="/activity" replace />} />
@@ -111,16 +107,12 @@ function AppRoutes() {
       <Route path="/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
       <Route path="/spaces" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
       <Route path="/spaces/:projectId" element={<ProtectedRoute><Projects /></ProtectedRoute>} />
-      <Route path="/spaces/:projectId/settings" element={<ProtectedRoute><ProjectSettings /></ProtectedRoute>} />
-      <Route path="/spaces/:projectId/wiki" element={<ProtectedRoute><Wiki /></ProtectedRoute>} />
       <Route path="/spaces/:projectId/issues/:taskId" element={<ProtectedRoute><TaskDetailPage /></ProtectedRoute>} />
       <Route path="/spaces/:projectId/issues" element={<ProtectedRoute><Tasks /></ProtectedRoute>} />
       <Route path="/spaces/:projectId/tasks/:taskId" element={<ProtectedRoute><ProjectTaskRedirect /></ProtectedRoute>} />
       <Route path="/spaces/:projectId/tasks" element={<ProtectedRoute><ProjectRedirect suffix="/issues" /></ProtectedRoute>} />
       <Route path="/projects" element={<Navigate to="/spaces" replace />} />
       <Route path="/projects/:projectId" element={<ProtectedRoute><ProjectRedirect /></ProtectedRoute>} />
-      <Route path="/projects/:projectId/settings" element={<ProtectedRoute><ProjectRedirect suffix="/settings" /></ProtectedRoute>} />
-      <Route path="/projects/:projectId/wiki" element={<ProtectedRoute><ProjectRedirect suffix="/wiki" /></ProtectedRoute>} />
       <Route path="/projects/:projectId/issues/:taskId" element={<ProtectedRoute><ProjectTaskRedirect /></ProtectedRoute>} />
       <Route path="/projects/:projectId/issues" element={<ProtectedRoute><ProjectRedirect suffix="/issues" /></ProtectedRoute>} />
       <Route path="/projects/:projectId/tasks/:taskId" element={<ProtectedRoute><ProjectTaskRedirect /></ProtectedRoute>} />
@@ -141,7 +133,9 @@ export default function App() {
   return (
     <Providers>
       <BoardLayout>
-        <AppRoutes />
+        <Suspense fallback={<FullScreenMessage message="Loading..." />}>
+          <AppRoutes />
+        </Suspense>
       </BoardLayout>
     </Providers>
   );

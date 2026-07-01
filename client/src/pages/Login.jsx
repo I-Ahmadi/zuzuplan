@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
 import { AuthNotice, AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
+import { useApiAction } from "@/lib/api-hooks";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -17,8 +17,7 @@ export default function Login() {
   const [error, setError] = useState("");
   const { login } = useAuth();
 
-  const loginMutation = useMutation({
-    mutationFn: login,
+  const loginAction = useApiAction(login, {
     onSuccess: () => {
       navigate("/for-you");
     },
@@ -30,10 +29,10 @@ export default function Login() {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
-    loginMutation.mutate({ email, password });
+    loginAction.run({ email, password });
   };
 
-  const isLoading = loginMutation.isPending;
+  const isLoading = loginAction.isPending;
   const isUnverifiedError =
     error.toLowerCase().includes("not verified") || error.toLowerCase().includes("verify your email");
 

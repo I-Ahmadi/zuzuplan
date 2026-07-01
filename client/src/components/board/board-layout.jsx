@@ -8,6 +8,7 @@ import { cleanupLegacyStorage } from "@/lib/storage-keys";
 const SIDEBAR_WIDTH_EXPANDED = 280;
 const SIDEBAR_WIDTH_COLLAPSED = 56;
 const AUTH_PATHS = ["/login", "/signup", "/verify-email", "/forgot-password", "/reset-password"];
+const PORTAL_CONTENT_CLASS = "w-full";
 
 function BoardLayoutInner({ children }) {
   const { pathname } = useLocation();
@@ -24,14 +25,14 @@ function BoardLayoutInner({ children }) {
   }
 
   return (
-    <div className="min-h-screen overflow-x-hidden bg-background">
+    <div className="min-h-screen bg-background">
       <Sidebar />
       <main
-        className="min-w-0 min-h-screen max-w-full overflow-x-hidden transition-[margin-left,width] duration-300 ease-in-out"
-        style={{ marginLeft: sidebarWidth, width: `calc(100% - ${sidebarWidth}px)` }}
+        className="fixed bottom-0 right-0 top-0 min-w-0 overflow-y-auto overflow-x-clip transition-[left] duration-300 ease-in-out"
+        style={{ left: sidebarWidth }}
       >
         <Header />
-        <div className="w-full min-w-0 overflow-x-hidden">
+        <div className={PORTAL_CONTENT_CLASS}>
           {children}
         </div>
       </main>

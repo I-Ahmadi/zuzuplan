@@ -1,5 +1,3 @@
-import { useMemo } from "react";
-import { useQueries, useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import {
   AlertTriangle,
@@ -14,16 +12,13 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PAGE_SIZE } from "@/components/ui/pagination";
 import { UserAvatar } from "@/components/ui/avatar";
-import { useAuth } from "@/contexts/auth-context";
-import { getProjects } from "@/lib/project-api";
-import { getProjectTasks } from "@/lib/task-api";
+import { useApiResource } from "@/lib/api-hooks";
+import { getForYouDashboard } from "@/lib/dashboard-api";
 import { ISSUE_STATUS_LABELS } from "@/lib/issue-constants";
 import { cn } from "@/lib/utils";
 
 const DAY_MS = 1000 * 60 * 60 * 24;
-const PRIORITY_RANK = { URGENT: 0, HIGH: 1, MEDIUM: 2, LOW: 3 };
 const PRIORITY_TONES = {
   URGENT: "border-red-500/30 bg-red-500/10 text-red-500",
   HIGH: "border-red-500/30 bg-red-500/10 text-red-500",
@@ -61,13 +56,6 @@ function taskPath(task) {
 
 function issueKey(task) {
   return `${task.space?.key || "SPC"}-${task.id.slice(-4).toUpperCase()}`;
-}
-
-function sortActionable(a, b) {
-  const aDue = dueMeta(a).days ?? 999;
-  const bDue = dueMeta(b).days ?? 999;
-  if (aDue !== bDue) return aDue - bDue;
-  return (PRIORITY_RANK[a.priority] ?? 4) - (PRIORITY_RANK[b.priority] ?? 4);
 }
 
 function MetricCard({ label, value, icon: Icon, detail }) {
@@ -152,8 +140,8 @@ function TaskRow({ task, reason, compact = false }) {
             <span className="text-xs text-muted-foreground">{issueKey(task)}</span>
           </div>
           <p className="mt-1 truncate text-xs text-muted-foreground">
-            {task.space?.name || "Space"} · {STATUS_LABELS[task.status] || task.status}
-            {reason ? ` · ${reason}` : ""}
+            {task.space?.name || "Space"} - {STATUS_LABELS[task.status] || task.status}
+            {reason ? ` - ${reason}` : ""}
           </p>
         </div>
         <UserAvatar user={task.assignee} fallback={task.assignee?.name || task.assignee?.email || "U"} className="h-7 w-7" fallbackClassName="bg-primary text-[10px] text-primary-foreground" />
@@ -177,84 +165,44 @@ function ActivityItem({ task }) {
       <span className="min-w-0 flex-1">
         <span className="block truncate font-medium">{task.title}</span>
         <span className="mt-0.5 block truncate text-xs text-muted-foreground">
-          {task.space?.name || "Space"} moved through {STATUS_LABELS[task.status] || task.status} · {relativeDate(task.updatedAt)}
+          {task.space?.name || "Space"} moved through {STATUS_LABELS[task.status] || task.status} - {relativeDate(task.updatedAt)}
         </span>
       </span>
     </Link>
   );
 }
 
-function SpaceRow({ space, tasks }) {
-  const total = tasks.length;
-  const done = tasks.filter((task) => task.status === "DONE").length;
-  const progress = total ? Math.round((done / total) * 100) : 0;
-
+function SpaceRow({ space }) {
   return (
     <Link to={`/spaces/${space.id}/issues`} className="block rounded-md border p-3 text-sm transition-colors hover:border-primary/60 hover:bg-accent/45">
       <div className="flex items-center justify-between gap-3">
         <div className="min-w-0">
           <p className="truncate font-semibold">{space.name}</p>
-          <p className="mt-1 text-xs text-muted-foreground">{total} issues · {done} done</p>
+          <p className="mt-1 text-xs text-muted-foreground">{space.total || 0} issues - {space.done || 0} done</p>
         </div>
         <span className="rounded border bg-muted/35 px-2 py-1 text-xs font-medium">{space.key}</span>
       </div>
       <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-muted">
-        <div className="h-full rounded-full bg-primary" style={{ width: `${progress}%` }} />
+        <div className="h-full rounded-full bg-primary" style={{ width: `${space.progress || 0}%` }} />
       </div>
     </Link>
   );
 }
 
 export default function ForYou() {
-  const { user } = useAuth();
-  const spacesQuery = useQuery({ queryKey: ["spaces", "for-you"], queryFn: () => getProjects({ limit: PAGE_SIZE }) });
-  const spaces = spacesQuery.data?.data || [];
-  const taskQueries = useQueries({
-    queries: spaces.slice(0, 6).map((space) => ({
-      queryKey: ["for-you-tasks", space.id],
-      queryFn: () => getProjectTasks(space.id, { limit: PAGE_SIZE }),
-      enabled: Boolean(space.id),
-    })),
-  });
-
-  const tasks = taskQueries.flatMap((query, index) => (query.data?.data || []).map((task) => ({ ...task, space: spaces[index] })));
-  const loading = spacesQuery.isLoading || taskQueries.some((query) => query.isLoading);
-  const primarySpace = spaces[0];
-  const primarySpaceTasksPath = primarySpace ? `/spaces/${primarySpace.id}/issues` : "/spaces";
-
-  const dashboard = useMemo(() => {
-    const activeTasks = tasks.filter((task) => task.status !== "DONE");
-    const assigned = activeTasks.filter((task) => task.assigneeId === user?.id);
-    const createdByMe = activeTasks.filter((task) => task.createdById === user?.id || task.createdBy?.id === user?.id);
-    const dueSoon = activeTasks.filter((task) => {
-      const due = dueMeta(task);
-      return due.days !== null && due.days >= 0 && due.days <= 7;
-    });
-    const overdue = activeTasks.filter((task) => dueMeta(task).days < 0);
-    const attention = activeTasks
-      .filter((task) => {
-        const due = dueMeta(task);
-        const importantAssigned = task.assigneeId === user?.id && ["HIGH", "URGENT"].includes(task.priority);
-        return importantAssigned || due.days < 1 || (task.assigneeId === user?.id && due.days !== null && due.days <= 7);
-      })
-      .sort(sortActionable);
-    const recent = tasks.slice().sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt)).slice(0, 6);
-    const spacesWithTasks = spaces.map((space) => ({
-      space,
-      tasks: tasks.filter((task) => task.space?.id === space.id),
-    }));
-
-    return {
-      activeTasks,
-      assigned: assigned.sort(sortActionable),
-      createdByMe: createdByMe.sort(sortActionable),
-      dueSoon: dueSoon.sort(sortActionable),
-      overdue,
-      attention,
-      recent,
-      spacesWithTasks,
-    };
-  }, [spaces, tasks, user?.id]);
+  const dashboardQuery = useApiResource(() => getForYouDashboard({ limit: 6 }), []);
+  const dashboard = dashboardQuery.data?.data || {
+    metrics: { assigned: 0, attention: 0, dueSoon: 0, spaces: 0, overdue: 0 },
+    attention: [],
+    assigned: [],
+    createdByMe: [],
+    recent: [],
+    upcoming: [],
+    spaces: [],
+    primarySpace: null,
+  };
+  const loading = dashboardQuery.isLoading;
+  const primarySpaceTasksPath = dashboard.primarySpace ? `/spaces/${dashboard.primarySpace.id}/issues` : "/spaces";
 
   return (
     <div className="space-y-4 px-3 py-4 sm:px-4 lg:px-5">
@@ -286,10 +234,10 @@ export default function ForYou() {
       </div>
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-        <MetricCard label="Assigned to you" value={dashboard.assigned.length} detail="Open personal work" icon={ListTodo} />
-        <MetricCard label="Needs attention" value={dashboard.attention.length} detail={`${dashboard.overdue.length} overdue`} icon={AlertTriangle} />
-        <MetricCard label="Due soon" value={dashboard.dueSoon.length} detail="Next 7 days" icon={Clock3} />
-        <MetricCard label="Spaces" value={spaces.length} detail="Accessible workspaces" icon={FolderKanban} />
+        <MetricCard label="Assigned to you" value={dashboard.metrics.assigned} detail="Open personal work" icon={ListTodo} />
+        <MetricCard label="Needs attention" value={dashboard.metrics.attention} detail={`${dashboard.metrics.overdue} overdue`} icon={AlertTriangle} />
+        <MetricCard label="Due soon" value={dashboard.metrics.dueSoon} detail="Next 7 days" icon={Clock3} />
+        <MetricCard label="Spaces" value={dashboard.metrics.spaces} detail="Accessible workspaces" icon={FolderKanban} />
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.55fr)_minmax(360px,0.75fr)]">
@@ -321,12 +269,12 @@ export default function ForYou() {
             <div className="grid gap-3 lg:grid-cols-2">
               <div className="space-y-2">
                 <p className="text-xs font-semibold uppercase text-muted-foreground">Assigned to me</p>
-                {dashboard.assigned.slice(0, 3).map((task) => <TaskRow key={task.id} task={task} compact />)}
+                {dashboard.assigned.map((task) => <TaskRow key={task.id} task={task} compact />)}
                 {!dashboard.assigned.length ? <EmptyState title="No assigned work" description="Assigned work will appear here." /> : null}
               </div>
               <div className="space-y-2">
                 <p className="text-xs font-semibold uppercase text-muted-foreground">Created by me</p>
-                {dashboard.createdByMe.slice(0, 3).map((task) => <TaskRow key={task.id} task={task} compact />)}
+                {dashboard.createdByMe.map((task) => <TaskRow key={task.id} task={task} compact />)}
                 {!dashboard.createdByMe.length ? <EmptyState title="No created work" description="Work you report or create will appear here." /> : null}
               </div>
             </div>
@@ -343,17 +291,17 @@ export default function ForYou() {
         <aside className="space-y-4">
           <SectionCard title="Upcoming" description="Deadlines and near-term planning signals." icon={CalendarClock}>
             <div className="space-y-2">
-              {dashboard.dueSoon.slice(0, 4).map((task) => <TaskRow key={task.id} task={task} compact />)}
-              {!dashboard.dueSoon.length ? <EmptyState title="No due-soon issues" description="Issues due in the next 7 days will appear here." /> : null}
+              {dashboard.upcoming.map((task) => <TaskRow key={task.id} task={task} compact />)}
+              {!dashboard.upcoming.length ? <EmptyState title="No due-soon issues" description="Issues due in the next 7 days will appear here." /> : null}
             </div>
           </SectionCard>
 
           <SectionCard title="Pinned Spaces" description="Frequently used spaces with work progress." icon={FolderKanban}>
             <div className="space-y-2">
-              {dashboard.spacesWithTasks.slice(0, 4).map(({ space, tasks: spaceTasks }) => (
-                <SpaceRow key={space.id} space={space} tasks={spaceTasks} />
+              {dashboard.spaces.map((space) => (
+                <SpaceRow key={space.id} space={space} />
               ))}
-              {!spaces.length ? (
+              {!dashboard.spaces.length ? (
                 <EmptyState
                   title="No spaces yet"
                   description="Create your first space to start organizing work."

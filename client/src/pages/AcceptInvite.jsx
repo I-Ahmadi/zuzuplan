@@ -1,24 +1,19 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
 import { CheckCircle2, MailWarning } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { acceptProjectInvite, getProjectInvite } from "@/lib/project-api";
 import { useAuth } from "@/contexts/auth-context";
+import { useApiAction, useApiResource } from "@/lib/api-hooks";
 
 export default function AcceptInvite() {
   const { token } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const inviteQuery = useQuery({
-    queryKey: ["project-invite", token],
-    queryFn: () => getProjectInvite(token),
-    enabled: Boolean(token),
-  });
+  const inviteQuery = useApiResource(() => getProjectInvite(token), [token], { enabled: Boolean(token) });
 
-  const acceptMutation = useMutation({
-    mutationFn: () => acceptProjectInvite(token),
+  const acceptAction = useApiAction(() => acceptProjectInvite(token), {
     onSuccess: (result) => {
       if (result?.success && result?.data?.id) {
         navigate(`/spaces/${result.data.id}/issues`);
@@ -27,7 +22,7 @@ export default function AcceptInvite() {
   });
 
   const invite = inviteQuery.data?.data;
-  const error = inviteQuery.data?.error?.message || acceptMutation.data?.error?.message || acceptMutation.error?.message;
+  const error = inviteQuery.data?.error?.message || acceptAction.data?.error?.message || acceptAction.error?.message;
   const canAccept = invite?.status === "PENDING" && user?.email?.toLowerCase() === invite.email?.toLowerCase();
 
   return (
@@ -72,8 +67,8 @@ export default function AcceptInvite() {
           ) : null}
 
           <div className="flex flex-col gap-2 sm:flex-row">
-            <Button className="flex-1" disabled={!canAccept || acceptMutation.isPending} onClick={() => acceptMutation.mutate()}>
-              {acceptMutation.isPending ? "Accepting..." : "Accept invite"}
+            <Button className="flex-1" disabled={!canAccept || acceptAction.isPending} onClick={() => acceptAction.run()}>
+              {acceptAction.isPending ? "Accepting..." : "Accept invite"}
             </Button>
             <Button asChild variant="outline" className="flex-1">
               <Link to="/spaces">Back to spaces</Link>

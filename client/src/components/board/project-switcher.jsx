@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { Check, ChevronDown } from "lucide-react";
 import { PAGE_SIZE } from "@/components/ui/pagination";
+import { useApiResource } from "@/lib/api-hooks";
 import { getProject, getProjects } from "@/lib/project-api";
 import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
 import { cn } from "@/lib/utils";
@@ -20,7 +20,7 @@ function getSwitchedProjectPath(pathname, currentProjectId, nextProjectId) {
   return nextSegments.join("/") || "/";
 }
 
-export function ProjectSwitcher({ compact = false, className, menuAlign = "right", menuPlacement = "down" }) {
+export function ProjectSwitcher({ compact = false, compactOnMobile = false, className, menuAlign = "right", menuPlacement = "down" }) {
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
   const routeProjectId = pathname.match(/^\/(?:projects|spaces)\/([^/]+)/)?.[1];
@@ -29,25 +29,23 @@ export function ProjectSwitcher({ compact = false, className, menuAlign = "right
   const switcherRef = useRef(null);
   const currentProjectId = routeProjectId || storedProjectId;
 
-  const projectsQuery = useQuery({
-    queryKey: ["projects", "project-switcher"],
-    queryFn: () => getProjects({ limit: PAGE_SIZE }),
-    staleTime: 60 * 1000,
+  const projectsQuery = useApiResource(() => getProjects({ fields: "switcher", page: 1, limit: PAGE_SIZE }), [open, currentProjectId], {
+    enabled: open || !currentProjectId,
+    refreshEvents: ["projects"],
   });
   const projects = useMemo(() => projectsQuery.data?.data || [], [projectsQuery.data]);
   const resolvedProjectId = currentProjectId || projects[0]?.id || "";
-  const projectQuery = useQuery({
-    queryKey: ["project-switcher-project", resolvedProjectId],
-    queryFn: () => getProject(resolvedProjectId),
-    enabled: Boolean(resolvedProjectId),
-    staleTime: 60 * 1000,
+  const listedProject = projects.find((project) => project.id === resolvedProjectId);
+  const projectQuery = useApiResource(() => getProject(resolvedProjectId, { fields: "switcher" }), [resolvedProjectId, listedProject], {
+    enabled: Boolean((open || routeProjectId) && resolvedProjectId && !projectsQuery.isLoading && !listedProject),
   });
-  const currentProject = projectQuery.data?.data || projects.find((project) => project.id === resolvedProjectId);
+  const currentProject = listedProject || projectQuery.data?.data;
 
   useEffect(() => {
     if (!routeProjectId) return;
     localStorage.setItem(CURRENT_PROJECT_KEY, routeProjectId);
     setStoredProjectId(routeProjectId);
+    window.dispatchEvent(new CustomEvent(CURRENT_PROJECT_CHANGE_EVENT, { detail: routeProjectId }));
   }, [routeProjectId]);
 
   useEffect(() => {
@@ -89,7 +87,7 @@ export function ProjectSwitcher({ compact = false, className, menuAlign = "right
   }
 
   const projectInitials = currentProject?.key?.slice(0, 2).toUpperCase() || currentProject?.name?.slice(0, 2).toUpperCase() || "SP";
-  const projectLabel = currentProject?.name || (projectsQuery.isLoading ? "Loading spaces..." : "Select space");
+  const projectLabel = currentProject?.name || (projectsQuery.isLoading || projectQuery.isLoading ? "Loading spaces..." : "Select space");
 
   return (
     <div className={cn("relative", className)} ref={switcherRef}>
@@ -97,12 +95,16 @@ export function ProjectSwitcher({ compact = false, className, menuAlign = "right
         type="button"
         className={cn(
           "flex h-9 w-full min-w-0 items-center rounded-md border border-border bg-transparent text-left shadow-none transition-colors hover:bg-accent",
-          compact ? "justify-center p-1" : "gap-2 px-2.5"
+          compact
+            ? "justify-center p-1"
+            : compactOnMobile
+              ? "justify-center p-1 sm:justify-start sm:gap-2 sm:px-2.5"
+              : "gap-2 px-2.5"
         )}
         aria-label="Switch project"
         aria-expanded={open}
         aria-haspopup="menu"
-        title={compact ? projectLabel : undefined}
+        title={compact || compactOnMobile ? projectLabel : undefined}
         onClick={() => setOpen((current) => !current)}
       >
         <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded border bg-background text-[10px] font-bold text-primary">
@@ -110,10 +112,16 @@ export function ProjectSwitcher({ compact = false, className, menuAlign = "right
         </span>
         {!compact ? (
           <>
-            <span className="min-w-0 flex-1">
+            <span className={cn("min-w-0 flex-1", compactOnMobile && "hidden sm:block")}>
               <span className="block truncate text-sm font-medium">{projectLabel}</span>
             </span>
-            <ChevronDown className={cn("h-4 w-4 shrink-0 text-muted-foreground transition-transform", open && "rotate-180")} />
+            <ChevronDown
+              className={cn(
+                "h-4 w-4 shrink-0 text-muted-foreground transition-transform",
+                compactOnMobile && "hidden sm:block",
+                open && "rotate-180"
+              )}
+            />
           </>
         ) : null}
       </button>

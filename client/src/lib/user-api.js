@@ -48,8 +48,9 @@ export async function resendVerificationEmail() {
   });
 }
 
-export async function getUserPreferences() {
-  return api("/users/me/preferences");
+export async function getUserPreferences(scope = "all") {
+  const query = scope ? `?${new URLSearchParams({ scope }).toString()}` : "";
+  return api(`/users/me/preferences${query}`);
 }
 
 export async function updateUserPreferences(payload) {

@@ -61,7 +61,9 @@ export const addTasks = [
 ];
 
 export const reorderTasks = [
-  ...sprintId,
+  param('sprintId')
+    .custom((value) => value === 'backlog' || /^c[a-z0-9]{24}$/.test(value))
+    .withMessage('Sprint id must be a valid id'),
   body('orderedTaskIds')
     .isArray()
     .withMessage('Ordered task ids must be an array'),

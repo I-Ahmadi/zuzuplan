@@ -23,25 +23,33 @@ export const PROJECT_PERMISSIONS = {
   COMMENT_UPDATE_OWN: 'comment.update.own',
   COMMENT_DELETE_ANY: 'comment.delete.any',
   COMMENT_DELETE_OWN: 'comment.delete.own',
-  WIKI_READ: 'wiki.read',
-  WIKI_CREATE: 'wiki.create',
-  WIKI_UPDATE_ANY: 'wiki.update.any',
-  WIKI_UPDATE_OWN: 'wiki.update.own',
-  WIKI_DELETE_ANY: 'wiki.delete.any',
 };
 
 export const TASK_STATUS = {
-  BACKLOG: 'BACKLOG',
-  READY: 'READY',
+  TODO: 'TODO',
   IN_PROGRESS: 'IN_PROGRESS',
   IN_REVIEW: 'IN_REVIEW',
-  READY_TO_MERGE: 'READY_TO_MERGE',
-  MERGED: 'MERGED',
-  DEPLOYED: 'DEPLOYED',
   DONE: 'DONE',
-  BLOCKED: 'BLOCKED',
-  CANCELED: 'CANCELED',
 };
+
+export const LEGACY_TASK_STATUS_GROUPS = {
+  [TASK_STATUS.TODO]: ['TODO', 'BACKLOG', 'READY'],
+  [TASK_STATUS.IN_PROGRESS]: ['IN_PROGRESS', 'READY_TO_MERGE', 'BLOCKED'],
+  [TASK_STATUS.IN_REVIEW]: ['IN_REVIEW'],
+  [TASK_STATUS.DONE]: ['DONE', 'MERGED', 'DEPLOYED', 'CANCELED', 'CANCELLED'],
+};
+
+export function normalizeTaskStatus(status) {
+  if (!status) return TASK_STATUS.TODO;
+  const normalized = String(status).toUpperCase();
+  const match = Object.entries(LEGACY_TASK_STATUS_GROUPS).find(([, values]) => values.includes(normalized));
+  return match ? match[0] : normalized;
+}
+
+export function taskStatusFilterValues(status) {
+  const normalized = normalizeTaskStatus(status);
+  return LEGACY_TASK_STATUS_GROUPS[normalized] || [normalized];
+}
 
 export const ISSUE_TYPE = {
   BUG: 'BUG',

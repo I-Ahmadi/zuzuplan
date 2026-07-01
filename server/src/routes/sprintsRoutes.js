@@ -10,6 +10,7 @@ router.use(authenticate);
 router.use(sprintValidators.projectId, validate);
 
 router.get('/', sprintController.list);
+router.get('/:sprintId/tasks', sprintValidators.sprintId, validate, sprintController.listTasks);
 router.post('/', sprintValidators.createSprint, validate, sprintController.create);
 router.put('/:sprintId', sprintValidators.updateSprint, validate, sprintController.update);
 router.post('/:sprintId/start', sprintValidators.startSprint, validate, sprintController.start);

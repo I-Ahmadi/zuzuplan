@@ -44,7 +44,7 @@ async function uploadAvatar(req, res, next) {
 
 async function getPreferences(req, res, next) {
   try {
-    const preferences = await userService.getPreferences(req.user.id);
+    const preferences = await userService.getPreferences(req.user.id, req.query.scope);
     res.json({ success: true, data: preferences });
   } catch (err) {
     next(err);

@@ -9,6 +9,7 @@
     "prestart": "prisma generate",
     "dev": "node --watch src/index.js",
     "predev": "prisma generate",
+    "db:seed": "node prisma/seed.js",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio"

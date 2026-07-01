@@ -1,5 +1,8 @@
 import { prisma } from '../config/database.js';
 
+const USER_SUMMARY_SELECT = { id: true, name: true, email: true, avatar: true };
+const PROJECT_SUMMARY_SELECT = { id: true, name: true, key: true };
+
 function accessibleProjectWhere(userId) {
   return {
     OR: [
@@ -41,9 +44,14 @@ export async function globalSearch(userId, query) {
       },
       take: 12,
       orderBy: { updatedAt: 'desc' },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        projectId: true,
+        status: true,
+        priority: true,
         project: { select: { id: true, name: true, key: true } },
-        assignee: { select: { id: true, name: true, email: true, avatar: true } },
+        assignee: { select: USER_SUMMARY_SELECT },
       },
     }),
     prisma.comment.findMany({
@@ -54,8 +62,8 @@ export async function globalSearch(userId, query) {
       take: 8,
       orderBy: { updatedAt: 'desc' },
       include: {
-        user: { select: { id: true, name: true, email: true, avatar: true } },
-        task: { select: { id: true, title: true, projectId: true, project: { select: { id: true, name: true, key: true } } } },
+        user: { select: USER_SUMMARY_SELECT },
+        task: { select: { id: true, title: true, projectId: true, project: { select: PROJECT_SUMMARY_SELECT } } },
       },
     }),
     prisma.projectMember.findMany({
@@ -69,8 +77,12 @@ export async function globalSearch(userId, query) {
       take: 8,
       orderBy: { updatedAt: 'desc' },
       include: {
-        user: { select: { id: true, name: true, email: true, avatar: true } },
-        project: { select: { id: true, name: true, key: true } },
+        id: true,
+        role: true,
+        userId: true,
+        projectId: true,
+        user: { select: USER_SUMMARY_SELECT },
+        project: { select: PROJECT_SUMMARY_SELECT },
       },
     }),
   ]);

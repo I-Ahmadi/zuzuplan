@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { FolderKanban, Inbox, ListTodo, MessageSquare, Search, UserCircle, X } from "lucide-react";
+import { FolderKanban, ListTodo, MessageSquare, Search, UserCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useApiResource } from "@/lib/api-hooks";
 import { globalSearch } from "@/lib/search-api";
 import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
 import { cn } from "@/lib/utils";
@@ -10,7 +10,6 @@ import { cn } from "@/lib/utils";
 const RECENT_SEARCHES_KEY = STORAGE_KEYS.recentSearches;
 const COMMANDS = [
   { id: "new-issue", title: "Create issue", subtitle: "Open the issue list for quick creation", to: "/issues?view=list", icon: ListTodo },
-  { id: "inbox", title: "Open inbox", subtitle: "Review assignments, comments, blockers, and reminders", to: "/inbox", icon: Inbox },
 ];
 
 function readRecentSearches() {
@@ -97,9 +96,7 @@ export default function GlobalSearchDialog({ open, initialQuery, onClose }) {
   const debouncedQuery = useDebouncedValue(query);
   const trimmedQuery = debouncedQuery.trim();
 
-  const searchQuery = useQuery({
-    queryKey: ["global-search-dialog", trimmedQuery],
-    queryFn: () => globalSearch(trimmedQuery),
+  const searchQuery = useApiResource(() => globalSearch(trimmedQuery), [open, trimmedQuery], {
     enabled: open && trimmedQuery.length >= 2,
   });
 

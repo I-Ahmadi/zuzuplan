@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import {
   Bell,
@@ -38,6 +37,7 @@ import {
 import { useAuth } from "@/contexts/auth-context";
 import { useSidebar } from "@/contexts/sidebar-context";
 import { useTheme } from "@/contexts/theme-context";
+import { useApiAction, useApiResource } from "@/lib/api-hooks";
 import { cn } from "@/lib/utils";
 
 const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
@@ -70,6 +70,42 @@ const SECTIONS = [
   { id: "danger", label: "Danger Zone", icon: Trash2 },
 ];
 
+function preferenceScopeForSection(section) {
+  if (section === "notifications") return "notifications";
+  if (section === "preferences") return "workspace";
+  return "profile";
+}
+
+function preferencePayloadForSection(section, values) {
+  if (section === "notifications") {
+    return {
+      emailNotifications: values.emailNotifications,
+      inAppNotifications: values.inAppNotifications,
+      dueSoonNotifications: values.dueSoonNotifications,
+      assignmentNotifications: values.assignmentNotifications,
+      mentionNotifications: values.mentionNotifications,
+      commentNotifications: values.commentNotifications,
+      digestFrequency: values.digestFrequency,
+      quietHoursEnabled: values.quietHoursEnabled,
+      quietHoursStart: values.quietHoursStart,
+      quietHoursEnd: values.quietHoursEnd,
+    };
+  }
+
+  if (section === "preferences") {
+    return {
+      defaultView: values.defaultView,
+      density: values.density,
+      theme: values.theme,
+      sidebarDefault: values.sidebarDefault,
+      projectSelectorBehavior: values.projectSelectorBehavior,
+      rememberLastSpace: values.rememberLastSpace,
+    };
+  }
+
+  return { profileNote: values.profileNote };
+}
+
 function formatDate(value) {
   if (!value) return "Not available";
   return new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(value));
@@ -100,10 +136,9 @@ function passwordStrength(password) {
 }
 
 export default function Setting() {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { user, refreshSession, logout } = useAuth();
-  const { setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const { setCollapsed } = useSidebar();
   const [activeSection, setActiveSection] = useState("profile");
   const [profile, setProfile] = useState({ name: "", email: "", avatar: "" });
@@ -113,10 +148,11 @@ export default function Setting() {
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [confirmLogout, setConfirmLogout] = useState(false);
   const [logoutPending, setLogoutPending] = useState(false);
+  const preferenceScope = preferenceScopeForSection(activeSection);
+  const shouldLoadPreferences = ["profile", "preferences", "notifications"].includes(activeSection);
 
-  const preferencesQuery = useQuery({
-    queryKey: ["user-preferences"],
-    queryFn: getUserPreferences,
+  const preferencesQuery = useApiResource(() => getUserPreferences(preferenceScope), [preferenceScope, shouldLoadPreferences], {
+    enabled: shouldLoadPreferences,
   });
 
   async function confirmLogoutAction() {
@@ -131,10 +167,7 @@ export default function Setting() {
       navigate("/login", { replace: true });
     }
   }
-  const sessionsQuery = useQuery({
-    queryKey: ["user-sessions"],
-    queryFn: getUserSessions,
-  });
+  const sessionsQuery = useApiResource(getUserSessions, [activeSection], { enabled: activeSection === "sessions" });
 
   useEffect(() => {
     setProfile({
@@ -159,8 +192,7 @@ export default function Setting() {
 
   const strength = passwordStrength(passwordForm.password);
 
-  const preferencesMutation = useMutation({
-    mutationFn: updateUserPreferences,
+  const preferencesAction = useApiAction(updateUserPreferences, {
     onSuccess: (result) => {
       if (!result?.success) {
         setMessage(result?.error?.message || "Could not save preferences.");
@@ -170,14 +202,13 @@ export default function Setting() {
       setPreferences(nextPreferences);
       setTheme(nextPreferences.theme);
       setCollapsed(nextPreferences.sidebarDefault === "collapsed");
-      queryClient.invalidateQueries({ queryKey: ["user-preferences"] });
+      preferencesQuery.reload();
       setMessage("Preferences saved.");
     },
     onError: (error) => setMessage(error.message),
   });
 
-  const profileMutation = useMutation({
-    mutationFn: async () => {
+  const profileAction = useApiAction(async () => {
       const payload = { name: profile.name.trim() };
       if (profile.email.trim() !== (user?.email || "")) payload.email = profile.email.trim();
       if (passwordForm.password) {
@@ -194,23 +225,22 @@ export default function Setting() {
         if (!avatarResult.success) throw new Error(avatarResult.error?.message || "Could not update avatar.");
       }
 
-      const preferenceResult = await updateUserPreferences({ ...preferences, profileNote: preferences.profileNote });
+      const preferenceResult = await updateUserPreferences({ profileNote: preferences.profileNote });
       if (!preferenceResult.success) throw new Error(preferenceResult.error?.message || "Could not save profile note.");
 
       return result.data;
-    },
+    }, {
     onSuccess: async (updatedUser) => {
       setStoredUser(updatedUser);
       setPasswordForm({ currentPassword: "", password: "", confirmPassword: "" });
       await refreshSession();
-      queryClient.invalidateQueries({ queryKey: ["user-preferences"] });
+      preferencesQuery.reload();
       setMessage("Profile saved.");
     },
     onError: (error) => setMessage(error.message),
   });
 
-  const resendMutation = useMutation({
-    mutationFn: resendVerificationEmail,
+  const resendAction = useApiAction(resendVerificationEmail, {
     onSuccess: (result) => {
       if (!result?.success) {
         setMessage(result?.error?.message || "Could not send verification email.");
@@ -221,14 +251,13 @@ export default function Setting() {
     onError: (error) => setMessage(error.message),
   });
 
-  const revokeSessionsMutation = useMutation({
-    mutationFn: () => revokeOtherSessions(getRefreshToken()),
+  const revokeSessionsAction = useApiAction(() => revokeOtherSessions(getRefreshToken()), {
     onSuccess: (result) => {
       if (!result?.success) {
         setMessage(result?.error?.message || "Could not revoke sessions.");
         return;
       }
-      queryClient.invalidateQueries({ queryKey: ["user-sessions"] });
+      sessionsQuery.reload();
       setMessage("Other sessions revoked.");
     },
     onError: (error) => setMessage(error.message),
@@ -267,10 +296,16 @@ export default function Setting() {
   }
 
   function savePreferences(nextPreferences = preferences) {
-    preferencesMutation.mutate(nextPreferences);
+    preferencesAction.run(preferencePayloadForSection(activeSection, nextPreferences));
   }
 
-  function exportProfileData() {
+  async function exportProfileData() {
+    const preferencesResult = await getUserPreferences("all");
+    if (!preferencesResult?.success) {
+      setMessage(preferencesResult?.error?.message || "Could not export account data.");
+      return;
+    }
+
     const payload = {
       exportedAt: new Date().toISOString(),
       user: {
@@ -280,7 +315,7 @@ export default function Setting() {
         emailVerified: user?.emailVerified,
         createdAt: user?.createdAt,
       },
-      preferences,
+      preferences: preferencesResult.data,
     };
     const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
@@ -327,7 +362,7 @@ export default function Setting() {
               </div>
               <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                 <span className="rounded border px-1.5 py-0.5 text-foreground">{user?.emailVerified ? "Verified email" : "Unverified email"}</span>
-                <span className="rounded border px-1.5 py-0.5 capitalize text-foreground">{preferences.theme} theme</span>
+                <span className="rounded border px-1.5 py-0.5 capitalize text-foreground">{theme} theme</span>
               </div>
             </div>
             <div className="mt-3 border-t">
@@ -371,7 +406,7 @@ export default function Setting() {
                   onSubmit={(event) => {
                     event.preventDefault();
                     setMessage("");
-                    profileMutation.mutate();
+                    profileAction.run();
                   }}
                 >
                   <div className="flex min-w-0 flex-col gap-4 md:flex-row md:items-start">
@@ -412,9 +447,9 @@ export default function Setting() {
                     <Textarea id="bio" className="min-h-24" value={preferences.profileNote} onChange={(event) => setPreferences((current) => ({ ...current, profileNote: event.target.value }))} placeholder="Role, focus area, or working notes" />
                   </div>
 
-                  <Button disabled={profileMutation.isPending}>
+                  <Button disabled={profileAction.isPending}>
                     <Save className="h-4 w-4" />
-                    {profileMutation.isPending ? "Saving..." : "Save profile"}
+                    {profileAction.isPending ? "Saving..." : "Save profile"}
                   </Button>
                 </form>
               </CardContent>
@@ -472,9 +507,9 @@ export default function Setting() {
                   </div>
                 </div>
                 <ToggleRow title="Remember last opened space" description="Use your last active space when opening boards and project-specific tools." checked={preferences.rememberLastSpace} onChange={(checked) => setPreferences((current) => ({ ...current, rememberLastSpace: checked }))} />
-                <Button disabled={preferencesMutation.isPending} onClick={() => savePreferences()}>
+                <Button disabled={preferencesAction.isPending} onClick={() => savePreferences()}>
                   <Save className="h-4 w-4" />
-                  {preferencesMutation.isPending ? "Saving..." : "Save preferences"}
+                  {preferencesAction.isPending ? "Saving..." : "Save preferences"}
                 </Button>
               </CardContent>
             </Card>
@@ -490,7 +525,7 @@ export default function Setting() {
                 <CardDescription>These notification preferences are persisted to your account.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3 p-4">
-                <ToggleRow title="Email notifications" description="Send important updates to your email inbox." checked={preferences.emailNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, emailNotifications: checked }))} />
+                <ToggleRow title="Email notifications" description="Send important updates to your mailbox." checked={preferences.emailNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, emailNotifications: checked }))} />
                 <ToggleRow title="In-app notifications" description="Show notifications inside your workspace." checked={preferences.inAppNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, inAppNotifications: checked }))} />
                 <ToggleRow title="Due-soon reminders" description="Remind me before assigned work is due." checked={preferences.dueSoonNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, dueSoonNotifications: checked }))} />
                 <ToggleRow title="Assignments" description="Notify me when work is assigned or reassigned to me." checked={preferences.assignmentNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, assignmentNotifications: checked }))} />
@@ -515,9 +550,9 @@ export default function Setting() {
                   </div>
                 </div>
                 <ToggleRow title="Quiet hours" description="Pause non-critical notifications during the selected time range." checked={preferences.quietHoursEnabled} onChange={(checked) => setPreferences((current) => ({ ...current, quietHoursEnabled: checked }))} />
-                <Button disabled={preferencesMutation.isPending} onClick={() => savePreferences()}>
+                <Button disabled={preferencesAction.isPending} onClick={() => savePreferences()}>
                   <Save className="h-4 w-4" />
-                  {preferencesMutation.isPending ? "Saving..." : "Save notifications"}
+                  {preferencesAction.isPending ? "Saving..." : "Save notifications"}
                 </Button>
               </CardContent>
             </Card>
@@ -563,13 +598,13 @@ export default function Setting() {
                   </div>
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  <Button disabled={profileMutation.isPending} onClick={() => profileMutation.mutate()}>
+                  <Button disabled={profileAction.isPending} onClick={() => profileAction.run()}>
                     <KeyRound className="h-4 w-4" />
-                    {profileMutation.isPending ? "Saving..." : "Change password"}
+                    {profileAction.isPending ? "Saving..." : "Change password"}
                   </Button>
-                  <Button variant="outline" disabled={user?.emailVerified || resendMutation.isPending} onClick={() => resendMutation.mutate()}>
+                  <Button variant="outline" disabled={user?.emailVerified || resendAction.isPending} onClick={() => resendAction.run()}>
                     <Lock className="h-4 w-4" />
-                    {resendMutation.isPending ? "Sending..." : "Resend verification"}
+                    {resendAction.isPending ? "Sending..." : "Resend verification"}
                   </Button>
                 </div>
               </CardContent>
@@ -597,9 +632,9 @@ export default function Setting() {
                 ))}
                 {!sessionsQuery.isLoading && sessions.length === 0 ? <p className="text-sm text-muted-foreground">No active sessions found.</p> : null}
                 <div className="flex flex-wrap gap-2 border-t pt-4">
-                  <Button variant="outline" disabled={revokeSessionsMutation.isPending} onClick={() => revokeSessionsMutation.mutate()}>
+                  <Button variant="outline" disabled={revokeSessionsAction.isPending} onClick={() => revokeSessionsAction.run()}>
                     <ShieldCheck className="h-4 w-4" />
-                    {revokeSessionsMutation.isPending ? "Revoking..." : "Revoke other sessions"}
+                    {revokeSessionsAction.isPending ? "Revoking..." : "Revoke other sessions"}
                   </Button>
                   <Button variant="outline" onClick={() => setConfirmLogout(true)}>
                     <X className="h-4 w-4" />

@@ -15,12 +15,28 @@ export const listProjects = [
   query("status")
     .optional()
     .isIn(["active", "archived", "completed"]),
+
+  query("visibility")
+    .optional()
+    .isIn(["private", "public"]),
+
+  query("search")
+    .optional()
+    .trim(),
+
+  query("fields")
+    .optional()
+    .isIn(["list", "switcher"]),
 ];
 
 export const projectId = [
   param("id")
     .matches(/^c[a-z0-9]{24}$/)
     .withMessage("Project id must be a valid id"),
+
+  query("fields")
+    .optional()
+    .isIn(["detail", "planning", "team", "edit", "switcher"]),
 ];
 
 export const member = [
@@ -160,10 +176,4 @@ export const revokeInvite = [
   param("inviteId")
     .matches(/^c[a-z0-9]{24}$/)
     .withMessage("Invite id must be a valid id"),
-];
-
-export const stats = [
-  param("id")
-    .matches(/^c[a-z0-9]{24}$/)
-    .withMessage("Project id must be a valid id"),
 ];

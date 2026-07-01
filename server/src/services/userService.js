@@ -10,20 +10,57 @@ function omitPassword(user) {
   return rest;
 }
 
+const CURRENT_USER_SELECT = {
+  id: true,
+  name: true,
+  email: true,
+  avatar: true,
+  emailVerified: true,
+  createdAt: true,
+};
+
+const PREFERENCE_SCOPE_SELECTS = {
+  default: { defaultView: true },
+  profile: { profileNote: true, theme: true },
+  workspace: {
+    defaultView: true,
+    density: true,
+    theme: true,
+    sidebarDefault: true,
+    projectSelectorBehavior: true,
+    rememberLastSpace: true,
+  },
+  notifications: {
+    emailNotifications: true,
+    inAppNotifications: true,
+    dueSoonNotifications: true,
+    assignmentNotifications: true,
+    mentionNotifications: true,
+    commentNotifications: true,
+    digestFrequency: true,
+    quietHoursEnabled: true,
+    quietHoursStart: true,
+    quietHoursEnd: true,
+  },
+  all: undefined,
+};
+
 export async function getProfile(userId) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    include: { preferences: true },
+    select: CURRENT_USER_SELECT,
   });
   if (!user) throw new AppError('User not found', 404);
-  return omitPassword(user);
+  return user;
 }
 
-export async function getPreferences(userId) {
+export async function getPreferences(userId, scope = 'all') {
+  const select = PREFERENCE_SCOPE_SELECTS[scope] ?? PREFERENCE_SCOPE_SELECTS.all;
   return prisma.userPreference.upsert({
     where: { userId },
     update: {},
     create: { userId },
+    ...(select ? { select } : {}),
   });
 }
 
@@ -81,16 +118,18 @@ export async function updateProfile(userId, data) {
   const user = await prisma.user.update({
     where: { id: userId },
     data: updateData,
+    select: CURRENT_USER_SELECT,
   });
-  return omitPassword(user);
+  return user;
 }
 
 export async function updateAvatar(userId, avatarUrl) {
   const user = await prisma.user.update({
     where: { id: userId },
     data: { avatar: avatarUrl || null },
+    select: CURRENT_USER_SELECT,
   });
-  return omitPassword(user);
+  return user;
 }
 
 export async function getUserById(userId) {

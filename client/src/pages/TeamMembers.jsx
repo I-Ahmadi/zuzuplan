@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MailPlus, Shield, Trash2, UserMinus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/ui/avatar";
@@ -10,14 +9,15 @@ import {
   createProjectInvite,
   getProject,
   getProjectInvites,
-  getProjectMembers,
   getProjects,
   removeProjectMember,
   revokeProjectInvite,
   updateProjectMember,
 } from "@/lib/project-api";
+import { useApiAction, useApiResource } from "@/lib/api-hooks";
 import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
 import { useAuth } from "@/contexts/auth-context";
+import { useProjectMembers } from "@/contexts/project-members-context";
 
 const ROLES = ["Admin", "Manager", "Employee", "Viewer"];
 const CURRENT_PROJECT_KEY = STORAGE_KEYS.currentProjectId;
@@ -33,7 +33,6 @@ function formatDate(value) {
 }
 
 export default function TeamMembers() {
-  const queryClient = useQueryClient();
   const { user } = useAuth();
   const [projectId, setProjectId] = useState(() => migrateStorageKey(LEGACY_STORAGE_KEYS.currentProjectId, CURRENT_PROJECT_KEY) || "");
   const [inviteEmail, setInviteEmail] = useState("");
@@ -42,13 +41,14 @@ export default function TeamMembers() {
   const [membersPage, setMembersPage] = useState(1);
   const [invitesPage, setInvitesPage] = useState(1);
 
-  const projectsQuery = useQuery({ queryKey: ["projects"], queryFn: () => getProjects({ limit: PAGE_SIZE }) });
+  const projectsQuery = useApiResource(() => getProjects({ fields: "switcher", limit: PAGE_SIZE }), [], { refreshEvents: ["projects"] });
   const projects = projectsQuery.data?.data || [];
 
   useEffect(() => {
     if (!projectId && projects[0]?.id) {
       localStorage.setItem(CURRENT_PROJECT_KEY, projects[0].id);
       setProjectId(projects[0].id);
+      window.dispatchEvent(new CustomEvent(CURRENT_PROJECT_CHANGE_EVENT, { detail: projects[0].id }));
     }
   }, [projectId, projects]);
 
@@ -61,32 +61,18 @@ export default function TeamMembers() {
     return () => window.removeEventListener(CURRENT_PROJECT_CHANGE_EVENT, handleProjectChange);
   }, []);
 
-  const projectQuery = useQuery({
-    queryKey: ["project", projectId],
-    queryFn: () => getProject(projectId),
-    enabled: Boolean(projectId),
-  });
+  const projectQuery = useApiResource(() => getProject(projectId, { fields: "team" }), [projectId], { enabled: Boolean(projectId) });
 
-  const membersQuery = useQuery({
-    queryKey: ["project-members", projectId],
-    queryFn: () => getProjectMembers(projectId),
-    enabled: Boolean(projectId),
-  });
-
-  const invitesQuery = useQuery({
-    queryKey: ["project-invites", projectId],
-    queryFn: () => getProjectInvites(projectId),
-    enabled: Boolean(projectId),
-  });
+  const invitesQuery = useApiResource(() => getProjectInvites(projectId), [projectId], { enabled: Boolean(projectId) });
+  const { members, isLoading: membersLoading, refreshMembers } = useProjectMembers(projectId);
 
   const refreshTeam = () => {
-    queryClient.invalidateQueries({ queryKey: ["project-members", projectId] });
-    queryClient.invalidateQueries({ queryKey: ["project-invites", projectId] });
-    queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+    refreshMembers();
+    invitesQuery.reload();
+    projectQuery.reload();
   };
 
-  const inviteMutation = useMutation({
-    mutationFn: () => createProjectInvite(projectId, { email: inviteEmail, role: inviteRole }),
+  const inviteAction = useApiAction(() => createProjectInvite(projectId, { email: inviteEmail, role: inviteRole }), {
     onSuccess: (result) => {
       if (!result?.success) {
         setMessage(resultMessage(result, "Could not send invite."));
@@ -100,8 +86,7 @@ export default function TeamMembers() {
     onError: (error) => setMessage(error.message),
   });
 
-  const updateRoleMutation = useMutation({
-    mutationFn: ({ userId, role }) => updateProjectMember(projectId, userId, { role }),
+  const updateRoleAction = useApiAction(({ userId, role }) => updateProjectMember(projectId, userId, { role }), {
     onSuccess: (result) => {
       if (!result?.success) {
         setMessage(resultMessage(result, "Could not update role."));
@@ -113,8 +98,7 @@ export default function TeamMembers() {
     onError: (error) => setMessage(error.message),
   });
 
-  const removeMemberMutation = useMutation({
-    mutationFn: (userId) => removeProjectMember(projectId, userId),
+  const removeMemberAction = useApiAction((userId) => removeProjectMember(projectId, userId), {
     onSuccess: (result) => {
       if (!result?.success) {
         setMessage(resultMessage(result, "Could not remove member."));
@@ -126,8 +110,7 @@ export default function TeamMembers() {
     onError: (error) => setMessage(error.message),
   });
 
-  const revokeInviteMutation = useMutation({
-    mutationFn: (inviteId) => revokeProjectInvite(projectId, inviteId),
+  const revokeInviteAction = useApiAction((inviteId) => revokeProjectInvite(projectId, inviteId), {
     onSuccess: (result) => {
       if (!result?.success) {
         setMessage(resultMessage(result, "Could not revoke invite."));
@@ -140,7 +123,6 @@ export default function TeamMembers() {
   });
 
   const project = projectQuery.data?.data;
-  const members = membersQuery.data?.data || [];
   const invites = invitesQuery.data?.data || [];
   const canManage = project?.currentUserPermissions?.includes("members.manage");
   const pendingInvites = invites.filter((invite) => invite.status === "PENDING");
@@ -159,7 +141,7 @@ export default function TeamMembers() {
       setMessage("Email is required.");
       return;
     }
-    inviteMutation.mutate();
+    inviteAction.run();
   }
 
   return (
@@ -209,8 +191,8 @@ export default function TeamMembers() {
                     <select
                       className="h-9 rounded-md border bg-background px-2 text-sm"
                       value={member.role}
-                      disabled={!canManage || isOwner || updateRoleMutation.isPending}
-                      onChange={(event) => updateRoleMutation.mutate({ userId: member.userId, role: event.target.value })}
+                      disabled={!canManage || isOwner || updateRoleAction.isPending}
+                      onChange={(event) => updateRoleAction.run({ userId: member.userId, role: event.target.value })}
                     >
                       {ROLES.map((role) => <option key={role} value={role}>{role}</option>)}
                     </select>
@@ -218,8 +200,8 @@ export default function TeamMembers() {
                       variant="ghost"
                       size="icon"
                       className="h-9 w-9 justify-self-start text-muted-foreground hover:text-destructive sm:justify-self-end"
-                      disabled={!canManage || isOwner || isCurrentUser || removeMemberMutation.isPending}
-                      onClick={() => removeMemberMutation.mutate(member.userId)}
+                      disabled={!canManage || isOwner || isCurrentUser || removeMemberAction.isPending}
+                      onClick={() => removeMemberAction.run(member.userId)}
                       aria-label={`Remove ${member.user?.name || member.user?.email}`}
                     >
                       <UserMinus className="h-4 w-4" />
@@ -228,7 +210,7 @@ export default function TeamMembers() {
                 );
               })}
               <PaginationControls pagination={membersPagination} onPageChange={setMembersPage} className="border-0 px-0" />
-              {!membersQuery.isLoading && members.length === 0 ? <p className="text-sm text-muted-foreground">No members found.</p> : null}
+              {!membersLoading && members.length === 0 ? <p className="text-sm text-muted-foreground">No members found.</p> : null}
             </CardContent>
           </Card>
 
@@ -252,8 +234,8 @@ export default function TeamMembers() {
                     variant="ghost"
                     size="icon"
                     className="h-9 w-9 justify-self-start text-muted-foreground hover:text-destructive sm:justify-self-end"
-                    disabled={!canManage || revokeInviteMutation.isPending}
-                    onClick={() => revokeInviteMutation.mutate(invite.id)}
+                    disabled={!canManage || revokeInviteAction.isPending}
+                    onClick={() => revokeInviteAction.run(invite.id)}
                     aria-label={`Revoke invite to ${invite.email}`}
                   >
                     <Trash2 className="h-4 w-4" />
@@ -277,9 +259,9 @@ export default function TeamMembers() {
               <select className="h-9 w-full rounded-md border bg-background px-3 text-sm" value={inviteRole} disabled={!canManage} onChange={(event) => setInviteRole(event.target.value)}>
                 {ROLES.map((role) => <option key={role} value={role}>{role}</option>)}
               </select>
-              <Button className="w-full" disabled={!canManage || inviteMutation.isPending}>
+              <Button className="w-full" disabled={!canManage || inviteAction.isPending}>
                 <MailPlus className="h-4 w-4" />
-                {inviteMutation.isPending ? "Sending..." : "Send invite"}
+                {inviteAction.isPending ? "Sending..." : "Send invite"}
               </Button>
               {!canManage ? <p className="text-xs text-muted-foreground">You can view this team, but cannot manage membership.</p> : null}
             </form>

@@ -5,6 +5,20 @@ import { generateToken, hashToken } from '../utils/crypto.js';
 import { sendVerificationEmail, sendPasswordResetEmail } from '../utils/email.js';
 import { AppError } from '../middleware/errorHandler.js';
 
+function publicUser(user) {
+  if (!user) return null;
+  const {
+    password,
+    emailVerificationToken,
+    passwordResetToken,
+    passwordResetExpires,
+    passwordChangedAt,
+    updatedAt,
+    ...rest
+  } = user;
+  return rest;
+}
+
 export async function register(name, email, password) {
   const existingUser = await prisma.user.findUnique({ where: { email } });
 
@@ -32,15 +46,7 @@ export async function register(name, email, password) {
     throw new AppError(`Verification email failed: ${err.message}`, 500);
   }
   
-  const { 
-    password: __password,
-    emailVerificationToken: _evToken,
-    passwordResetToken: _prToken,
-    passwordResetExpires: _prExpires,
-    ...rest
-  } = newUser;
-
-  return { user: rest };
+  return { user: publicUser(newUser) };
 }
 
 export async function login(email, password) {
@@ -70,16 +76,8 @@ export async function login(email, password) {
     },
   });
 
-  const { 
-    password: __password,
-    emailVerificationToken: _evToken,
-    passwordResetToken: _prToken,
-    passwordResetExpires: _prExpires,
-    ...rest
-  } = user;
-
   return {
-    user: rest,
+    user: publicUser(user),
     accessToken: accessToken,
     refreshToken: refreshToken,
     expiresIn: parseInt(process.env.JWT_REFRESH_EXPIRES_MS, 10) / 1000,
@@ -142,20 +140,12 @@ export async function verifyEmail(token) {
     throw new AppError('Invalid or expired verification token', 400);
   }
   
-  await prisma.user.update({
+  const updated = await prisma.user.update({
     where: { id: user.id },
     data: { emailVerified: true, emailVerificationToken: null },
   });
-
-  const { 
-    password: _password, 
-    emailVerificationToken: _evToken, 
-    passwordResetToken: _prToken, 
-    passwordResetExpires: _prExpires, 
-    ...rest 
-  } = user;
   
-  return { user: rest };
+  return { user: publicUser(updated) };
 }
 
 export async function forgotPassword(email) {

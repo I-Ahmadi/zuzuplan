@@ -18,6 +18,15 @@ async function create(req, res, next) {
   }
 }
 
+async function listTasks(req, res, next) {
+  try {
+    const tasks = await sprintService.listSprintTasks(req.params.projectId, req.params.sprintId, req.user.id);
+    res.json({ success: true, data: tasks });
+  } catch (err) {
+    next(err);
+  }
+}
+
 async function update(req, res, next) {
   try {
     const sprint = await sprintService.updateSprint(req.params.projectId, req.params.sprintId, req.user.id, req.body);
@@ -81,4 +90,4 @@ async function reorder(req, res, next) {
   }
 }
 
-export { list, create, update, start, complete, remove, addTasks, removeTask, reorder };
+export { list, listTasks, create, update, start, complete, remove, addTasks, removeTask, reorder };

@@ -64,8 +64,6 @@ Routes define HTTP method, path, middleware, and controller binding. Controllers
 ```txt
 GET /api/projects/:projectId/tasks
 POST /api/projects/:projectId/tasks
-GET /api/projects/:projectId/wiki
-POST /api/projects/:projectId/wiki
 GET /api/tasks/:taskId
 PATCH /api/tasks/:taskId
 DELETE /api/tasks/:taskId
@@ -139,7 +137,7 @@ Middleware should be composable and small.
 
 ```txt
 owner -> full project control
-admin -> manage members and settings
+admin -> manage members and project configuration
 member -> create and update assigned work
 viewer -> read-only access
 ```

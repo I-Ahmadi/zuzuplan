@@ -1,19 +1,15 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { BookOpen, Search } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { Search } from "lucide-react";
 import { CURRENT_PROJECT_CHANGE_EVENT, CURRENT_PROJECT_KEY, ProjectSwitcher } from "@/components/board/project-switcher";
 import { Button } from "@/components/ui/button";
 import { useGlobalSearch } from "@/contexts/search-context";
-import { LEGACY_STORAGE_KEYS, migrateStorageKey } from "@/lib/storage-keys";
 
 export default function Header() {
   const { openSearch } = useGlobalSearch();
   const { pathname, search } = useLocation();
   const routeProjectId = pathname.match(/^\/(?:projects|spaces)\/([^/]+)/)?.[1];
-  const [storedProjectId, setStoredProjectId] = useState(() => migrateStorageKey(LEGACY_STORAGE_KEYS.currentProjectId, CURRENT_PROJECT_KEY) || "");
   const [searchValue, setSearchValue] = useState(() => new URLSearchParams(search).get("q") || "");
-  const currentProjectId = routeProjectId || storedProjectId;
-  const wikiPath = currentProjectId ? `/spaces/${currentProjectId}/wiki` : "/spaces";
 
   function submitSearch(event) {
     event.preventDefault();
@@ -35,20 +31,11 @@ export default function Header() {
   useEffect(() => {
     if (!routeProjectId) return;
     localStorage.setItem(CURRENT_PROJECT_KEY, routeProjectId);
-    setStoredProjectId(routeProjectId);
+    window.dispatchEvent(new CustomEvent(CURRENT_PROJECT_CHANGE_EVENT, { detail: routeProjectId }));
   }, [routeProjectId]);
 
-  useEffect(() => {
-    function handleProjectChange(event) {
-      setStoredProjectId(event.detail || localStorage.getItem(CURRENT_PROJECT_KEY) || "");
-    }
-
-    window.addEventListener(CURRENT_PROJECT_CHANGE_EVENT, handleProjectChange);
-    return () => window.removeEventListener(CURRENT_PROJECT_CHANGE_EVENT, handleProjectChange);
-  }, []);
-
   return (
-    <header className="sticky top-0 z-30 h-14 border-b bg-topbar">
+    <header className="sticky top-0 z-40 h-14 border-b bg-topbar/95 backdrop-blur supports-[backdrop-filter]:bg-topbar/90">
       <div className="grid h-full w-full grid-cols-[auto_minmax(0,1fr)] items-center gap-3 px-3 sm:px-4 lg:grid-cols-[minmax(260px,560px)_minmax(0,1fr)_auto] lg:px-5">
         <form className="relative min-w-0 justify-self-start lg:w-full" onSubmit={submitSearch}>
           <Search className="pointer-events-none absolute left-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
@@ -68,14 +55,7 @@ export default function Header() {
         <div className="hidden lg:block" />
 
         <div className="flex min-w-0 items-center justify-end gap-1.5">
-          <Button asChild variant="outline" size="sm" className="h-9 px-2.5">
-            <Link to={wikiPath} aria-label="Open Wiki">
-              <BookOpen className="h-4 w-4" />
-              <span className="hidden sm:inline">Wiki</span>
-            </Link>
-          </Button>
-          <ProjectSwitcher compact className="w-9 sm:hidden" />
-          <ProjectSwitcher className="hidden w-56 sm:block" />
+          <ProjectSwitcher compactOnMobile className="w-9 sm:w-56" />
         </div>
       </div>
     </header>

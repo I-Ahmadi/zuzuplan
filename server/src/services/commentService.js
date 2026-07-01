@@ -5,7 +5,6 @@ import { ensureTaskAccess } from './taskService.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { getProjectRole, hasProjectPermission } from '../utils/permissions.js';
 import { createActivityEvent } from './activityService.js';
-import { createInboxItem } from './inboxService.js';
 
 function requireProjectPermission(project, userId, permission) {
   const role = getProjectRole(project, userId);
@@ -15,14 +14,21 @@ function requireProjectPermission(project, userId, permission) {
   return role;
 }
 
+const COMMENT_SELECT = {
+  id: true,
+  content: true,
+  createdAt: true,
+  user: { select: { id: true, name: true, email: true, avatar: true } },
+};
+
 export async function createComment(taskId, userId, content) {
   const task = await ensureTaskAccess(taskId, userId);
   requireProjectPermission(task.project, userId, PROJECT_PERMISSIONS.COMMENT_CREATE);
   const comment = await prisma.comment.create({
     data: { taskId, userId, content },
-    include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
+    select: COMMENT_SELECT,
   });
-  const activity = await createActivityEvent({
+  await createActivityEvent({
     projectId: task.projectId,
     taskId,
     actorId: userId,
@@ -34,19 +40,6 @@ export async function createComment(taskId, userId, content) {
     description: content.slice(0, 240),
     metadata: { issueTitle: task.title },
   });
-  const recipients = new Set([task.assigneeId, task.createdById].filter((id) => id && id !== userId));
-  await Promise.all(Array.from(recipients).map((recipientId) => createInboxItem({
-    userId: recipientId,
-    projectId: task.projectId,
-    taskId,
-    activityEventId: activity.id,
-    type: 'comment',
-    title: `Comment: ${task.title}`,
-    description: content.slice(0, 240),
-    priority: 'NORMAL',
-    actionUrl: `/spaces/${task.projectId}/issues/${taskId}`,
-    source: 'comment',
-  })));
   return comment;
 }
 
@@ -61,7 +54,7 @@ export async function getComments(taskId, userId, options = {}) {
       skip,
       take: limit,
       orderBy: { createdAt: 'asc' },
-      include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
+      select: COMMENT_SELECT,
     }),
     prisma.comment.count({ where: { taskId } }),
   ]);
@@ -84,7 +77,7 @@ export async function updateComment(commentId, userId, content) {
   const updated = await prisma.comment.update({
     where: { id: commentId },
     data: { content },
-    include: { user: { select: { id: true, name: true, email: true, avatar: true } } },
+    select: COMMENT_SELECT,
   });
   return updated;
 }

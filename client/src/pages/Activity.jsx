@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { Activity as ActivityIcon, ListTodo, Search } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
 import { UserAvatar } from "@/components/ui/avatar";
+import { useApiResource } from "@/lib/api-hooks";
 import { getActivityEvents } from "@/lib/activity-api";
 
 function iconFor(type) {
@@ -15,10 +15,7 @@ function iconFor(type) {
 export default function Activity() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const activityQuery = useQuery({
-    queryKey: ["activity", search, page],
-    queryFn: () => getActivityEvents({ search, page, limit: PAGE_SIZE }),
-  });
+  const activityQuery = useApiResource(() => getActivityEvents({ search, page, limit: PAGE_SIZE }), [search, page]);
   const events = activityQuery.data?.data || [];
   const pagination = activityQuery.data?.pagination;
 

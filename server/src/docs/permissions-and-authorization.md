@@ -71,16 +71,15 @@ Current permission groups:
 - Tasks: `task.create`, `task.read`, `task.update.any`, `task.update.own`, `task.assign`, `task.delete`
 - Delivery: `delivery.read`, `delivery.write`
 - Comments: `comment.create`, `comment.update.own`, `comment.delete.any`, `comment.delete.own`
-- Wiki: `wiki.read`, `wiki.create`, `wiki.update.any`, `wiki.update.own`, `wiki.delete.any`
 
 Role-to-permission mapping lives in `server/src/utils/permissions.js`.
 
 Current behavior:
 
 - `Admin`: all project permissions.
-- `Manager`: project update, member management, task management, delivery write, comment management, and wiki management.
-- `Employee`: project/member read, task create/read, own task updates, delivery read, own comment actions, and own wiki edits.
-- `Viewer`: project/member/task/wiki read only.
+- `Manager`: project update, member management, task management, delivery write, and comment management.
+- `Employee`: project/member read, task create/read, own task updates, delivery read, and own comment actions.
+- `Viewer`: project/member/task read only.
 
 Use these helpers instead of hardcoding role checks when possible:
 
@@ -102,8 +101,6 @@ Examples:
 - `sprintService.js` checks task update permissions for sprint planning operations.
 - `deliveryService.js` checks delivery read/write permissions.
 - `commentService.js` checks comment create, update-own, delete-own, and delete-any permissions.
-- `attachmentService.js` checks task access for listing/uploading and uploader/owner/admin access for deletion.
-- `wikiService.js` checks wiki read/create/update/delete permissions.
 
 For example, an `Employee` can access a project, but cannot assign tasks unless they have `task.assign`. The route lets the request reach the controller after authentication and validation, and `taskService` rejects the assignment.
 
@@ -157,54 +154,6 @@ or:
 comment.delete.any
 ```
 
-## Attachment Authorization
-
-Attachments use task access for listing and upload:
-
-```txt
-task.read
-```
-
-Deleting an attachment is more specific. It is allowed if the user is:
-
-- The uploader.
-- The project owner.
-- A project member with the `Admin` role.
-
-This deletion rule is role-based in `attachmentService.js` and does not currently use `PROJECT_PERMISSIONS`.
-
-## Wiki Authorization
-
-Wiki pages use project access for reading:
-
-```txt
-wiki.read
-```
-
-Creating a page requires:
-
-```txt
-wiki.create
-```
-
-Updating a page is allowed when either:
-
-```txt
-wiki.update.any
-```
-
-or:
-
-```txt
-page creator + wiki.update.own
-```
-
-Deleting a page requires:
-
-```txt
-wiki.delete.any
-```
-
 ## Invite Authorization
 
 Project invite management is handled in `projectService.js`.
@@ -249,4 +198,3 @@ Do not rely only on frontend role checks. The server must enforce all access rul
 
 - Routes no longer perform project authorization. They only authenticate and validate.
 - Services independently load project access and enforce permissions.
-- Attachment delete authorization is role-specific and separate from the permission matrix.

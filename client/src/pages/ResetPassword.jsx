@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
 import { AuthNotice, AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
+import { useApiAction } from "@/lib/api-hooks";
 
 export default function ResetPassword() {
   const navigate = useNavigate();
@@ -16,8 +16,7 @@ export default function ResetPassword() {
   const [error, setError] = useState("");
   const { resetPassword } = useAuth();
 
-  const resetPasswordMutation = useMutation({
-    mutationFn: resetPassword,
+  const resetPasswordAction = useApiAction(resetPassword, {
     onSuccess: () => {
       navigate("/login?reset=true");
     },
@@ -57,7 +56,7 @@ export default function ResetPassword() {
                   return;
                 }
 
-                resetPasswordMutation.mutate({ token, password });
+                resetPasswordAction.run({ token, password });
               }}
             >
               {error && (
@@ -74,7 +73,7 @@ export default function ResetPassword() {
                   placeholder="At least 6 characters"
                   minLength={6}
                   required
-                  disabled={resetPasswordMutation.isPending}
+                  disabled={resetPasswordAction.isPending}
                 />
               </div>
 
@@ -88,12 +87,12 @@ export default function ResetPassword() {
                   placeholder="Re-enter your new password"
                   minLength={6}
                   required
-                  disabled={resetPasswordMutation.isPending}
+                  disabled={resetPasswordAction.isPending}
                 />
               </div>
 
-              <Button type="submit" className="w-full" disabled={resetPasswordMutation.isPending}>
-                {resetPasswordMutation.isPending ? "Resetting password..." : "Reset password"}
+              <Button type="submit" className="w-full" disabled={resetPasswordAction.isPending}>
+                {resetPasswordAction.isPending ? "Resetting password..." : "Reset password"}
               </Button>
             </form>
           )}

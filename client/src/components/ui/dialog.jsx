@@ -4,10 +4,17 @@ export function Dialog({ open, children }) {
   return open ? children : null;
 }
 
-export function DialogContent({ className, children }) {
+export function DialogContent({ className, children, ...props }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3">
-      <div className={cn("w-full max-w-lg rounded-lg border bg-background p-4 shadow-lg", className)}>{children}</div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-3" {...props}>
+      <div
+        role="dialog"
+        aria-modal="true"
+        className={cn("w-full max-w-lg rounded-lg border bg-background p-4 shadow-lg", className)}
+        onClick={(event) => event.stopPropagation()}
+      >
+        {children}
+      </div>
     </div>
   );
 }

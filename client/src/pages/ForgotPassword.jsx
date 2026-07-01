@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
 import { AuthNotice, AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
+import { useApiAction } from "@/lib/api-hooks";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
@@ -13,8 +13,7 @@ export default function ForgotPassword() {
   const [error, setError] = useState("");
   const { forgotPassword } = useAuth();
 
-  const forgotPasswordMutation = useMutation({
-    mutationFn: forgotPassword,
+  const forgotPasswordAction = useApiAction(forgotPassword, {
     onSuccess: () => {
       setError("");
       setMessage("If that email exists, a password reset link has been sent.");
@@ -41,7 +40,7 @@ export default function ForgotPassword() {
               e.preventDefault();
               setMessage("");
               setError("");
-              forgotPasswordMutation.mutate(email);
+              forgotPasswordAction.run(email);
             }}
           >
             {message && (
@@ -61,12 +60,12 @@ export default function ForgotPassword() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="example@email.com"
                 required
-                disabled={forgotPasswordMutation.isPending}
+                disabled={forgotPasswordAction.isPending}
               />
             </div>
 
-            <Button type="submit" className="w-full" disabled={forgotPasswordMutation.isPending}>
-              {forgotPasswordMutation.isPending ? "Sending reset link..." : "Send reset link"}
+            <Button type="submit" className="w-full" disabled={forgotPasswordAction.isPending}>
+              {forgotPasswordAction.isPending ? "Sending reset link..." : "Send reset link"}
             </Button>
           </form>
     </AuthShell>

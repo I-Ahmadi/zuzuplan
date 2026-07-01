@@ -8,6 +8,7 @@ import {
 const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 let refreshPromise = null;
+const pendingGetRequests = new Map();
 
 async function parseResponse(res) {
   const contentType = res.headers.get("content-type");
@@ -61,6 +62,7 @@ export async function api(endpoint, options = {}, retry = true) {
   const token = getAccessToken();
   const headers = { ...(options.headers || {}) };
   const isFormData = options.body instanceof FormData;
+  const method = (options.method || "GET").toUpperCase();
 
   if (!isFormData && !headers["Content-Type"]) {
     headers["Content-Type"] = "application/json";
@@ -71,44 +73,63 @@ export async function api(endpoint, options = {}, retry = true) {
   }
 
   const url = endpoint.startsWith("http") ? endpoint : `${API_BASE}${endpoint}`;
-  const res = await fetch(url, {
-    ...options,
-    headers,
-    credentials: "include",
-  });
+  const canDedupe = method === "GET" && !options.body;
+  const dedupeKey = canDedupe ? `${method}:${url}:${token || ""}` : null;
 
-  const data = await parseResponse(res);
+  if (dedupeKey && pendingGetRequests.has(dedupeKey)) {
+    return pendingGetRequests.get(dedupeKey);
+  }
 
-  const shouldTryRefresh =
-    res.status === 401 &&
-    retry &&
-    endpoint !== "/auth/login" &&
-    endpoint !== "/auth/register" &&
-    endpoint !== "/auth/refresh" &&
-    endpoint !== "/auth/forgot-password" &&
-    endpoint !== "/auth/reset-password" &&
-    endpoint !== "/auth/verify-email";
+  const request = (async () => {
+    const res = await fetch(url, {
+      ...options,
+      method,
+      headers,
+      credentials: "include",
+    });
 
-  if (shouldTryRefresh) {
-    try {
-      await refreshAccessToken();
-      return api(endpoint, options, false);
-    } catch {
+    const data = await parseResponse(res);
+
+    const shouldTryRefresh =
+      res.status === 401 &&
+      retry &&
+      endpoint !== "/auth/login" &&
+      endpoint !== "/auth/register" &&
+      endpoint !== "/auth/refresh" &&
+      endpoint !== "/auth/forgot-password" &&
+      endpoint !== "/auth/reset-password" &&
+      endpoint !== "/auth/verify-email";
+
+    if (shouldTryRefresh) {
+      try {
+        await refreshAccessToken();
+        return api(endpoint, options, false);
+      } catch {
+        return {
+          success: false,
+          error: { message: "Session refresh failed" },
+          status: 401,
+        };
+      }
+    }
+
+    if (!res.ok) {
       return {
         success: false,
-        error: { message: "Session refresh failed" },
-        status: 401,
+        error: data?.error || { message: data?.message || "Request failed" },
+        status: res.status,
       };
     }
-  }
 
-  if (!res.ok) {
-    return {
-      success: false,
-      error: data?.error || { message: data?.message || "Request failed" },
-      status: res.status,
-    };
-  }
+    return data;
+  })();
 
-  return data;
+  if (!dedupeKey) return request;
+
+  pendingGetRequests.set(dedupeKey, request);
+  request.then(
+    () => pendingGetRequests.delete(dedupeKey),
+    () => pendingGetRequests.delete(dedupeKey)
+  );
+  return request;
 }

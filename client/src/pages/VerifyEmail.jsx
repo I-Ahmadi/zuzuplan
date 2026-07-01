@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
 import { AuthNotice, AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
+import { useApiAction } from "@/lib/api-hooks";
 
 export default function VerifyEmail() {
   const location = useLocation();
@@ -16,8 +16,7 @@ export default function VerifyEmail() {
   const hasVerified = useRef(false);
   const { verifyEmail } = useAuth();
 
-  const verifyMutation = useMutation({
-    mutationFn: verifyEmail,
+  const verifyAction = useApiAction(verifyEmail, {
     onSuccess: () => {
       setStatus("success");
       setTimeout(() => navigate("/login?verified=true"), 2000);
@@ -31,9 +30,9 @@ export default function VerifyEmail() {
     if (token && !hasVerified.current) {
       hasVerified.current = true;
       setStatus("verifying");
-      verifyMutation.mutate(token);
+      verifyAction.run(token);
     }
-  }, [token, verifyMutation]);
+  }, [token, verifyAction]);
 
   return (
     <AuthShell
@@ -55,7 +54,7 @@ export default function VerifyEmail() {
         <div className="space-y-3">
           {sent && !token && (
             <p className="text-sm leading-5 text-[#44546f]">
-              We&apos;ve sent a verification link to your email. Please check your inbox and click the link to verify your account.
+              We&apos;ve sent a verification link to your email. Please check your mailbox and click the link to verify your account.
             </p>
           )}
 
@@ -75,7 +74,7 @@ export default function VerifyEmail() {
               <AuthNotice>
                 <p className="font-medium">Verification failed</p>
                 <p className="text-sm mt-1">
-                  {verifyMutation.error?.message || "The link may be invalid or expired."}
+                  {verifyAction.error?.message || "The link may be invalid or expired."}
                 </p>
               </AuthNotice>
               <p className="text-sm text-[#44546f]">

@@ -22,6 +22,5 @@ router.delete("/:id/members/:userId", projectValidators.removeMember, validate, 
 router.get("/:id/invites", projectValidators.projectId, validate, projectController.getInvites);
 router.post("/:id/invites", projectValidators.createInvite, validate, projectController.createInvite);
 router.delete("/:id/invites/:inviteId", projectValidators.revokeInvite, validate, projectController.revokeInvite);
-router.get("/:id/stats", projectValidators.stats, validate, projectController.getStats);
 
 export default router;
