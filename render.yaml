@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: sprintly-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm ci && npm run prisma:generate
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATABASE_URL
+        sync: false
+      - key: CLIENT_URL
+        sync: false
+      - key: CORS_ORIGINS
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+      - key: JWT_ACCESS_EXPIRES_IN
+        value: 15m
+      - key: JWT_REFRESH_EXPIRES_IN
+        value: 7d
+      - key: JWT_REFRESH_EXPIRES_MS
+        value: 604800000
+      - key: EMAIL_DEV_MODE
+        value: true
+      - key: UPLOAD_DIR
+        value: /tmp/sprintly-uploads
+      - key: AVATAR_MAX_FILE_SIZE
+        value: 2097152

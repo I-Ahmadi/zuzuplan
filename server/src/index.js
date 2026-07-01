@@ -1,9 +1,9 @@
 import 'dotenv/config';
-import path from 'path';
 import fs from 'fs';
 import express from 'express';
 import cors from 'cors';
 import { connectDB } from './config/database.js';
+import { IS_PRODUCTION, PORT, UPLOAD_DIR, isOriginAllowed, validateEnv } from './config/env.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import notFoundHandler from './middleware/notFoundHandler.js';
 import { verifyEmailTransport } from './utils/email.js';
@@ -24,9 +24,7 @@ import deliveryRoutes from './routes/deliveryRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
 import reportRoutes from './routes/reportRoutes.js';
 
-// App Configuration
-const PORT = process.env.PORT;
-const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
+validateEnv();
 
 if (!fs.existsSync(UPLOAD_DIR)) {
   fs.mkdirSync(UPLOAD_DIR, { recursive: true });
@@ -35,13 +33,24 @@ if (!fs.existsSync(UPLOAD_DIR)) {
 
 // Initialize Express Application
 const app = express();
+app.disable('x-powered-by');
+
+if (IS_PRODUCTION) {
+  app.set('trust proxy', 1);
+}
+
+app.use((req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('Referrer-Policy', 'no-referrer');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  next();
+});
 
 // CORS Configuration
 app.use(cors({
   origin: (origin, cb) => {
-    if (!origin) return cb(null, true);
-    const allowed = /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/.test(origin);
-    cb(null, allowed ? origin : false);
+    cb(null, isOriginAllowed(origin) ? origin || true : false);
   },
   credentials: true,
 }));

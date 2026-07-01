@@ -135,10 +135,10 @@ export function listProjectTasks(projectId) {
 ## Environment Variables
 
 - Vite-exposed variables must start with `VITE_`.
-- Current API base URL:
+- Production API base URL:
 
 ```txt
-VITE_API_URL=http://localhost:3000/api
+VITE_API_URL=https://YOUR_API_HOST/api
 ```
 
 - Keep frontend `.env.example` documentation synchronized when variables change.

@@ -1,6 +1,7 @@
 import express from 'express';
 import multer from 'multer';
 import path from 'path';
+import { UPLOAD_DIR } from '../config/env.js';
 import { authenticate } from '../middleware/auth.js';
 import { validate } from '../middleware/validation.js';
 import * as userController from '../controllers/userController.js';
@@ -8,7 +9,6 @@ import { AppError } from '../middleware/errorHandler.js';
 import * as userValidators from '../validators/userValidators.js';
 
 const router = express.Router();
-const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
 const AVATAR_MAX_FILE_SIZE = parseInt(process.env.AVATAR_MAX_FILE_SIZE, 10) || 2 * 1024 * 1024;
 const AVATAR_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
 

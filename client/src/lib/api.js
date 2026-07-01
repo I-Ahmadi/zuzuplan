@@ -5,7 +5,13 @@ import {
   setRefreshToken,
 } from "@/lib/auth-api";
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const configuredApiBase = import.meta.env.VITE_API_URL;
+
+if (import.meta.env.PROD && !configuredApiBase) {
+  console.error("Missing VITE_API_URL. Production API requests may fail.");
+}
+
+const API_BASE = (configuredApiBase || "/api").replace(/\/$/, "");
 
 let refreshPromise = null;
 const pendingGetRequests = new Map();

@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
 
-const CLIENT_URL     = process.env.CLIENT_URL || 'http://localhost:5173';
+const CLIENT_URL     = process.env.CLIENT_URL || '';
 const EMAIL_DEV_MODE = process.env.EMAIL_DEV_MODE === 'true';
 const IS_PRODUCTION  = process.env.NODE_ENV === 'production';
 

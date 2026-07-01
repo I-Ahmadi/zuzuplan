@@ -11,11 +11,11 @@ REST API for the Sprintly task management system. Built with **Node.js**, **Expr
 
 2. **Environment**
    - Copy `.env.example` to `.env`
-   - Set `DATABASE_URL` to your PostgreSQL connection string, e.g.:
+   - Set `DATABASE_URL` to your PostgreSQL connection string with SSL in production, e.g.:
      ```
-     DATABASE_URL="postgresql://user:password@localhost:5432/sprintly?schema=public"
+     DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/postgres?sslmode=require"
      ```
-   - Set `JWT_SECRET` and `JWT_REFRESH_SECRET` for auth
+   - Set `CLIENT_URL`, `CORS_ORIGINS`, `JWT_SECRET`, and `JWT_REFRESH_SECRET` for auth and browser access
 
 3. **Database**
    ```bash
@@ -27,7 +27,7 @@ REST API for the Sprintly task management system. Built with **Node.js**, **Expr
    ```bash
    npm run dev
    ```
-   Server runs at `http://localhost:3000` (or `PORT` from env).
+   Server runs on `PORT` from env, or `3000` when unset.
 
 ## API Overview
 

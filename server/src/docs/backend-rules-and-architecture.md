@@ -189,10 +189,11 @@ Common server variables:
 ```txt
 NODE_ENV=development
 PORT=3000
-DATABASE_URL=postgresql://...
+DATABASE_URL=postgresql://USER:PASSWORD@HOST:5432/postgres?sslmode=require
 JWT_SECRET=...
 JWT_REFRESH_SECRET=...
-CORS_ORIGIN=http://localhost:5173
+CLIENT_URL=https://YOUR_FRONTEND_HOST
+CORS_ORIGINS=https://YOUR_FRONTEND_HOST
 ```
 
 ## Logging and Monitoring
