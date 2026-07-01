@@ -7,7 +7,7 @@ export function LogoutConfirmationDialog({ open, pending, onCancel, onConfirm })
     <Dialog open={open}>
       <DialogContent className="max-w-md">
         <DialogHeader>
-          <DialogTitle>Log out of Zuzuplan?</DialogTitle>
+          <DialogTitle>Log out of Sprintly?</DialogTitle>
           <p className="text-sm text-muted-foreground">
             You will need to sign in again to access your workspace on this device.
           </p>

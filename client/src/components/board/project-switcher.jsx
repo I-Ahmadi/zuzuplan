@@ -56,6 +56,15 @@ export function ProjectSwitcher({ compact = false, compactOnMobile = false, clas
   }, [currentProjectId, projects]);
 
   useEffect(() => {
+    function handleProjectChange(event) {
+      setStoredProjectId(event.detail || localStorage.getItem(CURRENT_PROJECT_KEY) || "");
+    }
+
+    window.addEventListener(CURRENT_PROJECT_CHANGE_EVENT, handleProjectChange);
+    return () => window.removeEventListener(CURRENT_PROJECT_CHANGE_EVENT, handleProjectChange);
+  }, []);
+
+  useEffect(() => {
     function closeOnOutsideClick(event) {
       if (!switcherRef.current?.contains(event.target)) setOpen(false);
     }

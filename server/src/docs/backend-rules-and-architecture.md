@@ -1,4 +1,4 @@
-# ZuzuPlan Backend Rules and Architecture
+# Sprintly Backend Rules and Architecture
 
 Use this document for work under `server/`, including API routes, controllers, services, middleware, Prisma, auth, validation, uploads, backend utilities, and backend tests.
 

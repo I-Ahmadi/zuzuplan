@@ -26,6 +26,30 @@ import { useSidebar } from "@/contexts/sidebar-context";
 const SIDEBAR_WIDTH_EXPANDED = 280;
 const SIDEBAR_WIDTH_COLLAPSED = 56;
 
+function SidebarBrand({ collapsed = false }) {
+  return (
+    <Link
+      to="/for-you"
+      className={cn(
+        "group flex min-w-0 items-center rounded-md text-foreground transition-colors hover:bg-accent",
+        collapsed ? "h-9 w-9 justify-center" : "h-9 flex-1 gap-2 px-1"
+      )}
+      aria-label="Sprintly home"
+      title={collapsed ? "Sprintly" : undefined}
+    >
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-primary/20 bg-primary text-sm font-bold text-primary-foreground shadow-sm">
+        S
+      </span>
+      {!collapsed ? (
+        <span className="min-w-0">
+          <span className="block truncate text-[15px] font-bold leading-4 tracking-normal">Sprintly</span>
+          <span className="block truncate text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Project OS</span>
+        </span>
+      ) : null}
+    </Link>
+  );
+}
+
 function SidebarLink({ item, pathname, collapsed = false, onNavigate, className }) {
   const Icon = item.icon;
   const disabled = Boolean(item.disabled);
@@ -457,8 +481,10 @@ export function Sidebar() {
     return (
       <SidebarShell collapsed>
         <div className="flex h-14 items-center justify-center border-b px-2">
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setCollapsed(false)} aria-label="Expand sidebar">
-            <PanelLeftClose className="h-4 w-4 rotate-180" />
+          <Button variant="ghost" size="icon" className="h-9 w-9 p-0" onClick={() => setCollapsed(false)} aria-label="Expand sidebar" title="Sprintly">
+            <span className="flex h-8 w-8 items-center justify-center rounded-md border border-primary/20 bg-primary text-sm font-bold text-primary-foreground shadow-sm">
+              S
+            </span>
           </Button>
         </div>
 
@@ -481,8 +507,8 @@ export function Sidebar() {
 
   return (
     <SidebarShell collapsed={false}>
-      <div className="flex h-14 items-center justify-between border-b px-3">
-        <div className="h-8 w-8" aria-hidden="true" />
+      <div className="flex h-14 items-center justify-between gap-2 border-b px-3">
+        <SidebarBrand />
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setCollapsed(true)} aria-label="Collapse sidebar">
           <PanelLeftClose className="h-4 w-4" />
         </Button>

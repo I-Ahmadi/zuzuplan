@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
-const API_RESOURCE_REFRESH_EVENT = "zuzuplan-api-resource-refresh";
+const API_RESOURCE_REFRESH_EVENT = "sprintly-api-resource-refresh";
 
 export function emitApiResourceRefresh(name) {
   if (typeof window === "undefined" || !name) return;

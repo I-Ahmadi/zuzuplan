@@ -1,14 +1,14 @@
 export const STORAGE_KEYS = {
-  currentProjectId: "currentProjectId",
-  recentSearches: "recentSearches",
-  theme: "theme",
+  currentProjectId: "sprintly.currentProjectId",
+  recentSearches: "sprintly.recentSearches",
+  theme: "sprintly-theme",
 };
 
 export const LEGACY_STORAGE_KEYS = {
-  currentProjectId: "zuzuplan.currentProjectId",
-  recentNavigation: "zuzuplan.recentNavigation",
-  recentSearches: "zuzuplan.recentSearches",
-  theme: "zuzuplan-theme",
+  currentProjectId: "currentProjectId",
+  recentNavigation: "recentNavigation",
+  recentSearches: "recentSearches",
+  theme: "theme",
 };
 
 export function migrateStorageKey(legacyKey, nextKey) {

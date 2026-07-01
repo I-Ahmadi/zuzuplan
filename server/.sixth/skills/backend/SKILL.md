@@ -1,6 +1,6 @@
 # Backend Skill
 
-Use this skill when working on ZuzuPlan backend code under `server/`, including Express routes, controllers, services, middleware, Prisma schema or migrations, auth, validation, uploads, and backend tests.
+Use this skill when working on Sprintly backend code under `server/`, including Express routes, controllers, services, middleware, Prisma schema or migrations, auth, validation, uploads, and backend tests.
 
 ## Required Context
 

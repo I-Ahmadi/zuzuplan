@@ -74,6 +74,6 @@ export function sendPasswordResetEmail(email, token) {
 
 export function sendProjectInviteEmail(email, token, projectName, inviterName) {
   const url = `${CLIENT_URL}/invites/${token}/accept`;
-  const html = `${inviterName} invited you to join ${projectName} on ZuzuPlan: <a href="${url}">${url}</a>`;
+  const html = `${inviterName} invited you to join ${projectName} on Sprintly: <a href="${url}">${url}</a>`;
   return sendEmail(email, `Invitation to join ${projectName}`, html);
 }

@@ -1,6 +1,6 @@
 # Frontend Skill
 
-Use this skill when working on ZuzuPlan frontend code under `client/`, including routes, React components, UI styling, client-side state, API calls from the browser, and frontend tests.
+Use this skill when working on Sprintly frontend code under `client/`, including routes, React components, UI styling, client-side state, API calls from the browser, and frontend tests.
 
 ## Required Context
 

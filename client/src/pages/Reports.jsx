@@ -400,7 +400,7 @@ export default function Reports() {
     setExportPending("csv");
     try {
       const rows = await fetchExportRows();
-      downloadBlob(`zuzuplan-engineering-report-${fileDate()}.csv`, buildIssuesCsv(rows), "text/csv;charset=utf-8");
+      downloadBlob(`sprintly-engineering-report-${fileDate()}.csv`, buildIssuesCsv(rows), "text/csv;charset=utf-8");
     } finally {
       setExportPending("");
     }
@@ -419,7 +419,7 @@ export default function Reports() {
         workload: report.workload,
         attentionIssues: rows,
       };
-      downloadBlob(`zuzuplan-engineering-report-${fileDate()}.json`, JSON.stringify(payload, null, 2), "application/json;charset=utf-8");
+      downloadBlob(`sprintly-engineering-report-${fileDate()}.json`, JSON.stringify(payload, null, 2), "application/json;charset=utf-8");
     } finally {
       setExportPending("");
     }

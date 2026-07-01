@@ -62,7 +62,7 @@ const IssueStatusesContext = createContext({
   addStatus: () => null,
 });
 
-const CUSTOM_STATUS_STORAGE_PREFIX = "zuzuplan.issue-statuses.";
+const CUSTOM_STATUS_STORAGE_PREFIX = "sprintly.issue-statuses.";
 
 function statusStorageKey(projectId) {
   return `${CUSTOM_STATUS_STORAGE_PREFIX}${projectId || "global"}`;
@@ -190,6 +190,17 @@ function isRowControlTarget(target) {
   return Boolean(target?.closest?.("button,input,select,textarea,a,[role='button'],[data-row-control='true']"));
 }
 
+function resizeTextareaToContent(element) {
+  if (!element) return;
+  element.style.height = "auto";
+  element.style.height = `${element.scrollHeight}px`;
+}
+
+function scrollIssueSectionIntoView(sectionId) {
+  if (typeof document === "undefined") return;
+  document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
 function getPlannedOrActiveSprints(sprints) {
   return sprints
     .filter((sprint) => sprint.status !== "COMPLETED")
@@ -206,6 +217,23 @@ function getMoveScopeOptions(sprints) {
     { value: "backlog", label: "Backlog" },
     ...getPlannedOrActiveSprints(sprints).map((sprint) => ({ value: sprint.id, label: sprint.name })),
   ];
+}
+
+function assigneeLabel(user) {
+  return user?.name || user?.email || "Unknown member";
+}
+
+function getAssigneeOptions(members, task) {
+  const options = [
+    { value: "", label: "Unassigned" },
+    ...members.map((member) => ({ value: member.userId, label: assigneeLabel(member.user) })),
+  ];
+
+  if (task?.assigneeId && !options.some((option) => option.value === task.assigneeId)) {
+    options.push({ value: task.assigneeId, label: assigneeLabel(task.assignee) });
+  }
+
+  return options;
 }
 
 export default function Tasks() {
@@ -754,8 +782,8 @@ export function TaskDetailPage() {
       <IssueStatusesContext.Provider value={issueStatusState}>
       <div className="space-y-3 px-3 py-3 sm:px-4 lg:px-5">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Work Item</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Review details, links, activity, and ownership for this task.</p>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Issue details</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Review details, activity, and ownership for this issue.</p>
         </div>
         <p className="rounded-md border p-6 text-sm text-muted-foreground">Loading issue...</p>
       </div>
@@ -768,8 +796,8 @@ export function TaskDetailPage() {
       <IssueStatusesContext.Provider value={issueStatusState}>
       <div className="space-y-3 px-3 py-3 sm:px-4 lg:px-5">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Work Item</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Review details, links, activity, and ownership for this task.</p>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Issue details</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Review details, activity, and ownership for this issue.</p>
         </div>
         <div className="rounded-md border p-6 text-sm text-muted-foreground">
           <p>{taskErrorMessage || "Work item not found."}</p>
@@ -786,13 +814,14 @@ export function TaskDetailPage() {
     <IssueStatusesContext.Provider value={issueStatusState}>
     <div className="min-h-[calc(100vh-3rem)] bg-background px-3 py-3 sm:px-4 lg:px-5">
       <div className="mb-4">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Work Item</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Review details, links, activity, and ownership for this task.</p>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Issue details</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Review details, activity, and ownership for this issue.</p>
       </div>
       {error ? (
         <p className="mb-3 rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">{error}</p>
       ) : null}
       <WorkItemView
+        key={task.id}
         task={task}
         activeProject={activeProject}
         members={members}
@@ -2722,10 +2751,7 @@ function PriorityOption({ priority }) {
 }
 
 function InlineAssignee({ task, members, disabled, onUpdate }) {
-  const assigneeOptions = [
-    { value: "", label: "Unassigned" },
-    ...members.map((member) => ({ value: member.userId, label: member.user?.name || member.user?.email })),
-  ];
+  const assigneeOptions = getAssigneeOptions(members, task);
 
   return (
     <InlineDropdown
@@ -2763,13 +2789,14 @@ function TaskActionsMenu({ task, onView, onDelete, canDelete = true, moveOptions
   const triggerRef = useRef(null);
   const [position, setPosition] = useState({ top: 0, left: 0 });
   const availableMoveOptions = moveOptions.filter((option) => option.value !== (task.sprintId || "backlog"));
+  const hasViewAction = Boolean(onView);
 
   function updatePosition() {
     const rect = triggerRef.current?.getBoundingClientRect();
     if (!rect) return;
 
     const menuWidth = 160;
-    const menuHeight = 44 + (availableMoveOptions.length ? 40 + (availableMoveOptions.length * 32) : 0) + (canDelete ? 40 : 0);
+    const menuHeight = (hasViewAction ? 44 : 0) + (availableMoveOptions.length ? 40 + (availableMoveOptions.length * 32) : 0) + (canDelete ? 40 : 0);
     const left = Math.min(Math.max(rect.right - menuWidth, 8), window.innerWidth - menuWidth - 8);
     const opensUp = rect.bottom + menuHeight + 8 > window.innerHeight;
     const top = opensUp ? Math.max(rect.top - menuHeight - 4, 8) : rect.bottom + 4;
@@ -2800,7 +2827,7 @@ function TaskActionsMenu({ task, onView, onDelete, canDelete = true, moveOptions
       window.removeEventListener("resize", updatePosition);
       window.removeEventListener("scroll", updatePosition, true);
     };
-  }, [open, canDelete, availableMoveOptions.length]);
+  }, [open, canDelete, availableMoveOptions.length, hasViewAction]);
 
   return (
     <div className="inline-flex">
@@ -2824,9 +2851,11 @@ function TaskActionsMenu({ task, onView, onDelete, canDelete = true, moveOptions
           className="fixed z-[100] w-40 rounded-md border bg-popover p-1 text-sm text-popover-foreground shadow-lg"
           style={{ top: position.top, left: position.left }}
         >
-          <button type="button" className="flex w-full items-center rounded px-2 py-1.5 text-left hover:bg-accent" onClick={() => { setOpen(false); onView(); }}>
-            View
-          </button>
+          {hasViewAction ? (
+            <button type="button" className="flex w-full items-center rounded px-2 py-1.5 text-left hover:bg-accent" onClick={() => { setOpen(false); onView(); }}>
+              View
+            </button>
+          ) : null}
           {availableMoveOptions.length && onMoveTo ? (
             <div className="mt-1 border-t pt-1">
               <p className="px-2 py-1 text-[11px] font-semibold uppercase text-muted-foreground">Move to</p>
@@ -2845,10 +2874,10 @@ function TaskActionsMenu({ task, onView, onDelete, canDelete = true, moveOptions
               ))}
             </div>
           ) : null}
-          {canDelete ? (
+          {canDelete && onDelete ? (
             <button
               type="button"
-              className="mt-1 flex w-full items-center rounded border-t px-2 py-1.5 text-left text-destructive hover:bg-accent"
+              className={cn("flex w-full items-center rounded px-2 py-1.5 text-left text-destructive hover:bg-accent", (hasViewAction || availableMoveOptions.length) && "mt-1 border-t")}
               onClick={() => {
                 setOpen(false);
                 setConfirmDelete(true);
@@ -2877,7 +2906,7 @@ function TaskActionsMenu({ task, onView, onDelete, canDelete = true, moveOptions
               variant="destructive"
               onClick={() => {
                 setConfirmDelete(false);
-                onDelete();
+                onDelete?.();
               }}
             >
               <Trash2 className="h-4 w-4" />
@@ -3273,10 +3302,7 @@ function BacklogRow({ task, activeProject, members, selected, canAssign, moveSco
     style: { color: PRIORITY_OPTION_COLORS[priority], fontWeight: 600 },
   }));
   const typeOptions = ISSUE_TYPES.map((type) => ({ value: type, label: type.replace("_", " ") }));
-  const assigneeOptions = [
-    { value: "", label: "Unassigned" },
-    ...members.map((member) => ({ value: member.userId, label: member.user?.name || member.user?.email })),
-  ];
+  const assigneeOptions = getAssigneeOptions(members, task);
   const stopRowOpen = (event) => event.stopPropagation();
   const controlProps = {
     "data-row-control": "true",
@@ -3502,6 +3528,7 @@ function WorkItemView({
     return [...members, { userId: task.assigneeId, user: task.assignee }];
   }, [members, task.assignee, task.assigneeId]);
   const activityRef = useRef(null);
+  const titleRef = useRef(null);
   const [activityVisible, setActivityVisible] = useState(false);
   const [titleDraft, setTitleDraft] = useState(task.title || "");
   const [descriptionDraft, setDescriptionDraft] = useState(task.description || "");
@@ -3521,6 +3548,10 @@ function WorkItemView({
     setTitleDraft(task.title || "");
     setDescriptionDraft(task.description || "");
   }, [task.id, task.title, task.description]);
+
+  useEffect(() => {
+    resizeTextareaToContent(titleRef.current);
+  }, [titleDraft, task.id]);
 
   useEffect(() => {
     const node = activityRef.current;
@@ -3606,36 +3637,42 @@ function WorkItemView({
     <section className={cn("rounded-md border bg-card", compact ? "p-4" : "p-5")}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1 space-y-3">
-          <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted-foreground">
             <span>Spaces</span>
             <span>/</span>
-            <span className="truncate">{project?.name || "Space"}</span>
+            <span className="min-w-0 max-w-full truncate">{project?.name || "Space"}</span>
             <span>/</span>
-            <span className="font-medium text-foreground">{key}</span>
+            <span className="font-medium text-foreground break-all">{key}</span>
           </div>
           <div>
-            <Input
-              className={cn("h-auto min-h-10 border-0 bg-transparent px-0 py-0 font-semibold leading-tight shadow-none focus-visible:ring-0", compact ? "text-xl" : "text-2xl")}
+            <Textarea
+              ref={titleRef}
+              rows={1}
+              className={cn("min-h-0 resize-none overflow-hidden border-0 bg-transparent px-0 py-0 font-semibold leading-tight shadow-none focus-visible:ring-0", compact ? "text-xl" : "text-2xl")}
               value={titleDraft}
               disabled={savingTitle}
               onChange={(event) => setTitleDraft(event.target.value)}
               onBlur={(event) => saveDraftField("title", event.target.value)}
+              onInput={(event) => resizeTextareaToContent(event.currentTarget)}
               onKeyDown={(event) => {
-                if (event.key === "Enter") event.currentTarget.blur();
+                if (event.key === "Enter" && !event.shiftKey) {
+                  event.preventDefault();
+                  event.currentTarget.blur();
+                }
               }}
               aria-label="Issue title"
             />
             <p className="mt-1 text-xs text-muted-foreground">{savingTitle ? "Saving title..." : `Updated ${relativeDate(task.updatedAt)}`}</p>
           </div>
         </div>
-        {!standalone ? (
+        {(!standalone || canDelete) ? (
           <div className="flex shrink-0 items-center gap-1">
-            <Button asChild variant="outline" size="icon" className="h-8 w-8" aria-label="Open issue in full page">
-              <a href={taskUrl} target="_blank" rel="noreferrer">
-                <ExternalLink className="h-4 w-4" />
-              </a>
-            </Button>
-            <TaskActionsMenu task={task} canDelete={canDelete} onView={() => window.open(taskUrl, "_blank", "noopener,noreferrer")} onDelete={() => deleteMutation.mutate(task.id)} />
+            <TaskActionsMenu
+              task={task}
+              canDelete={canDelete}
+              onView={!standalone ? () => window.open(taskUrl, "_blank", "noopener,noreferrer") : undefined}
+              onDelete={() => deleteMutation.mutate(task.id)}
+            />
           </div>
         ) : null}
       </div>
@@ -3656,19 +3693,24 @@ function WorkItemView({
   );
 
   return (
-    <div className={cn("min-h-[70vh] gap-5", compact ? "space-y-5" : standalone ? "grid lg:grid-cols-[minmax(0,1fr)_340px]" : "grid lg:grid-cols-[minmax(0,1fr)_300px]")}>
+    <div className={cn("gap-5", compact ? "min-h-0 space-y-4" : standalone ? "grid min-h-[70vh] lg:grid-cols-[minmax(0,1fr)_340px]" : "grid min-h-[70vh] lg:grid-cols-[minmax(0,1fr)_300px]")}>
       <section className="min-w-0 space-y-5">
         {issueHeader}
 
         <nav className="flex flex-wrap gap-1 border-b pb-2 text-sm" aria-label="Issue sections">
           {[
-            ["Description", "#work-item-description"],
-            ["Details", "#work-item-details"],
-            ["Activity", "#work-item-activity"],
-          ].map(([label, href]) => (
-            <a key={href} className="rounded-md px-2.5 py-1.5 text-muted-foreground hover:bg-accent hover:text-foreground" href={href}>
+            ["Description", "work-item-description"],
+            ["Details", "work-item-details"],
+            ["Activity", "work-item-activity"],
+          ].map(([label, sectionId]) => (
+            <button
+              key={sectionId}
+              type="button"
+              className="rounded-md px-2.5 py-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
+              onClick={() => scrollIssueSectionIntoView(sectionId)}
+            >
               {label}
-            </a>
+            </button>
           ))}
         </nav>
 
@@ -3702,9 +3744,10 @@ function WorkItemView({
             <UserAvatar user={reporter} className="h-8 w-8" fallbackClassName="bg-primary text-primary-foreground" />
             <div className="flex-1 space-y-2">
               <Input placeholder="Add a comment..." value={comment} onChange={(event) => setComment(event.target.value)} disabled={!canComment} />
+              {!canComment ? <p className="text-xs text-muted-foreground">You can view activity, but do not have permission to comment.</p> : null}
               <div className="flex flex-wrap gap-2">
                 {["Who is working on this...?", "Can I get more info...?", "Status update..."].map((prompt) => (
-                  <Button key={prompt} variant="outline" className="h-7 rounded px-2 text-xs" onClick={() => setComment(prompt)}>
+                  <Button key={prompt} variant="outline" className="h-7 rounded px-2 text-xs" disabled={!canComment} onClick={() => setComment(prompt)}>
                     {prompt}
                   </Button>
                 ))}
@@ -3825,11 +3868,19 @@ function IssueDetailDialog({
           <X className="h-4 w-4" />
         </Button>
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto p-5">
+      <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-5">
         {detailQuery.isLoading ? (
-          <p className="rounded-md border p-4 text-sm text-muted-foreground">Loading issue...</p>
+          <div className="space-y-3 rounded-md border bg-card p-4">
+            <div className="h-4 w-36 rounded bg-muted" />
+            <div className="h-8 w-3/4 rounded bg-muted" />
+            <div className="grid gap-2 sm:grid-cols-2">
+              <div className="h-16 rounded border bg-background" />
+              <div className="h-16 rounded border bg-background" />
+            </div>
+          </div>
         ) : task ? (
           <WorkItemView
+            key={task.id}
             task={task}
             activeProject={activeProject}
             members={members}

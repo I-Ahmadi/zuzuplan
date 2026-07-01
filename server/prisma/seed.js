@@ -12,16 +12,16 @@ const prisma = new PrismaClient({
   log: ['error', 'warn'],
 });
 
-const seedUserEmail = 'demo@zuzuplan.local';
+const seedUserEmail = 'demo@sprintly.local';
 const seedPassword = 'DemoPass123!';
 const baseDate = new Date('2026-06-24T12:00:00.000Z');
 
 const users = [
   { email: seedUserEmail, name: 'Demo Owner', role: 'Admin', avatar: 'https://api.dicebear.com/9.x/initials/svg?seed=Demo%20Owner' },
-  { email: 'maya@zuzuplan.local', name: 'Maya Chen', role: 'Manager', avatar: 'https://api.dicebear.com/9.x/initials/svg?seed=Maya%20Chen' },
-  { email: 'leo@zuzuplan.local', name: 'Leo Brooks', role: 'Employee', avatar: 'https://api.dicebear.com/9.x/initials/svg?seed=Leo%20Brooks' },
-  { email: 'nora@zuzuplan.local', name: 'Nora Patel', role: 'Employee', avatar: 'https://api.dicebear.com/9.x/initials/svg?seed=Nora%20Patel' },
-  { email: 'sam@zuzuplan.local', name: 'Sam Rivera', role: 'Viewer', avatar: 'https://api.dicebear.com/9.x/initials/svg?seed=Sam%20Rivera' },
+  { email: 'maya@sprintly.local', name: 'Maya Chen', role: 'Manager', avatar: 'https://api.dicebear.com/9.x/initials/svg?seed=Maya%20Chen' },
+  { email: 'leo@sprintly.local', name: 'Leo Brooks', role: 'Employee', avatar: 'https://api.dicebear.com/9.x/initials/svg?seed=Leo%20Brooks' },
+  { email: 'nora@sprintly.local', name: 'Nora Patel', role: 'Employee', avatar: 'https://api.dicebear.com/9.x/initials/svg?seed=Nora%20Patel' },
+  { email: 'sam@sprintly.local', name: 'Sam Rivera', role: 'Viewer', avatar: 'https://api.dicebear.com/9.x/initials/svg?seed=Sam%20Rivera' },
 ];
 
 const taskStatuses = [
@@ -37,7 +37,7 @@ const priorities = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'];
 const projectBlueprints = [
   {
     key: 'CORE',
-    name: 'ZuzuPlan Core',
+    name: 'Sprintly Core',
     description: 'End-to-end task management, board behavior, comments, search, and workspace navigation.',
     visibility: 'private',
     status: 'active',
@@ -356,7 +356,7 @@ async function createProjectGraph(blueprint, projectIndex, people) {
         projectId: project.id,
         taskId: task.id,
         provider: 'MANUAL',
-        repository: `zuzuplan/${blueprint.key.toLowerCase()}`,
+        repository: `sprintly/${blueprint.key.toLowerCase()}`,
         number: projectIndex * 100 + index + 1,
         title: task.title.replace(`[${blueprint.key}-`, `PR ${blueprint.key}-`),
         url: `https://example.local/${blueprint.key.toLowerCase()}/pull/${projectIndex * 100 + index + 1}`,
@@ -426,7 +426,7 @@ async function createProjectGraph(blueprint, projectIndex, people) {
 
 async function main() {
   if (!process.env.DATABASE_URL) {
-    throw new Error('DATABASE_URL is required to seed ZuzuPlan.');
+    throw new Error('DATABASE_URL is required to seed Sprintly.');
   }
 
   const passwordHash = await bcrypt.hash(seedPassword, 12);

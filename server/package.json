@@ -1,7 +1,7 @@
 {
-  "name": "zuzuplan-server",
+  "name": "sprintly-server",
   "version": "1.0.0",
-  "description": "ZuzuPlan task management backend API",
+  "description": "Sprintly task management backend API",
   "type": "module",
   "main": "src/index.js",
   "scripts": {

@@ -1,7 +1,10 @@
+import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
 
 export function Dialog({ open, children }) {
-  return open ? children : null;
+  if (!open) return null;
+  if (typeof document === "undefined") return children;
+  return createPortal(children, document.body);
 }
 
 export function DialogContent({ className, children, ...props }) {

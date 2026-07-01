@@ -1,4 +1,4 @@
-# ZuzuPlan Frontend Rules and Architecture
+# Sprintly Frontend Rules and Architecture
 
 Use this document for work under `client/`, including routes, UI, state, styling, browser integrations, frontend API calls, and frontend tests.
 

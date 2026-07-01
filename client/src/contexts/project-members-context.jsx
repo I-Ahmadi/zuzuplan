@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "@/contexts/auth-context";
-import { getProjectMembers } from "@/lib/project-api";
+import { getProjectMembers, getProjects } from "@/lib/project-api";
 import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
 
 const ProjectMembersContext = createContext(undefined);
@@ -19,12 +19,13 @@ function getInitialProjectId() {
 }
 
 export function ProjectMembersProvider({ children }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const [currentProjectId, setCurrentProjectId] = useState(getInitialProjectId);
   const [membersByProjectId, setMembersByProjectId] = useState(() => new Map(membersCache));
   const [loadingByProjectId, setLoadingByProjectId] = useState({});
   const [errorByProjectId, setErrorByProjectId] = useState({});
   const mountedRef = useRef(true);
+  const defaultProjectRequestRef = useRef(null);
 
   useEffect(() => {
     return () => {
@@ -54,6 +55,27 @@ export function ProjectMembersProvider({ children }) {
       window.removeEventListener("popstate", handleProjectChange);
     };
   }, []);
+
+  useEffect(() => {
+    if (authLoading || !isAuthenticated || currentProjectId || getProjectIdFromPath()) return;
+    if (defaultProjectRequestRef.current) return;
+
+    defaultProjectRequestRef.current = getProjects({ fields: "switcher", page: 1, limit: 1 })
+      .then((result) => {
+        if (!mountedRef.current || currentProjectId || getProjectIdFromPath() || localStorage.getItem(CURRENT_PROJECT_KEY)) return;
+
+        const firstProjectId = result?.data?.[0]?.id;
+        if (!firstProjectId) return;
+
+        localStorage.setItem(CURRENT_PROJECT_KEY, firstProjectId);
+        setCurrentProjectId(firstProjectId);
+        window.dispatchEvent(new CustomEvent(CURRENT_PROJECT_CHANGE_EVENT, { detail: firstProjectId }));
+      })
+      .catch(() => null)
+      .finally(() => {
+        defaultProjectRequestRef.current = null;
+      });
+  }, [authLoading, currentProjectId, isAuthenticated]);
 
   const loadMembers = useCallback(async (projectId, { force = false } = {}) => {
     if (!projectId || !isAuthenticated) return null;
@@ -113,6 +135,10 @@ export function ProjectMembersProvider({ children }) {
     refreshMembers(projectId = currentProjectId) {
       return loadMembers(projectId, { force: true });
     },
+    ensureMembers(projectId = currentProjectId) {
+      if (!projectId || membersByProjectId.has(projectId) || loadingByProjectId[projectId] || errorByProjectId[projectId]) return null;
+      return loadMembers(projectId);
+    },
   }), [currentProjectId, errorByProjectId, loadMembers, loadingByProjectId, membersByProjectId]);
 
   return <ProjectMembersContext.Provider value={value}>{children}</ProjectMembersContext.Provider>;
@@ -122,6 +148,11 @@ export function useProjectMembers(projectId) {
   const context = useContext(ProjectMembersContext);
   if (!context) throw new Error("useProjectMembers must be used inside ProjectMembersProvider");
   const resolvedProjectId = projectId || context.currentProjectId;
+
+  useEffect(() => {
+    context.ensureMembers(resolvedProjectId);
+  }, [context, resolvedProjectId]);
+
   return {
     members: context.getMembers(resolvedProjectId),
     isLoading: context.isLoading(resolvedProjectId),

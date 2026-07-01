@@ -1,6 +1,6 @@
-# ZuzuPlan Backend
+# Sprintly Backend
 
-REST API for the ZuzuPlan task management system. Built with **Node.js**, **Express**, **PostgreSQL**, and **Prisma** (JavaScript).
+REST API for the Sprintly task management system. Built with **Node.js**, **Express**, **PostgreSQL**, and **Prisma** (JavaScript).
 
 ## Setup
 
@@ -13,7 +13,7 @@ REST API for the ZuzuPlan task management system. Built with **Node.js**, **Expr
    - Copy `.env.example` to `.env`
    - Set `DATABASE_URL` to your PostgreSQL connection string, e.g.:
      ```
-     DATABASE_URL="postgresql://user:password@localhost:5432/zuzuplan?schema=public"
+     DATABASE_URL="postgresql://user:password@localhost:5432/sprintly?schema=public"
      ```
    - Set `JWT_SECRET` and `JWT_REFRESH_SECRET` for auth
 

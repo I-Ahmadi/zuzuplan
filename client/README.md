@@ -1,6 +1,6 @@
-# React + Vite + Tailwind + ShadCN + React Query
+# Sprintly Frontend
 
-This frontend now runs as a standard React 18 application powered by Vite.
+Sprintly's frontend runs as a standard React 18 application powered by Vite.
 
 ## Stack
 
