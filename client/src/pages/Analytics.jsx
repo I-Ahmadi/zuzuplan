@@ -18,11 +18,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { InlineLoader } from "@/components/ui/loading";
 import { PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
 import { UserAvatar } from "@/components/ui/avatar";
 import { useApiResource } from "@/lib/api-hooks";
-import { getDeliveryHealthReport } from "@/lib/report-api";
-import { ISSUE_STATUSES } from "@/lib/issue-constants";
+import { getDeliveryHealthAnalytics } from "@/lib/analytics-api";
+import { TASK_STATUSES } from "@/lib/task-constants";
 import { cn } from "@/lib/utils";
 
 const DAY_MS = 1000 * 60 * 60 * 24;
@@ -32,7 +33,7 @@ const STATUS_TONES = {
   IN_REVIEW: "bg-violet-500",
   DONE: "bg-blue-500",
 };
-const STATUSES = ISSUE_STATUSES.map((status) => ({ ...status, tone: STATUS_TONES[status.value] || "bg-muted-foreground" }));
+const STATUSES = TASK_STATUSES.map((status) => ({ ...status, tone: STATUS_TONES[status.value] || "bg-muted-foreground" }));
 const PRIORITIES = [
   { value: "URGENT", label: "Urgent", badge: "border-red-500/30 bg-red-500/10 text-red-500" },
   { value: "HIGH", label: "High", badge: "border-red-500/30 bg-red-500/10 text-red-500" },
@@ -65,12 +66,12 @@ function relativeDate(value) {
   return `${days} days ago`;
 }
 
-function issueKey(task) {
-  return `${task.space?.key || "SPC"}-${task.id.slice(-4).toUpperCase()}`;
+function taskKey(task) {
+  return `${task.project?.key || "PRJ"}-${task.id.slice(-4).toUpperCase()}`;
 }
 
 function taskPath(task) {
-  return `/spaces/${task.space?.id || task.projectId}/issues/${task.id}`;
+  return `/projects/${task.project?.id || task.projectId}/tasks/${task.id}`;
 }
 
 function priorityBadge(priority) {
@@ -98,12 +99,12 @@ function downloadBlob(filename, content, type) {
   URL.revokeObjectURL(url);
 }
 
-function buildIssuesCsv(tasks) {
-  const headers = ["Issue Key", "Title", "Space", "Status", "Priority", "Assignee", "Due Date", "Updated", "Attention Reasons"];
+function buildTasksCsv(tasks) {
+  const headers = ["Task Key", "Title", "Project", "Status", "Priority", "Assignee", "Due Date", "Updated", "Attention Reasons"];
   const rows = tasks.map((task) => [
-    issueKey(task),
+    taskKey(task),
     task.title,
-    task.space?.name,
+    task.project?.name,
     task.status,
     task.priority,
     task.assignee?.name || task.assignee?.email || "Unassigned",
@@ -173,7 +174,7 @@ function CycleHealthPanel({ health }) {
             <div>
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium">{health.percent}% complete</span>
-                <span className="text-muted-foreground">{health.completed}/{health.activeTaskCount ?? health.activeTasks?.length ?? 0} issues done</span>
+                <span className="text-muted-foreground">{health.completed}/{health.activeTaskCount ?? health.activeTasks?.length ?? 0} tasks done</span>
               </div>
               <div className="mt-2 h-2 overflow-hidden rounded bg-muted">
                 <div className="h-full rounded bg-primary" style={{ width: `${health.percent}%` }} />
@@ -198,9 +199,9 @@ function CycleHealthPanel({ health }) {
                 <div key={sprint.id} className="flex items-center justify-between gap-3 rounded-md border px-3 py-2 text-sm">
                   <span className="min-w-0">
                     <span className="block truncate font-medium">{sprint.name}</span>
-                    <span className="block truncate text-xs text-muted-foreground">{sprint.space?.name || "Workspace"} - ends {formatDate(sprint.endDate)}</span>
+                    <span className="block truncate text-xs text-muted-foreground">{sprint.project?.name || "Project"} - ends {formatDate(sprint.endDate)}</span>
                   </span>
-                  <span className="rounded border bg-muted/35 px-2 py-1 text-xs">{sprint._count?.tasks ?? sprint.tasks?.length ?? 0} issues</span>
+                  <span className="rounded border bg-muted/35 px-2 py-1 text-xs">{sprint._count?.tasks ?? sprint.tasks?.length ?? 0} tasks</span>
                 </div>
               ))}
             </div>
@@ -257,7 +258,7 @@ function WorkloadPanel({ rows }) {
   );
 }
 
-function ThroughputPanel({ overview, rangeDays }) {
+function ThroughputPanel({ summary, rangeDays }) {
   return (
     <Card>
       <CardHeader>
@@ -270,27 +271,27 @@ function ThroughputPanel({ overview, rangeDays }) {
       <CardContent className="grid gap-2 sm:grid-cols-3">
         <div className="rounded-md border p-3">
           <p className="text-xs text-muted-foreground">Created</p>
-          <p className="mt-1 text-2xl font-semibold">{overview.createdRecent}</p>
+          <p className="mt-1 text-2xl font-semibold">{summary.createdRecent}</p>
         </div>
         <div className="rounded-md border p-3">
           <p className="text-xs text-muted-foreground">Updated</p>
-          <p className="mt-1 text-2xl font-semibold">{overview.updatedRecent}</p>
+          <p className="mt-1 text-2xl font-semibold">{summary.updatedRecent}</p>
         </div>
         <div className="rounded-md border p-3">
           <p className="text-xs text-muted-foreground">Completed</p>
-          <p className="mt-1 text-2xl font-semibold">{overview.completedRecent}</p>
+          <p className="mt-1 text-2xl font-semibold">{summary.completedRecent}</p>
         </div>
       </CardContent>
     </Card>
   );
 }
 
-function AttentionTable({ issues }) {
-  if (!issues.length) {
+function AttentionTable({ tasks }) {
+  if (!tasks.length) {
     return (
       <div className="rounded-md border border-dashed p-8 text-center">
         <p className="text-sm font-medium">No attention items</p>
-        <p className="mt-1 text-sm text-muted-foreground">No overdue, unassigned, stale, or high-priority issues match the filters.</p>
+        <p className="mt-1 text-sm text-muted-foreground">No overdue, unassigned, stale, or high-priority tasks match the filters.</p>
       </div>
     );
   }
@@ -301,7 +302,7 @@ function AttentionTable({ issues }) {
         <table className="w-full min-w-[980px] text-left text-sm">
           <thead className="border-b bg-muted/20 text-xs uppercase text-muted-foreground">
             <tr>
-              <th className="px-3 py-2 font-semibold">Issue</th>
+              <th className="px-3 py-2 font-semibold">Task</th>
               <th className="px-3 py-2 font-semibold">Needs attention</th>
               <th className="px-3 py-2 font-semibold">Status</th>
               <th className="px-3 py-2 font-semibold">Priority</th>
@@ -310,11 +311,11 @@ function AttentionTable({ issues }) {
             </tr>
           </thead>
           <tbody>
-            {issues.map((task) => (
+            {tasks.map((task) => (
               <tr key={task.id} className="border-b last:border-b-0 hover:bg-accent/35">
                 <td className="px-3 py-3 align-top">
                   <Link to={taskPath(task)} className="font-semibold hover:text-primary">{task.title}</Link>
-                  <p className="mt-1 text-xs text-muted-foreground">{issueKey(task)} - {task.space?.name}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{taskKey(task)} - {task.project?.name}</p>
                 </td>
                 <td className="px-3 py-3 align-top">
                   <div className="flex flex-wrap gap-1">
@@ -347,8 +348,8 @@ function AttentionTable({ issues }) {
   );
 }
 
-const emptyReport = {
-  spaces: [],
+const emptyAnalytics = {
+  projects: [],
   assignees: [],
   summary: {
     open: 0,
@@ -366,13 +367,13 @@ const emptyReport = {
   priorityBreakdown: [],
   workload: [],
   cycleHealth: { active: [], activeTaskCount: 0, completed: 0, open: 0, dueSoon: 0, percent: 0 },
-  attentionIssues: [],
-  staleIssues: [],
+  attentionTasks: [],
+  staleTasks: [],
   pagination: { page: 1, limit: PAGE_SIZE, total: 0, totalPages: 1, hasNext: false, hasPrev: false },
-  totals: { spaces: 0, tasks: 0, filtered: 0 },
+  totals: { projects: 0, tasks: 0, filtered: 0 },
 };
 
-export default function Reports() {
+export default function Analytics() {
   const [filters, setFilters] = useState({
     search: "",
     projectId: "all",
@@ -386,40 +387,40 @@ export default function Reports() {
   const [exportPending, setExportPending] = useState("");
 
   const queryParams = { ...filters, page, limit: PAGE_SIZE };
-  const reportQuery = useApiResource(() => getDeliveryHealthReport(queryParams), [filters, page]);
-  const report = reportQuery.data?.data || emptyReport;
+  const analyticsQuery = useApiResource(() => getDeliveryHealthAnalytics(queryParams), [filters, page]);
+  const analytics = analyticsQuery.data?.data || emptyAnalytics;
   const generatedAt = useMemo(() => new Date(), []);
 
   async function fetchExportRows() {
-    const result = await getDeliveryHealthReport({ ...filters, includeExport: true, page: 1, limit: PAGE_SIZE });
-    if (!result?.success) throw new Error(result?.error?.message || "Could not export report.");
+    const result = await getDeliveryHealthAnalytics({ ...filters, includeExport: true, page: 1, limit: PAGE_SIZE });
+    if (!result?.success) throw new Error(result?.error?.message || "Could not export analytics.");
     return result.data?.exportTasks || [];
   }
 
-  async function downloadCsvReport() {
+  async function downloadCsvAnalytics() {
     setExportPending("csv");
     try {
       const rows = await fetchExportRows();
-      downloadBlob(`sprintly-engineering-report-${fileDate()}.csv`, buildIssuesCsv(rows), "text/csv;charset=utf-8");
+      downloadBlob(`sprintly-engineering-analytics-${fileDate()}.csv`, buildTasksCsv(rows), "text/csv;charset=utf-8");
     } finally {
       setExportPending("");
     }
   }
 
-  async function downloadJsonReport() {
+  async function downloadJsonAnalytics() {
     setExportPending("json");
     try {
       const rows = await fetchExportRows();
       const payload = {
         generatedAt: new Date().toISOString(),
         filters,
-        summary: report.summary,
-        statusBreakdown: report.statusBreakdown,
-        priorityBreakdown: report.priorityBreakdown,
-        workload: report.workload,
-        attentionIssues: rows,
+        summary: analytics.summary,
+        statusBreakdown: analytics.statusBreakdown,
+        priorityBreakdown: analytics.priorityBreakdown,
+        workload: analytics.workload,
+        attentionTasks: rows,
       };
-      downloadBlob(`sprintly-engineering-report-${fileDate()}.json`, JSON.stringify(payload, null, 2), "application/json;charset=utf-8");
+      downloadBlob(`sprintly-engineering-analytics-${fileDate()}.json`, JSON.stringify(payload, null, 2), "application/json;charset=utf-8");
     } finally {
       setExportPending("");
     }
@@ -435,18 +436,18 @@ export default function Reports() {
         <section className="overflow-hidden rounded-md border bg-card">
           <div className="flex flex-wrap items-start justify-between gap-4 border-b p-4">
             <div className="min-w-0">
-              <p className="text-xs font-semibold uppercase text-primary">Engineering report</p>
-              <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">Delivery Health Report</h1>
+              <p className="text-xs font-semibold uppercase text-primary">Engineering analytics</p>
+              <h1 className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">Delivery Health Analytics</h1>
               <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
                 A generated view of delivery health, cycle pressure, workload, stale work, and engineering attention signals.
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button type="button" variant="outline" className="h-9" disabled={Boolean(exportPending)} onClick={downloadCsvReport}>
+              <Button type="button" variant="outline" className="h-9" disabled={Boolean(exportPending)} onClick={downloadCsvAnalytics}>
                 <Download className="h-4 w-4" />
                 {exportPending === "csv" ? "Preparing..." : "Download CSV"}
               </Button>
-              <Button type="button" variant="outline" className="h-9" disabled={Boolean(exportPending)} onClick={downloadJsonReport}>
+              <Button type="button" variant="outline" className="h-9" disabled={Boolean(exportPending)} onClick={downloadJsonAnalytics}>
                 <FileJson className="h-4 w-4" />
                 {exportPending === "json" ? "Preparing..." : "Download JSON"}
               </Button>
@@ -463,36 +464,36 @@ export default function Reports() {
             </div>
             <div className="bg-card px-4 py-3">
               <p className="text-xs uppercase text-muted-foreground">Coverage</p>
-              <p className="mt-1 font-medium">{report.totals.spaces} spaces</p>
+              <p className="mt-1 font-medium">{analytics.totals.projects} projects</p>
             </div>
             <div className="bg-card px-4 py-3">
               <p className="text-xs uppercase text-muted-foreground">Dataset</p>
-              <p className="mt-1 font-medium">{report.totals.tasks} total issues</p>
+              <p className="mt-1 font-medium">{analytics.totals.tasks} total tasks</p>
             </div>
             <div className="bg-card px-4 py-3">
               <p className="text-xs uppercase text-muted-foreground">Filtered</p>
-              <p className="mt-1 font-medium">{report.totals.filtered} matching issues</p>
+              <p className="mt-1 font-medium">{analytics.totals.filtered} matching tasks</p>
             </div>
           </div>
         </section>
 
         <section className="rounded-md border bg-card">
           <div className="border-b px-3 py-2">
-            <p className="text-sm font-semibold">Report criteria</p>
+            <p className="text-sm font-semibold">Analytics criteria</p>
           </div>
           <div className="grid gap-2 p-3 md:grid-cols-2 xl:grid-cols-[minmax(240px,1fr)_170px_170px_160px_160px_150px_auto]">
             <div className="relative">
               <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input className="pl-9" value={filters.search} onChange={(event) => setFilters((current) => ({ ...current, search: event.target.value }))} placeholder="Search issues, spaces, assignees..." />
+              <Input className="pl-9" value={filters.search} onChange={(event) => setFilters((current) => ({ ...current, search: event.target.value }))} placeholder="Search tasks, projects, assignees..." />
             </div>
-            <select className="h-9 rounded-md border bg-background px-3 text-sm" value={filters.projectId} onChange={(event) => setFilters((current) => ({ ...current, projectId: event.target.value }))} aria-label="Filter by space">
-              <option value="all">All spaces</option>
-              {report.spaces.map((space) => <option key={space.id} value={space.id}>{space.name}</option>)}
+            <select className="h-9 rounded-md border bg-background px-3 text-sm" value={filters.projectId} onChange={(event) => setFilters((current) => ({ ...current, projectId: event.target.value }))} aria-label="Filter by project">
+              <option value="all">All projects</option>
+              {analytics.projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}
             </select>
             <select className="h-9 rounded-md border bg-background px-3 text-sm" value={filters.assigneeId} onChange={(event) => setFilters((current) => ({ ...current, assigneeId: event.target.value }))} aria-label="Filter by assignee">
               <option value="all">All assignees</option>
               <option value="unassigned">Unassigned</option>
-              {report.assignees.map((user) => <option key={user.id} value={user.id}>{user.name || user.email}</option>)}
+              {analytics.assignees.map((user) => <option key={user.id} value={user.id}>{user.name || user.email}</option>)}
             </select>
             <select className="h-9 rounded-md border bg-background px-3 text-sm" value={filters.status} onChange={(event) => setFilters((current) => ({ ...current, status: event.target.value }))} aria-label="Filter by status">
               <option value="all">All statuses</option>
@@ -512,25 +513,24 @@ export default function Reports() {
           </div>
         </section>
 
-        <section className="grid overflow-hidden rounded-md border bg-card md:grid-cols-2 xl:grid-cols-6">
-          <MetricCard label="Open issues" value={report.summary.open} detail="active engineering work" icon={ListTodo} />
-          <MetricCard label="Completed" value={report.summary.completed} detail="done in current filters" icon={CheckCircle2} />
-          <MetricCard label="In review" value={report.summary.inReview} detail="waiting for feedback" icon={GitPullRequest} />
-          <MetricCard label="Stale work" value={report.summary.stale} detail={`${STALE_DAYS}d without movement`} icon={TimerReset} />
-          <MetricCard label="Due pressure" value={`${report.summary.dueSoon}/${report.summary.overdue}`} detail="due soon / overdue" icon={CalendarClock} />
-          <MetricCard label="Cycle completion" value={`${report.summary.cycleCompletionRate}%`} detail="active sprint progress" icon={BarChart3} />
-        </section>
-
-        {reportQuery.isLoading ? (
-          <div className="rounded-md border border-dashed p-8 text-center text-sm text-muted-foreground">Loading engineering reports...</div>
-        ) : null}
-
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)]">
+        {analyticsQuery.isLoading ? (
+          <InlineLoader message="Loading analytics..." />
+        ) : (
+          <>
+          <section className="grid overflow-hidden rounded-md border bg-card md:grid-cols-2 xl:grid-cols-6">
+            <MetricCard label="Open tasks" value={analytics.summary.open} detail="active engineering work" icon={ListTodo} />
+            <MetricCard label="Completed" value={analytics.summary.completed} detail="done in current filters" icon={CheckCircle2} />
+            <MetricCard label="In review" value={analytics.summary.inReview} detail="waiting for feedback" icon={GitPullRequest} />
+            <MetricCard label="Stale work" value={analytics.summary.stale} detail={`${STALE_DAYS}d without movement`} icon={TimerReset} />
+            <MetricCard label="Due pressure" value={`${analytics.summary.dueSoon}/${analytics.summary.overdue}`} detail="due soon / overdue" icon={CalendarClock} />
+            <MetricCard label="Cycle completion" value={`${analytics.summary.cycleCompletionRate}%`} detail="active sprint progress" icon={BarChart3} />
+          </section>
+          <div className="grid gap-4 xl:grid-cols-[minmax(0,1.15fr)_minmax(360px,0.85fr)]">
           <div className="space-y-4">
-            <CycleHealthPanel health={report.cycleHealth} />
+            <CycleHealthPanel health={analytics.cycleHealth} />
             <div className="grid gap-4 lg:grid-cols-2">
-              <BreakdownPanel title="Status Breakdown" description="Current lifecycle distribution for filtered issues." items={report.statusBreakdown} />
-              <BreakdownPanel title="Priority Breakdown" description="How engineering effort is distributed by priority." items={report.priorityBreakdown} />
+              <BreakdownPanel title="Status Breakdown" description="Current lifecycle distribution for filtered tasks." items={analytics.statusBreakdown} />
+              <BreakdownPanel title="Priority Breakdown" description="How engineering effort is distributed by priority." items={analytics.priorityBreakdown} />
             </div>
             <Card>
               <CardHeader>
@@ -538,41 +538,43 @@ export default function Reports() {
                   <ShieldAlert className="h-4 w-4 text-primary" />
                   Engineering Attention List
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">Issues that are overdue, high-priority, unassigned, stale, or in review.</p>
+                <p className="text-sm text-muted-foreground">Tasks that are overdue, high-priority, unassigned, stale, or in review.</p>
               </CardHeader>
               <CardContent className="space-y-3">
-                <AttentionTable issues={report.attentionIssues} />
-                <PaginationControls pagination={report.pagination} onPageChange={setPage} />
+                <AttentionTable tasks={analytics.attentionTasks} />
+                <PaginationControls pagination={analytics.pagination} onPageChange={setPage} />
               </CardContent>
             </Card>
           </div>
 
           <div className="space-y-4">
-            <ThroughputPanel overview={report.summary} rangeDays={filters.rangeDays} />
-            <WorkloadPanel rows={report.workload} />
+            <ThroughputPanel summary={analytics.summary} rangeDays={filters.rangeDays} />
+            <WorkloadPanel rows={analytics.workload} />
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
                   <AlertTriangle className="h-4 w-4 text-primary" />
                   Aging / Stale Work
                 </CardTitle>
-                <p className="text-sm text-muted-foreground">Old open issues and review items that may need a decision.</p>
+                <p className="text-sm text-muted-foreground">Old open tasks and review items that may need a decision.</p>
               </CardHeader>
               <CardContent className="space-y-2">
-                {report.staleIssues.map((task) => (
+                {analytics.staleTasks.map((task) => (
                   <Link key={task.id} to={taskPath(task)} className="block rounded-md border px-3 py-2 text-sm hover:bg-accent">
                     <span className="font-medium">{task.title}</span>
-                    <span className="ml-2 text-xs text-muted-foreground">{issueKey(task)}</span>
+                    <span className="ml-2 text-xs text-muted-foreground">{taskKey(task)}</span>
                     <p className="mt-1 text-xs text-muted-foreground">{task.status} - updated {relativeDate(task.updatedAt)}</p>
                   </Link>
                 ))}
-                {!report.staleIssues.length ? (
+                {!analytics.staleTasks.length ? (
                   <div className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground">No stale work in the current filters.</div>
                 ) : null}
               </CardContent>
             </Card>
           </div>
-        </div>
+          </div>
+          </>
+        )}
       </div>
     </div>
   );

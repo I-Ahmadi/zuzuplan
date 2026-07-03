@@ -22,6 +22,7 @@ import { UserAvatar } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { InlineLoader } from "@/components/ui/loading";
 import { Textarea } from "@/components/ui/textarea";
 import { getRefreshToken, setStoredUser } from "@/lib/auth-api";
 import {
@@ -42,13 +43,13 @@ import { cn } from "@/lib/utils";
 
 const MAX_AVATAR_SIZE = 2 * 1024 * 1024;
 const preferenceDefaults = {
-  defaultView: "board",
+  defaultView: "home",
   density: "comfortable",
   theme: "system",
   profileNote: "",
   sidebarDefault: "expanded",
   projectSelectorBehavior: "remember",
-  rememberLastSpace: true,
+  rememberLastProject: true,
   emailNotifications: true,
   inAppNotifications: true,
   dueSoonNotifications: true,
@@ -99,7 +100,7 @@ function preferencePayloadForSection(section, values) {
       theme: values.theme,
       sidebarDefault: values.sidebarDefault,
       projectSelectorBehavior: values.projectSelectorBehavior,
-      rememberLastSpace: values.rememberLastSpace,
+      rememberLastProject: values.rememberLastProject,
     };
   }
 
@@ -391,6 +392,10 @@ export default function Setting() {
         </Card>
 
         <main className="min-w-0 max-w-full space-y-4 overflow-x-hidden">
+          {preferencesQuery.isLoading && shouldLoadPreferences ? (
+            <InlineLoader message="Loading settings..." />
+          ) : null}
+
           {activeSection === "profile" ? (
             <Card className="min-w-0 overflow-hidden">
               <CardHeader className="border-b">
@@ -398,7 +403,7 @@ export default function Setting() {
                   <UserCircle className="h-4 w-4" />
                   Profile
                 </CardTitle>
-                <CardDescription className="break-words">Update the identity shown across spaces, tasks, and comments.</CardDescription>
+                <CardDescription className="break-words">Update the identity shown across projects, tasks, and comments.</CardDescription>
               </CardHeader>
               <CardContent className="p-4">
                 <form
@@ -463,17 +468,19 @@ export default function Setting() {
                   <Monitor className="h-4 w-4" />
                   Preferences
                 </CardTitle>
-                <CardDescription>Control how your workspace opens and feels for your account.</CardDescription>
+                <CardDescription>Control how Sprintly opens and feels for your account.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4 p-4">
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                   <div className="space-y-2">
                     <Label>Default landing page</Label>
                     <select className="h-9 w-full rounded-md border bg-background px-3 text-sm" value={preferences.defaultView} onChange={(event) => setPreferences((current) => ({ ...current, defaultView: event.target.value }))}>
-                      <option value="for-you">For You</option>
-                      <option value="spaces">Spaces</option>
-                      <option value="board">Issues</option>
-                      <option value="recent">Recent</option>
+                      <option value="home">Home</option>
+                      <option value="projects">Projects</option>
+                      <option value="tasks">Tasks</option>
+                      <option value="people">People</option>
+                      <option value="activity">Activity</option>
+                      <option value="analytics">Analytics</option>
                     </select>
                   </div>
                   <div className="space-y-2">
@@ -506,7 +513,7 @@ export default function Setting() {
                     </select>
                   </div>
                 </div>
-                <ToggleRow title="Remember last opened space" description="Use your last active space when opening boards and project-specific tools." checked={preferences.rememberLastSpace} onChange={(checked) => setPreferences((current) => ({ ...current, rememberLastSpace: checked }))} />
+                <ToggleRow title="Remember last opened project" description="Use your last active project when opening boards and project-specific tools." checked={preferences.rememberLastProject} onChange={(checked) => setPreferences((current) => ({ ...current, rememberLastProject: checked }))} />
                 <Button disabled={preferencesAction.isPending} onClick={() => savePreferences()}>
                   <Save className="h-4 w-4" />
                   {preferencesAction.isPending ? "Saving..." : "Save preferences"}
@@ -526,7 +533,7 @@ export default function Setting() {
               </CardHeader>
               <CardContent className="space-y-3 p-4">
                 <ToggleRow title="Email notifications" description="Send important updates to your mailbox." checked={preferences.emailNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, emailNotifications: checked }))} />
-                <ToggleRow title="In-app notifications" description="Show notifications inside your workspace." checked={preferences.inAppNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, inAppNotifications: checked }))} />
+                <ToggleRow title="In-app notifications" description="Show notifications inside Sprintly." checked={preferences.inAppNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, inAppNotifications: checked }))} />
                 <ToggleRow title="Due-soon reminders" description="Remind me before assigned work is due." checked={preferences.dueSoonNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, dueSoonNotifications: checked }))} />
                 <ToggleRow title="Assignments" description="Notify me when work is assigned or reassigned to me." checked={preferences.assignmentNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, assignmentNotifications: checked }))} />
                 <ToggleRow title="Mentions" description="Notify me when someone mentions me." checked={preferences.mentionNotifications} onChange={(checked) => setPreferences((current) => ({ ...current, mentionNotifications: checked }))} />
@@ -621,6 +628,7 @@ export default function Setting() {
                 <CardDescription>Review active refresh-token sessions and revoke access from other devices.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3 p-4">
+                {sessionsQuery.isLoading ? <InlineLoader message="Loading sessions..." /> : null}
                 {sessions.map((session, index) => (
                   <div key={session.id} className="flex flex-col gap-2 rounded-md border p-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>

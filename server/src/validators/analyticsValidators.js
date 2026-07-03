@@ -9,10 +9,6 @@ export const deliveryHealth = [
     .optional()
     .custom((value) => value === 'all' || /^c[a-z0-9]{24}$/.test(value))
     .withMessage('Project id must be a valid id'),
-  query('spaceId')
-    .optional()
-    .custom((value) => value === 'all' || /^c[a-z0-9]{24}$/.test(value))
-    .withMessage('Space id must be a valid id'),
   query('assigneeId')
     .optional()
     .custom((value) => value === 'all' || value === 'unassigned' || /^c[a-z0-9]{24}$/.test(value))

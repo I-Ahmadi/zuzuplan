@@ -55,9 +55,7 @@ export function AuthProvider({ children }) {
       setStoredUser(currentUser);
       setUser(currentUser);
     } catch (error) {
-      if (!storedUser) {
-        clearSession();
-      }
+      clearSession();
     } finally {
       setLoading(false);
     }

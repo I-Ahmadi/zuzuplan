@@ -51,22 +51,22 @@ function inRange(value, days) {
   return Date.now() - new Date(value).getTime() <= Number(days) * DAY_MS;
 }
 
-function isOpenIssue(task) {
+function isOpenTask(task) {
   return task.status !== TASK_STATUS.DONE;
 }
 
 function isOverdue(task) {
   const days = dateDaysFromToday(task.dueDate);
-  return isOpenIssue(task) && days !== null && days < 0;
+  return isOpenTask(task) && days !== null && days < 0;
 }
 
 function isDueSoon(task) {
   const days = dateDaysFromToday(task.dueDate);
-  return isOpenIssue(task) && days !== null && days >= 0 && days <= 7;
+  return isOpenTask(task) && days !== null && days >= 0 && days <= 7;
 }
 
 function isStale(task) {
-  if (!isOpenIssue(task)) return false;
+  if (!isOpenTask(task)) return false;
   const staleLimit = task.status === TASK_STATUS.IN_REVIEW ? REVIEW_STALE_DAYS : STALE_DAYS;
   return ageInDays(task.updatedAt || task.createdAt) >= staleLimit;
 }
@@ -74,7 +74,7 @@ function isStale(task) {
 function compactTask(task) {
   return {
     ...task,
-    space: task.project,
+    project: task.project,
   };
 }
 
@@ -86,8 +86,8 @@ function buildBreakdown(items, definitions, key = 'status') {
   });
 }
 
-function buildDeliveryOverview(tasks, sprints, rangeDays) {
-  const open = tasks.filter(isOpenIssue);
+function buildDeliveryAnalytics(tasks, sprints, rangeDays) {
+  const open = tasks.filter(isOpenTask);
   const completed = tasks.filter((task) => task.status === TASK_STATUS.DONE);
   const activeSprintIds = new Set(sprints.filter((sprint) => sprint.status === 'ACTIVE').map((sprint) => sprint.id));
   const activeSprintTasks = tasks.filter((task) => task.sprintId && activeSprintIds.has(task.sprintId));
@@ -129,7 +129,7 @@ function buildAssigneeWorkload(tasks, members) {
   const users = buildAssignees(tasks, members);
   const rows = users.map((user) => {
     const assigned = tasks.filter((task) => task.assigneeId === user.id || task.assignee?.id === user.id);
-    const open = assigned.filter(isOpenIssue);
+    const open = assigned.filter(isOpenTask);
     return {
       user,
       open: open.length,
@@ -139,7 +139,7 @@ function buildAssigneeWorkload(tasks, members) {
     };
   });
 
-  const unassigned = tasks.filter((task) => isOpenIssue(task) && !task.assigneeId && !task.assignee?.id);
+  const unassigned = tasks.filter((task) => isOpenTask(task) && !task.assigneeId && !task.assignee?.id);
   if (unassigned.length) {
     rows.push({
       user: { id: 'unassigned', name: 'Unassigned', email: 'Needs owner' },
@@ -159,13 +159,13 @@ function getAttentionReasons(task) {
   if (isOverdue(task)) reasons.push('Overdue');
   if (task.priority === 'URGENT') reasons.push('Urgent');
   if (task.priority === 'HIGH') reasons.push('High priority');
-  if (!task.assigneeId && !task.assignee?.id && isOpenIssue(task)) reasons.push('No assignee');
+  if (!task.assigneeId && !task.assignee?.id && isOpenTask(task)) reasons.push('No assignee');
   if (task.status === TASK_STATUS.IN_REVIEW) reasons.push('In review');
   if (isStale(task)) reasons.push(task.status === TASK_STATUS.IN_REVIEW ? 'Review stale' : 'Stale');
   return reasons;
 }
 
-function getAttentionIssues(tasks) {
+function getAttentionTasks(tasks) {
   return tasks
     .map((task) => ({ ...task, attentionReasons: getAttentionReasons(task) }))
     .filter((task) => task.attentionReasons.length)
@@ -185,7 +185,7 @@ function activeCycleHealth(sprints, tasks) {
   const activeIds = new Set(active.map((sprint) => sprint.id));
   const activeTasks = tasks.filter((task) => task.sprintId && activeIds.has(task.sprintId));
   const completed = activeTasks.filter((task) => task.status === TASK_STATUS.DONE).length;
-  const open = activeTasks.filter(isOpenIssue).length;
+  const open = activeTasks.filter(isOpenTask).length;
   const dueSoon = activeTasks.filter(isDueSoon).length;
   const percent = activeTasks.length ? Math.round((completed / activeTasks.length) * 100) : 0;
   return { active, activeTaskCount: activeTasks.length, completed, open, dueSoon, percent };
@@ -193,7 +193,7 @@ function activeCycleHealth(sprints, tasks) {
 
 function buildTaskWhere(projectIds, filters) {
   const where = { projectId: { in: projectIds } };
-  const projectId = filters.projectId || filters.spaceId;
+  const projectId = filters.projectId;
   if (projectId && projectId !== 'all') where.projectId = projectIds.includes(projectId) ? projectId : '__no_access__';
   if (filters.assigneeId === 'unassigned') {
     where.assigneeId = null;
@@ -218,7 +218,7 @@ function buildTaskWhere(projectIds, filters) {
   return where;
 }
 
-export async function getDeliveryHealthReport(userId, filters = {}) {
+export async function getDeliveryHealthAnalytics(userId, filters = {}) {
   const { page, limit } = getPageAndLimit(filters);
   const includeExport = boolValue(filters.includeExport, false);
   const rangeDays = filters.rangeDays || '30';
@@ -232,17 +232,17 @@ export async function getDeliveryHealthReport(userId, filters = {}) {
 
   if (!projectIds.length) {
     return {
-      spaces: [],
+      projects: [],
       assignees: [],
-      summary: buildDeliveryOverview([], [], rangeDays),
+      summary: buildDeliveryAnalytics([], [], rangeDays),
       statusBreakdown: buildBreakdown([], STATUSES),
       priorityBreakdown: buildBreakdown([], PRIORITIES, 'priority'),
       workload: [],
       cycleHealth: activeCycleHealth([], []),
-      attentionIssues: [],
-      staleIssues: [],
+      attentionTasks: [],
+      staleTasks: [],
       pagination: createPaginationResult([], 0, page, limit).pagination,
-      totals: { spaces: 0, tasks: 0, filtered: 0 },
+      totals: { projects: 0, tasks: 0, filtered: 0 },
       exportTasks: includeExport ? [] : undefined,
     };
   }
@@ -291,22 +291,22 @@ export async function getDeliveryHealthReport(userId, filters = {}) {
   ]);
 
   const tasks = rawTasks.map(compactTask);
-  const sprintRows = sprints.map((sprint) => ({ ...sprint, space: sprint.project }));
-  const attentionIssues = getAttentionIssues(tasks);
-  const paged = createPaginationResult(attentionIssues.slice((page - 1) * limit, page * limit), attentionIssues.length, page, limit);
+  const sprintRows = sprints.map((sprint) => ({ ...sprint, project: sprint.project }));
+  const attentionTasks = getAttentionTasks(tasks);
+  const paged = createPaginationResult(attentionTasks.slice((page - 1) * limit, page * limit), attentionTasks.length, page, limit);
 
   return {
-    spaces: projects,
+    projects,
     assignees: buildAssignees(tasks, members),
-    summary: buildDeliveryOverview(tasks, sprintRows, rangeDays),
+    summary: buildDeliveryAnalytics(tasks, sprintRows, rangeDays),
     statusBreakdown: buildBreakdown(tasks, STATUSES),
     priorityBreakdown: buildBreakdown(tasks, PRIORITIES, 'priority'),
     workload: buildAssigneeWorkload(tasks, members),
     cycleHealth: activeCycleHealth(sprintRows, tasks),
-    attentionIssues: paged.data,
-    staleIssues: tasks.filter(isStale).slice(0, 6),
+    attentionTasks: paged.data,
+    staleTasks: tasks.filter(isStale).slice(0, 6),
     pagination: paged.pagination,
-    totals: { spaces: projects.length, tasks: rawTasks.length, filtered: tasks.length },
-    exportTasks: includeExport ? attentionIssues : undefined,
+    totals: { projects: projects.length, tasks: rawTasks.length, filtered: tasks.length },
+    exportTasks: includeExport ? attentionTasks : undefined,
   };
 }

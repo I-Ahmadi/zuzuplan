@@ -36,13 +36,13 @@ model User {
 model UserPreference {
   id                      String   @id @default(cuid())
   userId                  String   @unique
-  defaultView             String   @default("board")
+  defaultView             String   @default("home")
   density                 String   @default("comfortable")
   theme                   String   @default("system")
   profileNote             String   @default("")
   sidebarDefault          String   @default("expanded")
   projectSelectorBehavior String   @default("remember")
-  rememberLastSpace       Boolean  @default(true)
+  rememberLastProject     Boolean  @default(true)
   emailNotifications      Boolean  @default(true)
   inAppNotifications      Boolean  @default(true)
   dueSoonNotifications    Boolean  @default(true)

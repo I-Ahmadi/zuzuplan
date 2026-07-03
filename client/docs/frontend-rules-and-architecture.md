@@ -108,7 +108,7 @@ export function listProjectTasks(projectId) {
 
 - Generic hooks live in `src/hooks`.
 - API helpers and utilities live in `src/lib`.
-- Keep storage keys, issue constants, and similar shared constants in focused `src/lib/*` files.
+- Keep storage keys, task constants, and similar shared constants in focused `src/lib/*` files.
 - Avoid large unstructured utility files; split by concern when growth makes the file hard to scan.
 - Prefer plain data transformation helpers over logic hidden inside UI components.
 
@@ -182,7 +182,7 @@ Rules:
 
 ## Next.js Migration Note
 
-If the team intentionally migrates to Next.js:
+If the project intentionally migrates to Next.js:
 
 - Move route pages from `src/pages` into `app/` route segments.
 - Move shared UI from `src/components/ui` into `components/ui`.

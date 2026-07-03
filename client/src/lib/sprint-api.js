@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-import { normalizeTaskStatusPayload } from "@/lib/issue-constants";
+import { normalizeTaskStatusPayload } from "@/lib/task-constants";
 
 function normalizeSprint(sprint) {
   if (!sprint?.tasks) return sprint;

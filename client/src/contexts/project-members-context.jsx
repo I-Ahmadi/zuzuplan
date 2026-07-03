@@ -11,7 +11,7 @@ const membersRequests = new Map();
 
 function getProjectIdFromPath() {
   if (typeof window === "undefined") return "";
-  return window.location.pathname.match(/^\/(?:projects|spaces)\/([^/]+)/)?.[1] || "";
+  return window.location.pathname.match(/^\/(?:projects|projects)\/([^/]+)/)?.[1] || "";
 }
 
 function getInitialProjectId() {

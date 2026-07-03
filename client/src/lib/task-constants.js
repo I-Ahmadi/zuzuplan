@@ -1,17 +1,17 @@
-export const ISSUE_STATUSES = [
+export const TASK_STATUSES = [
   { value: "TODO", label: "Todo", color: "#6b7280" },
   { value: "IN_PROGRESS", label: "In Progress", color: "#82b832" },
   { value: "IN_REVIEW", label: "In Review", color: "#bf5af2" },
   { value: "DONE", label: "Done", color: "#3478f6" },
 ];
 
-export const BOARD_STATUSES = ISSUE_STATUSES;
+export const BOARD_STATUSES = TASK_STATUSES;
 
-export const ISSUE_STATUS_LABELS = Object.fromEntries(ISSUE_STATUSES.map((status) => [status.value, status.label]));
+export const TASK_STATUS_LABELS = Object.fromEntries(TASK_STATUSES.map((status) => [status.value, status.label]));
 
 const CUSTOM_STATUS_COLORS = ["#f97316", "#14b8a6", "#eab308", "#ec4899", "#8b5cf6", "#22c55e", "#06b6d4", "#f43f5e"];
 
-export function toIssueStatusValue(label) {
+export function toTaskStatusValue(label) {
   return String(label || "")
     .trim()
     .toUpperCase()
@@ -20,9 +20,9 @@ export function toIssueStatusValue(label) {
     .slice(0, 32);
 }
 
-export function makeIssueStatus(label, existing = []) {
+export function makeTaskStatus(label, existing = []) {
   const cleanLabel = String(label || "").trim().replace(/\s+/g, " ");
-  const value = toIssueStatusValue(cleanLabel);
+  const value = toTaskStatusValue(cleanLabel);
   if (!cleanLabel || !value) return null;
   const duplicate = existing.some((status) => status.value === value || status.label.toLowerCase() === cleanLabel.toLowerCase());
   if (duplicate) return null;
@@ -34,9 +34,9 @@ export function makeIssueStatus(label, existing = []) {
   };
 }
 
-export function mergeIssueStatuses(customStatuses = []) {
+export function mergeTaskStatuses(customStatuses = []) {
   const seen = new Set();
-  return [...ISSUE_STATUSES, ...customStatuses]
+  return [...TASK_STATUSES, ...customStatuses]
     .filter((status) => status?.value && status?.label)
     .filter((status) => {
       if (seen.has(status.value)) return false;
@@ -45,31 +45,31 @@ export function mergeIssueStatuses(customStatuses = []) {
     });
 }
 
-export function issueStatusLabel(value, statuses = ISSUE_STATUSES) {
+export function taskStatusLabel(value, statuses = TASK_STATUSES) {
   return statuses.find((status) => status.value === value)?.label || value;
 }
 
-export const LEGACY_ISSUE_STATUS_GROUPS = {
+export const LEGACY_TASK_STATUS_GROUPS = {
   TODO: ["TODO", "BACKLOG", "READY"],
   IN_PROGRESS: ["IN_PROGRESS", "READY_TO_MERGE", "BLOCKED"],
   IN_REVIEW: ["IN_REVIEW"],
   DONE: ["DONE", "MERGED", "DEPLOYED", "CANCELED", "CANCELLED"],
 };
 
-export function normalizeIssueStatus(status) {
+export function normalizeTaskStatus(status) {
   if (!status) return "TODO";
   const normalized = String(status).toUpperCase();
-  const match = Object.entries(LEGACY_ISSUE_STATUS_GROUPS).find(([, values]) => values.includes(normalized));
+  const match = Object.entries(LEGACY_TASK_STATUS_GROUPS).find(([, values]) => values.includes(normalized));
   return match ? match[0] : normalized;
 }
 
 export function normalizeTaskStatusPayload(task) {
   if (!task) return task;
-  return { ...task, status: normalizeIssueStatus(task.status) };
+  return { ...task, status: normalizeTaskStatus(task.status) };
 }
 
-export const ISSUE_TYPES = ["BUG", "FEATURE", "CHORE", "TECH_DEBT", "SPIKE", "INCIDENT"];
+export const TASK_TYPES = ["BUG", "FEATURE", "CHORE", "TECH_DEBT", "SPIKE", "INCIDENT"];
 
-export function isClosedIssue(status) {
+export function isClosedTask(status) {
   return status === "DONE";
 }

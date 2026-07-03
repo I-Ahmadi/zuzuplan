@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { prisma } from '../config/database.js';
 import { AppError } from '../middleware/errorHandler.js';
 import { generateToken, hashToken } from '../utils/crypto.js';
-import { sendVerificationEmail } from '../utils/email.js';
+import { sendVerificationEmail } from './emailService.js';
 
 function omitPassword(user) {
   if (!user) return null;
@@ -16,6 +16,7 @@ const CURRENT_USER_SELECT = {
   email: true,
   avatar: true,
   emailVerified: true,
+  passwordChangedAt: true,
   createdAt: true,
 };
 
@@ -28,7 +29,7 @@ const PREFERENCE_SCOPE_SELECTS = {
     theme: true,
     sidebarDefault: true,
     projectSelectorBehavior: true,
-    rememberLastSpace: true,
+    rememberLastProject: true,
   },
   notifications: {
     emailNotifications: true,
@@ -72,7 +73,7 @@ export async function updatePreferences(userId, data) {
     'profileNote',
     'sidebarDefault',
     'projectSelectorBehavior',
-    'rememberLastSpace',
+    'rememberLastProject',
     'emailNotifications',
     'inAppNotifications',
     'dueSoonNotifications',

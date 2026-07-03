@@ -4,7 +4,7 @@ import { PROJECT_INVITE_STATUS, PROJECT_PERMISSIONS, ROLES, TASK_STATUS, taskSta
 import { AppError } from '../middleware/errorHandler.js';
 import { getProjectPermissions, getProjectRole, hasProjectPermission, normalizeRole } from '../utils/permissions.js';
 import { generateToken, hashToken } from '../utils/crypto.js';
-import { sendProjectInviteEmail } from '../utils/email.js';
+import { sendProjectInviteEmail } from './emailService.js';
 
 const USER_SUMMARY_SELECT = { id: true, name: true, email: true, avatar: true };
 
@@ -47,7 +47,7 @@ const PROJECT_DETAIL_SELECTS = {
     key: true,
     ...PROJECT_ACCESS_SELECT,
   },
-  team: {
+  people: {
     id: true,
     name: true,
     key: true,

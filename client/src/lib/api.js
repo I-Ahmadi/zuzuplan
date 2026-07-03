@@ -4,6 +4,7 @@ import {
   setAccessToken,
   setRefreshToken,
 } from "@/lib/auth-api";
+import { startGlobalLoading } from "@/lib/loading-store";
 
 const configuredApiBase = import.meta.env.VITE_API_URL;
 
@@ -36,26 +37,32 @@ export async function refreshAccessToken() {
 
   if (!refreshPromise) {
     refreshPromise = (async () => {
-      const res = await fetch(`${API_BASE}/auth/refresh`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ token: refreshToken }),
-        credentials: "include",
-      });
+      const stopLoading = startGlobalLoading();
 
-      const data = await parseResponse(res);
+      try {
+        const res = await fetch(`${API_BASE}/auth/refresh`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ token: refreshToken }),
+          credentials: "include",
+        });
 
-      if (!res.ok || !data?.success || !data?.data?.accessToken) {
-        throw new Error(data?.error?.message || "Session refresh failed");
+        const data = await parseResponse(res);
+
+        if (!res.ok || !data?.success || !data?.data?.accessToken) {
+          throw new Error(data?.error?.message || "Session refresh failed");
+        }
+
+        setAccessToken(data.data.accessToken);
+        if (data.data.refreshToken) {
+          setRefreshToken(data.data.refreshToken);
+        }
+        return data.data.accessToken;
+      } finally {
+        stopLoading();
       }
-
-      setAccessToken(data.data.accessToken);
-      if (data.data.refreshToken) {
-        setRefreshToken(data.data.refreshToken);
-      }
-      return data.data.accessToken;
     })().finally(() => {
       refreshPromise = null;
     });
@@ -87,47 +94,53 @@ export async function api(endpoint, options = {}, retry = true) {
   }
 
   const request = (async () => {
-    const res = await fetch(url, {
-      ...options,
-      method,
-      headers,
-      credentials: "include",
-    });
+    const stopLoading = startGlobalLoading();
 
-    const data = await parseResponse(res);
+    try {
+      const res = await fetch(url, {
+        ...options,
+        method,
+        headers,
+        credentials: "include",
+      });
 
-    const shouldTryRefresh =
-      res.status === 401 &&
-      retry &&
-      endpoint !== "/auth/login" &&
-      endpoint !== "/auth/register" &&
-      endpoint !== "/auth/refresh" &&
-      endpoint !== "/auth/forgot-password" &&
-      endpoint !== "/auth/reset-password" &&
-      endpoint !== "/auth/verify-email";
+      const data = await parseResponse(res);
 
-    if (shouldTryRefresh) {
-      try {
-        await refreshAccessToken();
-        return api(endpoint, options, false);
-      } catch {
+      const shouldTryRefresh =
+        res.status === 401 &&
+        retry &&
+        endpoint !== "/auth/login" &&
+        endpoint !== "/auth/register" &&
+        endpoint !== "/auth/refresh" &&
+        endpoint !== "/auth/forgot-password" &&
+        endpoint !== "/auth/reset-password" &&
+        endpoint !== "/auth/verify-email";
+
+      if (shouldTryRefresh) {
+        try {
+          await refreshAccessToken();
+          return api(endpoint, options, false);
+        } catch {
+          return {
+            success: false,
+            error: { message: "Session refresh failed" },
+            status: 401,
+          };
+        }
+      }
+
+      if (!res.ok) {
         return {
           success: false,
-          error: { message: "Session refresh failed" },
-          status: 401,
+          error: data?.error || { message: data?.message || "Request failed" },
+          status: res.status,
         };
       }
-    }
 
-    if (!res.ok) {
-      return {
-        success: false,
-        error: data?.error || { message: data?.message || "Request failed" },
-        status: res.status,
-      };
+      return data;
+    } finally {
+      stopLoading();
     }
-
-    return data;
   })();
 
   if (!dedupeKey) return request;

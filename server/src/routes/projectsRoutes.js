@@ -6,10 +6,11 @@ import * as projectValidators from '../validators/projectValidators.js';
 
 const router = express.Router();
 
+router.get("/invites/:token", projectValidators.token, validate, projectController.getInviteByToken);
+
 router.use(authenticate);
 
 router.get("/", projectValidators.listProjects, validate, projectController.listProjects);
-router.get("/invites/:token", projectValidators.token, validate, projectController.getInviteByToken);
 router.post("/invites/:token/accept", projectValidators.token, validate, projectController.acceptInvite);
 router.post("/", projectValidators.createProject, validate, projectController.createProject);
 router.get("/:id", projectValidators.projectId, validate, projectController.getProjectById);

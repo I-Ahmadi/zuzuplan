@@ -56,10 +56,9 @@ export function validateEnv() {
     throw new Error('JWT_REFRESH_EXPIRES_MS must be a number of milliseconds.');
   }
 
-  const emailDevMode = process.env.EMAIL_DEV_MODE === 'true';
-  const hasSmtp = process.env.EMAIL_HOST && process.env.EMAIL_PORT && process.env.EMAIL_USER && process.env.EMAIL_PASS && process.env.EMAIL_FROM;
+  const hasBrevoEmail = process.env.BREVO_API_KEY && process.env.BREVO_SENDER_EMAIL;
 
-  if (IS_PRODUCTION && !emailDevMode && !hasSmtp) {
-    throw new Error('Production email requires SMTP env vars or EMAIL_DEV_MODE=true.');
+  if (IS_PRODUCTION && !hasBrevoEmail) {
+    throw new Error('Production email requires BREVO_API_KEY and BREVO_SENDER_EMAIL.');
   }
 }

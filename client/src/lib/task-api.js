@@ -1,5 +1,5 @@
 import { api } from "@/lib/api";
-import { normalizeTaskStatusPayload } from "@/lib/issue-constants";
+import { normalizeTaskStatusPayload } from "@/lib/task-constants";
 
 function normalizeTaskResult(result) {
   if (!result?.success) return result;
@@ -82,33 +82,33 @@ export async function getProjectTimeline(projectId, params = {}) {
 }
 
 export async function getProjectTaskSummary(projectId) {
-  return api(`/projects/${projectId}/issues/summary`);
+  return api(`/projects/${projectId}/tasks/summary`);
 }
 
 export async function getProjectTaskWorkload(projectId) {
-  return api(`/projects/${projectId}/issues/workload`);
+  return api(`/projects/${projectId}/tasks/workload`);
 }
 
 export async function createTask(projectId, payload) {
-  return normalizeTaskResult(await api(`/projects/${projectId}/issues`, {
+  return normalizeTaskResult(await api(`/projects/${projectId}/tasks`, {
     method: "POST",
     body: JSON.stringify(payload),
   }));
 }
 
 export async function getTask(projectId, taskId) {
-  return normalizeTaskResult(await api(`/projects/${projectId}/issues/${taskId}`));
+  return normalizeTaskResult(await api(`/projects/${projectId}/tasks/${taskId}`));
 }
 
 export async function updateTask(projectId, taskId, payload) {
-  return normalizeTaskResult(await api(`/projects/${projectId}/issues/${taskId}`, {
+  return normalizeTaskResult(await api(`/projects/${projectId}/tasks/${taskId}`, {
     method: "PUT",
     body: JSON.stringify(payload),
   }));
 }
 
 export async function deleteTask(projectId, taskId) {
-  return api(`/projects/${projectId}/issues/${taskId}`, {
+  return api(`/projects/${projectId}/tasks/${taskId}`, {
     method: "DELETE",
   });
 }

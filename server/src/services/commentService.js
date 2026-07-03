@@ -38,7 +38,7 @@ export async function createComment(taskId, userId, content) {
     entityId: comment.id,
     title: 'Comment added',
     description: content.slice(0, 240),
-    metadata: { issueTitle: task.title },
+    metadata: { taskTitle: task.title },
   });
   return comment;
 }

@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FolderKanban, ListTodo, MessageSquare, Search, UserCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { InlineLoader } from "@/components/ui/loading";
 import { useApiResource } from "@/lib/api-hooks";
 import { globalSearch } from "@/lib/search-api";
 import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
@@ -9,7 +10,7 @@ import { cn } from "@/lib/utils";
 
 const RECENT_SEARCHES_KEY = STORAGE_KEYS.recentSearches;
 const COMMANDS = [
-  { id: "new-issue", title: "Create issue", subtitle: "Open the issue list for quick creation", to: "/issues?view=list", icon: ListTodo },
+  { id: "new-task", title: "Create task", subtitle: "Open the task list for quick creation", to: "/tasks?view=list", icon: ListTodo },
 ];
 
 function readRecentSearches() {
@@ -41,10 +42,10 @@ function useDebouncedValue(value, delay = 220) {
 
 function resultPath(result) {
   if (result.type === "command") return result.item.to;
-  if (result.type === "space") return `/spaces/${result.item.id}`;
-  if (result.type === "task") return `/spaces/${result.item.projectId}/issues/${result.item.id}`;
-  if (result.type === "comment") return `/spaces/${result.item.task.projectId}/issues/${result.item.taskId}`;
-  return "/team-members";
+  if (result.type === "project") return `/projects/${result.item.id}`;
+  if (result.type === "task") return `/projects/${result.item.projectId}/tasks/${result.item.id}`;
+  if (result.type === "comment") return `/projects/${result.item.task.projectId}/tasks/${result.item.taskId}`;
+  return "/people";
 }
 
 function ResultIcon({ result }) {
@@ -53,7 +54,7 @@ function ResultIcon({ result }) {
     return <Icon className="h-4 w-4" />;
   }
   const icons = {
-    space: FolderKanban,
+    project: FolderKanban,
     task: ListTodo,
     comment: MessageSquare,
     member: UserCircle,
@@ -65,15 +66,15 @@ function ResultIcon({ result }) {
 function resultSubtitle(result) {
   const item = result.item;
   if (result.type === "command") return item.subtitle;
-  if (result.type === "space") return `${item.key || "SP"} - ${item.status || "active"}`;
-  if (result.type === "task") return `${item.project?.key || "SP"} - ${item.status}`;
-  if (result.type === "comment") return `${item.user?.name || item.user?.email || "Comment"} on ${item.task?.title || "issue"}`;
-  return `${item.role || "Member"} - ${item.project?.name || "Team"}`;
+  if (result.type === "project") return `${item.key || "PRJ"} - ${item.status || "active"}`;
+  if (result.type === "task") return `${item.project?.key || "PRJ"} - ${item.status}`;
+  if (result.type === "comment") return `${item.user?.name || item.user?.email || "Comment"} on ${item.task?.title || "task"}`;
+  return `${item.role || "Member"} - ${item.project?.name || "People"}`;
 }
 
 function flattenResults(results) {
   return [
-    ...(results.projects || []).map((item) => ({ type: "space", title: item.name, item })),
+    ...(results.projects || []).map((item) => ({ type: "project", title: item.name, item })),
     ...(results.tasks || []).map((item) => ({ type: "task", title: item.title, item })),
     ...(results.comments || []).map((item) => ({ type: "comment", title: item.content, item })),
     ...(results.members || []).map((item) => ({ type: "member", title: item.user?.name || item.user?.email || "Member", item })),
@@ -164,7 +165,7 @@ export default function GlobalSearchDialog({ open, initialQuery, onClose }) {
               setQuery(event.target.value);
               setActiveIndex(0);
             }}
-            placeholder="Search issues, spaces, comments, people..."
+            placeholder="Search tasks, projects, comments, people..."
             type="search"
           />
           <kbd className="hidden rounded border bg-secondary px-1.5 py-0.5 text-[11px] text-muted-foreground sm:inline">Esc</kbd>
@@ -206,7 +207,7 @@ export default function GlobalSearchDialog({ open, initialQuery, onClose }) {
 
           {query.trim().length >= 2 ? (
             <div className="space-y-1">
-              {searchQuery.isFetching ? <p className="px-3 py-2 text-sm text-muted-foreground">Searching...</p> : null}
+              {searchQuery.isFetching ? <InlineLoader message="Searching..." className="my-1 py-3" /> : null}
               {results.map((result, index) => (
                 <button
                   key={`${result.type}-${result.item.id}`}

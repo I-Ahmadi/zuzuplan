@@ -76,7 +76,7 @@ export async function globalSearch(userId, query) {
       },
       take: 8,
       orderBy: { updatedAt: 'desc' },
-      include: {
+      select: {
         id: true,
         role: true,
         userId: true,

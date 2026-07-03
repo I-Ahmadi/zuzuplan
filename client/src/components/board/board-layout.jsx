@@ -7,7 +7,7 @@ import { cleanupLegacyStorage } from "@/lib/storage-keys";
 
 const SIDEBAR_WIDTH_EXPANDED = 280;
 const SIDEBAR_WIDTH_COLLAPSED = 56;
-const AUTH_PATHS = ["/login", "/signup", "/verify-email", "/forgot-password", "/reset-password"];
+const AUTH_PATHS = ["/login", "/signup", "/verify-email", "/forgot-password", "/reset-password", "/invites"];
 const PORTAL_CONTENT_CLASS = "w-full";
 
 function BoardLayoutInner({ children }) {

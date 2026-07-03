@@ -27,21 +27,16 @@ JWT_REFRESH_SECRET=generate-a-different-long-random-value
 JWT_ACCESS_EXPIRES_IN=15m
 JWT_REFRESH_EXPIRES_IN=7d
 JWT_REFRESH_EXPIRES_MS=604800000
-EMAIL_DEV_MODE=true
+BREVO_API_KEY=your-brevo-api-key
+BREVO_SENDER_EMAIL=noreply@example.com
+BREVO_SENDER_NAME=Sprintly
 UPLOAD_DIR=/tmp/sprintly-uploads
 AVATAR_MAX_FILE_SIZE=2097152
 ```
 
-For a production email flow, replace `EMAIL_DEV_MODE=true` with SMTP settings:
+## Email
 
-```env
-EMAIL_HOST=smtp.example.com
-EMAIL_PORT=587
-EMAIL_SECURE=false
-EMAIL_USER=your-user
-EMAIL_PASS=your-password
-EMAIL_FROM=noreply@example.com
-```
+Sprintly sends transactional email through Brevo's Email API. Create a Brevo API key in the Brevo dashboard, verify the sender identity or sending domain, and set `BREVO_API_KEY`, `BREVO_SENDER_EMAIL`, and optionally `BREVO_SENDER_NAME` on the Render service. The server validates these settings on startup and uses the same Brevo sender for verification, password reset, and invitation emails.
 
 ## Database
 

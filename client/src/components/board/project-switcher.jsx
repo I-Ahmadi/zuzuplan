@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Check, ChevronDown } from "lucide-react";
+import { InlineLoader } from "@/components/ui/loading";
 import { PAGE_SIZE } from "@/components/ui/pagination";
 import { useApiResource } from "@/lib/api-hooks";
 import { getProject, getProjects } from "@/lib/project-api";
@@ -12,7 +13,7 @@ export const CURRENT_PROJECT_CHANGE_EVENT = "current-project-change";
 
 function getSwitchedProjectPath(pathname, currentProjectId, nextProjectId) {
   const segments = pathname.split("/");
-  const projectScope = segments[1] === "spaces" || segments[1] === "projects";
+  const projectScope = segments[1] === "projects";
   if (!projectScope || segments[2] !== currentProjectId) return null;
 
   const nextSegments = [...segments];
@@ -23,7 +24,7 @@ function getSwitchedProjectPath(pathname, currentProjectId, nextProjectId) {
 export function ProjectSwitcher({ compact = false, compactOnMobile = false, className, menuAlign = "right", menuPlacement = "down" }) {
   const navigate = useNavigate();
   const { pathname, search } = useLocation();
-  const routeProjectId = pathname.match(/^\/(?:projects|spaces)\/([^/]+)/)?.[1];
+  const routeProjectId = pathname.match(/^\/projects\/([^/]+)/)?.[1];
   const [storedProjectId, setStoredProjectId] = useState(() => migrateStorageKey(LEGACY_STORAGE_KEYS.currentProjectId, CURRENT_PROJECT_KEY) || "");
   const [open, setOpen] = useState(false);
   const switcherRef = useRef(null);
@@ -96,7 +97,7 @@ export function ProjectSwitcher({ compact = false, compactOnMobile = false, clas
   }
 
   const projectInitials = currentProject?.key?.slice(0, 2).toUpperCase() || currentProject?.name?.slice(0, 2).toUpperCase() || "SP";
-  const projectLabel = currentProject?.name || (projectsQuery.isLoading || projectQuery.isLoading ? "Loading spaces..." : "Select space");
+  const projectLabel = currentProject?.name || "Select project";
 
   return (
     <div className={cn("relative", className)} ref={switcherRef}>
@@ -148,6 +149,7 @@ export function ProjectSwitcher({ compact = false, compactOnMobile = false, clas
             <p className="text-xs font-medium uppercase text-muted-foreground">Switch project</p>
           </div>
           <div className="max-h-72 overflow-y-auto p-1">
+            {projectsQuery.isLoading || projectQuery.isLoading ? <InlineLoader message="Loading projects..." className="m-1 py-3" /> : null}
             {projects.map((project) => {
               const active = project.id === currentProject?.id;
               return (
@@ -173,12 +175,12 @@ export function ProjectSwitcher({ compact = false, compactOnMobile = false, clas
               );
             })}
             {!projectsQuery.isLoading && projects.length === 0 ? (
-              <p className="px-2 py-6 text-center text-sm text-muted-foreground">No spaces yet.</p>
+              <p className="px-2 py-6 text-center text-sm text-muted-foreground">No projects yet.</p>
             ) : null}
           </div>
           <div className="border-t p-1">
-            <Link className="block rounded px-2 py-2 text-sm hover:bg-accent" to="/spaces" onClick={() => setOpen(false)}>
-              View all spaces
+            <Link className="block rounded px-2 py-2 text-sm hover:bg-accent" to="/projects" onClick={() => setOpen(false)}>
+              View all projects
             </Link>
           </div>
         </div>

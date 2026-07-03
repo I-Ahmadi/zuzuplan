@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "
 
 export function LogoutConfirmationDialog({ open, pending, onCancel, onConfirm }) {
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onCancel()}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Log out of Sprintly?</DialogTitle>

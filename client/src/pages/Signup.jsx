@@ -39,7 +39,7 @@ export default function Signup() {
   return (
     <AuthShell
       title="Create your account"
-      description="Start organizing spaces, tasks, teams, and delivery plans."
+      description="Start organizing projects, tasks, people, and delivery plans."
       footer={
         <p>
           Already have an account?{" "}

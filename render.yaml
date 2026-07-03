@@ -28,8 +28,12 @@ services:
         value: 7d
       - key: JWT_REFRESH_EXPIRES_MS
         value: 604800000
-      - key: EMAIL_DEV_MODE
-        value: true
+      - key: BREVO_API_KEY
+        sync: false
+      - key: BREVO_SENDER_EMAIL
+        sync: false
+      - key: BREVO_SENDER_NAME
+        value: Sprintly
       - key: UPLOAD_DIR
         value: /tmp/sprintly-uploads
       - key: AVATAR_MAX_FILE_SIZE

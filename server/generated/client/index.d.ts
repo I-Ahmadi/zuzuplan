@@ -3815,7 +3815,7 @@ export namespace Prisma {
     profileNote: string | null
     sidebarDefault: string | null
     projectSelectorBehavior: string | null
-    rememberLastSpace: boolean | null
+    rememberLastProject: boolean | null
     emailNotifications: boolean | null
     inAppNotifications: boolean | null
     dueSoonNotifications: boolean | null
@@ -3839,7 +3839,7 @@ export namespace Prisma {
     profileNote: string | null
     sidebarDefault: string | null
     projectSelectorBehavior: string | null
-    rememberLastSpace: boolean | null
+    rememberLastProject: boolean | null
     emailNotifications: boolean | null
     inAppNotifications: boolean | null
     dueSoonNotifications: boolean | null
@@ -3863,7 +3863,7 @@ export namespace Prisma {
     profileNote: number
     sidebarDefault: number
     projectSelectorBehavior: number
-    rememberLastSpace: number
+    rememberLastProject: number
     emailNotifications: number
     inAppNotifications: number
     dueSoonNotifications: number
@@ -3889,7 +3889,7 @@ export namespace Prisma {
     profileNote?: true
     sidebarDefault?: true
     projectSelectorBehavior?: true
-    rememberLastSpace?: true
+    rememberLastProject?: true
     emailNotifications?: true
     inAppNotifications?: true
     dueSoonNotifications?: true
@@ -3913,7 +3913,7 @@ export namespace Prisma {
     profileNote?: true
     sidebarDefault?: true
     projectSelectorBehavior?: true
-    rememberLastSpace?: true
+    rememberLastProject?: true
     emailNotifications?: true
     inAppNotifications?: true
     dueSoonNotifications?: true
@@ -3937,7 +3937,7 @@ export namespace Prisma {
     profileNote?: true
     sidebarDefault?: true
     projectSelectorBehavior?: true
-    rememberLastSpace?: true
+    rememberLastProject?: true
     emailNotifications?: true
     inAppNotifications?: true
     dueSoonNotifications?: true
@@ -4034,7 +4034,7 @@ export namespace Prisma {
     profileNote: string
     sidebarDefault: string
     projectSelectorBehavior: string
-    rememberLastSpace: boolean
+    rememberLastProject: boolean
     emailNotifications: boolean
     inAppNotifications: boolean
     dueSoonNotifications: boolean
@@ -4075,7 +4075,7 @@ export namespace Prisma {
     profileNote?: boolean
     sidebarDefault?: boolean
     projectSelectorBehavior?: boolean
-    rememberLastSpace?: boolean
+    rememberLastProject?: boolean
     emailNotifications?: boolean
     inAppNotifications?: boolean
     dueSoonNotifications?: boolean
@@ -4100,7 +4100,7 @@ export namespace Prisma {
     profileNote?: boolean
     sidebarDefault?: boolean
     projectSelectorBehavior?: boolean
-    rememberLastSpace?: boolean
+    rememberLastProject?: boolean
     emailNotifications?: boolean
     inAppNotifications?: boolean
     dueSoonNotifications?: boolean
@@ -4125,7 +4125,7 @@ export namespace Prisma {
     profileNote?: boolean
     sidebarDefault?: boolean
     projectSelectorBehavior?: boolean
-    rememberLastSpace?: boolean
+    rememberLastProject?: boolean
     emailNotifications?: boolean
     inAppNotifications?: boolean
     dueSoonNotifications?: boolean
@@ -4150,7 +4150,7 @@ export namespace Prisma {
     profileNote?: boolean
     sidebarDefault?: boolean
     projectSelectorBehavior?: boolean
-    rememberLastSpace?: boolean
+    rememberLastProject?: boolean
     emailNotifications?: boolean
     inAppNotifications?: boolean
     dueSoonNotifications?: boolean
@@ -4165,7 +4165,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type UserPreferenceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "defaultView" | "density" | "theme" | "profileNote" | "sidebarDefault" | "projectSelectorBehavior" | "rememberLastSpace" | "emailNotifications" | "inAppNotifications" | "dueSoonNotifications" | "assignmentNotifications" | "mentionNotifications" | "commentNotifications" | "digestFrequency" | "quietHoursEnabled" | "quietHoursStart" | "quietHoursEnd" | "createdAt" | "updatedAt", ExtArgs["result"]["userPreference"]>
+  export type UserPreferenceOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "userId" | "defaultView" | "density" | "theme" | "profileNote" | "sidebarDefault" | "projectSelectorBehavior" | "rememberLastProject" | "emailNotifications" | "inAppNotifications" | "dueSoonNotifications" | "assignmentNotifications" | "mentionNotifications" | "commentNotifications" | "digestFrequency" | "quietHoursEnabled" | "quietHoursStart" | "quietHoursEnd" | "createdAt" | "updatedAt", ExtArgs["result"]["userPreference"]>
   export type UserPreferenceInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     user?: boolean | UserDefaultArgs<ExtArgs>
   }
@@ -4190,7 +4190,7 @@ export namespace Prisma {
       profileNote: string
       sidebarDefault: string
       projectSelectorBehavior: string
-      rememberLastSpace: boolean
+      rememberLastProject: boolean
       emailNotifications: boolean
       inAppNotifications: boolean
       dueSoonNotifications: boolean
@@ -4635,7 +4635,7 @@ export namespace Prisma {
     readonly profileNote: FieldRef<"UserPreference", 'String'>
     readonly sidebarDefault: FieldRef<"UserPreference", 'String'>
     readonly projectSelectorBehavior: FieldRef<"UserPreference", 'String'>
-    readonly rememberLastSpace: FieldRef<"UserPreference", 'Boolean'>
+    readonly rememberLastProject: FieldRef<"UserPreference", 'Boolean'>
     readonly emailNotifications: FieldRef<"UserPreference", 'Boolean'>
     readonly inAppNotifications: FieldRef<"UserPreference", 'Boolean'>
     readonly dueSoonNotifications: FieldRef<"UserPreference", 'Boolean'>
@@ -19546,7 +19546,7 @@ export namespace Prisma {
     profileNote: 'profileNote',
     sidebarDefault: 'sidebarDefault',
     projectSelectorBehavior: 'projectSelectorBehavior',
-    rememberLastSpace: 'rememberLastSpace',
+    rememberLastProject: 'rememberLastProject',
     emailNotifications: 'emailNotifications',
     inAppNotifications: 'inAppNotifications',
     dueSoonNotifications: 'dueSoonNotifications',
@@ -20016,7 +20016,7 @@ export namespace Prisma {
     profileNote?: StringFilter<"UserPreference"> | string
     sidebarDefault?: StringFilter<"UserPreference"> | string
     projectSelectorBehavior?: StringFilter<"UserPreference"> | string
-    rememberLastSpace?: BoolFilter<"UserPreference"> | boolean
+    rememberLastProject?: BoolFilter<"UserPreference"> | boolean
     emailNotifications?: BoolFilter<"UserPreference"> | boolean
     inAppNotifications?: BoolFilter<"UserPreference"> | boolean
     dueSoonNotifications?: BoolFilter<"UserPreference"> | boolean
@@ -20041,7 +20041,7 @@ export namespace Prisma {
     profileNote?: SortOrder
     sidebarDefault?: SortOrder
     projectSelectorBehavior?: SortOrder
-    rememberLastSpace?: SortOrder
+    rememberLastProject?: SortOrder
     emailNotifications?: SortOrder
     inAppNotifications?: SortOrder
     dueSoonNotifications?: SortOrder
@@ -20069,7 +20069,7 @@ export namespace Prisma {
     profileNote?: StringFilter<"UserPreference"> | string
     sidebarDefault?: StringFilter<"UserPreference"> | string
     projectSelectorBehavior?: StringFilter<"UserPreference"> | string
-    rememberLastSpace?: BoolFilter<"UserPreference"> | boolean
+    rememberLastProject?: BoolFilter<"UserPreference"> | boolean
     emailNotifications?: BoolFilter<"UserPreference"> | boolean
     inAppNotifications?: BoolFilter<"UserPreference"> | boolean
     dueSoonNotifications?: BoolFilter<"UserPreference"> | boolean
@@ -20094,7 +20094,7 @@ export namespace Prisma {
     profileNote?: SortOrder
     sidebarDefault?: SortOrder
     projectSelectorBehavior?: SortOrder
-    rememberLastSpace?: SortOrder
+    rememberLastProject?: SortOrder
     emailNotifications?: SortOrder
     inAppNotifications?: SortOrder
     dueSoonNotifications?: SortOrder
@@ -20124,7 +20124,7 @@ export namespace Prisma {
     profileNote?: StringWithAggregatesFilter<"UserPreference"> | string
     sidebarDefault?: StringWithAggregatesFilter<"UserPreference"> | string
     projectSelectorBehavior?: StringWithAggregatesFilter<"UserPreference"> | string
-    rememberLastSpace?: BoolWithAggregatesFilter<"UserPreference"> | boolean
+    rememberLastProject?: BoolWithAggregatesFilter<"UserPreference"> | boolean
     emailNotifications?: BoolWithAggregatesFilter<"UserPreference"> | boolean
     inAppNotifications?: BoolWithAggregatesFilter<"UserPreference"> | boolean
     dueSoonNotifications?: BoolWithAggregatesFilter<"UserPreference"> | boolean
@@ -21374,7 +21374,7 @@ export namespace Prisma {
     profileNote?: string
     sidebarDefault?: string
     projectSelectorBehavior?: string
-    rememberLastSpace?: boolean
+    rememberLastProject?: boolean
     emailNotifications?: boolean
     inAppNotifications?: boolean
     dueSoonNotifications?: boolean
@@ -21399,7 +21399,7 @@ export namespace Prisma {
     profileNote?: string
     sidebarDefault?: string
     projectSelectorBehavior?: string
-    rememberLastSpace?: boolean
+    rememberLastProject?: boolean
     emailNotifications?: boolean
     inAppNotifications?: boolean
     dueSoonNotifications?: boolean
@@ -21422,7 +21422,7 @@ export namespace Prisma {
     profileNote?: StringFieldUpdateOperationsInput | string
     sidebarDefault?: StringFieldUpdateOperationsInput | string
     projectSelectorBehavior?: StringFieldUpdateOperationsInput | string
-    rememberLastSpace?: BoolFieldUpdateOperationsInput | boolean
+    rememberLastProject?: BoolFieldUpdateOperationsInput | boolean
     emailNotifications?: BoolFieldUpdateOperationsInput | boolean
     inAppNotifications?: BoolFieldUpdateOperationsInput | boolean
     dueSoonNotifications?: BoolFieldUpdateOperationsInput | boolean
@@ -21447,7 +21447,7 @@ export namespace Prisma {
     profileNote?: StringFieldUpdateOperationsInput | string
     sidebarDefault?: StringFieldUpdateOperationsInput | string
     projectSelectorBehavior?: StringFieldUpdateOperationsInput | string
-    rememberLastSpace?: BoolFieldUpdateOperationsInput | boolean
+    rememberLastProject?: BoolFieldUpdateOperationsInput | boolean
     emailNotifications?: BoolFieldUpdateOperationsInput | boolean
     inAppNotifications?: BoolFieldUpdateOperationsInput | boolean
     dueSoonNotifications?: BoolFieldUpdateOperationsInput | boolean
@@ -21471,7 +21471,7 @@ export namespace Prisma {
     profileNote?: string
     sidebarDefault?: string
     projectSelectorBehavior?: string
-    rememberLastSpace?: boolean
+    rememberLastProject?: boolean
     emailNotifications?: boolean
     inAppNotifications?: boolean
     dueSoonNotifications?: boolean
@@ -21494,7 +21494,7 @@ export namespace Prisma {
     profileNote?: StringFieldUpdateOperationsInput | string
     sidebarDefault?: StringFieldUpdateOperationsInput | string
     projectSelectorBehavior?: StringFieldUpdateOperationsInput | string
-    rememberLastSpace?: BoolFieldUpdateOperationsInput | boolean
+    rememberLastProject?: BoolFieldUpdateOperationsInput | boolean
     emailNotifications?: BoolFieldUpdateOperationsInput | boolean
     inAppNotifications?: BoolFieldUpdateOperationsInput | boolean
     dueSoonNotifications?: BoolFieldUpdateOperationsInput | boolean
@@ -21518,7 +21518,7 @@ export namespace Prisma {
     profileNote?: StringFieldUpdateOperationsInput | string
     sidebarDefault?: StringFieldUpdateOperationsInput | string
     projectSelectorBehavior?: StringFieldUpdateOperationsInput | string
-    rememberLastSpace?: BoolFieldUpdateOperationsInput | boolean
+    rememberLastProject?: BoolFieldUpdateOperationsInput | boolean
     emailNotifications?: BoolFieldUpdateOperationsInput | boolean
     inAppNotifications?: BoolFieldUpdateOperationsInput | boolean
     dueSoonNotifications?: BoolFieldUpdateOperationsInput | boolean
@@ -22967,7 +22967,7 @@ export namespace Prisma {
     profileNote?: SortOrder
     sidebarDefault?: SortOrder
     projectSelectorBehavior?: SortOrder
-    rememberLastSpace?: SortOrder
+    rememberLastProject?: SortOrder
     emailNotifications?: SortOrder
     inAppNotifications?: SortOrder
     dueSoonNotifications?: SortOrder
@@ -22991,7 +22991,7 @@ export namespace Prisma {
     profileNote?: SortOrder
     sidebarDefault?: SortOrder
     projectSelectorBehavior?: SortOrder
-    rememberLastSpace?: SortOrder
+    rememberLastProject?: SortOrder
     emailNotifications?: SortOrder
     inAppNotifications?: SortOrder
     dueSoonNotifications?: SortOrder
@@ -23015,7 +23015,7 @@ export namespace Prisma {
     profileNote?: SortOrder
     sidebarDefault?: SortOrder
     projectSelectorBehavior?: SortOrder
-    rememberLastSpace?: SortOrder
+    rememberLastProject?: SortOrder
     emailNotifications?: SortOrder
     inAppNotifications?: SortOrder
     dueSoonNotifications?: SortOrder
@@ -25877,7 +25877,7 @@ export namespace Prisma {
     profileNote?: string
     sidebarDefault?: string
     projectSelectorBehavior?: string
-    rememberLastSpace?: boolean
+    rememberLastProject?: boolean
     emailNotifications?: boolean
     inAppNotifications?: boolean
     dueSoonNotifications?: boolean
@@ -25900,7 +25900,7 @@ export namespace Prisma {
     profileNote?: string
     sidebarDefault?: string
     projectSelectorBehavior?: string
-    rememberLastSpace?: boolean
+    rememberLastProject?: boolean
     emailNotifications?: boolean
     inAppNotifications?: boolean
     dueSoonNotifications?: boolean
@@ -26205,7 +26205,7 @@ export namespace Prisma {
     profileNote?: StringFieldUpdateOperationsInput | string
     sidebarDefault?: StringFieldUpdateOperationsInput | string
     projectSelectorBehavior?: StringFieldUpdateOperationsInput | string
-    rememberLastSpace?: BoolFieldUpdateOperationsInput | boolean
+    rememberLastProject?: BoolFieldUpdateOperationsInput | boolean
     emailNotifications?: BoolFieldUpdateOperationsInput | boolean
     inAppNotifications?: BoolFieldUpdateOperationsInput | boolean
     dueSoonNotifications?: BoolFieldUpdateOperationsInput | boolean
@@ -26228,7 +26228,7 @@ export namespace Prisma {
     profileNote?: StringFieldUpdateOperationsInput | string
     sidebarDefault?: StringFieldUpdateOperationsInput | string
     projectSelectorBehavior?: StringFieldUpdateOperationsInput | string
-    rememberLastSpace?: BoolFieldUpdateOperationsInput | boolean
+    rememberLastProject?: BoolFieldUpdateOperationsInput | boolean
     emailNotifications?: BoolFieldUpdateOperationsInput | boolean
     inAppNotifications?: BoolFieldUpdateOperationsInput | boolean
     dueSoonNotifications?: BoolFieldUpdateOperationsInput | boolean

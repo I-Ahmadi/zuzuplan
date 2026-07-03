@@ -21,6 +21,7 @@ import {
   ListTodo,
   MessageSquare,
   MoreHorizontal,
+  Pencil,
   Plus,
   RefreshCcw,
   Search,
@@ -33,9 +34,10 @@ import { UserAvatar } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { InlineLoader } from "@/components/ui/loading";
 import { PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
 import { Textarea } from "@/components/ui/textarea";
-import { createComment, getTaskComments } from "@/lib/comment-api";
+import { createComment, deleteComment, getTaskComments, updateComment } from "@/lib/comment-api";
 import { useApiAction, useApiResource } from "@/lib/api-hooks";
 import { getProject, getProjects } from "@/lib/project-api";
 import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
@@ -54,15 +56,15 @@ import {
 import { createTask, deleteTask, getProjectBacklogTasks, getProjectBoardTasks, getProjectListTasks, getProjectTaskSummary, getProjectTaskWorkload, getProjectTimeline, getTask, updateTask } from "@/lib/task-api";
 import { useAuth } from "@/contexts/auth-context";
 import { useProjectMembers } from "@/contexts/project-members-context";
-import { ISSUE_STATUSES, ISSUE_TYPES, issueStatusLabel, makeIssueStatus, mergeIssueStatuses } from "@/lib/issue-constants";
+import { TASK_STATUSES, TASK_TYPES, taskStatusLabel, makeTaskStatus, mergeTaskStatuses } from "@/lib/task-constants";
 import { cn } from "@/lib/utils";
 
-const IssueStatusesContext = createContext({
-  statuses: ISSUE_STATUSES,
+const TaskStatusesContext = createContext({
+  statuses: TASK_STATUSES,
   addStatus: () => null,
 });
 
-const CUSTOM_STATUS_STORAGE_PREFIX = "sprintly.issue-statuses.";
+const CUSTOM_STATUS_STORAGE_PREFIX = "sprintly.task-statuses.";
 
 function statusStorageKey(projectId) {
   return `${CUSTOM_STATUS_STORAGE_PREFIX}${projectId || "global"}`;
@@ -83,17 +85,17 @@ function writeCustomStatuses(projectId, statuses) {
   window.localStorage.setItem(statusStorageKey(projectId), JSON.stringify(statuses));
 }
 
-function useProjectIssueStatuses(projectId) {
+function useProjectTaskStatuses(projectId) {
   const [customStatuses, setCustomStatuses] = useState(() => readCustomStatuses(projectId));
 
   useEffect(() => {
     setCustomStatuses(readCustomStatuses(projectId));
   }, [projectId]);
 
-  const statuses = useMemo(() => mergeIssueStatuses(customStatuses), [customStatuses]);
+  const statuses = useMemo(() => mergeTaskStatuses(customStatuses), [customStatuses]);
 
   function addStatus(label) {
-    const nextStatus = makeIssueStatus(label, statuses);
+    const nextStatus = makeTaskStatus(label, statuses);
     if (!nextStatus || !projectId) return null;
     const nextCustomStatuses = [...customStatuses, nextStatus];
     setCustomStatuses(nextCustomStatuses);
@@ -104,8 +106,8 @@ function useProjectIssueStatuses(projectId) {
   return { statuses, addStatus };
 }
 
-function useIssueStatuses() {
-  return useContext(IssueStatusesContext);
+function useTaskStatuses() {
+  return useContext(TaskStatusesContext);
 }
 
 const PRIORITIES = ["LOW", "MEDIUM", "HIGH", "URGENT"];
@@ -137,7 +139,7 @@ const PROJECT_TABS = [
   { value: "timeline", label: "Timeline", icon: CalendarRange },
 ];
 const TASK_DETAIL_PANEL_WIDTH = "clamp(560px, 42vw, 720px)";
-const ISSUE_CONTENT_CLASS = "w-full px-3 sm:px-4 lg:px-5";
+const TASK_CONTENT_CLASS = "w-full px-3 sm:px-4 lg:px-5";
 const CURRENT_PROJECT_KEY = STORAGE_KEYS.currentProjectId;
 const CURRENT_PROJECT_CHANGE_EVENT = "current-project-change";
 
@@ -166,7 +168,7 @@ function formatDate(date) {
   );
 }
 
-function issueKey(project, task) {
+function taskKey(project, task) {
   return `${project?.key || "SPC"}-${task.id.slice(-4).toUpperCase()}`;
 }
 
@@ -196,7 +198,7 @@ function resizeTextareaToContent(element) {
   element.style.height = `${element.scrollHeight}px`;
 }
 
-function scrollIssueSectionIntoView(sectionId) {
+function scrollTaskSectionIntoView(sectionId) {
   if (typeof document === "undefined") return;
   document.getElementById(sectionId)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
@@ -254,7 +256,7 @@ export default function Tasks() {
   const [timelineSprintDialog, setTimelineSprintDialog] = useState(null);
   const [detailVersion, setDetailVersion] = useState(0);
   const [commentsVersion, setCommentsVersion] = useState(0);
-  const issueStatusState = useProjectIssueStatuses(projectId);
+  const taskStatusState = useProjectTaskStatuses(projectId);
 
   function setSelectedTask(taskOrId) {
     if (!taskOrId) {
@@ -340,6 +342,7 @@ export default function Tasks() {
   const taskSummary = taskSummaryQuery.data?.data;
   const taskWorkload = taskWorkloadQuery.data?.data;
   const activeProject = projectQuery.data?.data;
+  const projectLoading = projectsQuery.isLoading || projectQuery.isLoading;
   const currentPermissions = activeProject?.currentUserPermissions || [];
 
   const canCreate = currentPermissions.includes("task.create");
@@ -355,7 +358,7 @@ export default function Tasks() {
   const createMutation = useApiAction((payload) => createTask(projectId, payload), {
     onSuccess: (result) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not create issue."));
+        setError(resultMessage(result, "Could not create task."));
         return;
       }
       setTaskForm(emptyTask);
@@ -368,7 +371,7 @@ export default function Tasks() {
   const updateMutation = useApiAction(({ taskId, payload }) => updateTask(projectId, taskId, payload), {
     onSuccess: (result) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not update issue."));
+        setError(resultMessage(result, "Could not update task."));
         return;
       }
       setError("");
@@ -382,7 +385,7 @@ export default function Tasks() {
   const deleteMutation = useApiAction((taskId) => deleteTask(projectId, taskId), {
     onSuccess: (result) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not delete issue."));
+        setError(resultMessage(result, "Could not delete task."));
         return;
       }
       setSelectedTaskId("");
@@ -473,7 +476,7 @@ export default function Tasks() {
   const reorderSprintTasksMutation = useApiAction(({ sprintId, orderedTaskIds }) => reorderSprintTasks(projectId, sprintId, orderedTaskIds), {
     onSuccess: (result) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not reorder issues."));
+        setError(resultMessage(result, "Could not reorder tasks."));
         return;
       }
       setError("");
@@ -484,7 +487,7 @@ export default function Tasks() {
   const addTasksToSprintMutation = useApiAction(({ sprintId, taskIds }) => addTasksToSprint(projectId, sprintId, taskIds), {
     onSuccess: (result) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not move issues to sprint."));
+        setError(resultMessage(result, "Could not move tasks to sprint."));
         return;
       }
       setError("");
@@ -495,7 +498,7 @@ export default function Tasks() {
   const removeTaskFromSprintMutation = useApiAction(({ sprintId, taskId }) => removeTaskFromSprint(projectId, sprintId, taskId), {
     onSuccess: (result) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not move issue to backlog."));
+        setError(resultMessage(result, "Could not move task to backlog."));
         return;
       }
       setError("");
@@ -537,7 +540,7 @@ export default function Tasks() {
     return updateMutation
       .mutateAsync({ taskId: selectedTaskId, payload: { [field]: value === "" ? null : value } })
       .catch((error) => {
-        setError(error?.message || "Could not update issue.");
+        setError(error?.message || "Could not update task.");
         return { success: false };
       });
   }
@@ -559,7 +562,7 @@ export default function Tasks() {
   const taskDetailPanelOpen = detailPresentation === "panel" && Boolean(selectedTaskId);
 
   return (
-    <IssueStatusesContext.Provider value={issueStatusState}>
+    <TaskStatusesContext.Provider value={taskStatusState}>
     <div className="min-h-[calc(100vh-3rem)] bg-background">
       <div
         className={cn("min-w-0 transition-[margin-right] duration-200 ease-out", taskDetailPanelOpen && "lg:mr-[var(--task-detail-width)]")}
@@ -570,12 +573,14 @@ export default function Tasks() {
           setActiveView={changeView}
         />
 
-        <div className={cn(ISSUE_CONTENT_CLASS, "space-y-3 pb-3 pt-2")}>
+        <div className={cn(TASK_CONTENT_CLASS, "space-y-3 pb-3 pt-2")}>
           {error ? (
             <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">
               {error}
             </p>
           ) : null}
+
+          {projectLoading ? <InlineLoader message="Loading project..." /> : null}
 
           {activeView === "summary" ? (
             <SummaryView
@@ -589,6 +594,7 @@ export default function Tasks() {
           {activeView === "board" ? (
           <BoardView
             tasks={boardTasks}
+            loading={boardTasksQuery.isLoading}
             activeProject={activeProject}
             members={members}
             sprints={sprints}
@@ -602,6 +608,7 @@ export default function Tasks() {
           {activeView === "list" ? (
             <ListView
               tasks={tasks}
+              loading={tasksQuery.isLoading}
               pagination={tasksPagination}
               onPageChange={setTaskPage}
               activeProject={activeProject}
@@ -662,7 +669,7 @@ export default function Tasks() {
         </div>
       </div>
 
-      <IssueCreateDialog
+      <TaskCreateDialog
         open={createOpen}
         setOpen={setCreateOpen}
         taskForm={taskForm}
@@ -674,7 +681,7 @@ export default function Tasks() {
         pending={createMutation.isPending}
       />
 
-      <IssueDetailDialog
+      <TaskDetailDialog
         selectedTaskId={selectedTaskId}
         setSelectedTask={setSelectedTask}
         activeProject={activeProject}
@@ -683,6 +690,7 @@ export default function Tasks() {
         canAssign={canAssign}
               canDelete={canDelete}
               canComment={canComment}
+              permissions={currentPermissions}
               sprints={sprints}
               comment={comment}
               setComment={setComment}
@@ -707,7 +715,7 @@ export default function Tasks() {
         pending={updateSprintMutation.isPending}
       />
     </div>
-    </IssueStatusesContext.Provider>
+    </TaskStatusesContext.Provider>
   );
 }
 
@@ -717,7 +725,7 @@ export function TaskDetailPage() {
   const [comment, setComment] = useState("");
   const [error, setError] = useState("");
   const [commentsVersion, setCommentsVersion] = useState(0);
-  const issueStatusState = useProjectIssueStatuses(projectId);
+  const taskStatusState = useProjectTaskStatuses(projectId);
 
   const projectQuery = useApiResource(() => getProject(projectId, { fields: "planning" }), [projectId], { enabled: Boolean(projectId) });
   const sprintsQuery = useApiResource(() => getProjectSprints(projectId), [projectId], { enabled: Boolean(projectId) });
@@ -737,7 +745,7 @@ export function TaskDetailPage() {
   const updateMutation = useApiAction(({ payload }) => updateTask(projectId, taskId, payload), {
     onSuccess: (result) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not update issue."));
+        setError(resultMessage(result, "Could not update task."));
         return;
       }
       setError("");
@@ -749,10 +757,10 @@ export function TaskDetailPage() {
   const deleteMutation = useApiAction(() => deleteTask(projectId, taskId), {
     onSuccess: (result) => {
       if (!result?.success) {
-        setError(resultMessage(result, "Could not delete issue."));
+        setError(resultMessage(result, "Could not delete task."));
         return;
       }
-      navigate(`/spaces/${projectId}/issues?view=list`);
+      navigate(`/projects/${projectId}/tasks?view=list`);
     },
   });
 
@@ -772,50 +780,50 @@ export function TaskDetailPage() {
     return updateMutation
       .mutateAsync({ payload: { [field]: value === "" ? null : value } })
       .catch((error) => {
-        setError(error?.message || "Could not update issue.");
+        setError(error?.message || "Could not update task.");
         return { success: false };
       });
   }
 
   if (taskQuery.isLoading) {
     return (
-      <IssueStatusesContext.Provider value={issueStatusState}>
+      <TaskStatusesContext.Provider value={taskStatusState}>
       <div className="space-y-3 px-3 py-3 sm:px-4 lg:px-5">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Issue details</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Review details, activity, and ownership for this issue.</p>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Task details</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Review details, activity, and ownership for this task.</p>
         </div>
-        <p className="rounded-md border p-6 text-sm text-muted-foreground">Loading issue...</p>
+        <InlineLoader message="Loading task..." />
       </div>
-      </IssueStatusesContext.Provider>
+      </TaskStatusesContext.Provider>
     );
   }
 
   if (!task) {
     return (
-      <IssueStatusesContext.Provider value={issueStatusState}>
+      <TaskStatusesContext.Provider value={taskStatusState}>
       <div className="space-y-3 px-3 py-3 sm:px-4 lg:px-5">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Issue details</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Review details, activity, and ownership for this issue.</p>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Task details</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Review details, activity, and ownership for this task.</p>
         </div>
         <div className="rounded-md border p-6 text-sm text-muted-foreground">
           <p>{taskErrorMessage || "Work item not found."}</p>
-          <Button className="mt-4" variant="outline" onClick={() => navigate(`/spaces/${projectId}/issues?view=list`)}>
-            Back to issues
+          <Button className="mt-4" variant="outline" onClick={() => navigate(`/projects/${projectId}/tasks?view=list`)}>
+            Back to tasks
           </Button>
         </div>
       </div>
-      </IssueStatusesContext.Provider>
+      </TaskStatusesContext.Provider>
     );
   }
 
   return (
-    <IssueStatusesContext.Provider value={issueStatusState}>
+    <TaskStatusesContext.Provider value={taskStatusState}>
     <div className="min-h-[calc(100vh-3rem)] bg-background px-3 py-3 sm:px-4 lg:px-5">
       <div className="mb-4">
-        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Issue details</h1>
-        <p className="mt-1 text-sm text-muted-foreground">Review details, activity, and ownership for this issue.</p>
+        <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Task details</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Review details, activity, and ownership for this task.</p>
       </div>
       {error ? (
         <p className="mb-3 rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">{error}</p>
@@ -828,6 +836,7 @@ export function TaskDetailPage() {
         canAssign={canAssign}
         canDelete={canDelete}
         canComment={canComment}
+        permissions={permissions}
         sprints={sprints}
         comment={comment}
         commentsVersion={commentsVersion}
@@ -836,21 +845,21 @@ export function TaskDetailPage() {
         deleteMutation={deleteMutation}
         commentMutation={commentMutation}
         setSelectedTask={(nextTask) => {
-          if (nextTask?.id) navigate(`/spaces/${projectId}/issues/${nextTask.id}`);
+          if (nextTask?.id) navigate(`/projects/${projectId}/tasks/${nextTask.id}`);
         }}
         standalone
       />
     </div>
-    </IssueStatusesContext.Provider>
+    </TaskStatusesContext.Provider>
   );
 }
 
 function ProjectHeader({ activeView, setActiveView }) {
   return (
     <div className="sticky top-14 z-20 border-b bg-background/95 pt-3 backdrop-blur supports-[backdrop-filter]:bg-background/90">
-      <div className={ISSUE_CONTENT_CLASS}>
+      <div className={TASK_CONTENT_CLASS}>
         <div className="pb-3">
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Issues</h1>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Tasks</h1>
           <p className="mt-1 text-sm text-muted-foreground">Plan backlog work, track sprint progress, and review delivery status.</p>
         </div>
         <div className="flex min-h-10 items-center justify-between gap-3">
@@ -886,7 +895,7 @@ function ProjectHeader({ activeView, setActiveView }) {
 }
 
 function SummaryView({ summary, workload, loading, workloadLoading }) {
-  const { statuses } = useIssueStatuses();
+  const { statuses } = useTaskStatuses();
   const data = summary || EMPTY_TASK_SUMMARY;
   const workloadData = workload || EMPTY_TASK_WORKLOAD;
   const recent = data.recent || EMPTY_TASK_SUMMARY.recent;
@@ -902,9 +911,9 @@ function SummaryView({ summary, workload, loading, workloadLoading }) {
     count: data.priorityCounts?.[priority] || 0,
     color: SUMMARY_PRIORITY_COLORS[priority],
   }));
-  const typeItems = ISSUE_TYPES.map((type) => ({
+  const typeItems = TASK_TYPES.map((type) => ({
     value: type,
-    label: formatIssueType(type),
+    label: formatTaskType(type),
     count: data.typeCounts?.[type] || 0,
     color: SUMMARY_TYPE_COLORS[type],
   }));
@@ -912,7 +921,7 @@ function SummaryView({ summary, workload, loading, workloadLoading }) {
   return (
     <div className="space-y-4 pb-6">
       {loading && !summary ? (
-        <div className="rounded-md border bg-card p-4 text-sm text-muted-foreground">Loading delivery summary...</div>
+        <InlineLoader message="Loading delivery summary..." />
       ) : null}
 
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
@@ -923,10 +932,10 @@ function SummaryView({ summary, workload, loading, workloadLoading }) {
       </div>
 
       <div className="grid gap-4 xl:grid-cols-2">
-        <StatusOverviewPanel items={statusItems} total={data.total} />
+        <StatusAnalyticsPanel items={statusItems} total={data.total} />
         <PriorityBreakdownPanel items={priorityItems} total={data.total} />
         <TypeBreakdownPanel items={typeItems} total={data.total} />
-        <TeamWorkloadPanel workload={workloadData.workload} total={workloadData.total} loading={workloadLoading} />
+        <PeopleWorkloadPanel workload={workloadData.workload} total={workloadData.total} loading={workloadLoading} />
       </div>
     </div>
   );
@@ -986,7 +995,7 @@ function SummaryStatCard({ icon: Icon, value, label, detail, tone = "default" })
   );
 }
 
-function StatusOverviewPanel({ items, total }) {
+function StatusAnalyticsPanel({ items, total }) {
   const background = total ? buildDonutBackground(items, total) : "conic-gradient(#e5e7eb 0 100%)";
 
   return (
@@ -1038,7 +1047,7 @@ function PriorityBreakdownPanel({ items, total }) {
           </div>
         ))}
       </div>
-      <p className="mt-2 text-xs text-muted-foreground">{total} total issues represented.</p>
+      <p className="mt-2 text-xs text-muted-foreground">{total} total tasks represented.</p>
     </Panel>
   );
 }
@@ -1072,16 +1081,16 @@ function TypeBreakdownPanel({ items, total }) {
   );
 }
 
-function TeamWorkloadPanel({ workload, total, loading }) {
+function PeopleWorkloadPanel({ workload, total, loading }) {
   return (
-    <Panel title="Team workload" subtitle="Monitor the capacity of your team.">
+    <Panel title="People workload" subtitle="Monitor people capacity.">
       <div className="space-y-3">
         <div className="grid grid-cols-[minmax(130px,0.5fr)_minmax(0,1fr)] gap-4 text-xs font-semibold text-muted-foreground">
           <span>Assignee</span>
           <span>Work distribution</span>
         </div>
         {loading ? (
-          <p className="text-sm text-muted-foreground">Loading workload...</p>
+          <InlineLoader message="Loading workload..." className="py-4" />
         ) : workload.length ? workload.slice(0, 6).map((item) => {
           const percent = countPercent(item.total, total);
           return (
@@ -1122,7 +1131,7 @@ function countPercent(count, total) {
   return total ? Math.round((count / total) * 100) : 0;
 }
 
-function formatIssueType(type) {
+function formatTaskType(type) {
   return type.replaceAll("_", " ").toLowerCase().replace(/\b\w/g, (letter) => letter.toUpperCase());
 }
 
@@ -1135,8 +1144,8 @@ function priorityLabel(priority) {
   }[priority] || priority;
 }
 
-function BoardView({ tasks, activeProject, members, sprints, filters, setFilters, setSelectedTask, moveTask }) {
-  const { statuses, addStatus } = useIssueStatuses();
+function BoardView({ tasks, loading, activeProject, members, sprints, filters, setFilters, setSelectedTask, moveTask }) {
+  const { statuses, addStatus } = useTaskStatuses();
   const [draftFilters, setDraftFilters] = useState(filters);
   const [createColumnOpen, setCreateColumnOpen] = useState(false);
   const [columnTitle, setColumnTitle] = useState("");
@@ -1215,6 +1224,7 @@ function BoardView({ tasks, activeProject, members, sprints, filters, setFilters
       </div>
 
       <div className="overflow-x-auto pb-3">
+        {loading ? <InlineLoader message="Loading board tasks..." className="mb-3" /> : null}
         <div className="flex min-h-[380px] min-w-max gap-4">
         {boardColumns.map((column) => {
           const columnTasks = boardTasks.filter((task) => task.status === column.value);
@@ -1295,7 +1305,7 @@ function BoardView({ tasks, activeProject, members, sprints, filters, setFilters
               placeholder="Column name"
             />
             <p className="text-xs text-muted-foreground">
-              New columns become project issue statuses and appear in filters, forms, and status menus.
+              New columns become project task statuses and appear in filters, forms, and status menus.
             </p>
           </div>
           <DialogFooter>
@@ -1310,8 +1320,8 @@ function BoardView({ tasks, activeProject, members, sprints, filters, setFilters
 }
 
 function BoardTaskCard({ task, activeProject, onOpen }) {
-  const { statuses } = useIssueStatuses();
-  const issueAttention = STATUS_BUCKETS.attention.includes(task.status);
+  const { statuses } = useTaskStatuses();
+  const taskAttention = STATUS_BUCKETS.attention.includes(task.status);
 
   return (
     <div
@@ -1330,7 +1340,7 @@ function BoardTaskCard({ task, activeProject, onOpen }) {
       onClick={onOpen}
       onDoubleClick={onOpen}
       onKeyDown={(event) => openTaskFromKeyboard(event, onOpen)}
-      title="Click to open issue details"
+      title="Click to open task details"
     >
       <div className="flex items-start justify-between gap-2">
         <p className="line-clamp-3 text-sm font-medium leading-5 text-foreground group-hover:text-primary">{task.title}</p>
@@ -1338,12 +1348,12 @@ function BoardTaskCard({ task, activeProject, onOpen }) {
       </div>
       <div className="mt-3 flex flex-wrap gap-1.5">
         <span className="rounded bg-secondary px-1.5 py-0.5 text-[11px] font-medium text-muted-foreground">
-          {issueKey(activeProject, task)}
+          {taskKey(activeProject, task)}
         </span>
         <span className={cn("rounded px-1.5 py-0.5 text-[11px] font-semibold", PRIORITY_TONES[task.priority], "bg-secondary")}>
           {task.priority}
         </span>
-        {issueAttention ? <span className="rounded bg-destructive/10 px-1.5 py-0.5 text-[11px] font-semibold text-destructive">{issueStatusLabel(task.status, statuses)}</span> : null}
+        {taskAttention ? <span className="rounded bg-destructive/10 px-1.5 py-0.5 text-[11px] font-semibold text-destructive">{taskStatusLabel(task.status, statuses)}</span> : null}
       </div>
       {task.sprint?.name ? (
         <div className="mt-2 max-w-full truncate text-xs text-muted-foreground">{task.sprint.name}</div>
@@ -1487,7 +1497,7 @@ function shortTimelineText(value, maxLength = 18) {
 }
 
 function TimelineView({ projectId, active, activeProject, members, currentUser, setSelectedTask, onEditSprint }) {
-  const { statuses } = useIssueStatuses();
+  const { statuses } = useTaskStatuses();
   const [search, setSearch] = useState("");
   const [statusCategory, setStatusCategory] = useState("");
   const [assigneeFilter, setAssigneeFilter] = useState("");
@@ -1577,8 +1587,8 @@ function TimelineView({ projectId, active, activeProject, members, currentUser, 
               type="button"
               className={cn("flex h-8 w-8 items-center justify-center rounded-full border", assigneeFilter === "me" ? "border-primary bg-primary/10" : "bg-background")}
               onClick={() => setAssigneeFilter((current) => (current === "me" ? "" : "me"))}
-              aria-label="Filter to my issues"
-              title="My issues"
+              aria-label="Filter to my tasks"
+              title="My tasks"
             >
               <UserAvatar user={currentUser} className="h-7 w-7" fallbackClassName="bg-primary text-[10px] text-primary-foreground" />
             </button>
@@ -1586,15 +1596,15 @@ function TimelineView({ projectId, active, activeProject, members, currentUser, 
               type="button"
               className={cn("flex h-8 w-8 items-center justify-center rounded-full border", assigneeFilter === "unassigned" ? "border-primary bg-primary/10 text-primary" : "bg-background text-muted-foreground")}
               onClick={() => setAssigneeFilter((current) => (current === "unassigned" ? "" : "unassigned"))}
-              aria-label="Filter to unassigned issues"
-              title="Unassigned issues"
+              aria-label="Filter to unassigned tasks"
+              title="Unassigned tasks"
             >
               <UserAvatar user={null} className="h-7 w-7" fallback="-" fallbackClassName="bg-secondary text-[11px] text-muted-foreground" />
             </button>
           </div>
           <select className="h-9 rounded-md border bg-background px-3 text-sm" value={assigneeFilter} onChange={(event) => setAssigneeFilter(event.target.value)}>
             <option value="">All assignees</option>
-            <option value="me">My issues</option>
+            <option value="me">My tasks</option>
             <option value="unassigned">Unassigned</option>
             {members.map((member) => (
               <option key={memberId(member)} value={memberId(member)}>{memberLabel(member)}</option>
@@ -1615,25 +1625,22 @@ function TimelineView({ projectId, active, activeProject, members, currentUser, 
               Clear
             </Button>
           ) : null}
-          <Button variant="outline" size="icon" className="h-9 w-9 rounded" aria-label="Refresh timeline" title="Refresh timeline" onClick={() => timelineTasksQuery.reload()}>
-            <RefreshCcw className="h-4 w-4" />
-          </Button>
         </div>
       </div>
 
       {timelineTasksQuery.isLoading ? (
-        <p className="rounded-md border bg-background px-3 py-2 text-sm text-muted-foreground">Loading timeline...</p>
+        <InlineLoader message="Loading timeline..." />
       ) : null}
 
       {timelineTasksQuery.isError ? (
         <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          Could not load timeline work. Try refreshing the timeline.
+          Could not load timeline work.
         </p>
       ) : null}
 
       {capped ? (
         <p className="rounded-md border border-orange-200 bg-orange-50 px-3 py-2 text-sm text-orange-800">
-          Showing the first {TIMELINE_LIMIT} matching issues on the timeline. Refine search or filters to narrow the plan.
+          Showing the first {TIMELINE_LIMIT} matching tasks on the timeline. Refine search or filters to narrow the plan.
         </p>
       ) : null}
 
@@ -1657,7 +1664,7 @@ function TimelineView({ projectId, active, activeProject, members, currentUser, 
                 onClick={() => setSelectedSprintId((current) => (current === sprint.id ? "" : sprint.id))}
                 onDoubleClick={() => onEditSprint(sprint)}
                 onKeyDown={(event) => openTaskFromKeyboard(event, () => onEditSprint(sprint))}
-                title="Click to show sprint issues. Double-click to edit sprint."
+                title="Click to show sprint tasks. Double-click to edit sprint."
               >
                 <span className="min-w-0">
                   <span className="block truncate text-sm font-medium" title={sprint.name}>{shortTimelineText(sprint.name, 20)}</span>
@@ -1668,7 +1675,7 @@ function TimelineView({ projectId, active, activeProject, members, currentUser, 
             {selectedSprint ? (
               <>
                 <div className="flex h-11 items-center justify-between gap-2 border-b px-4">
-                  <p className="truncate text-sm font-semibold text-muted-foreground" title={selectedSprint.name}>Issues</p>
+                  <p className="truncate text-sm font-semibold text-muted-foreground" title={selectedSprint.name}>Tasks</p>
                   <span className="shrink-0 rounded bg-secondary px-1.5 py-0.5 text-xs font-medium text-muted-foreground">{selectedSprintTasks.length}</span>
                 </div>
                 {selectedSprintTasks.length ? selectedSprintTasks.map((task) => (
@@ -1678,15 +1685,15 @@ function TimelineView({ projectId, active, activeProject, members, currentUser, 
                     className="flex h-11 w-full min-w-0 items-center border-b px-4 text-left hover:bg-accent/40"
                     onDoubleClick={() => setSelectedTask(task)}
                     onKeyDown={(event) => openTaskFromKeyboard(event, () => setSelectedTask(task))}
-                    title="Double-click to open issue details"
+                    title="Double-click to open task details"
                   >
                     <span className="min-w-0">
                       <span className="block truncate text-sm font-medium" title={task.title}>{shortTimelineText(task.title, 22)}</span>
-                      <span className="block truncate text-xs text-muted-foreground">{issueKey(activeProject, task)} - {formatDate(task.dueDate)}</span>
+                      <span className="block truncate text-xs text-muted-foreground">{taskKey(activeProject, task)} - {formatDate(task.dueDate)}</span>
                     </span>
                   </button>
                 )) : (
-                  <div className="flex h-11 items-center border-b px-4 text-sm text-muted-foreground">No issues in this sprint</div>
+                  <div className="flex h-11 items-center border-b px-4 text-sm text-muted-foreground">No tasks in this sprint</div>
                 )}
               </>
             ) : (
@@ -1740,7 +1747,7 @@ function TimelineView({ projectId, active, activeProject, members, currentUser, 
                       onClick={() => setSelectedSprintId((current) => (current === sprint.id ? "" : sprint.id))}
                       onDoubleClick={() => onEditSprint(sprint)}
                       onKeyDown={(event) => openTaskFromKeyboard(event, () => onEditSprint(sprint))}
-                      title={`${sprint.name} - ${formatDate(start)} to ${formatDate(end)}. Click to show sprint issues. Double-click to edit sprint.`}
+                      title={`${sprint.name} - ${formatDate(start)} to ${formatDate(end)}. Click to show sprint tasks. Double-click to edit sprint.`}
                     >
                       <span className="truncate">{shortTimelineText(sprint.name, 18)}</span>
                     </button>
@@ -1763,10 +1770,10 @@ function TimelineView({ projectId, active, activeProject, members, currentUser, 
                         style={getItemStyle(barStart, barStart, timelineRange.start, totalDays, 120)}
                         onDoubleClick={() => setSelectedTask(task)}
                         onKeyDown={(event) => openTaskFromKeyboard(event, () => setSelectedTask(task))}
-                        title={`${issueKey(activeProject, task)} - ${task.title} - ${task.dueDate ? formatDate(task.dueDate) : "No due date"}. Double-click to open issue details.`}
+                        title={`${taskKey(activeProject, task)} - ${task.title} - ${task.dueDate ? formatDate(task.dueDate) : "No due date"}. Double-click to open task details.`}
                       >
                         <ChevronsUp className={cn("h-3.5 w-3.5 shrink-0", PRIORITY_TONES[task.priority])} />
-                        <span className="truncate">{issueKey(activeProject, task)}</span>
+                        <span className="truncate">{taskKey(activeProject, task)}</span>
                         <span className="sr-only">{status?.label || task.status}</span>
                       </button>
                     ) : null}
@@ -1836,7 +1843,7 @@ function BacklogView({
   addTasksToSprintMutation,
   removeTaskFromSprintMutation,
 }) {
-  const { statuses } = useIssueStatuses();
+  const { statuses } = useTaskStatuses();
   const [selectedTaskIds, setSelectedTaskIds] = useState([]);
   const [sprintDialog, setSprintDialog] = useState(null);
   const [draftFilters, setDraftFilters] = useState(filters);
@@ -2069,7 +2076,7 @@ function BacklogView({
           <span className="font-medium">{selectedVisibleIds.length} selected</span>
           {canManageSprints && moveScopeOptions.length > 1 ? (
             <>
-              <select className="h-8 rounded border bg-background px-2 text-sm" value={moveTargetSprintId} onChange={(event) => setMoveTargetSprintId(event.target.value)} aria-label="Move selected issues to">
+              <select className="h-8 rounded border bg-background px-2 text-sm" value={moveTargetSprintId} onChange={(event) => setMoveTargetSprintId(event.target.value)} aria-label="Move selected tasks to">
                 <option value="">Move to...</option>
                 {moveScopeOptions.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
               </select>
@@ -2084,7 +2091,7 @@ function BacklogView({
       ) : null}
 
       {loading ? (
-        <section className="rounded-md border bg-muted/40 p-4 text-sm text-muted-foreground">Loading backlog planning data...</section>
+        <InlineLoader message="Loading backlog planning data..." />
       ) : null}
 
       {!plannedOrActiveSprints.length && !loading ? (
@@ -2118,7 +2125,7 @@ function BacklogView({
             selectedTaskIds={selectedTaskIds}
             activeProject={activeProject}
             members={members}
-            emptyLabel={filters.search || filters.status || filters.priority || filters.assigneeId ? "No issues match these filters in this sprint." : "No issues in this sprint yet."}
+            emptyLabel={filters.search || filters.status || filters.priority || filters.assigneeId ? "No tasks match these filters in this sprint." : "No tasks in this sprint yet."}
             primaryAction={sprint.status === "ACTIVE" ? "Complete sprint" : "Start sprint"}
             canCreate={canCreate}
             canAssign={canAssign}
@@ -2148,7 +2155,7 @@ function BacklogView({
           <GripVertical className="h-4 w-4" />
         </div>
         <p>
-          {tasks.length} issue{tasks.length === 1 ? "" : "s"} visible
+          {tasks.length} task{tasks.length === 1 ? "" : "s"} visible
         </p>
       </div>
 
@@ -2159,7 +2166,7 @@ function BacklogView({
           selectedTaskIds={selectedTaskIds}
           activeProject={activeProject}
           members={members}
-          emptyLabel={filters.search || filters.status || filters.priority || filters.assigneeId ? "No backlog issues match these filters." : "No backlog issues yet."}
+          emptyLabel={filters.search || filters.status || filters.priority || filters.assigneeId ? "No backlog tasks match these filters." : "No backlog tasks yet."}
           primaryAction="Create sprint"
           canCreate={canCreate}
             canAssign={canAssign}
@@ -2218,7 +2225,7 @@ function CompletedSprintHistory({ projectId, sprints, activeProject, onViewTask,
       <div className="border-b px-3 py-2">
         <h2 className="text-sm font-semibold">Completed sprint history</h2>
         <p className="text-xs text-muted-foreground">
-          Review {orderedSprints.length} completed sprint{orderedSprints.length === 1 ? "" : "s"} and the issues finished in each sprint.
+          Review {orderedSprints.length} completed sprint{orderedSprints.length === 1 ? "" : "s"} and the tasks finished in each sprint.
         </p>
       </div>
       <div className="divide-y">
@@ -2241,7 +2248,7 @@ function CompletedSprintHistory({ projectId, sprints, activeProject, onViewTask,
                     </button>
                     <p className="truncate text-sm font-medium">{sprint.name}</p>
                     <span className="rounded bg-secondary px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">COMPLETED</span>
-                    <span className="text-xs text-muted-foreground">{total} issue{total === 1 ? "" : "s"}</span>
+                    <span className="text-xs text-muted-foreground">{total} task{total === 1 ? "" : "s"}</span>
                   </div>
                   <p className="mt-1 truncate text-xs text-muted-foreground">{sprint.goal || "No sprint goal recorded."}</p>
                 </div>
@@ -2270,18 +2277,18 @@ function CompletedSprintHistory({ projectId, sprints, activeProject, onViewTask,
 }
 
 function CompletedSprintTaskTable({ projectId, sprint, activeProject, onViewTask, onDeleteTask }) {
-  const { statuses } = useIssueStatuses();
+  const { statuses } = useTaskStatuses();
   const tasksQuery = useApiResource(() => getProjectSprintTasks(projectId, sprint.id), [projectId, sprint.id], {
     enabled: Boolean(projectId && sprint?.id),
   });
   const tasks = tasksQuery.data?.data || [];
 
   if (tasksQuery.isLoading) {
-    return <div className="mt-3 rounded border px-3 py-6 text-center text-sm text-muted-foreground">Loading sprint issues...</div>;
+    return <InlineLoader message="Loading sprint tasks..." className="mt-3" />;
   }
 
   if (tasksQuery.isError) {
-    const message = tasksQuery.error?.message || resultMessage(tasksQuery.data, "Could not load sprint issues.");
+    const message = tasksQuery.error?.message || resultMessage(tasksQuery.data, "Could not load sprint tasks.");
     return <div className="mt-3 rounded border px-3 py-6 text-center text-sm text-destructive">{message}</div>;
   }
 
@@ -2290,7 +2297,7 @@ function CompletedSprintTaskTable({ projectId, sprint, activeProject, onViewTask
       <table className="w-full min-w-[720px] text-sm">
         <thead className="bg-muted/30 text-left text-[11px] uppercase text-muted-foreground">
           <tr>
-            <th className="px-3 py-2">Issue</th>
+            <th className="px-3 py-2">Task</th>
             <th className="w-32 px-3 py-2">Status</th>
             <th className="w-28 px-3 py-2">Priority</th>
             <th className="w-28 px-3 py-2">Type</th>
@@ -2304,13 +2311,13 @@ function CompletedSprintTaskTable({ projectId, sprint, activeProject, onViewTask
               <td className="min-w-0 px-3 py-2">
                 <div className="flex min-w-0 items-center gap-2">
                   <ListTodo className="h-4 w-4 shrink-0 text-primary" />
-                  <span className="shrink-0 text-xs text-muted-foreground">{issueKey(activeProject, task)}</span>
+                  <span className="shrink-0 text-xs text-muted-foreground">{taskKey(activeProject, task)}</span>
                   <span className="truncate font-medium">{task.title}</span>
                 </div>
               </td>
               <td className="px-3 py-2">
                 <span className="inline-flex h-8 min-w-28 items-center rounded border bg-background px-2 text-xs">
-                  {issueStatusLabel(task.status, statuses)}
+                  {taskStatusLabel(task.status, statuses)}
                 </span>
               </td>
               <td className="px-3 py-2">
@@ -2340,7 +2347,7 @@ function CompletedSprintTaskTable({ projectId, sprint, activeProject, onViewTask
             </tr>
           )) : (
             <tr>
-              <td colSpan={6} className="px-3 py-6 text-center text-sm text-muted-foreground">No issues remain attached to this completed sprint.</td>
+              <td colSpan={6} className="px-3 py-6 text-center text-sm text-muted-foreground">No tasks remain attached to this completed sprint.</td>
             </tr>
           )}
         </tbody>
@@ -2440,7 +2447,7 @@ function SprintDialog({ state, onClose, onSubmit, pending }) {
           ) : null}
           {type === "delete" ? (
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground">Issues in this sprint will move back to the backlog.</p>
+              <p className="text-sm text-muted-foreground">Tasks in this sprint will move back to the backlog.</p>
               <Label htmlFor={`${fieldIdPrefix}-delete-confirm`}>Type {sprint?.name} to confirm</Label>
               <Input id={`${fieldIdPrefix}-delete-confirm`} value={form.deleteConfirm} onChange={(event) => setForm((current) => ({ ...current, deleteConfirm: event.target.value }))} />
             </div>
@@ -2479,7 +2486,7 @@ function QuickCreateTask({ members, sprints, defaultStatus = "TODO", defaultSpri
       )}
       onSubmit={submit}
     >
-      <Input className="h-8" placeholder="Create issue" value={title} onChange={(event) => setTitle(event.target.value)} />
+      <Input className="h-8" placeholder="Create task" value={title} onChange={(event) => setTitle(event.target.value)} />
       {!compact ? (
         <>
           <select className="h-8 rounded border bg-background px-2 text-sm" value={priority} onChange={(event) => setPriority(event.target.value)}>
@@ -2504,7 +2511,7 @@ function QuickCreateTask({ members, sprints, defaultStatus = "TODO", defaultSpri
   );
 }
 
-function ListView({ tasks, pagination, onPageChange, activeProject, members, sprints, filters, setFilters, setSelectedTask, canCreate, canAssign, createInlineTask, updateTaskMutation, deleteTaskMutation, addTasksToSprintMutation, removeTaskFromSprintMutation }) {
+function ListView({ tasks, loading, pagination, onPageChange, activeProject, members, sprints, filters, setFilters, setSelectedTask, canCreate, canAssign, createInlineTask, updateTaskMutation, deleteTaskMutation, addTasksToSprintMutation, removeTaskFromSprintMutation }) {
   const [selectedIds, setSelectedIds] = useState([]);
   const [sort, setSort] = useState({ field: "updatedAt", direction: "desc" });
   const [creating, setCreating] = useState(false);
@@ -2547,7 +2554,7 @@ function ListView({ tasks, pagination, onPageChange, activeProject, members, spr
     setSelectedTask(task);
   }
 
-  function handleIssueCellDoubleClick(event, task) {
+  function handleTaskCellDoubleClick(event, task) {
     event.stopPropagation();
     setSelectedTask(task);
   }
@@ -2559,7 +2566,7 @@ function ListView({ tasks, pagination, onPageChange, activeProject, members, spr
         <div className="flex items-center justify-between gap-3 rounded-md border bg-background px-3 py-2">
           <div>
             <h2 className="text-sm font-semibold">Work</h2>
-          <p className="text-xs text-muted-foreground">Track and update space issues.</p>
+          <p className="text-xs text-muted-foreground">Track and update project tasks.</p>
           </div>
           <Button className="h-8 rounded px-2.5 text-sm" onClick={() => setCreating((current) => !current)}>
             <Plus className="h-4 w-4" />
@@ -2568,6 +2575,7 @@ function ListView({ tasks, pagination, onPageChange, activeProject, members, spr
         </div>
       ) : null}
       {creating ? <QuickCreateTask members={members} sprints={sprints} onCreate={(payload) => { createInlineTask(payload); setCreating(false); }} /> : null}
+      {loading ? <InlineLoader message="Loading tasks..." /> : null}
       {selectedIds.length ? (
         <div className="flex flex-wrap items-center gap-2 rounded-md border bg-muted/40 p-2 text-sm">
           <span className="font-medium">{selectedIds.length} selected</span>
@@ -2610,16 +2618,16 @@ function ListView({ tasks, pagination, onPageChange, activeProject, members, spr
                 key={task.id}
                 className="cursor-pointer border-t hover:bg-accent/40"
                 tabIndex={0}
-                title="Click to open issue details"
+                title="Click to open task details"
                 onClick={(event) => handleRowOpen(event, task)}
                 onDoubleClick={(event) => handleRowOpen(event, task)}
                 onKeyDown={(event) => openTaskFromKeyboard(event, () => setSelectedTask(task))}
               >
                 <td className="whitespace-nowrap px-3 py-2" onDoubleClick={(event) => event.stopPropagation()}><input data-row-control="true" type="checkbox" checked={selectedIds.includes(task.id)} onClick={(event) => event.stopPropagation()} onDoubleClick={(event) => event.stopPropagation()} onChange={(event) => setSelectedIds((current) => event.target.checked ? [...current, task.id] : current.filter((id) => id !== task.id))} /></td>
-                <td className="px-3 py-2" onDoubleClick={(event) => handleIssueCellDoubleClick(event, task)}>
+                <td className="px-3 py-2" onDoubleClick={(event) => handleTaskCellDoubleClick(event, task)}>
                   <div className="flex min-w-0 items-center gap-2 whitespace-nowrap text-left">
                     <span className="truncate font-medium hover:text-primary">{task.title}</span>
-                    <span className="shrink-0 text-xs text-muted-foreground">{issueKey(activeProject, task)}</span>
+                    <span className="shrink-0 text-xs text-muted-foreground">{taskKey(activeProject, task)}</span>
                   </div>
                 </td>
                 <td className="whitespace-nowrap px-3 py-2" onClick={(event) => event.stopPropagation()} onDoubleClick={(event) => event.stopPropagation()}><InlineStatus task={task} onUpdate={(payload) => updateTaskMutation.mutate({ taskId: task.id, payload })} /></td>
@@ -2635,8 +2643,8 @@ function ListView({ tasks, pagination, onPageChange, activeProject, members, spr
                 </td>
               </tr>
             ))}
-            {!sortedTasks.length ? (
-              <tr><td colSpan={11} className="px-3 py-8 text-center text-muted-foreground">No issues match this view.</td></tr>
+            {!loading && !sortedTasks.length ? (
+              <tr><td colSpan={11} className="px-3 py-8 text-center text-muted-foreground">No tasks match this view.</td></tr>
             ) : null}
           </tbody>
         </table>
@@ -2647,7 +2655,7 @@ function ListView({ tasks, pagination, onPageChange, activeProject, members, spr
 }
 
 function TaskFilters({ filters, setFilters, members, sprints = [], placeholder }) {
-  const { statuses } = useIssueStatuses();
+  const { statuses } = useTaskStatuses();
   const [draftFilters, setDraftFilters] = useState(filters);
   const hasSearchValue = draftFilters.search.trim().length > 0;
 
@@ -2706,7 +2714,7 @@ function TaskFilters({ filters, setFilters, members, sprints = [], placeholder }
 }
 
 function InlineStatus({ task, onUpdate }) {
-  const { statuses } = useIssueStatuses();
+  const { statuses } = useTaskStatuses();
   const statusOptions = statuses.map((status) => ({ value: status.value, label: status.label }));
 
   return (
@@ -2889,10 +2897,10 @@ function TaskActionsMenu({ task, onView, onDelete, canDelete = true, moveOptions
         </div>,
         document.body
       ) : null}
-      <Dialog open={confirmDelete}>
+      <Dialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Delete issue?</DialogTitle>
+            <DialogTitle>Delete task?</DialogTitle>
             <p className="text-sm text-muted-foreground">
               This permanently removes "{task.title}", including comments.
             </p>
@@ -2910,7 +2918,7 @@ function TaskActionsMenu({ task, onView, onDelete, canDelete = true, moveOptions
               }}
             >
               <Trash2 className="h-4 w-4" />
-              Delete issue
+              Delete task
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -3173,7 +3181,7 @@ function BacklogSection({
               </button>
               <h2 className="truncate text-sm font-semibold">{title}</h2>
               {sprint ? <span className="rounded bg-secondary px-1.5 py-0.5 text-[11px] font-semibold text-muted-foreground">{sprint.status}</span> : null}
-              <span className="shrink-0 text-sm text-muted-foreground">{items.length} issue{items.length === 1 ? "" : "s"}</span>
+              <span className="shrink-0 text-sm text-muted-foreground">{items.length} task{items.length === 1 ? "" : "s"}</span>
             </div>
             {sprint?.goal ? <p className="mt-1 truncate pl-11 text-xs text-muted-foreground">{sprint.goal}</p> : null}
           </div>
@@ -3229,7 +3237,7 @@ function BacklogSection({
               <tr>
                 <th className="w-10 px-2 py-2" />
                 <th className="w-8 px-2 py-2" />
-                <th className="px-2 py-2">Issue</th>
+                <th className="px-2 py-2">Task</th>
                 <th className="w-36 px-2 py-2">Status</th>
                 <th className="w-28 px-2 py-2">Priority</th>
                 <th className="w-28 px-2 py-2">Type</th>
@@ -3262,7 +3270,7 @@ function BacklogSection({
                 ))
               ) : (
                 <tr>
-                  <td colSpan={10} className="px-3 py-8 text-center text-sm text-muted-foreground">{emptyLabel || "No issues yet."}</td>
+                  <td colSpan={10} className="px-3 py-8 text-center text-sm text-muted-foreground">{emptyLabel || "No tasks yet."}</td>
                 </tr>
               )}
             </tbody>
@@ -3283,7 +3291,7 @@ function BacklogSection({
           }}
         >
           <Plus className="h-4 w-4 text-muted-foreground" />
-          <input name="title" className="h-8 flex-1 bg-transparent text-sm outline-none" placeholder="Create issue" />
+          <input name="title" className="h-8 flex-1 bg-transparent text-sm outline-none" placeholder="Create task" />
           <Button type="submit" variant="ghost" className="h-8 rounded px-2.5 text-sm">Create</Button>
         </form>
       ) : null}
@@ -3292,7 +3300,7 @@ function BacklogSection({
 }
 
 function BacklogRow({ task, activeProject, members, selected, canAssign, moveScopeOptions = [], onToggle, onOpen, onUpdate, onDelete, onMoveTo, onDropTask }) {
-  const { statuses } = useIssueStatuses();
+  const { statuses } = useTaskStatuses();
   const priorityTone = PRIORITY_TONES[task.priority] || "text-muted-foreground";
   const statusOptions = statuses.map((item) => ({ value: item.value, label: item.label }));
   const priorityOptions = PRIORITIES.map((priority) => ({
@@ -3301,7 +3309,7 @@ function BacklogRow({ task, activeProject, members, selected, canAssign, moveSco
     className: PRIORITY_TONES[priority],
     style: { color: PRIORITY_OPTION_COLORS[priority], fontWeight: 600 },
   }));
-  const typeOptions = ISSUE_TYPES.map((type) => ({ value: type, label: type.replace("_", " ") }));
+  const typeOptions = TASK_TYPES.map((type) => ({ value: type, label: type.replace("_", " ") }));
   const assigneeOptions = getAssigneeOptions(members, task);
   const stopRowOpen = (event) => event.stopPropagation();
   const controlProps = {
@@ -3315,7 +3323,7 @@ function BacklogRow({ task, activeProject, members, selected, canAssign, moveSco
     onOpen();
   }
 
-  function handleIssueCellDoubleClick(event) {
+  function handleTaskCellDoubleClick(event) {
     event.stopPropagation();
     onOpen();
   }
@@ -3323,7 +3331,7 @@ function BacklogRow({ task, activeProject, members, selected, canAssign, moveSco
   return (
     <tr
       className="border-t transition-colors hover:bg-accent/40"
-      title="Double-click to open issue details"
+      title="Double-click to open task details"
       onDragOver={(event) => event.preventDefault()}
       onDrop={(event) => {
         event.stopPropagation();
@@ -3357,10 +3365,10 @@ function BacklogRow({ task, activeProject, members, selected, canAssign, moveSco
           <GripVertical className="h-4 w-4" />
         </button>
       </td>
-      <td className="min-w-0 px-2 py-1.5" onDoubleClick={handleIssueCellDoubleClick}>
+      <td className="min-w-0 px-2 py-1.5" onDoubleClick={handleTaskCellDoubleClick}>
         <div className="flex min-w-0 items-center gap-2">
           <ListTodo className="h-4 w-4 shrink-0 text-primary" />
-          <span className="shrink-0 text-xs text-muted-foreground">{issueKey(activeProject, task)}</span>
+          <span className="shrink-0 text-xs text-muted-foreground">{taskKey(activeProject, task)}</span>
           <span className="truncate font-medium text-foreground">{task.title}</span>
         </div>
       </td>
@@ -3437,14 +3445,14 @@ function Panel({ title, subtitle, action, children }) {
   );
 }
 
-function IssueCreateDialog({ open, setOpen, taskForm, setTaskForm, members, sprints, canAssign, submitTask, pending }) {
-  const { statuses } = useIssueStatuses();
+function TaskCreateDialog({ open, setOpen, taskForm, setTaskForm, members, sprints, canAssign, submitTask, pending }) {
+  const { statuses } = useTaskStatuses();
   const planningSprints = sprints.filter((sprint) => sprint.status !== "COMPLETED");
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Create issue</DialogTitle>
+          <DialogTitle>Create task</DialogTitle>
         </DialogHeader>
         <form className="space-y-3" onSubmit={submitTask}>
           <div className="space-y-2">
@@ -3456,7 +3464,7 @@ function IssueCreateDialog({ open, setOpen, taskForm, setTaskForm, members, spri
             <Textarea id="task-description" value={taskForm.description} onChange={(event) => setTaskForm((current) => ({ ...current, description: event.target.value }))} />
           </div>
           <div className="grid gap-3 md:grid-cols-2">
-            <SelectField label="Type" value={taskForm.type} onChange={(value) => setTaskForm((current) => ({ ...current, type: value }))} options={ISSUE_TYPES.map((item) => [item, item.replaceAll("_", " ")])} />
+            <SelectField label="Type" value={taskForm.type} onChange={(value) => setTaskForm((current) => ({ ...current, type: value }))} options={TASK_TYPES.map((item) => [item, item.replaceAll("_", " ")])} />
             <SelectField label="Status" value={taskForm.status} onChange={(value) => setTaskForm((current) => ({ ...current, status: value }))} options={statuses.map((item) => [item.value, item.label])} />
             <SelectField label="Priority" value={taskForm.priority} onChange={(value) => setTaskForm((current) => ({ ...current, priority: value }))} options={PRIORITIES.map((item) => [item, item])} />
             <div className="space-y-2">
@@ -3465,7 +3473,7 @@ function IssueCreateDialog({ open, setOpen, taskForm, setTaskForm, members, spri
             </div>
             <div className="space-y-2">
               <Label>Branch</Label>
-              <Input placeholder="feature/issue-key" value={taskForm.branchName} onChange={(event) => setTaskForm((current) => ({ ...current, branchName: event.target.value }))} />
+              <Input placeholder="feature/task-key" value={taskForm.branchName} onChange={(event) => setTaskForm((current) => ({ ...current, branchName: event.target.value }))} />
             </div>
             <div className="space-y-2">
               <Label>Sprint</Label>
@@ -3490,7 +3498,7 @@ function IssueCreateDialog({ open, setOpen, taskForm, setTaskForm, members, spri
               <Input type="date" value={taskForm.dueDate} onChange={(event) => setTaskForm((current) => ({ ...current, dueDate: event.target.value }))} />
             </div>
           </div>
-          <Button type="submit" disabled={pending}>{pending ? "Creating..." : "Create issue"}</Button>
+          <Button type="submit" disabled={pending}>{pending ? "Creating..." : "Create task"}</Button>
         </form>
       </DialogContent>
     </Dialog>
@@ -3504,6 +3512,7 @@ function WorkItemView({
   canAssign,
   canDelete,
   canComment,
+  permissions = [],
   sprints,
   comments = [],
   comment,
@@ -3515,12 +3524,13 @@ function WorkItemView({
   standalone = false,
   compact = false,
 }) {
-  const { statuses } = useIssueStatuses();
+  const { user } = useAuth();
+  const { statuses } = useTaskStatuses();
   const planningSprints = sprints.filter((sprint) => sprint.status !== "COMPLETED");
-  const taskUrl = `/spaces/${task.projectId}/issues/${task.id}`;
+  const taskUrl = `/projects/${task.projectId}/tasks/${task.id}`;
   const reporter = task.createdBy;
   const project = activeProject || task.project;
-  const key = issueKey(project, task);
+  const key = taskKey(project, task);
   const status = statuses.find((item) => item.value === task.status);
   const statusOptions = statuses.map((item) => [item.value, item.label]);
   const memberOptions = useMemo(() => {
@@ -3533,7 +3543,11 @@ function WorkItemView({
   const [titleDraft, setTitleDraft] = useState(task.title || "");
   const [descriptionDraft, setDescriptionDraft] = useState(task.description || "");
   const [savingField, setSavingField] = useState("");
-  const commentsQuery = useApiResource(() => getTaskComments(task.id), [activityVisible, task.id, commentsVersion], {
+  const [commentListVersion, setCommentListVersion] = useState(0);
+  const [editingCommentId, setEditingCommentId] = useState("");
+  const [commentDraft, setCommentDraft] = useState("");
+  const [commentActionError, setCommentActionError] = useState("");
+  const commentsQuery = useApiResource(() => getTaskComments(task.id), [activityVisible, task.id, commentsVersion, commentListVersion], {
     enabled: Boolean(activityVisible && task.id),
   });
   const visibleComments = commentsQuery.data?.data || comments;
@@ -3542,7 +3556,36 @@ function WorkItemView({
 
   useEffect(() => {
     setActivityVisible(false);
+    setEditingCommentId("");
+    setCommentDraft("");
+    setCommentActionError("");
   }, [task.id]);
+
+  const updateCommentMutation = useApiAction(({ commentId, content }) => updateComment(task.id, commentId, content), {
+    onSuccess: (result) => {
+      if (!result?.success) {
+        setCommentActionError(resultMessage(result, "Could not update comment."));
+        return;
+      }
+      setEditingCommentId("");
+      setCommentDraft("");
+      setCommentActionError("");
+      setCommentListVersion((current) => current + 1);
+    },
+    onError: (err) => setCommentActionError(err.message || "Could not update comment."),
+  });
+
+  const deleteCommentMutation = useApiAction((commentId) => deleteComment(task.id, commentId), {
+    onSuccess: (result) => {
+      if (!result?.success) {
+        setCommentActionError(resultMessage(result, "Could not delete comment."));
+        return;
+      }
+      setCommentActionError("");
+      setCommentListVersion((current) => current + 1);
+    },
+    onError: (err) => setCommentActionError(err.message || "Could not delete comment."),
+  });
 
   useEffect(() => {
     setTitleDraft(task.title || "");
@@ -3598,6 +3641,47 @@ function WorkItemView({
     }
   }
 
+  function isOwnComment(item) {
+    return Boolean(user?.id && item.user?.id === user.id);
+  }
+
+  function canEditComment(item) {
+    return isOwnComment(item) && permissions.includes("comment.update.own");
+  }
+
+  function canDeleteComment(item) {
+    return (
+      permissions.includes("comment.delete.any") ||
+      (isOwnComment(item) && permissions.includes("comment.delete.own"))
+    );
+  }
+
+  function startCommentEdit(item) {
+    setEditingCommentId(item.id);
+    setCommentDraft(item.content || "");
+    setCommentActionError("");
+  }
+
+  function cancelCommentEdit() {
+    setEditingCommentId("");
+    setCommentDraft("");
+    setCommentActionError("");
+  }
+
+  function submitCommentEdit(commentId) {
+    const content = commentDraft.trim();
+    if (!content) {
+      setCommentActionError("Comment cannot be empty.");
+      return;
+    }
+    updateCommentMutation.mutate({ commentId, content });
+  }
+
+  function removeComment(commentId) {
+    if (!window.confirm("Delete this comment?")) return;
+    deleteCommentMutation.mutate(commentId);
+  }
+
   const detailCard = (
     <section id="work-item-details" className="rounded-md border bg-card">
       <div className="border-b px-4 py-3">
@@ -3633,14 +3717,14 @@ function WorkItemView({
     </section>
   );
 
-  const issueHeader = (
+  const taskHeader = (
     <section className={cn("rounded-md border bg-card", compact ? "p-4" : "p-5")}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0 flex-1 space-y-3">
           <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-muted-foreground">
-            <span>Spaces</span>
+            <span>Projects</span>
             <span>/</span>
-            <span className="min-w-0 max-w-full truncate">{project?.name || "Space"}</span>
+            <span className="min-w-0 max-w-full truncate">{project?.name || "Project"}</span>
             <span>/</span>
             <span className="font-medium text-foreground break-all">{key}</span>
           </div>
@@ -3660,7 +3744,7 @@ function WorkItemView({
                   event.currentTarget.blur();
                 }
               }}
-              aria-label="Issue title"
+              aria-label="Task title"
             />
             <p className="mt-1 text-xs text-muted-foreground">{savingTitle ? "Saving title..." : `Updated ${relativeDate(task.updatedAt)}`}</p>
           </div>
@@ -3678,10 +3762,10 @@ function WorkItemView({
       </div>
 
       <div className="mt-4 grid gap-2 sm:grid-cols-2">
-        <IssueMetaPill icon={CheckCircle2} label="Status" value={status?.label || task.status} toneClass="text-primary" />
-        <IssueMetaPill icon={ChevronsUp} label="Priority" value={task.priority} toneClass={PRIORITY_TONES[task.priority]} />
-        <IssueMetaPill icon={UserRound} label="Assignee" value={task.assignee?.name || task.assignee?.email || "Unassigned"} />
-        <IssueMetaPill icon={CalendarDays} label="Due" value={formatDate(task.dueDate)} />
+        <TaskMetaPill icon={CheckCircle2} label="Status" value={status?.label || task.status} toneClass="text-primary" />
+        <TaskMetaPill icon={ChevronsUp} label="Priority" value={task.priority} toneClass={PRIORITY_TONES[task.priority]} />
+        <TaskMetaPill icon={UserRound} label="Assignee" value={task.assignee?.name || task.assignee?.email || "Unassigned"} />
+        <TaskMetaPill icon={CalendarDays} label="Due" value={formatDate(task.dueDate)} />
       </div>
 
       {compact ? (
@@ -3695,9 +3779,9 @@ function WorkItemView({
   return (
     <div className={cn("gap-5", compact ? "min-h-0 space-y-4" : standalone ? "grid min-h-[70vh] lg:grid-cols-[minmax(0,1fr)_340px]" : "grid min-h-[70vh] lg:grid-cols-[minmax(0,1fr)_300px]")}>
       <section className="min-w-0 space-y-5">
-        {issueHeader}
+        {taskHeader}
 
-        <nav className="flex flex-wrap gap-1 border-b pb-2 text-sm" aria-label="Issue sections">
+        <nav className="flex flex-wrap gap-1 border-b pb-2 text-sm" aria-label="Task sections">
           {[
             ["Description", "work-item-description"],
             ["Details", "work-item-details"],
@@ -3707,7 +3791,7 @@ function WorkItemView({
               key={sectionId}
               type="button"
               className="rounded-md px-2.5 py-1.5 text-muted-foreground hover:bg-accent hover:text-foreground"
-              onClick={() => scrollIssueSectionIntoView(sectionId)}
+              onClick={() => scrollTaskSectionIntoView(sectionId)}
             >
               {label}
             </button>
@@ -3726,7 +3810,7 @@ function WorkItemView({
             disabled={savingDescription}
             onChange={(event) => setDescriptionDraft(event.target.value)}
             onBlur={(event) => saveDraftField("description", event.target.value)}
-            aria-label="Issue description"
+            aria-label="Task description"
           />
         </section>
 
@@ -3759,14 +3843,54 @@ function WorkItemView({
           </div>
           <div className="mt-4 space-y-2">
             {commentsQuery.isLoading ? (
-              <p className="rounded-md border p-3 text-sm text-muted-foreground">Loading comments...</p>
+              <InlineLoader message="Loading comments..." className="py-3" />
+            ) : null}
+            {commentActionError ? (
+              <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">{commentActionError}</p>
             ) : null}
             {visibleComments.map((item) => (
               <div key={item.id} className="rounded-md border bg-background p-3 text-sm">
-                <p>{item.content}</p>
-                <div className="mt-2 flex items-center gap-2 text-xs text-muted-foreground">
-                  <UserAvatar user={item.user} className="h-6 w-6" />
-                  <span>{item.user?.name || item.user?.email}</span>
+                {editingCommentId === item.id ? (
+                  <div className="space-y-2">
+                    <Textarea
+                      className="min-h-20"
+                      value={commentDraft}
+                      onChange={(event) => setCommentDraft(event.target.value)}
+                      aria-label="Edit comment"
+                    />
+                    <div className="flex flex-wrap gap-2">
+                      <Button className="h-7 rounded px-2 text-xs" disabled={updateCommentMutation.isPending || !commentDraft.trim()} onClick={() => submitCommentEdit(item.id)}>
+                        {updateCommentMutation.isPending ? "Saving..." : "Save"}
+                      </Button>
+                      <Button variant="outline" className="h-7 rounded px-2 text-xs" disabled={updateCommentMutation.isPending} onClick={cancelCommentEdit}>
+                        Cancel
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="whitespace-pre-wrap break-words">{item.content}</p>
+                )}
+                <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+                  <div className="flex items-center gap-2">
+                    <UserAvatar user={item.user} className="h-6 w-6" />
+                    <span>{item.user?.name || item.user?.email}</span>
+                  </div>
+                  {editingCommentId !== item.id && (canEditComment(item) || canDeleteComment(item)) ? (
+                    <div className="flex items-center gap-1">
+                      {canEditComment(item) ? (
+                        <Button variant="ghost" className="h-7 rounded px-2 text-xs" onClick={() => startCommentEdit(item)}>
+                          <Pencil className="h-3.5 w-3.5" />
+                          Edit
+                        </Button>
+                      ) : null}
+                      {canDeleteComment(item) ? (
+                        <Button variant="ghost" className="h-7 rounded px-2 text-xs text-destructive hover:text-destructive" disabled={deleteCommentMutation.isPending} onClick={() => removeComment(item.id)}>
+                          <Trash2 className="h-3.5 w-3.5" />
+                          Delete
+                        </Button>
+                      ) : null}
+                    </div>
+                  ) : null}
                 </div>
               </div>
             ))}
@@ -3808,7 +3932,7 @@ function DetailRow({ label, children }) {
   );
 }
 
-function IssueMetaPill({ icon: Icon, label, value, toneClass }) {
+function TaskMetaPill({ icon: Icon, label, value, toneClass }) {
   return (
     <div className="flex min-w-0 items-center gap-2 rounded-md border bg-background px-3 py-2 text-sm">
       <Icon className={cn("h-4 w-4 shrink-0 text-muted-foreground", toneClass)} />
@@ -3820,7 +3944,7 @@ function IssueMetaPill({ icon: Icon, label, value, toneClass }) {
   );
 }
 
-function IssueDetailDialog({
+function TaskDetailDialog({
   selectedTaskId,
   setSelectedTask,
   activeProject,
@@ -3829,6 +3953,7 @@ function IssueDetailDialog({
   canAssign,
   canDelete,
   canComment,
+  permissions = [],
   sprints,
   comments,
   comment,
@@ -3862,22 +3987,15 @@ function IssueDetailDialog({
       <div className="flex h-12 shrink-0 items-center justify-between border-b bg-background/95 px-4 backdrop-blur">
         <div className="flex items-center gap-2 text-sm font-semibold">
           <CheckCircle2 className="h-4 w-4" />
-          Issue details
+          Task details
         </div>
-        <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Close issue" onClick={() => setSelectedTask(null)}>
+        <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Close task" onClick={() => setSelectedTask(null)}>
           <X className="h-4 w-4" />
         </Button>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-5">
         {detailQuery.isLoading ? (
-          <div className="space-y-3 rounded-md border bg-card p-4">
-            <div className="h-4 w-36 rounded bg-muted" />
-            <div className="h-8 w-3/4 rounded bg-muted" />
-            <div className="grid gap-2 sm:grid-cols-2">
-              <div className="h-16 rounded border bg-background" />
-              <div className="h-16 rounded border bg-background" />
-            </div>
-          </div>
+          <InlineLoader message="Loading task..." />
         ) : task ? (
           <WorkItemView
             key={task.id}
@@ -3887,6 +4005,7 @@ function IssueDetailDialog({
             canAssign={canAssign}
             canDelete={canDelete}
             canComment={canComment}
+            permissions={permissions}
             sprints={sprints}
             comments={comments}
             commentsVersion={commentsVersion}
@@ -3898,7 +4017,7 @@ function IssueDetailDialog({
             compact
           />
         ) : (
-          <p className="rounded-md border p-4 text-sm text-muted-foreground">{detailErrorMessage || "Issue not found."}</p>
+          <p className="rounded-md border p-4 text-sm text-muted-foreground">{detailErrorMessage || "Task not found."}</p>
         )}
       </div>
     </>
@@ -3909,7 +4028,7 @@ function IssueDetailDialog({
       <aside
         className="fixed bottom-0 right-0 top-14 z-40 flex w-full flex-col border-l bg-background shadow-2xl sm:w-[82vw] lg:w-[var(--task-detail-width)]"
         style={{ "--task-detail-width": TASK_DETAIL_PANEL_WIDTH }}
-        aria-label="Issue details"
+        aria-label="Task details"
       >
         {detailContent}
       </aside>
@@ -3917,7 +4036,7 @@ function IssueDetailDialog({
   }
 
   return (
-    <Dialog open={Boolean(selectedTaskId)}>
+    <Dialog open={Boolean(selectedTaskId)} onOpenChange={(open) => !open && setSelectedTask(null)}>
       <DialogContent
         className="flex h-[min(880px,calc(100vh-2rem))] max-h-[calc(100vh-2rem)] max-w-[min(1120px,calc(100vw-2rem))] flex-col overflow-hidden rounded-md p-0"
         onClick={() => setSelectedTask(null)}

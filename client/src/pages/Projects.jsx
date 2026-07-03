@@ -6,13 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { InlineLoader } from "@/components/ui/loading";
 import { PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
 import { Textarea } from "@/components/ui/textarea";
 import { emitApiResourceRefresh, useApiAction, useApiResource } from "@/lib/api-hooks";
 import { createProject, deleteProject, getProject, getProjects, updateProject } from "@/lib/project-api";
 import { cn } from "@/lib/utils";
 
-const emptySpaceForm = {
+const emptyProjectForm = {
   name: "",
   key: "",
   description: "",
@@ -35,7 +36,7 @@ function getErrorMessage(result, fallback) {
   return result?.error?.message || fallback;
 }
 
-function normalizeSpaceForm(form) {
+function normalizeProjectForm(form) {
   return {
     name: form.name.trim(),
     key: form.key.trim().toUpperCase(),
@@ -77,21 +78,21 @@ function ProgressCell({ value = 0 }) {
   );
 }
 
-function SpaceDialog({ mode, open, form, setForm, pending, onClose, onSubmit }) {
+function ProjectDialog({ mode, open, form, setForm, pending, onClose, onSubmit }) {
   return (
-    <Dialog open={open}>
+    <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <DialogContent className="max-w-xl" onClick={(event) => event.stopPropagation()}>
         <DialogHeader>
-          <DialogTitle>{mode === "edit" ? "Edit Space" : "Create Space"}</DialogTitle>
+          <DialogTitle>{mode === "edit" ? "Edit Project" : "Create Project"}</DialogTitle>
           <p className="text-sm text-muted-foreground">
-            {mode === "edit" ? "Update the core details for this workspace." : "Create a workspace boundary for related work."}
+            {mode === "edit" ? "Update the core details for this project." : "Create a project boundary for related work."}
           </p>
         </DialogHeader>
         <form className="mt-4 space-y-4" onSubmit={onSubmit}>
           <div className="space-y-2">
-            <Label htmlFor="space-name">Name</Label>
+            <Label htmlFor="project-name">Name</Label>
             <Input
-              id="space-name"
+              id="project-name"
               value={form.name}
               onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
               placeholder="Website redesign"
@@ -100,9 +101,9 @@ function SpaceDialog({ mode, open, form, setForm, pending, onClose, onSubmit }) 
           </div>
           <div className="grid gap-3 sm:grid-cols-[160px_minmax(0,1fr)]">
             <div className="space-y-2">
-              <Label htmlFor="space-key">Key</Label>
+              <Label htmlFor="project-key">Key</Label>
               <Input
-                id="space-key"
+                id="project-key"
                 maxLength={10}
                 value={form.key}
                 onChange={(event) => setForm((current) => ({ ...current, key: event.target.value.toUpperCase() }))}
@@ -110,9 +111,9 @@ function SpaceDialog({ mode, open, form, setForm, pending, onClose, onSubmit }) 
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="space-visibility">Visibility</Label>
+              <Label htmlFor="project-visibility">Visibility</Label>
               <select
-                id="space-visibility"
+                id="project-visibility"
                 className="h-9 w-full rounded-md border bg-background px-3 text-sm"
                 value={form.visibility}
                 onChange={(event) => setForm((current) => ({ ...current, visibility: event.target.value }))}
@@ -122,9 +123,9 @@ function SpaceDialog({ mode, open, form, setForm, pending, onClose, onSubmit }) 
             </div>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="space-status">Status</Label>
+            <Label htmlFor="project-status">Status</Label>
             <select
-              id="space-status"
+              id="project-status"
               className="h-9 w-full rounded-md border bg-background px-3 text-sm"
               value={form.status}
               onChange={(event) => setForm((current) => ({ ...current, status: event.target.value }))}
@@ -133,9 +134,9 @@ function SpaceDialog({ mode, open, form, setForm, pending, onClose, onSubmit }) 
             </select>
           </div>
           <div className="space-y-2">
-            <Label htmlFor="space-description">Description</Label>
+            <Label htmlFor="project-description">Description</Label>
             <Textarea
-              id="space-description"
+              id="project-description"
               className="min-h-24"
               value={form.description}
               onChange={(event) => setForm((current) => ({ ...current, description: event.target.value }))}
@@ -146,7 +147,7 @@ function SpaceDialog({ mode, open, form, setForm, pending, onClose, onSubmit }) 
             <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
             <Button type="submit" disabled={pending}>
               <Plus className="h-4 w-4" />
-              {pending ? "Saving..." : mode === "edit" ? "Save Space" : "Create Space"}
+              {pending ? "Saving..." : mode === "edit" ? "Save Project" : "Create Project"}
             </Button>
           </DialogFooter>
         </form>
@@ -155,7 +156,7 @@ function SpaceDialog({ mode, open, form, setForm, pending, onClose, onSubmit }) 
   );
 }
 
-function SpaceActionsMenu({ space, onEdit, onDelete }) {
+function ProjectActionsMenu({ project, onEdit, onDelete }) {
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   const triggerRef = useRef(null);
@@ -211,7 +212,7 @@ function SpaceActionsMenu({ space, onEdit, onDelete }) {
         variant="ghost"
         size="icon"
         className="h-8 w-8"
-        aria-label={`Actions for ${space.name}`}
+        aria-label={`Actions for ${project.name}`}
         onClick={(event) => {
           event.stopPropagation();
           setOpen((current) => !current);
@@ -247,8 +248,8 @@ export default function Projects() {
   const [visibility, setVisibility] = useState("");
   const [status, setStatus] = useState("");
   const [dialogMode, setDialogMode] = useState(null);
-  const [editingSpaceId, setEditingSpaceId] = useState("");
-  const [form, setForm] = useState(emptySpaceForm);
+  const [editingProjectId, setEditingProjectId] = useState("");
+  const [form, setForm] = useState(emptyProjectForm);
   const [message, setMessage] = useState("");
   const [page, setPage] = useState(1);
 
@@ -259,50 +260,50 @@ export default function Projects() {
     page,
   ]);
 
-  const editProjectQuery = useApiResource(() => getProject(editingSpaceId, { fields: "edit" }), [editingSpaceId, dialogMode], {
-    enabled: Boolean(editingSpaceId && dialogMode === "edit"),
+  const editProjectQuery = useApiResource(() => getProject(editingProjectId, { fields: "edit" }), [editingProjectId, dialogMode], {
+    enabled: Boolean(editingProjectId && dialogMode === "edit"),
   });
 
-  const spaces = projectsQuery.data?.data || [];
+  const projects = projectsQuery.data?.data || [];
   const pagination = projectsQuery.data?.pagination;
-  const editingSpace = editProjectQuery.data?.data;
+  const editingProject = editProjectQuery.data?.data;
 
   useEffect(() => {
     setPage(1);
   }, [search, status, visibility]);
 
   useEffect(() => {
-    if (!editingSpace || dialogMode !== "edit") return;
+    if (!editingProject || dialogMode !== "edit") return;
     setForm({
-      name: editingSpace.name || "",
-      key: editingSpace.key || "",
-      description: editingSpace.description || "",
-      visibility: editingSpace.visibility || "private",
-      status: editingSpace.status || "active",
+      name: editingProject.name || "",
+      key: editingProject.key || "",
+      description: editingProject.description || "",
+      visibility: editingProject.visibility || "private",
+      status: editingProject.status || "active",
     });
-  }, [dialogMode, editingSpace]);
+  }, [dialogMode, editingProject]);
 
-  function refreshSpaces() {
+  function refreshProjects() {
     projectsQuery.reload();
-    if (editingSpaceId) editProjectQuery.reload();
+    if (editingProjectId) editProjectQuery.reload();
     emitApiResourceRefresh("projects");
   }
 
   const createAction = useApiAction(createProject, {
     onSuccess: (result) => {
       if (!result?.success) {
-        setMessage(getErrorMessage(result, "Could not create space."));
+        setMessage(getErrorMessage(result, "Could not create project."));
         return;
       }
-      setMessage("Space created.");
+      setMessage("Project created.");
       setDialogMode(null);
-      setForm(emptySpaceForm);
+      setForm(emptyProjectForm);
       setSearch("");
       setVisibility("");
       setStatus("");
       setPage(1);
-      refreshSpaces();
-      if (result.data?.id) navigate(`/spaces/${result.data.id}`);
+      refreshProjects();
+      if (result.data?.id) navigate(`/projects/${result.data.id}`);
     },
     onError: (error) => setMessage(error.message),
   });
@@ -310,14 +311,14 @@ export default function Projects() {
   const updateAction = useApiAction(({ id, payload }) => updateProject(id, payload), {
     onSuccess: (result) => {
       if (!result?.success) {
-        setMessage(getErrorMessage(result, "Could not update space."));
+        setMessage(getErrorMessage(result, "Could not update project."));
         return;
       }
-      setMessage("Space updated.");
+      setMessage("Project updated.");
       setDialogMode(null);
-      setEditingSpaceId("");
-      setForm(emptySpaceForm);
-      refreshSpaces();
+      setEditingProjectId("");
+      setForm(emptyProjectForm);
+      refreshProjects();
     },
     onError: (error) => setMessage(error.message),
   });
@@ -325,70 +326,70 @@ export default function Projects() {
   const deleteAction = useApiAction((id) => deleteProject(id), {
     onSuccess: (result, id) => {
       if (!result?.success) {
-        setMessage(getErrorMessage(result, "Could not delete space."));
+        setMessage(getErrorMessage(result, "Could not delete project."));
         return;
       }
-      setMessage("Space deleted.");
-      refreshSpaces();
-      if (projectId === id) navigate("/spaces");
+      setMessage("Project deleted.");
+      refreshProjects();
+      if (projectId === id) navigate("/projects");
     },
     onError: (error) => setMessage(error.message),
   });
 
   function openCreateDialog() {
     setMessage("");
-    setForm(emptySpaceForm);
-    setEditingSpaceId("");
+    setForm(emptyProjectForm);
+    setEditingProjectId("");
     setDialogMode("create");
   }
 
-  function openEditDialog(space) {
+  function openEditDialog(project) {
     setMessage("");
-    setEditingSpaceId(space.id);
+    setEditingProjectId(project.id);
     setForm({
-      name: space.name || "",
-      key: space.key || "",
-      description: space.description || "",
-      visibility: space.visibility || "private",
-      status: space.status || "active",
+      name: project.name || "",
+      key: project.key || "",
+      description: project.description || "",
+      visibility: project.visibility || "private",
+      status: project.status || "active",
     });
     setDialogMode("edit");
   }
 
   function closeDialog() {
     setDialogMode(null);
-    setEditingSpaceId("");
-    setForm(emptySpaceForm);
+    setEditingProjectId("");
+    setForm(emptyProjectForm);
   }
 
-  function submitSpace(event) {
+  function submitProject(event) {
     event.preventDefault();
     setMessage("");
-    const payload = normalizeSpaceForm(form);
+    const payload = normalizeProjectForm(form);
     if (!payload.name || !payload.key) {
-      setMessage("Space name and key are required.");
+      setMessage("Project name and key are required.");
       return;
     }
 
     if (dialogMode === "edit") {
-      updateAction.run({ id: editingSpaceId, payload });
+      updateAction.run({ id: editingProjectId, payload });
       return;
     }
 
     createAction.run(payload);
   }
 
-  function deleteSpace(space) {
-    if (!window.confirm(`Delete ${space.name}? This permanently removes its tasks, sprints, and comments.`)) return;
-    deleteAction.run(space.id);
+  function deleteProjectRecord(project) {
+    if (!window.confirm(`Delete ${project.name}? This permanently removes its tasks, sprints, and comments.`)) return;
+    deleteAction.run(project.id);
   }
 
   return (
     <div className="space-y-3 px-3 py-3 sm:px-4 lg:px-5">
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Spaces</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Manage spaces, access, lifecycle, and work boundaries.</p>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Projects</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Manage projects, access, lifecycle, and work boundaries.</p>
         </div>
       </div>
 
@@ -400,7 +401,7 @@ export default function Projects() {
             <Search className="pointer-events-none absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               className="h-8 rounded pl-8 text-sm"
-              placeholder="Search spaces..."
+              placeholder="Search projects..."
               value={search}
               onChange={(event) => setSearch(event.target.value)}
             />
@@ -416,7 +417,7 @@ export default function Projects() {
         </div>
         <Button className="h-8 rounded px-2.5 text-sm" onClick={openCreateDialog}>
           <Plus className="h-4 w-4" />
-          Create Space
+          Create Project
         </Button>
       </div>
 
@@ -424,12 +425,11 @@ export default function Projects() {
         <table className="w-full min-w-[980px] text-sm">
           <thead className="bg-muted/60 text-left text-xs uppercase text-muted-foreground">
             <tr>
-              <th className="w-10 px-3 py-2"><input type="checkbox" aria-label="Select all spaces" disabled /></th>
               <th className="px-3 py-2">Name</th>
               <th className="px-3 py-2">Key</th>
               <th className="px-3 py-2">Visibility</th>
               <th className="px-3 py-2">Members</th>
-              <th className="px-3 py-2">Issues</th>
+              <th className="px-3 py-2">Tasks</th>
               <th className="px-3 py-2">Progress</th>
               <th className="px-3 py-2">Status</th>
               <th className="w-12 px-3 py-2" aria-label="Actions" />
@@ -437,50 +437,51 @@ export default function Projects() {
           </thead>
           <tbody>
             {projectsQuery.isLoading ? (
-              <tr><td colSpan={9} className="px-3 py-8 text-center text-muted-foreground">Loading spaces...</td></tr>
-            ) : spaces.length ? spaces.map((space) => {
-              const memberCount = space._count?.members || 0;
-              const taskCount = space._count?.tasks || 0;
+              <tr>
+                <td colSpan={8} className="px-3 py-4">
+                  <InlineLoader message="Loading projects..." />
+                </td>
+              </tr>
+            ) : projects.length ? projects.map((project) => {
+              const memberCount = project._count?.members || 0;
+              const taskCount = project._count?.tasks || 0;
               return (
                 <tr
-                  key={space.id}
-                  className={cn("cursor-pointer border-t transition-colors hover:bg-accent/40", space.id === projectId && "bg-primary/10")}
-                  onClick={() => navigate(`/spaces/${space.id}`)}
-                  onDoubleClick={() => navigate(`/spaces/${space.id}`)}
+                  key={project.id}
+                  className={cn("cursor-pointer border-t transition-colors hover:bg-accent/40", project.id === projectId && "bg-primary/10")}
+                  onClick={() => navigate(`/projects/${project.id}`)}
+                  onDoubleClick={() => navigate(`/projects/${project.id}`)}
                 >
-                  <td className="px-3 py-2" onClick={(event) => event.stopPropagation()}>
-                    <input type="checkbox" aria-label={`Select ${space.name}`} />
-                  </td>
                   <td className="px-3 py-2">
                     <div className="flex min-w-0 items-center gap-3">
                       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
                         <FolderKanban className="h-4 w-4" />
                       </span>
                       <div className="min-w-0">
-                        <p className="truncate font-medium text-foreground">{space.name}</p>
-                        <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">{space.description || "No description yet."}</p>
+                        <p className="truncate font-medium text-foreground">{project.name}</p>
+                        <p className="mt-0.5 line-clamp-1 text-xs text-muted-foreground">{project.description || "No description yet."}</p>
                       </div>
                     </div>
                   </td>
                   <td className="px-3 py-2">
-                    <span className="rounded border px-1.5 py-0.5 text-xs font-medium">{space.key}</span>
+                    <span className="rounded border px-1.5 py-0.5 text-xs font-medium">{project.key}</span>
                   </td>
-                  <td className="px-3 py-2 text-xs capitalize text-muted-foreground">{space.visibility}</td>
+                  <td className="px-3 py-2 text-xs capitalize text-muted-foreground">{project.visibility}</td>
                   <td className="px-3 py-2 text-muted-foreground">{pluralize(memberCount, "member")}</td>
                   <td className="px-3 py-2 text-muted-foreground">{pluralize(taskCount, "task")}</td>
-                  <td className="px-3 py-2"><ProgressCell value={space.progress} /></td>
-                  <td className="px-3 py-2"><StatusIndicator status={space.status} /></td>
+                  <td className="px-3 py-2"><ProgressCell value={project.progress} /></td>
+                  <td className="px-3 py-2"><StatusIndicator status={project.status} /></td>
                   <td className="px-3 py-2 text-right" onClick={(event) => event.stopPropagation()}>
-                    <SpaceActionsMenu
-                      space={space}
-                      onEdit={() => openEditDialog(space)}
-                      onDelete={() => deleteSpace(space)}
+                    <ProjectActionsMenu
+                      project={project}
+                      onEdit={() => openEditDialog(project)}
+                      onDelete={() => deleteProjectRecord(project)}
                     />
                   </td>
                 </tr>
               );
             }) : (
-              <tr><td colSpan={9} className="px-3 py-8 text-center text-muted-foreground">No spaces match this view.</td></tr>
+              <tr><td colSpan={8} className="px-3 py-8 text-center text-muted-foreground">No projects match this view.</td></tr>
             )}
           </tbody>
         </table>
@@ -488,14 +489,14 @@ export default function Projects() {
 
       <PaginationControls pagination={pagination} onPageChange={setPage} />
 
-      <SpaceDialog
+      <ProjectDialog
         mode={dialogMode}
         open={Boolean(dialogMode)}
         form={form}
         setForm={setForm}
         pending={createAction.isPending || updateAction.isPending || editProjectQuery.isLoading}
         onClose={closeDialog}
-        onSubmit={submitSpace}
+        onSubmit={submitProject}
       />
     </div>
   );

@@ -144,7 +144,7 @@ exports.Prisma.UserPreferenceScalarFieldEnum = {
   profileNote: 'profileNote',
   sidebarDefault: 'sidebarDefault',
   projectSelectorBehavior: 'projectSelectorBehavior',
-  rememberLastSpace: 'rememberLastSpace',
+  rememberLastProject: 'rememberLastProject',
   emailNotifications: 'emailNotifications',
   inAppNotifications: 'inAppNotifications',
   dueSoonNotifications: 'dueSoonNotifications',

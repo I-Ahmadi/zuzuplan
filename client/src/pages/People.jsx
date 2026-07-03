@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { InlineLoader } from "@/components/ui/loading";
 import { getClientPagination, PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
 import {
   createProjectInvite,
@@ -32,7 +33,7 @@ function formatDate(value) {
   return new Intl.DateTimeFormat(undefined, { month: "short", day: "numeric", year: "numeric" }).format(new Date(value));
 }
 
-export default function TeamMembers() {
+export default function People() {
   const { user } = useAuth();
   const [projectId, setProjectId] = useState(() => migrateStorageKey(LEGACY_STORAGE_KEYS.currentProjectId, CURRENT_PROJECT_KEY) || "");
   const [inviteEmail, setInviteEmail] = useState("");
@@ -61,12 +62,12 @@ export default function TeamMembers() {
     return () => window.removeEventListener(CURRENT_PROJECT_CHANGE_EVENT, handleProjectChange);
   }, []);
 
-  const projectQuery = useApiResource(() => getProject(projectId, { fields: "team" }), [projectId], { enabled: Boolean(projectId) });
+  const projectQuery = useApiResource(() => getProject(projectId, { fields: "people" }), [projectId], { enabled: Boolean(projectId) });
 
   const invitesQuery = useApiResource(() => getProjectInvites(projectId), [projectId], { enabled: Boolean(projectId) });
   const { members, isLoading: membersLoading, refreshMembers } = useProjectMembers(projectId);
 
-  const refreshTeam = () => {
+  const refreshPeople = () => {
     refreshMembers();
     invitesQuery.reload();
     projectQuery.reload();
@@ -81,7 +82,7 @@ export default function TeamMembers() {
       setInviteEmail("");
       setInviteRole("Employee");
       setMessage("Invite sent.");
-      refreshTeam();
+      refreshPeople();
     },
     onError: (error) => setMessage(error.message),
   });
@@ -93,7 +94,7 @@ export default function TeamMembers() {
         return;
       }
       setMessage("Role updated.");
-      refreshTeam();
+      refreshPeople();
     },
     onError: (error) => setMessage(error.message),
   });
@@ -105,7 +106,7 @@ export default function TeamMembers() {
         return;
       }
       setMessage("Member removed.");
-      refreshTeam();
+      refreshPeople();
     },
     onError: (error) => setMessage(error.message),
   });
@@ -117,7 +118,7 @@ export default function TeamMembers() {
         return;
       }
       setMessage("Invite revoked.");
-      refreshTeam();
+      refreshPeople();
     },
     onError: (error) => setMessage(error.message),
   });
@@ -148,8 +149,8 @@ export default function TeamMembers() {
     <div className="space-y-3 px-3 py-3 sm:px-4 lg:px-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Team Members</h1>
-          <p className="mt-1 text-sm text-muted-foreground">Invite teammates and manage space access.</p>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">People</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Invite people and manage project access.</p>
         </div>
         {project ? (
           <div className="inline-flex h-9 items-center gap-2 rounded-md border bg-background px-3 text-sm">
@@ -173,10 +174,11 @@ export default function TeamMembers() {
           <Card>
             <CardHeader>
               <CardTitle className="text-base">Members</CardTitle>
-              <CardDescription>{project?.name || "Select a space"} access list.</CardDescription>
+              <CardDescription>{project?.name || "Select a project"} access list.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {pagedMembers.map((member) => {
+              {membersLoading ? <InlineLoader message="Loading members..." /> : null}
+              {!membersLoading && pagedMembers.map((member) => {
                 const isOwner = project?.ownerId === member.userId;
                 const isCurrentUser = user?.id === member.userId;
                 return (
@@ -220,7 +222,8 @@ export default function TeamMembers() {
               <CardDescription>Invitations expire after seven days.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {pagedInvites.map((invite) => (
+              {invitesQuery.isLoading ? <InlineLoader message="Loading invites..." /> : null}
+              {!invitesQuery.isLoading && pagedInvites.map((invite) => (
                 <div key={invite.id} className="grid gap-3 rounded-md border p-3 sm:grid-cols-[minmax(0,1fr)_120px_auto] sm:items-center">
                   <div className="min-w-0">
                     <p className="truncate text-sm font-medium">{invite.email}</p>
@@ -251,7 +254,7 @@ export default function TeamMembers() {
         <Card>
           <CardHeader>
             <CardTitle className="text-base">Invite Member</CardTitle>
-            <CardDescription>Send an email invitation with a space role.</CardDescription>
+            <CardDescription>Send an email invitation with a project role.</CardDescription>
           </CardHeader>
           <CardContent>
             <form className="space-y-3" onSubmit={submitInvite}>
@@ -263,7 +266,7 @@ export default function TeamMembers() {
                 <MailPlus className="h-4 w-4" />
                 {inviteAction.isPending ? "Sending..." : "Send invite"}
               </Button>
-              {!canManage ? <p className="text-xs text-muted-foreground">You can view this team, but cannot manage membership.</p> : null}
+              {!canManage ? <p className="text-xs text-muted-foreground">You can view these people, but cannot manage membership.</p> : null}
             </form>
           </CardContent>
         </Card>

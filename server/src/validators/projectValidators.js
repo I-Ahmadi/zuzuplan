@@ -36,7 +36,7 @@ export const projectId = [
 
   query("fields")
     .optional()
-    .isIn(["detail", "planning", "team", "edit", "switcher"]),
+    .isIn(["detail", "planning", "people", "edit", "switcher"]),
 ];
 
 export const member = [

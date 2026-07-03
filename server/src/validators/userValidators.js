@@ -24,20 +24,20 @@ export const getPreferences = [
 ];
 
 export const updatePreferences = [
-  body('defaultView').optional({ nullable: true }).trim(),
-  body('density').optional({ nullable: true }).trim(),
-  body('theme').optional({ nullable: true }).trim(),
+  body('defaultView').optional({ nullable: true }).trim().isIn(['home', 'projects', 'tasks', 'people', 'activity', 'analytics']),
+  body('density').optional({ nullable: true }).trim().isIn(['comfortable', 'compact']),
+  body('theme').optional({ nullable: true }).trim().isIn(['system', 'light', 'dark']),
   body('profileNote').optional({ nullable: true }).trim(),
-  body('sidebarDefault').optional({ nullable: true }).trim(),
-  body('projectSelectorBehavior').optional({ nullable: true }).trim(),
-  body('rememberLastSpace').optional().isBoolean(),
+  body('sidebarDefault').optional({ nullable: true }).trim().isIn(['expanded', 'collapsed']),
+  body('projectSelectorBehavior').optional({ nullable: true }).trim().isIn(['remember', 'first']),
+  body('rememberLastProject').optional().isBoolean(),
   body('emailNotifications').optional().isBoolean(),
   body('inAppNotifications').optional().isBoolean(),
   body('dueSoonNotifications').optional().isBoolean(),
   body('assignmentNotifications').optional().isBoolean(),
   body('mentionNotifications').optional().isBoolean(),
   body('commentNotifications').optional().isBoolean(),
-  body('digestFrequency').optional({ nullable: true }).trim(),
+  body('digestFrequency').optional({ nullable: true }).trim().isIn(['off', 'daily', 'weekly']),
   body('quietHoursEnabled').optional().isBoolean(),
   body('quietHoursStart')
     .optional({ nullable: true, checkFalsy: true })

@@ -8,7 +8,7 @@ import { useGlobalSearch } from "@/contexts/search-context";
 export default function Header() {
   const { openSearch } = useGlobalSearch();
   const { pathname, search } = useLocation();
-  const routeProjectId = pathname.match(/^\/(?:projects|spaces)\/([^/]+)/)?.[1];
+  const routeProjectId = pathname.match(/^\/projects\/([^/]+)/)?.[1];
   const [searchValue, setSearchValue] = useState(() => new URLSearchParams(search).get("q") || "");
 
   function submitSearch(event) {
@@ -44,7 +44,7 @@ export default function Header() {
             value={searchValue}
             onChange={(event) => setSearchValue(event.target.value)}
             onFocus={() => openSearch(searchValue)}
-            placeholder="Search issues, spaces, comments..."
+            placeholder="Search tasks, projects, comments..."
             type="search"
           />
           <Button type="button" variant="ghost" size="icon" className="h-9 w-9 lg:hidden" aria-label="Search" onClick={() => openSearch()}>

@@ -3,11 +3,13 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
   Activity,
   BarChart3,
+  Bell,
   FolderKanban,
   ListTodo,
   LogOut,
   Moon,
   PanelLeftClose,
+  ScrollText,
   Settings,
   Sun,
   UserCheck,
@@ -29,7 +31,7 @@ const SIDEBAR_WIDTH_COLLAPSED = 56;
 function SidebarBrand({ collapsed = false }) {
   return (
     <Link
-      to="/for-you"
+      to="/home"
       className={cn(
         "group flex min-w-0 items-center rounded-md text-foreground transition-colors hover:bg-accent",
         collapsed ? "h-9 w-9 justify-center" : "h-9 flex-1 gap-2 px-1"
@@ -114,30 +116,36 @@ function FooterAction({ icon: Icon, label, collapsed, onClick }) {
   );
 }
 
-function SidebarNavGroups({ groups, pathname, collapsed }) {
+function SidebarNavItems({ items, pathname, collapsed }) {
   return (
-    <nav className={cn("space-y-4", collapsed && "space-y-2")} aria-label="Sidebar navigation">
-      {groups.map((group, index) => (
-        <section key={group.title} className={cn("space-y-1", collapsed && "space-y-1.5")} aria-label={group.title}>
-          {index === 0 ? null : collapsed ? (
-            <div className="mx-auto h-px w-7 bg-border/80" aria-hidden="true" />
-          ) : (
-            <h2 className="px-[7px] text-[11px] font-semibold uppercase tracking-wide text-muted-foreground/80">
-              {group.title}
-            </h2>
-          )}
-          <div className="space-y-1">
-            {group.items.map((item) => (
-              <SidebarLink key={item.to} item={item} pathname={pathname} collapsed={collapsed} />
-            ))}
-          </div>
-        </section>
+    <nav className={cn("space-y-1", collapsed && "space-y-1.5")} aria-label="Sidebar navigation">
+      {items.map((item) => (
+        <SidebarLink key={item.to} item={item} pathname={pathname} collapsed={collapsed} />
       ))}
     </nav>
   );
 }
 
-function SidebarAccountMenu({ user, collapsed }) {
+function FooterLink({ icon: Icon, label, to, active, collapsed }) {
+  return (
+    <Link
+      to={to}
+      className={cn(
+        "group flex h-9 w-full items-center gap-2 rounded-md text-sm transition-colors",
+        "text-muted-foreground hover:bg-accent hover:text-foreground",
+        collapsed ? "w-9 justify-center px-0" : "px-[7px]",
+        active && "bg-sidebar-active font-medium text-primary"
+      )}
+      aria-label={label}
+      title={collapsed ? label : undefined}
+    >
+      <Icon className={cn("h-[18px] w-[18px] shrink-0", active ? "text-primary" : "text-muted-foreground", "group-hover:text-foreground")} />
+      {!collapsed ? <span className="min-w-0 flex-1 truncate">{label}</span> : null}
+    </Link>
+  );
+}
+
+function SidebarAccountMenu({ user, collapsed, pathname }) {
   const navigate = useNavigate();
   const { logout } = useAuth();
   const { resolvedTheme, toggleTheme } = useTheme();
@@ -176,6 +184,8 @@ function SidebarAccountMenu({ user, collapsed }) {
   return (
     <>
       <div className="relative space-y-2" ref={menuRef}>
+        <FooterLink icon={Bell} label="Notifications" to="/notifications" active={pathname === "/notifications"} collapsed={collapsed} />
+        <FooterLink icon={ScrollText} label="Release Notes" to="/release-notes" active={pathname === "/release-notes"} collapsed={collapsed} />
         <FooterAction icon={resolvedTheme === "dark" ? Sun : Moon} label={resolvedTheme === "dark" ? "Light mode" : "Dark mode"} collapsed={collapsed} onClick={toggleTheme} />
 
         <button
@@ -219,7 +229,7 @@ function SidebarAccountMenu({ user, collapsed }) {
             </div>
             <div className="p-1">
               <Link
-                to="/settting"
+                to="/settings"
                 className="flex w-full items-center gap-2 rounded px-2 py-2 text-sm transition-colors hover:bg-accent"
                 role="menuitem"
                 onClick={() => setOpen(false)}
@@ -381,84 +391,63 @@ export function Sidebar() {
   const { pathname } = useLocation();
   const { collapsed, setCollapsed } = useSidebar();
   const { user } = useAuth();
-  const routeProjectId = pathname.match(/^\/(?:projects|spaces)\/([^/]+)/)?.[1];
+  const routeProjectId = pathname.match(/^\/projects\/([^/]+)/)?.[1];
   const [storedProjectId, setStoredProjectId] = useState(() => migrateStorageKey(LEGACY_STORAGE_KEYS.currentProjectId, CURRENT_PROJECT_KEY) || "");
   const currentProjectId = routeProjectId || storedProjectId;
-  const issuesPath = currentProjectId ? `/spaces/${currentProjectId}/issues` : "/issues";
-  const spacesActive = pathname === "/spaces" || pathname === "/projects" || /^\/(?:projects|spaces)\/[^/]+$/.test(pathname);
-  const issuesActive = pathname === "/issues" || pathname === "/tasks" || /^\/(?:projects|spaces)\/[^/]+\/(?:issues|tasks)/.test(pathname);
+  const tasksPath = currentProjectId ? `/projects/${currentProjectId}/tasks` : "/tasks";
+  const projectsActive = pathname === "/projects" || /^\/projects\/[^/]+$/.test(pathname);
+  const tasksActive = pathname === "/tasks" || /^\/projects\/[^/]+\/tasks/.test(pathname);
 
-  const forYouItem = {
-    label: "For You",
-    to: "/for-you",
+  const homeItem = {
+    label: "Home",
+    to: "/home",
     icon: UserCheck,
-    match: (currentPath) => currentPath === "/" || currentPath === "/dashboard" || currentPath === "/for-you" || currentPath === "/recent",
+    match: (currentPath) => currentPath === "/" || currentPath === "/home",
   };
-  const issueItem = {
-    label: "Issues",
-    to: issuesPath,
+  const tasksItem = {
+    label: "Tasks",
+    to: tasksPath,
     icon: ListTodo,
-    match: () => issuesActive,
+    match: () => tasksActive,
   };
-  const spacesItem = {
-    label: "Spaces",
-    to: "/spaces",
+  const projectsItem = {
+    label: "Projects",
+    to: "/projects",
     icon: FolderKanban,
-    match: () => spacesActive,
+    match: () => projectsActive,
   };
   const activityItem = {
     label: "Activity",
     to: "/activity",
     icon: Activity,
-    match: (currentPath) => currentPath === "/activity" || currentPath === "/pull-requests" || currentPath === "/deployments",
+    match: (currentPath) => currentPath === "/activity",
   };
-  const reportsItem = {
-    label: "Reports",
-    to: "/reports",
+  const analyticsItem = {
+    label: "Analytics",
+    to: "/analytics",
     icon: BarChart3,
-    match: (currentPath) => currentPath === "/reports" || currentPath === "/goals",
+    match: (currentPath) => currentPath === "/analytics",
   };
-  const teamsItem = {
-    label: "Teams",
-    to: "/team-members",
+  const peopleItem = {
+    label: "People",
+    to: "/people",
     icon: Users,
-    match: (currentPath) => currentPath === "/team" || currentPath === "/team-members",
+    match: (currentPath) => currentPath === "/people",
   };
   const settingItem = {
     label: "Settings",
-    to: "/settting",
+    to: "/settings",
     icon: Settings,
-    match: (currentPath) => currentPath === "/settting" || currentPath === "/settings",
+    match: (currentPath) => currentPath === "/settings",
   };
-  const navGroups = [
-    {
-      title: "Overview",
-      items: [
-        forYouItem,
-      ],
-    },
-    {
-      title: "Projects",
-      items: [
-        spacesItem,
-        issueItem,
-      ],
-    },
-    {
-      title: "Team",
-      items: [
-        teamsItem,
-        activityItem,
-      ],
-    },
-    {
-      title: "Insights",
-      items: [reportsItem],
-    },
-    {
-      title: "Manage",
-      items: [settingItem],
-    },
+  const navItems = [
+    homeItem,
+    projectsItem,
+    tasksItem,
+    peopleItem,
+    activityItem,
+    analyticsItem,
+    settingItem,
   ];
 
   useEffect(() => {
@@ -491,14 +480,14 @@ export function Sidebar() {
         <SidebarMenuScroll collapsed>
           <div className="flex min-h-0 flex-col">
             <div className="min-h-0 overflow-x-hidden">
-              <SidebarNavGroups groups={navGroups} pathname={pathname} collapsed />
+              <SidebarNavItems items={navItems} pathname={pathname} collapsed />
             </div>
           </div>
         </SidebarMenuScroll>
 
         <div className="mt-auto border-t p-2.5">
           <div className="space-y-2">
-            <SidebarAccountMenu user={user} collapsed />
+            <SidebarAccountMenu user={user} collapsed pathname={pathname} />
           </div>
         </div>
       </SidebarShell>
@@ -517,14 +506,14 @@ export function Sidebar() {
       <SidebarMenuScroll collapsed={false}>
         <div className="flex min-h-0 flex-col">
           <div className="min-h-0 overflow-x-hidden">
-            <SidebarNavGroups groups={navGroups} pathname={pathname} />
+            <SidebarNavItems items={navItems} pathname={pathname} />
           </div>
         </div>
       </SidebarMenuScroll>
 
       <div className="mt-auto border-t px-3 py-2.5">
         <div className="space-y-2">
-          <SidebarAccountMenu user={user} />
+          <SidebarAccountMenu user={user} pathname={pathname} />
         </div>
       </div>
     </SidebarShell>

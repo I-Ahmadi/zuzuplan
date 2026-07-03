@@ -7,11 +7,18 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
 import { useApiAction } from "@/lib/api-hooks";
 
+function safeInternalRedirect(value) {
+  if (!value || typeof value !== "string") return "/home";
+  if (!value.startsWith("/") || value.startsWith("//")) return "/home";
+  return value;
+}
+
 export default function Login() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const verified = searchParams.get("verified") === "true";
   const reset = searchParams.get("reset") === "true";
+  const redirectTo = safeInternalRedirect(searchParams.get("redirect"));
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -19,7 +26,7 @@ export default function Login() {
 
   const loginAction = useApiAction(login, {
     onSuccess: () => {
-      navigate("/for-you");
+      navigate(redirectTo, { replace: true });
     },
     onError: (err) => {
       setError(err.message || "Something went wrong");

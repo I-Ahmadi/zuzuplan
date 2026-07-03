@@ -58,7 +58,7 @@ function sortActionable(a, b) {
 function compactTask(task) {
   return {
     ...task,
-    space: task.project,
+    project: task.project,
   };
 }
 
@@ -72,7 +72,7 @@ function dayRange() {
   return { today, tomorrow, dueSoonEnd };
 }
 
-export async function getForYouDashboard(userId, options = {}) {
+export async function getHomeDashboard(userId, options = {}) {
   const limit = clampLimit(options.limit);
   const projects = await prisma.project.findMany({
     where: accessibleProjectWhere(userId),
@@ -91,14 +91,14 @@ export async function getForYouDashboard(userId, options = {}) {
   const projectIds = projects.map((project) => project.id);
   if (!projectIds.length) {
     return {
-      metrics: { assigned: 0, attention: 0, dueSoon: 0, spaces: 0, overdue: 0 },
+      metrics: { assigned: 0, attention: 0, dueSoon: 0, projects: 0, overdue: 0 },
       attention: [],
       assigned: [],
       createdByMe: [],
       recent: [],
       upcoming: [],
-      spaces: [],
-      primarySpace: null,
+      projects: [],
+      primaryProject: null,
     };
   }
 
@@ -164,7 +164,7 @@ export async function getForYouDashboard(userId, options = {}) {
       assigned: assignedCount,
       attention: attentionCount,
       dueSoon: upcomingCount,
-      spaces: projects.length,
+      projects: projects.length,
       overdue: overdueCount,
     },
     attention: attention.map(compactTask).sort(sortActionable).slice(0, limit),
@@ -172,16 +172,16 @@ export async function getForYouDashboard(userId, options = {}) {
     createdByMe: createdByMe.map(compactTask).sort(sortActionable).slice(0, 3),
     recent: recent.map(compactTask).slice(0, limit),
     upcoming: upcoming.map(compactTask).sort(sortActionable).slice(0, 4),
-    spaces: projects.slice(0, 4).map((space) => {
-      const total = space._count?.tasks || 0;
-      const done = doneCountByProject.get(space.id) || 0;
+    projects: projects.slice(0, 4).map((project) => {
+      const total = project._count?.tasks || 0;
+      const done = doneCountByProject.get(project.id) || 0;
       return {
-        ...space,
+        ...project,
         total,
         done,
         progress: total ? Math.round((done / total) * 100) : 0,
       };
     }),
-    primarySpace: projects[0] || null,
+    primaryProject: projects[0] || null,
   };
 }

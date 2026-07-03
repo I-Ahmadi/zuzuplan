@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Activity as ActivityIcon, ListTodo, Search } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { InlineLoader } from "@/components/ui/loading";
 import { PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
 import { UserAvatar } from "@/components/ui/avatar";
 import { useApiResource } from "@/lib/api-hooks";
 import { getActivityEvents } from "@/lib/activity-api";
 
 function iconFor(type) {
-  if (type?.includes("issue")) return ListTodo;
+  if (type?.includes("task")) return ListTodo;
   return ActivityIcon;
 }
 
@@ -23,7 +24,7 @@ export default function Activity() {
     <div className="space-y-4 px-3 py-4 sm:px-4 lg:px-5">
       <div>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Activity</h1>
-        <p className="mt-1 text-sm text-muted-foreground">A durable timeline for issues, comments, spaces, and team activity.</p>
+        <p className="mt-1 text-sm text-muted-foreground">A durable timeline for tasks, comments, projects, and people activity.</p>
       </div>
       <Card>
         <CardHeader className="border-b px-4 py-3">
@@ -36,7 +37,7 @@ export default function Activity() {
           </div>
         </CardHeader>
         <CardContent className="p-0">
-          {activityQuery.isLoading ? <p className="p-6 text-sm text-muted-foreground">Loading activity...</p> : null}
+          {activityQuery.isLoading ? <InlineLoader message="Loading activity..." className="m-4" /> : null}
           {!activityQuery.isLoading && !events.length ? <p className="p-8 text-center text-sm text-muted-foreground">No activity recorded yet.</p> : null}
           {events.map((event) => {
             const Icon = iconFor(event.type);

@@ -1,10 +1,10 @@
 import express from 'express';
 import { authenticate } from '../middleware/auth.js';
-import * as dashboardController from '../controllers/dashboardController.js';
+import * as homeController from '../controllers/homeController.js';
 
 const router = express.Router();
 
 router.use(authenticate);
-router.get('/for-you', dashboardController.forYou);
+router.get('/', homeController.home);
 
 export default router;

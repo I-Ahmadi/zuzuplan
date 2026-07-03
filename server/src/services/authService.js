@@ -2,7 +2,7 @@ import bcrypt from 'bcrypt';
 import { prisma } from '../config/database.js';
 import { generateAccessToken, generateRefreshToken, verifyRefreshToken } from '../utils/jwt.js';
 import { generateToken, hashToken } from '../utils/crypto.js';
-import { sendVerificationEmail, sendPasswordResetEmail } from '../utils/email.js';
+import { sendVerificationEmail, sendPasswordResetEmail } from './emailService.js';
 import { AppError } from '../middleware/errorHandler.js';
 
 function publicUser(user) {
@@ -43,7 +43,7 @@ export async function register(name, email, password) {
     await sendVerificationEmail(email, rawToken);
   } catch (err) {
     await prisma.user.delete({ where: { id: newUser.id } })
-    throw new AppError(`Verification email failed: ${err.message}`, 500);
+    throw new AppError('Verification email could not be sent. Please try again later.', 500);
   }
   
   return { user: publicUser(newUser) };
@@ -152,8 +152,8 @@ export async function forgotPassword(email) {
   const user = await prisma.user.findUnique({ where: { email } });
   
   if (!user) {
-    throw new AppError(`No account found with this email ${email}`, 500);
-  };
+    return;
+  }
 
   const rawToken = generateToken();
   const passwordResetToken = hashToken(rawToken);
@@ -167,7 +167,7 @@ export async function forgotPassword(email) {
   try {
     await sendPasswordResetEmail(user.email, rawToken);
   } catch (err) {
-    throw new AppError(`Reset email failed: ${err.message}`, 500);
+    throw new AppError('Password reset email could not be sent. Please try again later.', 500);
   }
 }
 

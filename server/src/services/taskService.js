@@ -167,19 +167,19 @@ function buildTaskWhere(project, filters = {}) {
     const search = String(filters.search).trim();
     const projectKeyPrefix = `${project.key}-`.toUpperCase();
     const normalizedSearch = search.toUpperCase();
-    let issueKeySuffix = '';
+    let taskKeySuffix = '';
     if (normalizedSearch.startsWith(projectKeyPrefix)) {
-      issueKeySuffix = search.slice(projectKeyPrefix.length);
+      taskKeySuffix = search.slice(projectKeyPrefix.length);
     } else if (/^[A-Z0-9]{2,}$/i.test(search)) {
-      issueKeySuffix = search;
+      taskKeySuffix = search;
     }
     where.OR = [
       { title: { contains: search, mode: 'insensitive' } },
       { description: { contains: search, mode: 'insensitive' } },
       { sprint: { is: { name: { contains: search, mode: 'insensitive' } } } },
     ];
-    if (issueKeySuffix) {
-      where.OR.push({ id: { endsWith: issueKeySuffix.toLowerCase() } });
+    if (taskKeySuffix) {
+      where.OR.push({ id: { endsWith: taskKeySuffix.toLowerCase() } });
     }
   }
   if (filters.excludeCompletedSprints && filters.sprintId !== 'backlog') {
@@ -345,10 +345,10 @@ export async function createTask(projectId, userId, data) {
     taskId: task.id,
     actorId: userId,
     targetUserId: data.assigneeId || null,
-    type: 'issue.created',
-    entityType: 'issue',
+    type: 'task.created',
+    entityType: 'task',
     entityId: task.id,
-    title: 'Issue created',
+    title: 'Task created',
     description: data.title,
     severity: 'SUCCESS',
     metadata: {
@@ -502,11 +502,11 @@ export async function getTimelineTasks(projectId, userId, filters = {}) {
   if (search) {
     const projectKeyPrefix = `${project.key}-`.toUpperCase();
     const normalizedSearch = search.toUpperCase();
-    let issueKeySuffix = '';
+    let taskKeySuffix = '';
     if (normalizedSearch.startsWith(projectKeyPrefix)) {
-      issueKeySuffix = search.slice(projectKeyPrefix.length);
+      taskKeySuffix = search.slice(projectKeyPrefix.length);
     } else if (/^[A-Z0-9]{2,}$/i.test(search)) {
-      issueKeySuffix = search;
+      taskKeySuffix = search;
     }
 
     const searchFilters = [
@@ -514,8 +514,8 @@ export async function getTimelineTasks(projectId, userId, filters = {}) {
       { description: { contains: search, mode: 'insensitive' } },
       { sprint: { is: { name: { contains: search, mode: 'insensitive' } } } },
     ];
-    if (issueKeySuffix) {
-      searchFilters.push({ id: { endsWith: issueKeySuffix.toLowerCase() } });
+    if (taskKeySuffix) {
+      searchFilters.push({ id: { endsWith: taskKeySuffix.toLowerCase() } });
     }
     taskWhere.AND.push({ OR: searchFilters });
   }
@@ -754,10 +754,10 @@ export async function updateTask(taskId, userId, data) {
       taskId,
       actorId: userId,
       targetUserId: updateData.assigneeId !== undefined ? updateData.assigneeId : task.assigneeId,
-      type: statusChanged ? 'issue.status_changed' : 'issue.updated',
-      entityType: 'issue',
+      type: statusChanged ? 'task.status_changed' : 'task.updated',
+      entityType: 'task',
       entityId: taskId,
-      title: statusChanged ? `Status changed to ${nextStatus}` : 'Issue updated',
+      title: statusChanged ? `Status changed to ${nextStatus}` : 'Task updated',
       description: updateData.title || task.title,
       severity: 'INFO',
       metadata: { changed, fromStatus: task.status, toStatus: nextStatus },

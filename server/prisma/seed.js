@@ -31,14 +31,14 @@ const taskStatuses = [
   'DONE',
 ];
 
-const issueTypes = ['FEATURE', 'BUG', 'CHORE', 'TECH_DEBT', 'SPIKE', 'INCIDENT'];
+const taskTypes = ['FEATURE', 'BUG', 'CHORE', 'TECH_DEBT', 'SPIKE', 'INCIDENT'];
 const priorities = ['LOW', 'MEDIUM', 'HIGH', 'URGENT'];
 
 const projectBlueprints = [
   {
     key: 'CORE',
     name: 'Sprintly Core',
-    description: 'End-to-end task management, board behavior, comments, search, and workspace navigation.',
+    description: 'End-to-end task management, board behavior, comments, search, and project navigation.',
     visibility: 'private',
     status: 'active',
     tasks: [
@@ -48,13 +48,13 @@ const projectBlueprints = [
       'Open task detail drawer from list and board',
       'Update assignee and notify the new owner',
       'Add comments with long markdown-like notes',
-      'Review issue counters and activity signals',
+      'Review task counters and activity signals',
       'Search by task title and description',
       'Paginate task lists at high volume',
       'Archive completed project safely',
-      'Drag issue between board columns',
-      'Edit due date from overview panel',
-      'Show overdue count in reports',
+      'Drag task between board columns',
+      'Edit due date from analytics panel',
+      'Show overdue count in analytics',
       'Render canceled work as closed',
       'Keep sidebar project selection after reload',
       'Validate empty task title errors',
@@ -79,10 +79,10 @@ const projectBlueprints = [
       'Show unread badge after assignment',
       'Handle deployment failure alert',
       'Render account preference forms on narrow screens',
-      'Support swipe-free status updates',
+      'Support swipe-free status changes',
       'Check authentication redirect loop',
       'Validate password reset screens',
-      'Keep issue table readable on mobile',
+      'Keep task table readable on mobile',
       'Show sprint picker with many sprints',
       'Test avatar upload error state',
       'Review dark theme contrast',
@@ -90,7 +90,7 @@ const projectBlueprints = [
       'Handle expired invite messaging',
       'Check long comment wrapping',
       'Verify search dialog fits viewport',
-      'Exercise optimistic task updates'
+      'Exercise optimistic task changes'
     ],
   },
   {
@@ -107,7 +107,7 @@ const projectBlueprints = [
       'Validate assignee belongs to project',
       'Return task counts with list responses',
       'Record status change activity',
-      'Record blocked issue activity',
+      'Record blocked task activity',
       'Link pull request to task',
       'List deployments by environment',
       'Prevent duplicate task links',
@@ -145,10 +145,10 @@ const projectBlueprints = [
       'Compare comfortable and compact density',
       'Verify sidebar collapse state',
       'Audit avatar fallback initials',
-      'Test space edit validation',
+      'Test project edit validation',
       'Review report metric cards',
       'Check activity severity colors',
-      'Inspect issue content spacing'
+      'Inspect task content spacing'
     ],
   },
   {
@@ -164,7 +164,7 @@ const projectBlueprints = [
       'Document rollback steps',
       'Check failed deployment activity alert',
       'Confirm merged PR appears in delivery',
-      'Validate release checklist issue',
+      'Validate release checklist task',
       'Run accessibility pass on main flows',
       'Check analytics report totals',
       'Verify completed sprint snapshot',
@@ -299,7 +299,7 @@ async function createProjectGraph(blueprint, projectIndex, people) {
         assigneeId: taskIndex % 6 === 0 ? null : assignee.id,
         title: `[${blueprint.key}-${taskIndex + 1}] ${blueprint.tasks[taskIndex]}`,
         description: `Seeded QA task for ${blueprint.name}. Covers ${status.toLowerCase().replaceAll('_', ' ')} behavior, ${priorities[taskIndex % priorities.length].toLowerCase()} priority styling, assignment, filters, detail views, and search.`,
-        type: issueTypes[(taskIndex + projectIndex) % issueTypes.length],
+        type: taskTypes[(taskIndex + projectIndex) % taskTypes.length],
         priority: priorities[(taskIndex + projectIndex) % priorities.length],
         status,
         estimate: taskIndex % 4 === 0 ? null : (taskIndex % 8) + 1,
@@ -389,9 +389,9 @@ async function createProjectGraph(blueprint, projectIndex, people) {
   }
 
   const activitySeeds = [
-    { task: tasks[0], type: 'issue.created', title: 'Issue created', severity: 'SUCCESS' },
-    { task: tasks[4], type: 'issue.status_changed', title: 'Status changed to IN_REVIEW', severity: 'INFO' },
-    { task: tasks[8], type: 'issue.status_changed', title: 'Status changed to IN_PROGRESS', severity: 'INFO' },
+    { task: tasks[0], type: 'task.created', title: 'Task created', severity: 'SUCCESS' },
+    { task: tasks[4], type: 'task.status_changed', title: 'Status changed to IN_REVIEW', severity: 'INFO' },
+    { task: tasks[8], type: 'task.status_changed', title: 'Status changed to IN_PROGRESS', severity: 'INFO' },
     { task: tasks[16], type: 'deployment.created', title: 'Deployment recorded', severity: 'CRITICAL' },
   ];
 
@@ -403,7 +403,7 @@ async function createProjectGraph(blueprint, projectIndex, people) {
         actorId: people[(index % 3) + 1].id,
         targetUserId: item.task.assigneeId,
         type: item.type,
-        entityType: item.type.startsWith('deployment') ? 'deployment' : 'issue',
+        entityType: item.type.startsWith('deployment') ? 'deployment' : 'task',
         entityId: item.task.id,
         title: item.title,
         description: item.task.title,

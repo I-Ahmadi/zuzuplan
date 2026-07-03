@@ -4,7 +4,7 @@ export default function TaskNote({ tasks }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Issue Notes</CardTitle>
+        <CardTitle>Task Notes</CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
         {tasks.length ? tasks.map((task) => (
@@ -12,7 +12,7 @@ export default function TaskNote({ tasks }) {
             <h3 className="font-medium">{task.title}</h3>
             <p className="mt-1 text-sm text-muted-foreground">{task.description || "No notes added."}</p>
           </div>
-        )) : <p className="text-sm text-muted-foreground">No issue notes available.</p>}
+        )) : <p className="text-sm text-muted-foreground">No task notes available.</p>}
       </CardContent>
     </Card>
   );

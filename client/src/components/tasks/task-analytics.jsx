@@ -1,12 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function TaskOverview({ tasks }) {
+export default function TaskAnalytics({ tasks }) {
   const total = tasks.length;
   const completed = tasks.filter((task) => task.status === "completed").length;
   const inProgress = tasks.filter((task) => task.status === "in-progress").length;
 
   const stats = [
-    { label: "Total Issues", value: total },
+    { label: "Total Tasks", value: total },
     { label: "In Progress", value: inProgress },
     { label: "Completed", value: completed },
   ];

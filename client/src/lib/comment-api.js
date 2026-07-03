@@ -18,3 +18,16 @@ export async function createComment(taskId, content) {
     body: JSON.stringify({ content }),
   });
 }
+
+export async function updateComment(taskId, commentId, content) {
+  return api(`/tasks/${taskId}/comments/${commentId}`, {
+    method: "PUT",
+    body: JSON.stringify({ content }),
+  });
+}
+
+export async function deleteComment(taskId, commentId) {
+  return api(`/tasks/${taskId}/comments/${commentId}`, {
+    method: "DELETE",
+  });
+}

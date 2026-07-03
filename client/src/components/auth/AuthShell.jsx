@@ -20,7 +20,7 @@ export function AuthShell({ title, description, children, footer }) {
         </section>
 
         <footer className="text-center text-xs text-[#626f86]">
-          <p>One account for spaces, tasks, teams, and delivery planning.</p>
+          <p>One account for projects, tasks, people, and delivery planning.</p>
           <div className="mt-2 flex items-center justify-center gap-3">
             <Link to="/login" className="hover:text-[#0c66e4] hover:underline">Login</Link>
             <span aria-hidden="true">.</span>
@@ -134,10 +134,10 @@ function AuthBackdrop() {
             <span className="absolute left-9 top-5 h-px w-28 rotate-12 bg-[#85b8ff]" />
             <span className="absolute left-10 top-16 h-px w-24 -rotate-12 bg-[#85b8ff]" />
             <span className="absolute left-24 top-8 h-px w-16 rotate-45 bg-[#85b8ff]" />
-            <SpaceNode className="left-0 top-1 border-[#85b8ff] bg-[#deebff]" />
-            <SpaceNode className="right-4 top-2 border-[#7ee2b8] bg-[#dcfff1]" />
-            <SpaceNode className="bottom-0 left-12 border-[#f5cd47] bg-[#fff7d6]" />
-            <SpaceNode className="bottom-4 right-0 border-[#cce0ff] bg-white" />
+            <ProjectNode className="left-0 top-1 border-[#85b8ff] bg-[#deebff]" />
+            <ProjectNode className="right-4 top-2 border-[#7ee2b8] bg-[#dcfff1]" />
+            <ProjectNode className="bottom-0 left-12 border-[#f5cd47] bg-[#fff7d6]" />
+            <ProjectNode className="bottom-4 right-0 border-[#cce0ff] bg-white" />
           </div>
         </div>
       </div>
@@ -175,7 +175,7 @@ function ChatBubble({ width, color }) {
   );
 }
 
-function SpaceNode({ className }) {
+function ProjectNode({ className }) {
   return <span className={cn("absolute h-12 w-12 rounded border-2 shadow-sm", className)} />;
 }
 
