@@ -55,7 +55,7 @@ export function ErrorState({
   return (
     <div
       className={cn(
-        "flex flex-col items-center justify-center gap-3 rounded-md border border-destructive/30 bg-destructive/5 px-4 text-center text-sm",
+        "flex flex-col items-center justify-center gap-3 rounded-md border border-border bg-background px-4 text-center text-sm",
         compact ? "min-h-16 py-3" : page ? "min-h-[320px] py-10" : "min-h-36 py-8",
         className,
       )}

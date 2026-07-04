@@ -585,6 +585,9 @@ export default function Home() {
   const priorityRows = buildPriorityRows(workTasks);
   const projectLoadRows = buildProjectLoadRows(workTasks, home.projects);
   const assigneeRows = buildAssigneeRows(workTasks);
+  const homeErrorMessage = homeQuery.data?.status === 404
+    ? "Home dashboard data is unavailable. Restart the API server, then retry."
+    : homeQuery.errorMessage || "Could not load your home dashboard.";
 
   return (
     <div className="space-y-4 px-3 py-4 sm:px-4 lg:px-5">
@@ -616,7 +619,12 @@ export default function Home() {
         </div>
       </div>
 
-      <AsyncContent query={homeQuery} loadingMessage="Loading your home..." variant="page">
+      <AsyncContent
+        query={homeQuery}
+        loadingMessage="Loading your home..."
+        errorMessage={homeErrorMessage}
+        variant="page"
+      >
         <>
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             <MetricCard label="Assigned to you" value={home.metrics.assigned} detail="Open personal work" icon={ListTodo} />
