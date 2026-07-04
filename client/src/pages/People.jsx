@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { UserAvatar } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { InlineLoader } from "@/components/ui/loading";
+import { AsyncContent } from "@/components/ui/loading";
 import { getClientPagination, PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
 import {
   createProjectInvite,
@@ -62,9 +62,15 @@ export default function People() {
     return () => window.removeEventListener(CURRENT_PROJECT_CHANGE_EVENT, handleProjectChange);
   }, []);
 
-  const projectQuery = useApiResource(() => getProject(projectId, { fields: "people" }), [projectId], { enabled: Boolean(projectId) });
+  const projectQuery = useApiResource(() => getProject(projectId, { fields: "people" }), [projectId], {
+    enabled: Boolean(projectId),
+    resetOnChange: true,
+  });
 
-  const invitesQuery = useApiResource(() => getProjectInvites(projectId), [projectId], { enabled: Boolean(projectId) });
+  const invitesQuery = useApiResource(() => getProjectInvites(projectId), [projectId], {
+    enabled: Boolean(projectId),
+    resetOnChange: true,
+  });
   const { members, isLoading: membersLoading, error: membersError, refreshMembers } = useProjectMembers(projectId);
 
   const refreshPeople = () => {
@@ -126,6 +132,7 @@ export default function People() {
   const project = projectQuery.data?.data;
   const invites = invitesQuery.data?.data || [];
   const canManage = project?.currentUserPermissions?.includes("members.manage");
+  const inviteFormDisabled = !canManage || projectQuery.isInitialLoading || projectQuery.isError;
   const pendingInvites = invites.filter((invite) => invite.status === "PENDING");
   const { items: pagedMembers, pagination: membersPagination } = getClientPagination(members, membersPage, PAGE_SIZE);
   const { items: pagedInvites, pagination: invitesPagination } = getClientPagination(pendingInvites, invitesPage, PAGE_SIZE);
@@ -177,50 +184,50 @@ export default function People() {
               <CardDescription>{project?.name || "Select a project"} access list.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {membersLoading ? <InlineLoader message="Loading members..." /> : null}
-              {!membersLoading && membersError ? (
-                <div className="flex flex-col gap-3 rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
-                  <span className="text-destructive">{membersError}</span>
-                  <Button type="button" variant="outline" size="sm" onClick={() => refreshMembers()}>
-                    Retry
-                  </Button>
-                </div>
-              ) : null}
-              {!membersLoading && pagedMembers.map((member) => {
-                const isOwner = project?.ownerId === member.userId;
-                const isCurrentUser = user?.id === member.userId;
-                return (
-                  <div key={member.id} className="grid gap-3 rounded-md border p-3 sm:grid-cols-[minmax(0,1fr)_160px_auto] sm:items-center">
-                    <div className="flex min-w-0 items-center gap-3">
-                      <UserAvatar user={member.user} className="h-9 w-9" />
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-medium">{member.user?.name || member.user?.email}</p>
-                        <p className="truncate text-xs text-muted-foreground">{member.user?.email}</p>
+              <AsyncContent
+                loading={membersLoading}
+                error={membersError}
+                errorMessage={membersError}
+                onRetry={() => refreshMembers()}
+                loadingMessage="Loading members..."
+                emptyWhen={!members.length}
+                empty={<p className="text-sm text-muted-foreground">No members found.</p>}
+              >
+                {pagedMembers.map((member) => {
+                  const isOwner = project?.ownerId === member.userId;
+                  const isCurrentUser = user?.id === member.userId;
+                  return (
+                    <div key={member.id} className="grid gap-3 rounded-md border p-3 sm:grid-cols-[minmax(0,1fr)_160px_auto] sm:items-center">
+                      <div className="flex min-w-0 items-center gap-3">
+                        <UserAvatar user={member.user} className="h-9 w-9" />
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-medium">{member.user?.name || member.user?.email}</p>
+                          <p className="truncate text-xs text-muted-foreground">{member.user?.email}</p>
+                        </div>
                       </div>
+                      <select
+                        className="h-9 rounded-md border bg-background px-2 text-sm"
+                        value={member.role}
+                        disabled={!canManage || isOwner || updateRoleAction.isPending}
+                        onChange={(event) => updateRoleAction.run({ userId: member.userId, role: event.target.value })}
+                      >
+                        {ROLES.map((role) => <option key={role} value={role}>{role}</option>)}
+                      </select>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-9 w-9 justify-self-start text-muted-foreground hover:text-destructive sm:justify-self-end"
+                        disabled={!canManage || isOwner || isCurrentUser || removeMemberAction.isPending}
+                        onClick={() => removeMemberAction.run(member.userId)}
+                        aria-label={`Remove ${member.user?.name || member.user?.email}`}
+                      >
+                        <UserMinus className="h-4 w-4" />
+                      </Button>
                     </div>
-                    <select
-                      className="h-9 rounded-md border bg-background px-2 text-sm"
-                      value={member.role}
-                      disabled={!canManage || isOwner || updateRoleAction.isPending}
-                      onChange={(event) => updateRoleAction.run({ userId: member.userId, role: event.target.value })}
-                    >
-                      {ROLES.map((role) => <option key={role} value={role}>{role}</option>)}
-                    </select>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-9 w-9 justify-self-start text-muted-foreground hover:text-destructive sm:justify-self-end"
-                      disabled={!canManage || isOwner || isCurrentUser || removeMemberAction.isPending}
-                      onClick={() => removeMemberAction.run(member.userId)}
-                      aria-label={`Remove ${member.user?.name || member.user?.email}`}
-                    >
-                      <UserMinus className="h-4 w-4" />
-                    </Button>
-                  </div>
-                );
-              })}
-              <PaginationControls pagination={membersPagination} onPageChange={setMembersPage} className="border-0 px-0" />
-              {!membersLoading && !membersError && members.length === 0 ? <p className="text-sm text-muted-foreground">No members found.</p> : null}
+                  );
+                })}
+                <PaginationControls pagination={membersPagination} onPageChange={setMembersPage} className="border-0 px-0" />
+              </AsyncContent>
             </CardContent>
           </Card>
 
@@ -230,31 +237,36 @@ export default function People() {
               <CardDescription>Invitations expire after seven days.</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
-              {invitesQuery.isLoading ? <InlineLoader message="Loading invites..." /> : null}
-              {!invitesQuery.isLoading && pagedInvites.map((invite) => (
-                <div key={invite.id} className="grid gap-3 rounded-md border p-3 sm:grid-cols-[minmax(0,1fr)_120px_auto] sm:items-center">
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-medium">{invite.email}</p>
-                    <p className="text-xs text-muted-foreground">Expires {formatDate(invite.expiresAt)}</p>
+              <AsyncContent
+                query={invitesQuery}
+                loadingMessage="Loading invites..."
+                emptyWhen={!pendingInvites.length}
+                empty={<p className="text-sm text-muted-foreground">No pending invites.</p>}
+              >
+                {pagedInvites.map((invite) => (
+                  <div key={invite.id} className="grid gap-3 rounded-md border p-3 sm:grid-cols-[minmax(0,1fr)_120px_auto] sm:items-center">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium">{invite.email}</p>
+                      <p className="text-xs text-muted-foreground">Expires {formatDate(invite.expiresAt)}</p>
+                    </div>
+                    <span className="inline-flex h-7 items-center gap-1 rounded-md bg-secondary px-2 text-xs">
+                      <Shield className="h-3 w-3" />
+                      {invite.role}
+                    </span>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-9 w-9 justify-self-start text-muted-foreground hover:text-destructive sm:justify-self-end"
+                      disabled={!canManage || revokeInviteAction.isPending}
+                      onClick={() => revokeInviteAction.run(invite.id)}
+                      aria-label={`Revoke invite to ${invite.email}`}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
-                  <span className="inline-flex h-7 items-center gap-1 rounded-md bg-secondary px-2 text-xs">
-                    <Shield className="h-3 w-3" />
-                    {invite.role}
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-9 w-9 justify-self-start text-muted-foreground hover:text-destructive sm:justify-self-end"
-                    disabled={!canManage || revokeInviteAction.isPending}
-                    onClick={() => revokeInviteAction.run(invite.id)}
-                    aria-label={`Revoke invite to ${invite.email}`}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              ))}
-              <PaginationControls pagination={invitesPagination} onPageChange={setInvitesPage} className="border-0 px-0" />
-              {!invitesQuery.isLoading && pendingInvites.length === 0 ? <p className="text-sm text-muted-foreground">No pending invites.</p> : null}
+                ))}
+                <PaginationControls pagination={invitesPagination} onPageChange={setInvitesPage} className="border-0 px-0" />
+              </AsyncContent>
             </CardContent>
           </Card>
         </section>
@@ -266,15 +278,15 @@ export default function People() {
           </CardHeader>
           <CardContent>
             <form className="space-y-3" onSubmit={submitInvite}>
-              <Input type="email" placeholder="teammate@example.com" value={inviteEmail} disabled={!canManage} onChange={(event) => setInviteEmail(event.target.value)} />
-              <select className="h-9 w-full rounded-md border bg-background px-3 text-sm" value={inviteRole} disabled={!canManage} onChange={(event) => setInviteRole(event.target.value)}>
+              <Input type="email" placeholder="teammate@example.com" value={inviteEmail} disabled={inviteFormDisabled} onChange={(event) => setInviteEmail(event.target.value)} />
+              <select className="h-9 w-full rounded-md border bg-background px-3 text-sm" value={inviteRole} disabled={inviteFormDisabled} onChange={(event) => setInviteRole(event.target.value)}>
                 {ROLES.map((role) => <option key={role} value={role}>{role}</option>)}
               </select>
-              <Button className="w-full" disabled={!canManage || inviteAction.isPending}>
+              <Button className="w-full" disabled={inviteFormDisabled || inviteAction.isPending}>
                 <MailPlus className="h-4 w-4" />
                 {inviteAction.isPending ? "Sending..." : "Send invite"}
               </Button>
-              {!canManage ? <p className="text-xs text-muted-foreground">You can view these people, but cannot manage membership.</p> : null}
+              {!projectQuery.isInitialLoading && !canManage ? <p className="text-xs text-muted-foreground">You can view these people, but cannot manage membership.</p> : null}
             </form>
           </CardContent>
         </Card>

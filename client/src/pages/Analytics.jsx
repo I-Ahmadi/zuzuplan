@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { InlineLoader } from "@/components/ui/loading";
+import { AsyncContent } from "@/components/ui/loading";
 import { PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
 import { UserAvatar } from "@/components/ui/avatar";
 import { useApiResource } from "@/lib/api-hooks";
@@ -387,9 +387,13 @@ export default function Analytics() {
   const [exportPending, setExportPending] = useState("");
 
   const queryParams = { ...filters, page, limit: PAGE_SIZE };
-  const analyticsQuery = useApiResource(() => getDeliveryHealthAnalytics(queryParams), [filters, page]);
+  const analyticsQuery = useApiResource(() => getDeliveryHealthAnalytics(queryParams), [filters, page], {
+    resetOnChange: true,
+  });
   const analytics = analyticsQuery.data?.data || emptyAnalytics;
   const generatedAt = useMemo(() => new Date(), []);
+  const analyticsReady = analyticsQuery.hasData && !analyticsQuery.isError;
+  const analyticsControlsDisabled = analyticsQuery.isInitialLoading || Boolean(exportPending);
 
   async function fetchExportRows() {
     const result = await getDeliveryHealthAnalytics({ ...filters, includeExport: true, page: 1, limit: PAGE_SIZE });
@@ -443,20 +447,21 @@ export default function Analytics() {
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
-              <Button type="button" variant="outline" className="h-9" disabled={Boolean(exportPending)} onClick={downloadCsvAnalytics}>
+              <Button type="button" variant="outline" className="h-9" disabled={analyticsControlsDisabled || !analyticsReady} onClick={downloadCsvAnalytics}>
                 <Download className="h-4 w-4" />
                 {exportPending === "csv" ? "Preparing..." : "Download CSV"}
               </Button>
-              <Button type="button" variant="outline" className="h-9" disabled={Boolean(exportPending)} onClick={downloadJsonAnalytics}>
+              <Button type="button" variant="outline" className="h-9" disabled={analyticsControlsDisabled || !analyticsReady} onClick={downloadJsonAnalytics}>
                 <FileJson className="h-4 w-4" />
                 {exportPending === "json" ? "Preparing..." : "Download JSON"}
               </Button>
-              <Button type="button" variant="outline" className="h-9" onClick={() => window.print()}>
+              <Button type="button" variant="outline" className="h-9" disabled={!analyticsReady} onClick={() => window.print()}>
                 <Printer className="h-4 w-4" />
                 Print
               </Button>
             </div>
           </div>
+          {analyticsReady ? (
           <div className="grid gap-px bg-border text-sm md:grid-cols-4">
             <div className="bg-card px-4 py-3">
               <p className="text-xs uppercase text-muted-foreground">Generated</p>
@@ -475,48 +480,45 @@ export default function Analytics() {
               <p className="mt-1 font-medium">{analytics.totals.filtered} matching tasks</p>
             </div>
           </div>
+          ) : null}
         </section>
 
-        <section className="rounded-md border bg-card">
-          <div className="border-b px-3 py-2">
-            <p className="text-sm font-semibold">Analytics criteria</p>
-          </div>
-          <div className="grid gap-2 p-3 md:grid-cols-2 xl:grid-cols-[minmax(240px,1fr)_170px_170px_160px_160px_150px_auto]">
-            <div className="relative">
-              <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input className="pl-9" value={filters.search} onChange={(event) => setFilters((current) => ({ ...current, search: event.target.value }))} placeholder="Search tasks, projects, assignees..." />
+        <AsyncContent query={analyticsQuery} loadingMessage="Loading analytics..." variant="page" className="space-y-4">
+          <section className="rounded-md border bg-card">
+            <div className="border-b px-3 py-2">
+              <p className="text-sm font-semibold">Analytics criteria</p>
             </div>
-            <select className="h-9 rounded-md border bg-background px-3 text-sm" value={filters.projectId} onChange={(event) => setFilters((current) => ({ ...current, projectId: event.target.value }))} aria-label="Filter by project">
-              <option value="all">All projects</option>
-              {analytics.projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}
-            </select>
-            <select className="h-9 rounded-md border bg-background px-3 text-sm" value={filters.assigneeId} onChange={(event) => setFilters((current) => ({ ...current, assigneeId: event.target.value }))} aria-label="Filter by assignee">
-              <option value="all">All assignees</option>
-              <option value="unassigned">Unassigned</option>
-              {analytics.assignees.map((user) => <option key={user.id} value={user.id}>{user.name || user.email}</option>)}
-            </select>
-            <select className="h-9 rounded-md border bg-background px-3 text-sm" value={filters.status} onChange={(event) => setFilters((current) => ({ ...current, status: event.target.value }))} aria-label="Filter by status">
-              <option value="all">All statuses</option>
-              {STATUSES.map((status) => <option key={status.value} value={status.value}>{status.label}</option>)}
-            </select>
-            <select className="h-9 rounded-md border bg-background px-3 text-sm" value={filters.priority} onChange={(event) => setFilters((current) => ({ ...current, priority: event.target.value }))} aria-label="Filter by priority">
-              <option value="all">All priorities</option>
-              {PRIORITIES.map((priority) => <option key={priority.value} value={priority.value}>{priority.label}</option>)}
-            </select>
-            <select className="h-9 rounded-md border bg-background px-3 text-sm" value={filters.rangeDays} onChange={(event) => setFilters((current) => ({ ...current, rangeDays: event.target.value }))} aria-label="Time range">
-              {TIME_RANGES.map((range) => <option key={range.value} value={range.value}>{range.label}</option>)}
-            </select>
-            <label className="flex h-9 items-center gap-2 rounded-md border px-3 text-sm">
-              <input type="checkbox" checked={filters.includeCompleted} onChange={(event) => setFilters((current) => ({ ...current, includeCompleted: event.target.checked }))} />
-              Completed
-            </label>
-          </div>
-        </section>
-
-        {analyticsQuery.isLoading ? (
-          <InlineLoader message="Loading analytics..." />
-        ) : (
-          <>
+            <div className="grid gap-2 p-3 md:grid-cols-2 xl:grid-cols-[minmax(240px,1fr)_170px_170px_160px_160px_150px_auto]">
+              <div className="relative">
+                <Search className="pointer-events-none absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input className="pl-9" value={filters.search} onChange={(event) => setFilters((current) => ({ ...current, search: event.target.value }))} placeholder="Search tasks, projects, assignees..." />
+              </div>
+              <select className="h-9 rounded-md border bg-background px-3 text-sm" value={filters.projectId} onChange={(event) => setFilters((current) => ({ ...current, projectId: event.target.value }))} aria-label="Filter by project">
+                <option value="all">All projects</option>
+                {analytics.projects.map((project) => <option key={project.id} value={project.id}>{project.name}</option>)}
+              </select>
+              <select className="h-9 rounded-md border bg-background px-3 text-sm" value={filters.assigneeId} onChange={(event) => setFilters((current) => ({ ...current, assigneeId: event.target.value }))} aria-label="Filter by assignee">
+                <option value="all">All assignees</option>
+                <option value="unassigned">Unassigned</option>
+                {analytics.assignees.map((user) => <option key={user.id} value={user.id}>{user.name || user.email}</option>)}
+              </select>
+              <select className="h-9 rounded-md border bg-background px-3 text-sm" value={filters.status} onChange={(event) => setFilters((current) => ({ ...current, status: event.target.value }))} aria-label="Filter by status">
+                <option value="all">All statuses</option>
+                {STATUSES.map((status) => <option key={status.value} value={status.value}>{status.label}</option>)}
+              </select>
+              <select className="h-9 rounded-md border bg-background px-3 text-sm" value={filters.priority} onChange={(event) => setFilters((current) => ({ ...current, priority: event.target.value }))} aria-label="Filter by priority">
+                <option value="all">All priorities</option>
+                {PRIORITIES.map((priority) => <option key={priority.value} value={priority.value}>{priority.label}</option>)}
+              </select>
+              <select className="h-9 rounded-md border bg-background px-3 text-sm" value={filters.rangeDays} onChange={(event) => setFilters((current) => ({ ...current, rangeDays: event.target.value }))} aria-label="Time range">
+                {TIME_RANGES.map((range) => <option key={range.value} value={range.value}>{range.label}</option>)}
+              </select>
+              <label className="flex h-9 items-center gap-2 rounded-md border px-3 text-sm">
+                <input type="checkbox" checked={filters.includeCompleted} onChange={(event) => setFilters((current) => ({ ...current, includeCompleted: event.target.checked }))} />
+                Completed
+              </label>
+            </div>
+          </section>
           <section className="grid overflow-hidden rounded-md border bg-card md:grid-cols-2 xl:grid-cols-6">
             <MetricCard label="Open tasks" value={analytics.summary.open} detail="active engineering work" icon={ListTodo} />
             <MetricCard label="Completed" value={analytics.summary.completed} detail="done in current filters" icon={CheckCircle2} />
@@ -573,8 +575,7 @@ export default function Analytics() {
             </Card>
           </div>
           </div>
-          </>
-        )}
+        </AsyncContent>
       </div>
     </div>
   );

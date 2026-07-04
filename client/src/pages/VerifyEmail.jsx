@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { AuthNotice, AuthShell } from "@/components/auth/AuthShell";
 import { Button } from "@/components/ui/button";
+import { ErrorState, LoadingState } from "@/components/ui/loading";
 import { useAuth } from "@/contexts/auth-context";
 import { useApiAction } from "@/lib/api-hooks";
 
@@ -25,6 +26,12 @@ export default function VerifyEmail() {
       setStatus("error");
     },
   });
+
+  function retryVerification() {
+    if (!token) return;
+    setStatus("verifying");
+    verifyAction.run(token);
+  }
 
   useEffect(() => {
     if (token && !hasVerified.current) {
@@ -59,7 +66,7 @@ export default function VerifyEmail() {
           )}
 
           {token && status === "verifying" && (
-            <p className="text-sm text-[#44546f]">Verifying your email...</p>
+            <LoadingState message="Verifying your email..." variant="compact" />
           )}
 
           {status === "success" && (
@@ -71,12 +78,7 @@ export default function VerifyEmail() {
 
           {status === "error" && (
             <div className="space-y-2">
-              <AuthNotice>
-                <p className="font-medium">Verification failed</p>
-                <p className="text-sm mt-1">
-                  {verifyAction.error?.message || "The link may be invalid or expired."}
-                </p>
-              </AuthNotice>
+              <ErrorState message={verifyAction.error?.message || "The link may be invalid or expired."} onRetry={retryVerification} variant="compact" />
               <p className="text-sm text-[#44546f]">
                 You can request a new verification email by signing up again or contacting support.
               </p>

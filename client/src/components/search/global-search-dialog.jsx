@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FolderKanban, ListTodo, MessageSquare, Search, UserCircle, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { InlineLoader } from "@/components/ui/loading";
+import { AsyncContent } from "@/components/ui/loading";
 import { useApiResource } from "@/lib/api-hooks";
 import { globalSearch } from "@/lib/search-api";
 import { LEGACY_STORAGE_KEYS, migrateStorageKey, STORAGE_KEYS } from "@/lib/storage-keys";
@@ -99,14 +99,14 @@ export default function GlobalSearchDialog({ open, initialQuery, onClose }) {
 
   const searchQuery = useApiResource(() => globalSearch(trimmedQuery), [open, trimmedQuery], {
     enabled: open && trimmedQuery.length >= 2,
+    resetOnChange: true,
   });
 
+  const commandItems = useMemo(() => commandResults(debouncedQuery), [debouncedQuery]);
+  const backendResults = useMemo(() => flattenResults(searchQuery.data?.data || { projects: [], tasks: [], comments: [], members: [] }), [searchQuery.data]);
   const results = useMemo(() => {
-    return [
-      ...commandResults(debouncedQuery),
-      ...flattenResults(searchQuery.data?.data || { projects: [], tasks: [], comments: [], members: [] }),
-    ];
-  }, [debouncedQuery, searchQuery.data]);
+    return [...commandItems, ...backendResults];
+  }, [backendResults, commandItems]);
 
   useEffect(() => {
     if (!open) return;
@@ -207,8 +207,7 @@ export default function GlobalSearchDialog({ open, initialQuery, onClose }) {
 
           {query.trim().length >= 2 ? (
             <div className="space-y-1">
-              {searchQuery.isFetching ? <InlineLoader message="Searching..." className="my-1 py-3" /> : null}
-              {results.map((result, index) => (
+              {commandItems.map((result, index) => (
                 <button
                   key={`${result.type}-${result.item.id}`}
                   className={cn(
@@ -228,9 +227,37 @@ export default function GlobalSearchDialog({ open, initialQuery, onClose }) {
                   <span className="rounded bg-secondary px-1.5 py-0.5 text-[11px] capitalize text-muted-foreground">{result.type}</span>
                 </button>
               ))}
-              {!searchQuery.isFetching && !results.length ? (
-                <p className="px-3 py-8 text-center text-sm text-muted-foreground">No results found.</p>
-              ) : null}
+              <AsyncContent
+                query={searchQuery}
+                loadingMessage="Searching..."
+                variant="compact"
+                emptyWhen={!backendResults.length && !commandItems.length}
+                empty={<p className="px-3 py-8 text-center text-sm text-muted-foreground">No results found.</p>}
+              >
+                {backendResults.map((result, backendIndex) => {
+                  const index = commandItems.length + backendIndex;
+                  return (
+                    <button
+                      key={`${result.type}-${result.item.id}`}
+                      className={cn(
+                        "flex w-full items-center gap-3 rounded-md px-3 py-2 text-left transition-colors",
+                        index === activeIndex ? "bg-accent text-foreground" : "hover:bg-accent/70"
+                      )}
+                      onMouseEnter={() => setActiveIndex(index)}
+                      onClick={() => openResult(result)}
+                    >
+                      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-secondary text-muted-foreground">
+                        <ResultIcon result={result} />
+                      </span>
+                      <span className="min-w-0 flex-1">
+                        <span className="block truncate text-sm font-medium">{result.title}</span>
+                        <span className="block truncate text-xs text-muted-foreground">{resultSubtitle(result)}</span>
+                      </span>
+                      <span className="rounded bg-secondary px-1.5 py-0.5 text-[11px] capitalize text-muted-foreground">{result.type}</span>
+                    </button>
+                  );
+                })}
+              </AsyncContent>
             </div>
           ) : null}
         </div>

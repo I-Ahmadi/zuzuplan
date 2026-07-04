@@ -34,7 +34,7 @@ import { UserAvatar } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { InlineLoader } from "@/components/ui/loading";
+import { AsyncContent } from "@/components/ui/loading";
 import { PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
 import { Textarea } from "@/components/ui/textarea";
 import { createComment, deleteComment, getTaskComments, updateComment } from "@/lib/comment-api";
@@ -302,30 +302,36 @@ export default function Tasks() {
     }
   }, [activeView, searchParams]);
 
-  const projectQuery = useApiResource(() => getProject(projectId, { fields: "planning" }), [projectId], { enabled: Boolean(projectId) });
+  const projectQuery = useApiResource(() => getProject(projectId, { fields: "planning" }), [projectId], {
+    enabled: Boolean(projectId),
+    resetOnChange: true,
+  });
 
   const tasksQuery = useApiResource(() => getProjectListTasks(projectId, { ...filters, page: taskPage, limit: PAGE_SIZE }), [
     projectId,
     filters,
     taskPage,
     activeView,
-  ], { enabled: Boolean(projectId && activeView === "list") });
+  ], { enabled: Boolean(projectId && activeView === "list"), resetOnChange: true });
 
   const taskSummaryQuery = useApiResource(() => getProjectTaskSummary(projectId), [projectId, activeView], {
     enabled: Boolean(projectId && activeView === "summary"),
+    resetOnChange: true,
   });
   const taskWorkloadQuery = useApiResource(() => getProjectTaskWorkload(projectId), [projectId, activeView], {
     enabled: Boolean(projectId && activeView === "summary"),
+    resetOnChange: true,
   });
 
   const backlogTasksQuery = useApiResource(() => getProjectBacklogTasks(projectId, filters), [
     projectId,
     filters,
     activeView,
-  ], { enabled: Boolean(projectId && activeView === "backlog") });
+  ], { enabled: Boolean(projectId && activeView === "backlog"), resetOnChange: true });
 
   const sprintsQuery = useApiResource(() => getProjectSprints(projectId), [projectId, needsSprints], {
     enabled: Boolean(projectId && needsSprints),
+    resetOnChange: true,
   });
 
   const { members } = useProjectMembers(projectId);
@@ -337,12 +343,14 @@ export default function Tasks() {
     projectId,
     filters,
     activeView,
-  ], { enabled: Boolean(projectId && activeView === "board") });
+  ], { enabled: Boolean(projectId && activeView === "board"), resetOnChange: true });
   const boardTasks = boardTasksQuery.data?.data || [];
   const taskSummary = taskSummaryQuery.data?.data;
   const taskWorkload = taskWorkloadQuery.data?.data;
   const activeProject = projectQuery.data?.data;
   const projectLoading = projectsQuery.isLoading || projectQuery.isLoading;
+  const projectError = projectsQuery.isError || projectQuery.isError;
+  const projectErrorMessage = projectsQuery.errorMessage || projectQuery.errorMessage || "Could not load project.";
   const currentPermissions = activeProject?.currentUserPermissions || [];
 
   const canCreate = currentPermissions.includes("task.create");
@@ -580,8 +588,16 @@ export default function Tasks() {
             </p>
           ) : null}
 
-          {projectLoading ? <InlineLoader message="Loading project..." /> : null}
-
+          <AsyncContent
+            loading={projectLoading}
+            error={projectError}
+            errorMessage={projectErrorMessage}
+            onRetry={() => {
+              projectsQuery.retry();
+              projectQuery.retry();
+            }}
+            loadingMessage="Loading project..."
+          >
           {activeView === "summary" ? (
             <SummaryView
               summary={taskSummary}
@@ -665,6 +681,7 @@ export default function Tasks() {
               onEditSprint={(sprint) => setTimelineSprintDialog({ type: "edit", sprint })}
             />
           ) : null}
+          </AsyncContent>
 
         </div>
       </div>
@@ -727,10 +744,17 @@ export function TaskDetailPage() {
   const [commentsVersion, setCommentsVersion] = useState(0);
   const taskStatusState = useProjectTaskStatuses(projectId);
 
-  const projectQuery = useApiResource(() => getProject(projectId, { fields: "planning" }), [projectId], { enabled: Boolean(projectId) });
-  const sprintsQuery = useApiResource(() => getProjectSprints(projectId), [projectId], { enabled: Boolean(projectId) });
+  const projectQuery = useApiResource(() => getProject(projectId, { fields: "planning" }), [projectId], {
+    enabled: Boolean(projectId),
+    resetOnChange: true,
+  });
+  const sprintsQuery = useApiResource(() => getProjectSprints(projectId), [projectId], {
+    enabled: Boolean(projectId),
+    resetOnChange: true,
+  });
   const taskQuery = useApiResource(() => getTask(projectId, taskId), [projectId, taskId], {
     enabled: Boolean(projectId && taskId),
+    resetOnChange: true,
   });
   const activeProject = projectQuery.data?.data;
   const task = taskQuery.data?.data;
@@ -741,6 +765,9 @@ export function TaskDetailPage() {
   const canAssign = permissions.includes("task.assign");
   const canDelete = permissions.includes("task.delete");
   const canComment = permissions.includes("comment.create");
+  const detailLoading = projectQuery.isInitialLoading || sprintsQuery.isInitialLoading || taskQuery.isInitialLoading;
+  const detailError = projectQuery.isError || sprintsQuery.isError || taskQuery.isError;
+  const detailErrorMessage = projectQuery.errorMessage || sprintsQuery.errorMessage || taskQuery.errorMessage || taskErrorMessage || "Could not load task details.";
 
   const updateMutation = useApiAction(({ payload }) => updateTask(projectId, taskId, payload), {
     onSuccess: (result) => {
@@ -785,7 +812,7 @@ export function TaskDetailPage() {
       });
   }
 
-  if (taskQuery.isLoading) {
+  if (detailLoading) {
     return (
       <TaskStatusesContext.Provider value={taskStatusState}>
       <div className="space-y-3 px-3 py-3 sm:px-4 lg:px-5">
@@ -793,7 +820,29 @@ export function TaskDetailPage() {
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Task details</h1>
           <p className="mt-1 text-sm text-muted-foreground">Review details, activity, and ownership for this task.</p>
         </div>
-        <InlineLoader message="Loading task..." />
+        <AsyncContent loading loadingMessage="Loading task..." />
+      </div>
+      </TaskStatusesContext.Provider>
+    );
+  }
+
+  if (detailError) {
+    return (
+      <TaskStatusesContext.Provider value={taskStatusState}>
+      <div className="space-y-3 px-3 py-3 sm:px-4 lg:px-5">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">Task details</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Review details, activity, and ownership for this task.</p>
+        </div>
+        <AsyncContent
+          error
+          errorMessage={detailErrorMessage}
+          onRetry={() => {
+            projectQuery.retry();
+            sprintsQuery.retry();
+            taskQuery.retry();
+          }}
+        />
       </div>
       </TaskStatusesContext.Provider>
     );
@@ -918,12 +967,12 @@ function SummaryView({ summary, workload, loading, workloadLoading }) {
     color: SUMMARY_TYPE_COLORS[type],
   }));
 
+  if (loading || workloadLoading) {
+    return <AsyncContent loading loadingMessage="Loading delivery summary..." />;
+  }
+
   return (
     <div className="space-y-4 pb-6">
-      {loading && !summary ? (
-        <InlineLoader message="Loading delivery summary..." />
-      ) : null}
-
       <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
         <SummaryStatCard icon={CheckCircle2} value={recent.completed} label="completed" detail="in the last 7 days" tone="success" />
         <SummaryStatCard icon={RefreshCcw} value={recent.updated} label="updated" detail="in the last 7 days" />
@@ -1090,7 +1139,7 @@ function PeopleWorkloadPanel({ workload, total, loading }) {
           <span>Work distribution</span>
         </div>
         {loading ? (
-          <InlineLoader message="Loading workload..." className="py-4" />
+          <AsyncContent loading loadingMessage="Loading workload..." className="py-4" />
         ) : workload.length ? workload.slice(0, 6).map((item) => {
           const percent = countPercent(item.total, total);
           return (
@@ -1188,6 +1237,10 @@ function BoardView({ tasks, loading, activeProject, members, sprints, filters, s
     setCreateColumnOpen(false);
   }
 
+  if (loading) {
+    return <AsyncContent loading loadingMessage="Loading board tasks..." />;
+  }
+
   return (
     <>
     <div className="space-y-4">
@@ -1224,7 +1277,6 @@ function BoardView({ tasks, loading, activeProject, members, sprints, filters, s
       </div>
 
       <div className="overflow-x-auto pb-3">
-        {loading ? <InlineLoader message="Loading board tasks..." className="mb-3" /> : null}
         <div className="flex min-h-[380px] min-w-max gap-4">
         {boardColumns.map((column) => {
           const columnTasks = boardTasks.filter((task) => task.status === column.value);
@@ -1521,6 +1573,7 @@ function TimelineView({ projectId, active, activeProject, members, currentUser, 
       limit: TIMELINE_LIMIT,
     }), [projectId, search, statusCategory, assigneeFilter, timelineFrom, timelineTo, zoom, active], {
     enabled: Boolean(projectId && active),
+    resetOnChange: true,
   });
 
   const timelineData = timelineTasksQuery.data?.data || {};
@@ -1572,6 +1625,20 @@ function TimelineView({ projectId, active, activeProject, members, currentUser, 
   function moveTimeline(direction) {
     setSelectedSprintId("");
     setFocusDate((current) => shiftTimelineFocus(current, zoom, direction));
+  }
+
+  if (timelineTasksQuery.isInitialLoading) {
+    return <AsyncContent loading loadingMessage="Loading timeline..." />;
+  }
+
+  if (timelineTasksQuery.isError) {
+    return (
+      <AsyncContent
+        error
+        errorMessage={timelineTasksQuery.errorMessage || "Could not load timeline work."}
+        onRetry={timelineTasksQuery.retry}
+      />
+    );
   }
 
   return (
@@ -1627,16 +1694,6 @@ function TimelineView({ projectId, active, activeProject, members, currentUser, 
           ) : null}
         </div>
       </div>
-
-      {timelineTasksQuery.isLoading ? (
-        <InlineLoader message="Loading timeline..." />
-      ) : null}
-
-      {timelineTasksQuery.isError ? (
-        <p className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive">
-          Could not load timeline work.
-        </p>
-      ) : null}
 
       {capped ? (
         <p className="rounded-md border border-orange-200 bg-orange-50 px-3 py-2 text-sm text-orange-800">
@@ -2004,6 +2061,10 @@ function BacklogView({
     }
   }
 
+  if (loading) {
+    return <AsyncContent loading loadingMessage="Loading backlog planning data..." />;
+  }
+
   return (
     <div className="space-y-3">
       <div className="flex w-full flex-col gap-2 border-b pb-3 lg:flex-row lg:items-center lg:justify-between">
@@ -2088,10 +2149,6 @@ function BacklogView({
           ) : null}
           <Button variant="ghost" className="h-8 rounded px-2.5 text-sm" onClick={() => setSelectedTaskIds([])}>Clear</Button>
         </div>
-      ) : null}
-
-      {loading ? (
-        <InlineLoader message="Loading backlog planning data..." />
       ) : null}
 
       {!plannedOrActiveSprints.length && !loading ? (
@@ -2280,16 +2337,17 @@ function CompletedSprintTaskTable({ projectId, sprint, activeProject, onViewTask
   const { statuses } = useTaskStatuses();
   const tasksQuery = useApiResource(() => getProjectSprintTasks(projectId, sprint.id), [projectId, sprint.id], {
     enabled: Boolean(projectId && sprint?.id),
+    resetOnChange: true,
   });
   const tasks = tasksQuery.data?.data || [];
 
   if (tasksQuery.isLoading) {
-    return <InlineLoader message="Loading sprint tasks..." className="mt-3" />;
+    return <AsyncContent loading loadingMessage="Loading sprint tasks..." className="mt-3" />;
   }
 
   if (tasksQuery.isError) {
     const message = tasksQuery.error?.message || resultMessage(tasksQuery.data, "Could not load sprint tasks.");
-    return <div className="mt-3 rounded border px-3 py-6 text-center text-sm text-destructive">{message}</div>;
+    return <AsyncContent error errorMessage={message} onRetry={tasksQuery.retry} className="mt-3" />;
   }
 
   return (
@@ -2559,6 +2617,10 @@ function ListView({ tasks, loading, pagination, onPageChange, activeProject, mem
     setSelectedTask(task);
   }
 
+  if (loading) {
+    return <AsyncContent loading loadingMessage="Loading tasks..." />;
+  }
+
   return (
     <div className="space-y-3">
       <TaskFilters filters={filters} setFilters={setFilters} members={members} sprints={sprints} placeholder="Search list" />
@@ -2575,7 +2637,6 @@ function ListView({ tasks, loading, pagination, onPageChange, activeProject, mem
         </div>
       ) : null}
       {creating ? <QuickCreateTask members={members} sprints={sprints} onCreate={(payload) => { createInlineTask(payload); setCreating(false); }} /> : null}
-      {loading ? <InlineLoader message="Loading tasks..." /> : null}
       {selectedIds.length ? (
         <div className="flex flex-wrap items-center gap-2 rounded-md border bg-muted/40 p-2 text-sm">
           <span className="font-medium">{selectedIds.length} selected</span>
@@ -3549,6 +3610,7 @@ function WorkItemView({
   const [commentActionError, setCommentActionError] = useState("");
   const commentsQuery = useApiResource(() => getTaskComments(task.id), [activityVisible, task.id, commentsVersion, commentListVersion], {
     enabled: Boolean(activityVisible && task.id),
+    resetOnChange: true,
   });
   const visibleComments = commentsQuery.data?.data || comments;
   const savingTitle = savingField === "title";
@@ -3842,61 +3904,63 @@ function WorkItemView({
             </div>
           </div>
           <div className="mt-4 space-y-2">
-            {commentsQuery.isLoading ? (
-              <InlineLoader message="Loading comments..." className="py-3" />
-            ) : null}
-            {commentActionError ? (
-              <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">{commentActionError}</p>
-            ) : null}
-            {visibleComments.map((item) => (
-              <div key={item.id} className="rounded-md border bg-background p-3 text-sm">
-                {editingCommentId === item.id ? (
-                  <div className="space-y-2">
-                    <Textarea
-                      className="min-h-20"
-                      value={commentDraft}
-                      onChange={(event) => setCommentDraft(event.target.value)}
-                      aria-label="Edit comment"
-                    />
-                    <div className="flex flex-wrap gap-2">
-                      <Button className="h-7 rounded px-2 text-xs" disabled={updateCommentMutation.isPending || !commentDraft.trim()} onClick={() => submitCommentEdit(item.id)}>
-                        {updateCommentMutation.isPending ? "Saving..." : "Save"}
-                      </Button>
-                      <Button variant="outline" className="h-7 rounded px-2 text-xs" disabled={updateCommentMutation.isPending} onClick={cancelCommentEdit}>
-                        Cancel
-                      </Button>
-                    </div>
-                  </div>
-                ) : (
-                  <p className="whitespace-pre-wrap break-words">{item.content}</p>
-                )}
-                <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <UserAvatar user={item.user} className="h-6 w-6" />
-                    <span>{item.user?.name || item.user?.email}</span>
-                  </div>
-                  {editingCommentId !== item.id && (canEditComment(item) || canDeleteComment(item)) ? (
-                    <div className="flex items-center gap-1">
-                      {canEditComment(item) ? (
-                        <Button variant="ghost" className="h-7 rounded px-2 text-xs" onClick={() => startCommentEdit(item)}>
-                          <Pencil className="h-3.5 w-3.5" />
-                          Edit
+            <AsyncContent
+              query={commentsQuery}
+              loadingMessage="Loading comments..."
+              className="py-3"
+              emptyWhen={activityVisible && !commentActionError && !visibleComments.length}
+              empty={<p className="rounded-md border p-3 text-sm text-muted-foreground">No comments yet.</p>}
+            >
+              {commentActionError ? (
+                <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-sm text-destructive">{commentActionError}</p>
+              ) : null}
+              {visibleComments.map((item) => (
+                <div key={item.id} className="rounded-md border bg-background p-3 text-sm">
+                  {editingCommentId === item.id ? (
+                    <div className="space-y-2">
+                      <Textarea
+                        className="min-h-20"
+                        value={commentDraft}
+                        onChange={(event) => setCommentDraft(event.target.value)}
+                        aria-label="Edit comment"
+                      />
+                      <div className="flex flex-wrap gap-2">
+                        <Button className="h-7 rounded px-2 text-xs" disabled={updateCommentMutation.isPending || !commentDraft.trim()} onClick={() => submitCommentEdit(item.id)}>
+                          {updateCommentMutation.isPending ? "Saving..." : "Save"}
                         </Button>
-                      ) : null}
-                      {canDeleteComment(item) ? (
-                        <Button variant="ghost" className="h-7 rounded px-2 text-xs text-destructive hover:text-destructive" disabled={deleteCommentMutation.isPending} onClick={() => removeComment(item.id)}>
-                          <Trash2 className="h-3.5 w-3.5" />
-                          Delete
+                        <Button variant="outline" className="h-7 rounded px-2 text-xs" disabled={updateCommentMutation.isPending} onClick={cancelCommentEdit}>
+                          Cancel
                         </Button>
-                      ) : null}
+                      </div>
                     </div>
-                  ) : null}
+                  ) : (
+                    <p className="whitespace-pre-wrap break-words">{item.content}</p>
+                  )}
+                  <div className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground">
+                    <div className="flex items-center gap-2">
+                      <UserAvatar user={item.user} className="h-6 w-6" />
+                      <span>{item.user?.name || item.user?.email}</span>
+                    </div>
+                    {editingCommentId !== item.id && (canEditComment(item) || canDeleteComment(item)) ? (
+                      <div className="flex items-center gap-1">
+                        {canEditComment(item) ? (
+                          <Button variant="ghost" className="h-7 rounded px-2 text-xs" onClick={() => startCommentEdit(item)}>
+                            <Pencil className="h-3.5 w-3.5" />
+                            Edit
+                          </Button>
+                        ) : null}
+                        {canDeleteComment(item) ? (
+                          <Button variant="ghost" className="h-7 rounded px-2 text-xs text-destructive hover:text-destructive" disabled={deleteCommentMutation.isPending} onClick={() => removeComment(item.id)}>
+                            <Trash2 className="h-3.5 w-3.5" />
+                            Delete
+                          </Button>
+                        ) : null}
+                      </div>
+                    ) : null}
+                  </div>
                 </div>
-              </div>
-            ))}
-            {activityVisible && !commentsQuery.isLoading && !visibleComments.length ? (
-              <p className="rounded-md border p-3 text-sm text-muted-foreground">No comments yet.</p>
-            ) : null}
+              ))}
+            </AsyncContent>
           </div>
         </section>
       </section>
@@ -3967,6 +4031,7 @@ function TaskDetailDialog({
 }) {
   const detailQuery = useApiResource(() => getTask(projectId, selectedTaskId), [projectId, selectedTaskId, detailVersion], {
     enabled: Boolean(projectId && selectedTaskId),
+    resetOnChange: true,
   });
   const task = detailQuery.data?.data;
   const detailErrorMessage = detailQuery.data?.error?.message || detailQuery.error?.message || "";
@@ -3994,31 +4059,31 @@ function TaskDetailDialog({
         </Button>
       </div>
       <div className="min-h-0 flex-1 overflow-y-auto p-3 sm:p-5">
-        {detailQuery.isLoading ? (
-          <InlineLoader message="Loading task..." />
-        ) : task ? (
-          <WorkItemView
-            key={task.id}
-            task={task}
-            activeProject={activeProject}
-            members={members}
-            canAssign={canAssign}
-            canDelete={canDelete}
-            canComment={canComment}
-            permissions={permissions}
-            sprints={sprints}
-            comments={comments}
-            commentsVersion={commentsVersion}
-            comment={comment}
-            setComment={setComment}
-            updateSelected={updateSelected}
-            deleteMutation={deleteMutation}
-            commentMutation={commentMutation}
-            compact
-          />
-        ) : (
-          <p className="rounded-md border p-4 text-sm text-muted-foreground">{detailErrorMessage || "Task not found."}</p>
-        )}
+        <AsyncContent query={detailQuery} loadingMessage="Loading task..." errorMessage={detailErrorMessage || "Could not load task."}>
+          {task ? (
+            <WorkItemView
+              key={task.id}
+              task={task}
+              activeProject={activeProject}
+              members={members}
+              canAssign={canAssign}
+              canDelete={canDelete}
+              canComment={canComment}
+              permissions={permissions}
+              sprints={sprints}
+              comments={comments}
+              commentsVersion={commentsVersion}
+              comment={comment}
+              setComment={setComment}
+              updateSelected={updateSelected}
+              deleteMutation={deleteMutation}
+              commentMutation={commentMutation}
+              compact
+            />
+          ) : (
+            <p className="rounded-md border p-4 text-sm text-muted-foreground">{detailErrorMessage || "Task not found."}</p>
+          )}
+        </AsyncContent>
       </div>
     </>
   );

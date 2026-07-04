@@ -22,7 +22,7 @@ import { UserAvatar } from "@/components/ui/avatar";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { InlineLoader } from "@/components/ui/loading";
+import { AsyncContent } from "@/components/ui/loading";
 import { Textarea } from "@/components/ui/textarea";
 import { getRefreshToken, setStoredUser } from "@/lib/auth-api";
 import {
@@ -154,6 +154,7 @@ export default function Setting() {
 
   const preferencesQuery = useApiResource(() => getUserPreferences(preferenceScope), [preferenceScope, shouldLoadPreferences], {
     enabled: shouldLoadPreferences,
+    resetOnChange: true,
   });
 
   async function confirmLogoutAction() {
@@ -168,7 +169,10 @@ export default function Setting() {
       navigate("/login", { replace: true });
     }
   }
-  const sessionsQuery = useApiResource(getUserSessions, [activeSection], { enabled: activeSection === "sessions" });
+  const sessionsQuery = useApiResource(getUserSessions, [activeSection], {
+    enabled: activeSection === "sessions",
+    resetOnChange: true,
+  });
 
   useEffect(() => {
     setProfile({
@@ -329,6 +333,8 @@ export default function Setting() {
   }
 
   const sessions = sessionsQuery.data?.data || [];
+  const preferencesReady = !shouldLoadPreferences || (preferencesQuery.hasData && !preferencesQuery.isError);
+  const sessionsReady = activeSection !== "sessions" || (sessionsQuery.hasData && !sessionsQuery.isError);
 
   return (
     <div className="w-full min-w-0 max-w-full overflow-x-hidden space-y-3 px-3 py-3 sm:px-4 lg:px-5">
@@ -392,11 +398,11 @@ export default function Setting() {
         </Card>
 
         <main className="min-w-0 max-w-full space-y-4 overflow-x-hidden">
-          {preferencesQuery.isLoading && shouldLoadPreferences ? (
-            <InlineLoader message="Loading settings..." />
+          {shouldLoadPreferences && !preferencesReady ? (
+            <AsyncContent query={preferencesQuery} loadingMessage="Loading settings..." />
           ) : null}
 
-          {activeSection === "profile" ? (
+          {activeSection === "profile" && preferencesReady ? (
             <Card className="min-w-0 overflow-hidden">
               <CardHeader className="border-b">
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -461,7 +467,7 @@ export default function Setting() {
             </Card>
           ) : null}
 
-          {activeSection === "preferences" ? (
+          {activeSection === "preferences" && preferencesReady ? (
             <Card>
               <CardHeader className="border-b">
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -522,7 +528,7 @@ export default function Setting() {
             </Card>
           ) : null}
 
-          {activeSection === "notifications" ? (
+          {activeSection === "notifications" && preferencesReady ? (
             <Card>
               <CardHeader className="border-b">
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -618,7 +624,11 @@ export default function Setting() {
             </Card>
           ) : null}
 
-          {activeSection === "sessions" ? (
+          {activeSection === "sessions" && !sessionsReady ? (
+            <AsyncContent query={sessionsQuery} loadingMessage="Loading sessions..." />
+          ) : null}
+
+          {activeSection === "sessions" && sessionsReady ? (
             <Card>
               <CardHeader className="border-b">
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -628,7 +638,6 @@ export default function Setting() {
                 <CardDescription>Review active refresh-token sessions and revoke access from other devices.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-3 p-4">
-                {sessionsQuery.isLoading ? <InlineLoader message="Loading sessions..." /> : null}
                 {sessions.map((session, index) => (
                   <div key={session.id} className="flex flex-col gap-2 rounded-md border p-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>

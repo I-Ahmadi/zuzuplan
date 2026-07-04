@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { InlineLoader } from "@/components/ui/loading";
+import { AsyncContent, LoadingState } from "@/components/ui/loading";
 import { PAGE_SIZE, PaginationControls } from "@/components/ui/pagination";
 import { Textarea } from "@/components/ui/textarea";
 import { emitApiResourceRefresh, useApiAction, useApiResource } from "@/lib/api-hooks";
@@ -78,7 +78,7 @@ function ProgressCell({ value = 0 }) {
   );
 }
 
-function ProjectDialog({ mode, open, form, setForm, pending, onClose, onSubmit }) {
+function ProjectDialog({ mode, open, form, setForm, loading, pending, onClose, onSubmit }) {
   return (
     <Dialog open={open} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
       <DialogContent className="max-w-xl" onClick={(event) => event.stopPropagation()}>
@@ -88,6 +88,9 @@ function ProjectDialog({ mode, open, form, setForm, pending, onClose, onSubmit }
             {mode === "edit" ? "Update the core details for this project." : "Create a project boundary for related work."}
           </p>
         </DialogHeader>
+        {loading ? (
+          <LoadingState message="Loading project..." className="mt-4" />
+        ) : (
         <form className="mt-4 space-y-4" onSubmit={onSubmit}>
           <div className="space-y-2">
             <Label htmlFor="project-name">Name</Label>
@@ -151,6 +154,7 @@ function ProjectDialog({ mode, open, form, setForm, pending, onClose, onSubmit }
             </Button>
           </DialogFooter>
         </form>
+        )}
       </DialogContent>
     </Dialog>
   );
@@ -258,7 +262,7 @@ export default function Projects() {
     visibility,
     status,
     page,
-  ]);
+  ], { resetOnChange: true });
 
   const editProjectQuery = useApiResource(() => getProject(editingProjectId, { fields: "edit" }), [editingProjectId, dialogMode], {
     enabled: Boolean(editingProjectId && dialogMode === "edit"),
@@ -267,6 +271,8 @@ export default function Projects() {
   const projects = projectsQuery.data?.data || [];
   const pagination = projectsQuery.data?.pagination;
   const editingProject = editProjectQuery.data?.data;
+  const projectsReady = projectsQuery.hasData && !projectsQuery.isError;
+  const controlsDisabled = projectsQuery.isInitialLoading;
 
   useEffect(() => {
     setPage(1);
@@ -403,46 +409,47 @@ export default function Projects() {
               className="h-8 rounded pl-8 text-sm"
               placeholder="Search projects..."
               value={search}
+              disabled={controlsDisabled}
               onChange={(event) => setSearch(event.target.value)}
             />
           </div>
-          <select className="h-8 rounded border bg-background px-2.5 text-sm" value={visibility} onChange={(event) => setVisibility(event.target.value)}>
+          <select className="h-8 rounded border bg-background px-2.5 text-sm" value={visibility} disabled={controlsDisabled} onChange={(event) => setVisibility(event.target.value)}>
             <option value="">All visibility</option>
             {VISIBILITY_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
           </select>
-          <select className="h-8 rounded border bg-background px-2.5 text-sm" value={status} onChange={(event) => setStatus(event.target.value)}>
+          <select className="h-8 rounded border bg-background px-2.5 text-sm" value={status} disabled={controlsDisabled} onChange={(event) => setStatus(event.target.value)}>
             <option value="">All statuses</option>
             {STATUS_OPTIONS.map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
           </select>
         </div>
-        <Button className="h-8 rounded px-2.5 text-sm" onClick={openCreateDialog}>
+        <Button className="h-8 rounded px-2.5 text-sm" disabled={controlsDisabled} onClick={openCreateDialog}>
           <Plus className="h-4 w-4" />
           Create Project
         </Button>
       </div>
 
-      <div className="overflow-x-auto rounded-md border bg-background">
-        <table className="w-full min-w-[980px] text-sm">
-          <thead className="bg-muted/60 text-left text-xs uppercase text-muted-foreground">
-            <tr>
-              <th className="px-3 py-2">Name</th>
-              <th className="px-3 py-2">Key</th>
-              <th className="px-3 py-2">Visibility</th>
-              <th className="px-3 py-2">Members</th>
-              <th className="px-3 py-2">Tasks</th>
-              <th className="px-3 py-2">Progress</th>
-              <th className="px-3 py-2">Status</th>
-              <th className="w-12 px-3 py-2" aria-label="Actions" />
-            </tr>
-          </thead>
-          <tbody>
-            {projectsQuery.isLoading ? (
+      <AsyncContent
+        query={projectsQuery}
+        loadingMessage="Loading projects..."
+        emptyWhen={!projects.length}
+        empty={<p className="rounded-md border bg-background px-3 py-8 text-center text-sm text-muted-foreground">No projects match this view.</p>}
+      >
+        <div className="overflow-x-auto rounded-md border bg-background">
+          <table className="w-full min-w-[980px] text-sm">
+            <thead className="bg-muted/60 text-left text-xs uppercase text-muted-foreground">
               <tr>
-                <td colSpan={8} className="px-3 py-4">
-                  <InlineLoader message="Loading projects..." />
-                </td>
+                <th className="px-3 py-2">Name</th>
+                <th className="px-3 py-2">Key</th>
+                <th className="px-3 py-2">Visibility</th>
+                <th className="px-3 py-2">Members</th>
+                <th className="px-3 py-2">Tasks</th>
+                <th className="px-3 py-2">Progress</th>
+                <th className="px-3 py-2">Status</th>
+                <th className="w-12 px-3 py-2" aria-label="Actions" />
               </tr>
-            ) : projects.length ? projects.map((project) => {
+            </thead>
+            <tbody>
+              {projects.map((project) => {
               const memberCount = project._count?.members || 0;
               const taskCount = project._count?.tasks || 0;
               return (
@@ -480,20 +487,20 @@ export default function Projects() {
                   </td>
                 </tr>
               );
-            }) : (
-              <tr><td colSpan={8} className="px-3 py-8 text-center text-muted-foreground">No projects match this view.</td></tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+            })}
+            </tbody>
+          </table>
+        </div>
+      </AsyncContent>
 
-      <PaginationControls pagination={pagination} onPageChange={setPage} />
+      {projectsReady ? <PaginationControls pagination={pagination} onPageChange={setPage} /> : null}
 
       <ProjectDialog
         mode={dialogMode}
         open={Boolean(dialogMode)}
         form={form}
         setForm={setForm}
+        loading={dialogMode === "edit" && editProjectQuery.isInitialLoading}
         pending={createAction.isPending || updateAction.isPending || editProjectQuery.isLoading}
         onClose={closeDialog}
         onSubmit={submitProject}

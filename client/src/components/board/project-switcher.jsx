@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Check, ChevronDown } from "lucide-react";
-import { InlineLoader } from "@/components/ui/loading";
+import { AsyncContent } from "@/components/ui/loading";
 import { PAGE_SIZE } from "@/components/ui/pagination";
 import { useApiResource } from "@/lib/api-hooks";
 import { getProject, getProjects } from "@/lib/project-api";
@@ -149,34 +149,38 @@ export function ProjectSwitcher({ compact = false, compactOnMobile = false, clas
             <p className="text-xs font-medium uppercase text-muted-foreground">Switch project</p>
           </div>
           <div className="max-h-72 overflow-y-auto p-1">
-            {projectsQuery.isLoading || projectQuery.isLoading ? <InlineLoader message="Loading projects..." className="m-1 py-3" /> : null}
-            {projects.map((project) => {
-              const active = project.id === currentProject?.id;
-              return (
-                <button
-                  key={project.id}
-                  type="button"
-                  className={cn(
-                    "flex w-full items-center gap-2 rounded px-2 py-2 text-left text-sm transition-colors hover:bg-accent",
-                    active && "bg-accent"
-                  )}
-                  onClick={() => switchProject(project.id)}
-                  role="menuitem"
-                >
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary text-[10px] font-bold text-primary-foreground">
-                    {project.key?.slice(0, 2).toUpperCase() || "SP"}
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="block truncate font-medium">{project.name}</span>
-                    <span className="block truncate text-xs text-muted-foreground">{project.key}</span>
-                  </span>
-                  {active ? <Check className="h-4 w-4 shrink-0 text-primary" /> : null}
-                </button>
-              );
-            })}
-            {!projectsQuery.isLoading && projects.length === 0 ? (
-              <p className="px-2 py-6 text-center text-sm text-muted-foreground">No projects yet.</p>
-            ) : null}
+            <AsyncContent
+              query={projectsQuery}
+              loadingMessage="Loading projects..."
+              variant="compact"
+              emptyWhen={!projects.length}
+              empty={<p className="px-2 py-6 text-center text-sm text-muted-foreground">No projects yet.</p>}
+            >
+              {projects.map((project) => {
+                const active = project.id === currentProject?.id;
+                return (
+                  <button
+                    key={project.id}
+                    type="button"
+                    className={cn(
+                      "flex w-full items-center gap-2 rounded px-2 py-2 text-left text-sm transition-colors hover:bg-accent",
+                      active && "bg-accent"
+                    )}
+                    onClick={() => switchProject(project.id)}
+                    role="menuitem"
+                  >
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary text-[10px] font-bold text-primary-foreground">
+                      {project.key?.slice(0, 2).toUpperCase() || "SP"}
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-medium">{project.name}</span>
+                      <span className="block truncate text-xs text-muted-foreground">{project.key}</span>
+                    </span>
+                    {active ? <Check className="h-4 w-4 shrink-0 text-primary" /> : null}
+                  </button>
+                );
+              })}
+            </AsyncContent>
           </div>
           <div className="border-t p-1">
             <Link className="block rounded px-2 py-2 text-sm hover:bg-accent" to="/projects" onClick={() => setOpen(false)}>

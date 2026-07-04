@@ -2,7 +2,7 @@ import { CheckCircle2, MailWarning } from "lucide-react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { InlineLoader } from "@/components/ui/loading";
+import { AsyncContent } from "@/components/ui/loading";
 import { acceptProjectInvite, getProjectInvite } from "@/lib/project-api";
 import { useAuth } from "@/contexts/auth-context";
 import { useApiAction, useApiResource } from "@/lib/api-hooks";
@@ -12,7 +12,10 @@ export default function AcceptInvite() {
   const navigate = useNavigate();
   const { user, loading, isAuthenticated } = useAuth();
 
-  const inviteQuery = useApiResource(() => getProjectInvite(token), [token], { enabled: Boolean(token) });
+  const inviteQuery = useApiResource(() => getProjectInvite(token), [token], {
+    enabled: Boolean(token),
+    resetOnChange: true,
+  });
 
   const acceptAction = useApiAction(() => acceptProjectInvite(token), {
     onSuccess: (result) => {
@@ -44,8 +47,7 @@ export default function AcceptInvite() {
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 text-sm">
-          {inviteQuery.isLoading ? <InlineLoader message="Loading invitation details..." /> : null}
-          {invite ? (
+          <AsyncContent query={inviteQuery} loadingMessage="Loading invitation details...">
             <div className="space-y-2 rounded-md border p-3">
               <div className="flex items-center justify-between gap-3">
                 <span className="text-muted-foreground">Project</span>
@@ -64,20 +66,19 @@ export default function AcceptInvite() {
                 <span className="font-medium">{invite.status}</span>
               </div>
             </div>
-          ) : null}
 
-          {error ? <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-destructive">{error}</p> : null}
-          {invite && !loading && !isAuthenticated && !error ? (
+            {acceptAction.data?.error?.message || acceptAction.error?.message ? <p className="rounded-md border border-destructive/30 bg-destructive/10 p-3 text-destructive">{acceptAction.data?.error?.message || acceptAction.error?.message}</p> : null}
+          {!loading && !isAuthenticated && !error ? (
             <p className="rounded-md border bg-secondary p-3 text-muted-foreground">
               Sign in with {invite.email} to accept this invitation.
             </p>
           ) : null}
-          {invite && isAuthenticated && !emailMatches && !error ? (
+          {isAuthenticated && !emailMatches && !error ? (
             <p className="rounded-md border bg-secondary p-3 text-muted-foreground">
               You are signed in as {user?.email}. This invitation was sent to {invite.email}.
             </p>
           ) : null}
-          {invite && isAuthenticated && !isPending && !error ? (
+          {isAuthenticated && !isPending && !error ? (
             <p className="rounded-md border bg-secondary p-3 text-muted-foreground">
               This invitation is {String(invite.status || "inactive").toLowerCase()} and cannot be accepted.
             </p>
@@ -99,6 +100,7 @@ export default function AcceptInvite() {
               <Link to={isAuthenticated ? "/projects" : "/login"}>Back to projects</Link>
             </Button>
           </div>
+          </AsyncContent>
         </CardContent>
       </Card>
     </div>

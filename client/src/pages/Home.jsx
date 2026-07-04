@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { InlineLoader } from "@/components/ui/loading";
+import { AsyncContent } from "@/components/ui/loading";
 import { UserAvatar } from "@/components/ui/avatar";
 import { useApiResource } from "@/lib/api-hooks";
 import { getHomeDashboard } from "@/lib/home-api";
@@ -579,7 +579,6 @@ export default function Home() {
     projects: [],
     primaryProject: null,
   };
-  const loading = homeQuery.isLoading;
   const primaryProjectTasksPath = home.primaryProject ? `/projects/${home.primaryProject.id}/tasks` : "/projects";
   const workTasks = uniqueTasks([home.attention, home.assigned, home.createdByMe, home.recent, home.upcoming]);
   const statusRows = buildStatusRows(workTasks);
@@ -617,9 +616,7 @@ export default function Home() {
         </div>
       </div>
 
-      {loading ? <InlineLoader message="Loading your home..." /> : null}
-
-      {!loading ? (
+      <AsyncContent query={homeQuery} loadingMessage="Loading your home..." variant="page">
         <>
           <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             <MetricCard label="Assigned to you" value={home.metrics.assigned} detail="Open personal work" icon={ListTodo} />
@@ -729,7 +726,7 @@ export default function Home() {
             </aside>
           </div>
         </>
-      ) : null}
+      </AsyncContent>
     </div>
   );
 }
