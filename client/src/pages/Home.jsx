@@ -626,7 +626,7 @@ export default function Home() {
         variant="page"
       >
         <>
-          <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          <div className="mb-4 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
             <MetricCard label="Assigned to you" value={home.metrics.assigned} detail="Open personal work" icon={ListTodo} />
             <MetricCard label="Needs attention" value={home.metrics.attention} detail={`${home.metrics.overdue} overdue`} icon={AlertTriangle} tone={home.metrics.overdue ? "danger" : "primary"} />
             <MetricCard label="Due soon" value={home.metrics.dueSoon} detail="Next 7 days" icon={Clock3} tone={home.metrics.dueSoon ? "warning" : "primary"} />
