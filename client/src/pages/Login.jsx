@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/contexts/auth-context";
 import { useApiAction } from "@/lib/api-hooks";
+import { consumeSessionExpiredNotice } from "@/lib/auth-api";
 
 function safeInternalRedirect(value) {
   if (!value || typeof value !== "string") return "/home";
@@ -19,6 +20,7 @@ export default function Login() {
   const verified = searchParams.get("verified") === "true";
   const reset = searchParams.get("reset") === "true";
   const redirectTo = safeInternalRedirect(searchParams.get("redirect"));
+  const [sessionExpired] = useState(() => consumeSessionExpiredNotice());
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -66,6 +68,10 @@ export default function Login() {
 
           {reset && (
             <AuthNotice type="success">Password reset successfully. You can now log in with your new password.</AuthNotice>
+          )}
+
+          {sessionExpired && (
+            <AuthNotice>Your session expired. Please sign in again.</AuthNotice>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-3">

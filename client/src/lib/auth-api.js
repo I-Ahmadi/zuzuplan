@@ -1,6 +1,9 @@
 const ACCESS_TOKEN_KEY = "accessToken";
 const REFRESH_TOKEN_KEY = "refreshToken";
 const USER_KEY = "user";
+const SESSION_EXPIRED_KEY = "sessionExpired";
+
+export const AUTH_SESSION_EXPIRED_EVENT = "auth:session-expired";
 
 let accessToken = null;
 
@@ -96,4 +99,23 @@ export function clearAuth() {
   localStorage.removeItem(ACCESS_TOKEN_KEY);
   localStorage.removeItem(REFRESH_TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
+}
+
+export function expireAuthSession() {
+  clearAuth();
+
+  if (canUseStorage()) {
+    sessionStorage.setItem(SESSION_EXPIRED_KEY, "true");
+    window.dispatchEvent(new Event(AUTH_SESSION_EXPIRED_EVENT));
+  }
+}
+
+export function consumeSessionExpiredNotice() {
+  if (!canUseStorage()) {
+    return false;
+  }
+
+  const wasExpired = sessionStorage.getItem(SESSION_EXPIRED_KEY) === "true";
+  sessionStorage.removeItem(SESSION_EXPIRED_KEY);
+  return wasExpired;
 }

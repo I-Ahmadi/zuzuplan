@@ -65,7 +65,7 @@ export default function People() {
   const projectQuery = useApiResource(() => getProject(projectId, { fields: "people" }), [projectId], { enabled: Boolean(projectId) });
 
   const invitesQuery = useApiResource(() => getProjectInvites(projectId), [projectId], { enabled: Boolean(projectId) });
-  const { members, isLoading: membersLoading, refreshMembers } = useProjectMembers(projectId);
+  const { members, isLoading: membersLoading, error: membersError, refreshMembers } = useProjectMembers(projectId);
 
   const refreshPeople = () => {
     refreshMembers();
@@ -178,6 +178,14 @@ export default function People() {
             </CardHeader>
             <CardContent className="space-y-3">
               {membersLoading ? <InlineLoader message="Loading members..." /> : null}
+              {!membersLoading && membersError ? (
+                <div className="flex flex-col gap-3 rounded-md border border-destructive/30 bg-destructive/5 p-3 text-sm sm:flex-row sm:items-center sm:justify-between">
+                  <span className="text-destructive">{membersError}</span>
+                  <Button type="button" variant="outline" size="sm" onClick={() => refreshMembers()}>
+                    Retry
+                  </Button>
+                </div>
+              ) : null}
               {!membersLoading && pagedMembers.map((member) => {
                 const isOwner = project?.ownerId === member.userId;
                 const isCurrentUser = user?.id === member.userId;
@@ -212,7 +220,7 @@ export default function People() {
                 );
               })}
               <PaginationControls pagination={membersPagination} onPageChange={setMembersPage} className="border-0 px-0" />
-              {!membersLoading && members.length === 0 ? <p className="text-sm text-muted-foreground">No members found.</p> : null}
+              {!membersLoading && !membersError && members.length === 0 ? <p className="text-sm text-muted-foreground">No members found.</p> : null}
             </CardContent>
           </Card>
 

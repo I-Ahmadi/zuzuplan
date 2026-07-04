@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import {
+  AUTH_SESSION_EXPIRED_EVENT,
   clearAuth,
   getAccessToken,
   getRefreshToken,
@@ -64,6 +65,16 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     bootstrapSession();
   }, [bootstrapSession]);
+
+  useEffect(() => {
+    function handleSessionExpired() {
+      clearSession();
+      setLoading(false);
+    }
+
+    window.addEventListener(AUTH_SESSION_EXPIRED_EVENT, handleSessionExpired);
+    return () => window.removeEventListener(AUTH_SESSION_EXPIRED_EVENT, handleSessionExpired);
+  }, [clearSession]);
 
   const signup = useCallback(async ({ name, email, password }) => {
     const response = await api("/auth/register", {

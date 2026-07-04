@@ -1,6 +1,7 @@
 import {
   getAccessToken,
   getRefreshToken,
+  expireAuthSession,
   setAccessToken,
   setRefreshToken,
 } from "@/lib/auth-api";
@@ -32,6 +33,7 @@ export async function refreshAccessToken() {
   const refreshToken = getRefreshToken();
 
   if (!refreshToken) {
+    expireAuthSession();
     throw new Error("No refresh token available");
   }
 
@@ -52,6 +54,7 @@ export async function refreshAccessToken() {
         const data = await parseResponse(res);
 
         if (!res.ok || !data?.success || !data?.data?.accessToken) {
+          expireAuthSession();
           throw new Error(data?.error?.message || "Session refresh failed");
         }
 

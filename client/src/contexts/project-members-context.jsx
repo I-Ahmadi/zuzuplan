@@ -28,6 +28,8 @@ export function ProjectMembersProvider({ children }) {
   const defaultProjectRequestRef = useRef(null);
 
   useEffect(() => {
+    mountedRef.current = true;
+
     return () => {
       mountedRef.current = false;
     };
