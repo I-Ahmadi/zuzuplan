@@ -92,8 +92,6 @@ model Project {
   sprints Sprint[]
   invites ProjectInvite[]
   activityEvents ActivityEvent[]
-  pullRequests PullRequest[]
-  deployments Deployment[]
 
   @@unique([ownerId, key])
   @@index([ownerId])
@@ -167,13 +165,8 @@ model Task {
   sprint    Sprint?      @relation(fields: [sprintId], references: [id], onDelete: SetNull)
   assignee  User?        @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
   createdBy User         @relation("TaskCreator", fields: [createdById], references: [id], onDelete: Cascade)
-  subtasks  Subtask[]
   comments  Comment[]
-  linkedFrom TaskLink[] @relation("TaskLinksFrom")
-  linkedTo   TaskLink[] @relation("TaskLinksTo")
   activityEvents ActivityEvent[]
-  pullRequests PullRequest[]
-  deployments Deployment[]
 
   @@index([projectId])
   @@index([sprintId])
@@ -183,21 +176,6 @@ model Task {
   @@index([status])
   @@index([priority])
   @@index([updatedAt])
-}
-
-model TaskLink {
-  id           String   @id @default(cuid())
-  sourceTaskId String
-  targetTaskId String
-  type         String   @default("RELATES_TO")
-  createdAt    DateTime @default(now())
-
-  sourceTask Task @relation("TaskLinksFrom", fields: [sourceTaskId], references: [id], onDelete: Cascade)
-  targetTask Task @relation("TaskLinksTo", fields: [targetTaskId], references: [id], onDelete: Cascade)
-
-  @@unique([sourceTaskId, targetTaskId, type])
-  @@index([sourceTaskId])
-  @@index([targetTaskId])
 }
 
 model Sprint {
@@ -216,19 +194,6 @@ model Sprint {
 
   @@index([projectId])
   @@index([status])
-}
-
-model Subtask {
-  id        String   @id @default(cuid())
-  taskId    String
-  title     String
-  completed Boolean  @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  task Task @relation(fields: [taskId], references: [id], onDelete: Cascade)
-
-  @@index([taskId])
 }
 
 model Comment {
@@ -271,61 +236,4 @@ model ActivityEvent {
   @@index([targetUserId])
   @@index([entityType, entityId])
   @@index([createdAt])
-}
-
-model PullRequest {
-  id            String   @id @default(cuid())
-  projectId     String
-  taskId        String?
-  provider      String   @default("MANUAL")
-  repository    String
-  number        Int
-  title         String
-  url           String?
-  branch        String?
-  targetBranch  String?
-  status        String   @default("OPEN") // OPEN, CLOSED, MERGED, DRAFT
-  reviewState   String   @default("REQUESTED") // REQUESTED, APPROVED, CHANGES_REQUESTED, MERGED
-  ciStatus      String   @default("UNKNOWN") // UNKNOWN, PENDING, SUCCESS, FAILED
-  author        String?
-  openedAt      DateTime?
-  mergedAt      DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  task Task? @relation(fields: [taskId], references: [id], onDelete: SetNull)
-  deployments Deployment[]
-
-  @@unique([projectId, provider, repository, number])
-  @@index([projectId])
-  @@index([taskId])
-  @@index([status])
-  @@index([reviewState])
-  @@index([ciStatus])
-}
-
-model Deployment {
-  id            String   @id @default(cuid())
-  projectId     String
-  taskId        String?
-  pullRequestId String?
-  environment   String   @default("staging") // production, staging, preview
-  status        String   @default("PENDING") // PENDING, RUNNING, SUCCESS, FAILED, ROLLED_BACK
-  version       String?
-  url           String?
-  deployedBy    String?
-  deployedAt    DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-
-  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  task Task? @relation(fields: [taskId], references: [id], onDelete: SetNull)
-  pullRequest PullRequest? @relation(fields: [pullRequestId], references: [id], onDelete: SetNull)
-
-  @@index([projectId])
-  @@index([taskId])
-  @@index([environment])
-  @@index([status])
-  @@index([deployedAt])
 }

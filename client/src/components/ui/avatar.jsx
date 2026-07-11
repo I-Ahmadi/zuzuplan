@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 export function getInitials(user, fallback = "U") {
   const label = user?.name || user?.email || fallback;

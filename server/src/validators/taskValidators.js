@@ -65,24 +65,6 @@ export const taskId = [
     .withMessage('Task id must be a valid id'),
 ];
 
-export const subtaskId = [
-  param('id')
-    .matches(/^c[a-z0-9]{24}$/)
-    .withMessage('Task id must be a valid id'),
-  param('subtaskId')
-    .matches(/^c[a-z0-9]{24}$/)
-    .withMessage('Subtask id must be a valid id'),
-];
-
-export const linkId = [
-  param('id')
-    .matches(/^c[a-z0-9]{24}$/)
-    .withMessage('Task id must be a valid id'),
-  param('linkId')
-    .matches(/^c[a-z0-9]{24}$/)
-    .withMessage('Link id must be a valid id'),
-];
-
 export const createTask = [
   body('title').trim().notEmpty().withMessage('Title is required'),
   body('description').optional({ nullable: true }).trim(),
@@ -128,23 +110,4 @@ export const updateTask = [
     .optional({ nullable: true, checkFalsy: true })
     .matches(/^c[a-z0-9]{24}$/)
     .withMessage('Sprint id must be a valid id'),
-];
-
-export const createSubtask = [
-  ...taskId,
-  body('title').trim().notEmpty().withMessage('Title is required'),
-];
-
-export const updateSubtask = [
-  ...subtaskId,
-  body('title').optional().trim().notEmpty(),
-  body('completed').optional().isBoolean(),
-];
-
-export const createTaskLink = [
-  ...taskId,
-  body('targetTaskId')
-    .matches(/^c[a-z0-9]{24}$/)
-    .withMessage('Target task id must be a valid id'),
-  body('type').optional({ nullable: true }).trim(),
 ];

@@ -20,7 +20,6 @@ import commentRoutes from './routes/commentsRoutes.js';
 import sprintRoutes from './routes/sprintsRoutes.js';
 import searchRoutes from './routes/searchRoutes.js';
 import activityRoutes from './routes/activityRoutes.js';
-import deliveryRoutes from './routes/deliveryRoutes.js';
 import homeRoutes from './routes/homeRoutes.js';
 import analyticsRoutes from './routes/analyticsRoutes.js';
 
@@ -79,7 +78,6 @@ app.use('/api/projects/:projectId/backlog', backlogRoutes);
 app.use('/api/projects/:projectId/board', boardRoutes);
 app.use('/api/projects/:projectId/timeline', timelineRoutes);
 app.use('/api/projects/:projectId/sprints', sprintRoutes);
-app.use('/api/projects/:projectId/delivery', deliveryRoutes);
 app.use('/api/tasks/:taskId/comments', commentRoutes);
 app.use('/api/home', homeRoutes);
 app.use('/api/activity', activityRoutes);

@@ -39,10 +39,5 @@ router.get('/workload', taskController.workload);
 router.get('/:id', taskValidators.taskId, validate, requireTaskInProject, taskController.getById);
 router.put('/:id', taskValidators.updateTask, validate, requireTaskInProject, taskController.update);
 router.delete('/:id', taskValidators.taskId, validate, requireTaskInProject, taskController.remove);
-router.post('/:id/subtasks', taskValidators.createSubtask, validate, requireTaskInProject, taskController.addSubtask);
-router.put('/:id/subtasks/:subtaskId', taskValidators.updateSubtask, validate, requireTaskInProject, taskController.updateSubtask);
-router.delete('/:id/subtasks/:subtaskId', taskValidators.subtaskId, validate, requireTaskInProject, taskController.deleteSubtask);
-router.post('/:id/links', taskValidators.createTaskLink, validate, requireTaskInProject, taskController.addTaskLink);
-router.delete('/:id/links/:linkId', taskValidators.linkId, validate, requireTaskInProject, taskController.deleteTaskLink);
 
 export default router;

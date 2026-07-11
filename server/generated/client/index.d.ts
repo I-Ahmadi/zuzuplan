@@ -49,20 +49,10 @@ export type ProjectMember = $Result.DefaultSelection<Prisma.$ProjectMemberPayloa
  */
 export type Task = $Result.DefaultSelection<Prisma.$TaskPayload>
 /**
- * Model TaskLink
- * 
- */
-export type TaskLink = $Result.DefaultSelection<Prisma.$TaskLinkPayload>
-/**
  * Model Sprint
  * 
  */
 export type Sprint = $Result.DefaultSelection<Prisma.$SprintPayload>
-/**
- * Model Subtask
- * 
- */
-export type Subtask = $Result.DefaultSelection<Prisma.$SubtaskPayload>
 /**
  * Model Comment
  * 
@@ -73,16 +63,6 @@ export type Comment = $Result.DefaultSelection<Prisma.$CommentPayload>
  * 
  */
 export type ActivityEvent = $Result.DefaultSelection<Prisma.$ActivityEventPayload>
-/**
- * Model PullRequest
- * 
- */
-export type PullRequest = $Result.DefaultSelection<Prisma.$PullRequestPayload>
-/**
- * Model Deployment
- * 
- */
-export type Deployment = $Result.DefaultSelection<Prisma.$DeploymentPayload>
 
 /**
  * ##  Prisma Client ʲˢ
@@ -276,16 +256,6 @@ export class PrismaClient<
   get task(): Prisma.TaskDelegate<ExtArgs, ClientOptions>;
 
   /**
-   * `prisma.taskLink`: Exposes CRUD operations for the **TaskLink** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more TaskLinks
-    * const taskLinks = await prisma.taskLink.findMany()
-    * ```
-    */
-  get taskLink(): Prisma.TaskLinkDelegate<ExtArgs, ClientOptions>;
-
-  /**
    * `prisma.sprint`: Exposes CRUD operations for the **Sprint** model.
     * Example usage:
     * ```ts
@@ -294,16 +264,6 @@ export class PrismaClient<
     * ```
     */
   get sprint(): Prisma.SprintDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.subtask`: Exposes CRUD operations for the **Subtask** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Subtasks
-    * const subtasks = await prisma.subtask.findMany()
-    * ```
-    */
-  get subtask(): Prisma.SubtaskDelegate<ExtArgs, ClientOptions>;
 
   /**
    * `prisma.comment`: Exposes CRUD operations for the **Comment** model.
@@ -324,26 +284,6 @@ export class PrismaClient<
     * ```
     */
   get activityEvent(): Prisma.ActivityEventDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.pullRequest`: Exposes CRUD operations for the **PullRequest** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more PullRequests
-    * const pullRequests = await prisma.pullRequest.findMany()
-    * ```
-    */
-  get pullRequest(): Prisma.PullRequestDelegate<ExtArgs, ClientOptions>;
-
-  /**
-   * `prisma.deployment`: Exposes CRUD operations for the **Deployment** model.
-    * Example usage:
-    * ```ts
-    * // Fetch zero or more Deployments
-    * const deployments = await prisma.deployment.findMany()
-    * ```
-    */
-  get deployment(): Prisma.DeploymentDelegate<ExtArgs, ClientOptions>;
 }
 
 export namespace Prisma {
@@ -785,13 +725,9 @@ export namespace Prisma {
     ProjectInvite: 'ProjectInvite',
     ProjectMember: 'ProjectMember',
     Task: 'Task',
-    TaskLink: 'TaskLink',
     Sprint: 'Sprint',
-    Subtask: 'Subtask',
     Comment: 'Comment',
-    ActivityEvent: 'ActivityEvent',
-    PullRequest: 'PullRequest',
-    Deployment: 'Deployment'
+    ActivityEvent: 'ActivityEvent'
   };
 
   export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -807,7 +743,7 @@ export namespace Prisma {
       omit: GlobalOmitOptions
     }
     meta: {
-      modelProps: "user" | "userPreference" | "refreshToken" | "project" | "projectInvite" | "projectMember" | "task" | "taskLink" | "sprint" | "subtask" | "comment" | "activityEvent" | "pullRequest" | "deployment"
+      modelProps: "user" | "userPreference" | "refreshToken" | "project" | "projectInvite" | "projectMember" | "task" | "sprint" | "comment" | "activityEvent"
       txIsolationLevel: Prisma.TransactionIsolationLevel
     }
     model: {
@@ -1329,80 +1265,6 @@ export namespace Prisma {
           }
         }
       }
-      TaskLink: {
-        payload: Prisma.$TaskLinkPayload<ExtArgs>
-        fields: Prisma.TaskLinkFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.TaskLinkFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TaskLinkPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.TaskLinkFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TaskLinkPayload>
-          }
-          findFirst: {
-            args: Prisma.TaskLinkFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TaskLinkPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.TaskLinkFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TaskLinkPayload>
-          }
-          findMany: {
-            args: Prisma.TaskLinkFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TaskLinkPayload>[]
-          }
-          create: {
-            args: Prisma.TaskLinkCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TaskLinkPayload>
-          }
-          createMany: {
-            args: Prisma.TaskLinkCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.TaskLinkCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TaskLinkPayload>[]
-          }
-          delete: {
-            args: Prisma.TaskLinkDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TaskLinkPayload>
-          }
-          update: {
-            args: Prisma.TaskLinkUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TaskLinkPayload>
-          }
-          deleteMany: {
-            args: Prisma.TaskLinkDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.TaskLinkUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.TaskLinkUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TaskLinkPayload>[]
-          }
-          upsert: {
-            args: Prisma.TaskLinkUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$TaskLinkPayload>
-          }
-          aggregate: {
-            args: Prisma.TaskLinkAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateTaskLink>
-          }
-          groupBy: {
-            args: Prisma.TaskLinkGroupByArgs<ExtArgs>
-            result: $Utils.Optional<TaskLinkGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.TaskLinkCountArgs<ExtArgs>
-            result: $Utils.Optional<TaskLinkCountAggregateOutputType> | number
-          }
-        }
-      }
       Sprint: {
         payload: Prisma.$SprintPayload<ExtArgs>
         fields: Prisma.SprintFieldRefs
@@ -1474,80 +1336,6 @@ export namespace Prisma {
           count: {
             args: Prisma.SprintCountArgs<ExtArgs>
             result: $Utils.Optional<SprintCountAggregateOutputType> | number
-          }
-        }
-      }
-      Subtask: {
-        payload: Prisma.$SubtaskPayload<ExtArgs>
-        fields: Prisma.SubtaskFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.SubtaskFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SubtaskPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.SubtaskFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SubtaskPayload>
-          }
-          findFirst: {
-            args: Prisma.SubtaskFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SubtaskPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.SubtaskFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SubtaskPayload>
-          }
-          findMany: {
-            args: Prisma.SubtaskFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SubtaskPayload>[]
-          }
-          create: {
-            args: Prisma.SubtaskCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SubtaskPayload>
-          }
-          createMany: {
-            args: Prisma.SubtaskCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.SubtaskCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SubtaskPayload>[]
-          }
-          delete: {
-            args: Prisma.SubtaskDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SubtaskPayload>
-          }
-          update: {
-            args: Prisma.SubtaskUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SubtaskPayload>
-          }
-          deleteMany: {
-            args: Prisma.SubtaskDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.SubtaskUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.SubtaskUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SubtaskPayload>[]
-          }
-          upsert: {
-            args: Prisma.SubtaskUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$SubtaskPayload>
-          }
-          aggregate: {
-            args: Prisma.SubtaskAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateSubtask>
-          }
-          groupBy: {
-            args: Prisma.SubtaskGroupByArgs<ExtArgs>
-            result: $Utils.Optional<SubtaskGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.SubtaskCountArgs<ExtArgs>
-            result: $Utils.Optional<SubtaskCountAggregateOutputType> | number
           }
         }
       }
@@ -1699,154 +1487,6 @@ export namespace Prisma {
           }
         }
       }
-      PullRequest: {
-        payload: Prisma.$PullRequestPayload<ExtArgs>
-        fields: Prisma.PullRequestFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.PullRequestFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PullRequestPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.PullRequestFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PullRequestPayload>
-          }
-          findFirst: {
-            args: Prisma.PullRequestFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PullRequestPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.PullRequestFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PullRequestPayload>
-          }
-          findMany: {
-            args: Prisma.PullRequestFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PullRequestPayload>[]
-          }
-          create: {
-            args: Prisma.PullRequestCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PullRequestPayload>
-          }
-          createMany: {
-            args: Prisma.PullRequestCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.PullRequestCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PullRequestPayload>[]
-          }
-          delete: {
-            args: Prisma.PullRequestDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PullRequestPayload>
-          }
-          update: {
-            args: Prisma.PullRequestUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PullRequestPayload>
-          }
-          deleteMany: {
-            args: Prisma.PullRequestDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.PullRequestUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.PullRequestUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PullRequestPayload>[]
-          }
-          upsert: {
-            args: Prisma.PullRequestUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$PullRequestPayload>
-          }
-          aggregate: {
-            args: Prisma.PullRequestAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregatePullRequest>
-          }
-          groupBy: {
-            args: Prisma.PullRequestGroupByArgs<ExtArgs>
-            result: $Utils.Optional<PullRequestGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.PullRequestCountArgs<ExtArgs>
-            result: $Utils.Optional<PullRequestCountAggregateOutputType> | number
-          }
-        }
-      }
-      Deployment: {
-        payload: Prisma.$DeploymentPayload<ExtArgs>
-        fields: Prisma.DeploymentFieldRefs
-        operations: {
-          findUnique: {
-            args: Prisma.DeploymentFindUniqueArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeploymentPayload> | null
-          }
-          findUniqueOrThrow: {
-            args: Prisma.DeploymentFindUniqueOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeploymentPayload>
-          }
-          findFirst: {
-            args: Prisma.DeploymentFindFirstArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeploymentPayload> | null
-          }
-          findFirstOrThrow: {
-            args: Prisma.DeploymentFindFirstOrThrowArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeploymentPayload>
-          }
-          findMany: {
-            args: Prisma.DeploymentFindManyArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeploymentPayload>[]
-          }
-          create: {
-            args: Prisma.DeploymentCreateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeploymentPayload>
-          }
-          createMany: {
-            args: Prisma.DeploymentCreateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          createManyAndReturn: {
-            args: Prisma.DeploymentCreateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeploymentPayload>[]
-          }
-          delete: {
-            args: Prisma.DeploymentDeleteArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeploymentPayload>
-          }
-          update: {
-            args: Prisma.DeploymentUpdateArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeploymentPayload>
-          }
-          deleteMany: {
-            args: Prisma.DeploymentDeleteManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateMany: {
-            args: Prisma.DeploymentUpdateManyArgs<ExtArgs>
-            result: BatchPayload
-          }
-          updateManyAndReturn: {
-            args: Prisma.DeploymentUpdateManyAndReturnArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeploymentPayload>[]
-          }
-          upsert: {
-            args: Prisma.DeploymentUpsertArgs<ExtArgs>
-            result: $Utils.PayloadToResult<Prisma.$DeploymentPayload>
-          }
-          aggregate: {
-            args: Prisma.DeploymentAggregateArgs<ExtArgs>
-            result: $Utils.Optional<AggregateDeployment>
-          }
-          groupBy: {
-            args: Prisma.DeploymentGroupByArgs<ExtArgs>
-            result: $Utils.Optional<DeploymentGroupByOutputType>[]
-          }
-          count: {
-            args: Prisma.DeploymentCountArgs<ExtArgs>
-            result: $Utils.Optional<DeploymentCountAggregateOutputType> | number
-          }
-        }
-      }
     }
   } & {
     other: {
@@ -1962,13 +1602,9 @@ export namespace Prisma {
     projectInvite?: ProjectInviteOmit
     projectMember?: ProjectMemberOmit
     task?: TaskOmit
-    taskLink?: TaskLinkOmit
     sprint?: SprintOmit
-    subtask?: SubtaskOmit
     comment?: CommentOmit
     activityEvent?: ActivityEventOmit
-    pullRequest?: PullRequestOmit
-    deployment?: DeploymentOmit
   }
 
   /* Types for Logging */
@@ -2157,8 +1793,6 @@ export namespace Prisma {
     sprints: number
     invites: number
     activityEvents: number
-    pullRequests: number
-    deployments: number
   }
 
   export type ProjectCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -2167,8 +1801,6 @@ export namespace Prisma {
     sprints?: boolean | ProjectCountOutputTypeCountSprintsArgs
     invites?: boolean | ProjectCountOutputTypeCountInvitesArgs
     activityEvents?: boolean | ProjectCountOutputTypeCountActivityEventsArgs
-    pullRequests?: boolean | ProjectCountOutputTypeCountPullRequestsArgs
-    deployments?: boolean | ProjectCountOutputTypeCountDeploymentsArgs
   }
 
   // Custom InputTypes
@@ -2217,43 +1849,19 @@ export namespace Prisma {
     where?: ActivityEventWhereInput
   }
 
-  /**
-   * ProjectCountOutputType without action
-   */
-  export type ProjectCountOutputTypeCountPullRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PullRequestWhereInput
-  }
-
-  /**
-   * ProjectCountOutputType without action
-   */
-  export type ProjectCountOutputTypeCountDeploymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: DeploymentWhereInput
-  }
-
 
   /**
    * Count Type TaskCountOutputType
    */
 
   export type TaskCountOutputType = {
-    subtasks: number
     comments: number
-    linkedFrom: number
-    linkedTo: number
     activityEvents: number
-    pullRequests: number
-    deployments: number
   }
 
   export type TaskCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    subtasks?: boolean | TaskCountOutputTypeCountSubtasksArgs
     comments?: boolean | TaskCountOutputTypeCountCommentsArgs
-    linkedFrom?: boolean | TaskCountOutputTypeCountLinkedFromArgs
-    linkedTo?: boolean | TaskCountOutputTypeCountLinkedToArgs
     activityEvents?: boolean | TaskCountOutputTypeCountActivityEventsArgs
-    pullRequests?: boolean | TaskCountOutputTypeCountPullRequestsArgs
-    deployments?: boolean | TaskCountOutputTypeCountDeploymentsArgs
   }
 
   // Custom InputTypes
@@ -2270,13 +1878,6 @@ export namespace Prisma {
   /**
    * TaskCountOutputType without action
    */
-  export type TaskCountOutputTypeCountSubtasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: SubtaskWhereInput
-  }
-
-  /**
-   * TaskCountOutputType without action
-   */
   export type TaskCountOutputTypeCountCommentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: CommentWhereInput
   }
@@ -2284,36 +1885,8 @@ export namespace Prisma {
   /**
    * TaskCountOutputType without action
    */
-  export type TaskCountOutputTypeCountLinkedFromArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: TaskLinkWhereInput
-  }
-
-  /**
-   * TaskCountOutputType without action
-   */
-  export type TaskCountOutputTypeCountLinkedToArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: TaskLinkWhereInput
-  }
-
-  /**
-   * TaskCountOutputType without action
-   */
   export type TaskCountOutputTypeCountActivityEventsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: ActivityEventWhereInput
-  }
-
-  /**
-   * TaskCountOutputType without action
-   */
-  export type TaskCountOutputTypeCountPullRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PullRequestWhereInput
-  }
-
-  /**
-   * TaskCountOutputType without action
-   */
-  export type TaskCountOutputTypeCountDeploymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: DeploymentWhereInput
   }
 
 
@@ -2345,37 +1918,6 @@ export namespace Prisma {
    */
   export type SprintCountOutputTypeCountTasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     where?: TaskWhereInput
-  }
-
-
-  /**
-   * Count Type PullRequestCountOutputType
-   */
-
-  export type PullRequestCountOutputType = {
-    deployments: number
-  }
-
-  export type PullRequestCountOutputTypeSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    deployments?: boolean | PullRequestCountOutputTypeCountDeploymentsArgs
-  }
-
-  // Custom InputTypes
-  /**
-   * PullRequestCountOutputType without action
-   */
-  export type PullRequestCountOutputTypeDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PullRequestCountOutputType
-     */
-    select?: PullRequestCountOutputTypeSelect<ExtArgs> | null
-  }
-
-  /**
-   * PullRequestCountOutputType without action
-   */
-  export type PullRequestCountOutputTypeCountDeploymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: DeploymentWhereInput
   }
 
 
@@ -6390,8 +5932,6 @@ export namespace Prisma {
     sprints?: boolean | Project$sprintsArgs<ExtArgs>
     invites?: boolean | Project$invitesArgs<ExtArgs>
     activityEvents?: boolean | Project$activityEventsArgs<ExtArgs>
-    pullRequests?: boolean | Project$pullRequestsArgs<ExtArgs>
-    deployments?: boolean | Project$deploymentsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["project"]>
 
@@ -6450,8 +5990,6 @@ export namespace Prisma {
     sprints?: boolean | Project$sprintsArgs<ExtArgs>
     invites?: boolean | Project$invitesArgs<ExtArgs>
     activityEvents?: boolean | Project$activityEventsArgs<ExtArgs>
-    pullRequests?: boolean | Project$pullRequestsArgs<ExtArgs>
-    deployments?: boolean | Project$deploymentsArgs<ExtArgs>
     _count?: boolean | ProjectCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type ProjectIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -6470,8 +6008,6 @@ export namespace Prisma {
       sprints: Prisma.$SprintPayload<ExtArgs>[]
       invites: Prisma.$ProjectInvitePayload<ExtArgs>[]
       activityEvents: Prisma.$ActivityEventPayload<ExtArgs>[]
-      pullRequests: Prisma.$PullRequestPayload<ExtArgs>[]
-      deployments: Prisma.$DeploymentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -6886,8 +6422,6 @@ export namespace Prisma {
     sprints<T extends Project$sprintsArgs<ExtArgs> = {}>(args?: Subset<T, Project$sprintsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SprintPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     invites<T extends Project$invitesArgs<ExtArgs> = {}>(args?: Subset<T, Project$invitesArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ProjectInvitePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     activityEvents<T extends Project$activityEventsArgs<ExtArgs> = {}>(args?: Subset<T, Project$activityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActivityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    pullRequests<T extends Project$pullRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Project$pullRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    deployments<T extends Project$deploymentsArgs<ExtArgs> = {}>(args?: Subset<T, Project$deploymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DeploymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -7447,54 +6981,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: ActivityEventScalarFieldEnum | ActivityEventScalarFieldEnum[]
-  }
-
-  /**
-   * Project.pullRequests
-   */
-  export type Project$pullRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PullRequest
-     */
-    select?: PullRequestSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PullRequest
-     */
-    omit?: PullRequestOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PullRequestInclude<ExtArgs> | null
-    where?: PullRequestWhereInput
-    orderBy?: PullRequestOrderByWithRelationInput | PullRequestOrderByWithRelationInput[]
-    cursor?: PullRequestWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: PullRequestScalarFieldEnum | PullRequestScalarFieldEnum[]
-  }
-
-  /**
-   * Project.deployments
-   */
-  export type Project$deploymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Deployment
-     */
-    select?: DeploymentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Deployment
-     */
-    omit?: DeploymentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeploymentInclude<ExtArgs> | null
-    where?: DeploymentWhereInput
-    orderBy?: DeploymentOrderByWithRelationInput | DeploymentOrderByWithRelationInput[]
-    cursor?: DeploymentWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: DeploymentScalarFieldEnum | DeploymentScalarFieldEnum[]
   }
 
   /**
@@ -10127,13 +9613,8 @@ export namespace Prisma {
     sprint?: boolean | Task$sprintArgs<ExtArgs>
     assignee?: boolean | Task$assigneeArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
-    subtasks?: boolean | Task$subtasksArgs<ExtArgs>
     comments?: boolean | Task$commentsArgs<ExtArgs>
-    linkedFrom?: boolean | Task$linkedFromArgs<ExtArgs>
-    linkedTo?: boolean | Task$linkedToArgs<ExtArgs>
     activityEvents?: boolean | Task$activityEventsArgs<ExtArgs>
-    pullRequests?: boolean | Task$pullRequestsArgs<ExtArgs>
-    deployments?: boolean | Task$deploymentsArgs<ExtArgs>
     _count?: boolean | TaskCountOutputTypeDefaultArgs<ExtArgs>
   }, ExtArgs["result"]["task"]>
 
@@ -10223,13 +9704,8 @@ export namespace Prisma {
     sprint?: boolean | Task$sprintArgs<ExtArgs>
     assignee?: boolean | Task$assigneeArgs<ExtArgs>
     createdBy?: boolean | UserDefaultArgs<ExtArgs>
-    subtasks?: boolean | Task$subtasksArgs<ExtArgs>
     comments?: boolean | Task$commentsArgs<ExtArgs>
-    linkedFrom?: boolean | Task$linkedFromArgs<ExtArgs>
-    linkedTo?: boolean | Task$linkedToArgs<ExtArgs>
     activityEvents?: boolean | Task$activityEventsArgs<ExtArgs>
-    pullRequests?: boolean | Task$pullRequestsArgs<ExtArgs>
-    deployments?: boolean | Task$deploymentsArgs<ExtArgs>
     _count?: boolean | TaskCountOutputTypeDefaultArgs<ExtArgs>
   }
   export type TaskIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -10252,13 +9728,8 @@ export namespace Prisma {
       sprint: Prisma.$SprintPayload<ExtArgs> | null
       assignee: Prisma.$UserPayload<ExtArgs> | null
       createdBy: Prisma.$UserPayload<ExtArgs>
-      subtasks: Prisma.$SubtaskPayload<ExtArgs>[]
       comments: Prisma.$CommentPayload<ExtArgs>[]
-      linkedFrom: Prisma.$TaskLinkPayload<ExtArgs>[]
-      linkedTo: Prisma.$TaskLinkPayload<ExtArgs>[]
       activityEvents: Prisma.$ActivityEventPayload<ExtArgs>[]
-      pullRequests: Prisma.$PullRequestPayload<ExtArgs>[]
-      deployments: Prisma.$DeploymentPayload<ExtArgs>[]
     }
     scalars: $Extensions.GetPayloadResult<{
       id: string
@@ -10680,13 +10151,8 @@ export namespace Prisma {
     sprint<T extends Task$sprintArgs<ExtArgs> = {}>(args?: Subset<T, Task$sprintArgs<ExtArgs>>): Prisma__SprintClient<$Result.GetResult<Prisma.$SprintPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     assignee<T extends Task$assigneeArgs<ExtArgs> = {}>(args?: Subset<T, Task$assigneeArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
     createdBy<T extends UserDefaultArgs<ExtArgs> = {}>(args?: Subset<T, UserDefaultArgs<ExtArgs>>): Prisma__UserClient<$Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    subtasks<T extends Task$subtasksArgs<ExtArgs> = {}>(args?: Subset<T, Task$subtasksArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SubtaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     comments<T extends Task$commentsArgs<ExtArgs> = {}>(args?: Subset<T, Task$commentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$CommentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    linkedFrom<T extends Task$linkedFromArgs<ExtArgs> = {}>(args?: Subset<T, Task$linkedFromArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    linkedTo<T extends Task$linkedToArgs<ExtArgs> = {}>(args?: Subset<T, Task$linkedToArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     activityEvents<T extends Task$activityEventsArgs<ExtArgs> = {}>(args?: Subset<T, Task$activityEventsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$ActivityEventPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    pullRequests<T extends Task$pullRequestsArgs<ExtArgs> = {}>(args?: Subset<T, Task$pullRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    deployments<T extends Task$deploymentsArgs<ExtArgs> = {}>(args?: Subset<T, Task$deploymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DeploymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
     /**
      * Attaches callbacks for the resolution and/or rejection of the Promise.
      * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -11176,30 +10642,6 @@ export namespace Prisma {
   }
 
   /**
-   * Task.subtasks
-   */
-  export type Task$subtasksArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Subtask
-     */
-    select?: SubtaskSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Subtask
-     */
-    omit?: SubtaskOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SubtaskInclude<ExtArgs> | null
-    where?: SubtaskWhereInput
-    orderBy?: SubtaskOrderByWithRelationInput | SubtaskOrderByWithRelationInput[]
-    cursor?: SubtaskWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: SubtaskScalarFieldEnum | SubtaskScalarFieldEnum[]
-  }
-
-  /**
    * Task.comments
    */
   export type Task$commentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11221,54 +10663,6 @@ export namespace Prisma {
     take?: number
     skip?: number
     distinct?: CommentScalarFieldEnum | CommentScalarFieldEnum[]
-  }
-
-  /**
-   * Task.linkedFrom
-   */
-  export type Task$linkedFromArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TaskLink
-     */
-    select?: TaskLinkSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the TaskLink
-     */
-    omit?: TaskLinkOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskLinkInclude<ExtArgs> | null
-    where?: TaskLinkWhereInput
-    orderBy?: TaskLinkOrderByWithRelationInput | TaskLinkOrderByWithRelationInput[]
-    cursor?: TaskLinkWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: TaskLinkScalarFieldEnum | TaskLinkScalarFieldEnum[]
-  }
-
-  /**
-   * Task.linkedTo
-   */
-  export type Task$linkedToArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TaskLink
-     */
-    select?: TaskLinkSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the TaskLink
-     */
-    omit?: TaskLinkOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskLinkInclude<ExtArgs> | null
-    where?: TaskLinkWhereInput
-    orderBy?: TaskLinkOrderByWithRelationInput | TaskLinkOrderByWithRelationInput[]
-    cursor?: TaskLinkWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: TaskLinkScalarFieldEnum | TaskLinkScalarFieldEnum[]
   }
 
   /**
@@ -11296,54 +10690,6 @@ export namespace Prisma {
   }
 
   /**
-   * Task.pullRequests
-   */
-  export type Task$pullRequestsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PullRequest
-     */
-    select?: PullRequestSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PullRequest
-     */
-    omit?: PullRequestOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PullRequestInclude<ExtArgs> | null
-    where?: PullRequestWhereInput
-    orderBy?: PullRequestOrderByWithRelationInput | PullRequestOrderByWithRelationInput[]
-    cursor?: PullRequestWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: PullRequestScalarFieldEnum | PullRequestScalarFieldEnum[]
-  }
-
-  /**
-   * Task.deployments
-   */
-  export type Task$deploymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Deployment
-     */
-    select?: DeploymentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Deployment
-     */
-    omit?: DeploymentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeploymentInclude<ExtArgs> | null
-    where?: DeploymentWhereInput
-    orderBy?: DeploymentOrderByWithRelationInput | DeploymentOrderByWithRelationInput[]
-    cursor?: DeploymentWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: DeploymentScalarFieldEnum | DeploymentScalarFieldEnum[]
-  }
-
-  /**
    * Task without action
    */
   export type TaskDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
@@ -11359,1077 +10705,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: TaskInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model TaskLink
-   */
-
-  export type AggregateTaskLink = {
-    _count: TaskLinkCountAggregateOutputType | null
-    _min: TaskLinkMinAggregateOutputType | null
-    _max: TaskLinkMaxAggregateOutputType | null
-  }
-
-  export type TaskLinkMinAggregateOutputType = {
-    id: string | null
-    sourceTaskId: string | null
-    targetTaskId: string | null
-    type: string | null
-    createdAt: Date | null
-  }
-
-  export type TaskLinkMaxAggregateOutputType = {
-    id: string | null
-    sourceTaskId: string | null
-    targetTaskId: string | null
-    type: string | null
-    createdAt: Date | null
-  }
-
-  export type TaskLinkCountAggregateOutputType = {
-    id: number
-    sourceTaskId: number
-    targetTaskId: number
-    type: number
-    createdAt: number
-    _all: number
-  }
-
-
-  export type TaskLinkMinAggregateInputType = {
-    id?: true
-    sourceTaskId?: true
-    targetTaskId?: true
-    type?: true
-    createdAt?: true
-  }
-
-  export type TaskLinkMaxAggregateInputType = {
-    id?: true
-    sourceTaskId?: true
-    targetTaskId?: true
-    type?: true
-    createdAt?: true
-  }
-
-  export type TaskLinkCountAggregateInputType = {
-    id?: true
-    sourceTaskId?: true
-    targetTaskId?: true
-    type?: true
-    createdAt?: true
-    _all?: true
-  }
-
-  export type TaskLinkAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which TaskLink to aggregate.
-     */
-    where?: TaskLinkWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of TaskLinks to fetch.
-     */
-    orderBy?: TaskLinkOrderByWithRelationInput | TaskLinkOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: TaskLinkWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` TaskLinks from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` TaskLinks.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned TaskLinks
-    **/
-    _count?: true | TaskLinkCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: TaskLinkMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: TaskLinkMaxAggregateInputType
-  }
-
-  export type GetTaskLinkAggregateType<T extends TaskLinkAggregateArgs> = {
-        [P in keyof T & keyof AggregateTaskLink]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateTaskLink[P]>
-      : GetScalarType<T[P], AggregateTaskLink[P]>
-  }
-
-
-
-
-  export type TaskLinkGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: TaskLinkWhereInput
-    orderBy?: TaskLinkOrderByWithAggregationInput | TaskLinkOrderByWithAggregationInput[]
-    by: TaskLinkScalarFieldEnum[] | TaskLinkScalarFieldEnum
-    having?: TaskLinkScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: TaskLinkCountAggregateInputType | true
-    _min?: TaskLinkMinAggregateInputType
-    _max?: TaskLinkMaxAggregateInputType
-  }
-
-  export type TaskLinkGroupByOutputType = {
-    id: string
-    sourceTaskId: string
-    targetTaskId: string
-    type: string
-    createdAt: Date
-    _count: TaskLinkCountAggregateOutputType | null
-    _min: TaskLinkMinAggregateOutputType | null
-    _max: TaskLinkMaxAggregateOutputType | null
-  }
-
-  type GetTaskLinkGroupByPayload<T extends TaskLinkGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<TaskLinkGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof TaskLinkGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], TaskLinkGroupByOutputType[P]>
-            : GetScalarType<T[P], TaskLinkGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type TaskLinkSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    sourceTaskId?: boolean
-    targetTaskId?: boolean
-    type?: boolean
-    createdAt?: boolean
-    sourceTask?: boolean | TaskDefaultArgs<ExtArgs>
-    targetTask?: boolean | TaskDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["taskLink"]>
-
-  export type TaskLinkSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    sourceTaskId?: boolean
-    targetTaskId?: boolean
-    type?: boolean
-    createdAt?: boolean
-    sourceTask?: boolean | TaskDefaultArgs<ExtArgs>
-    targetTask?: boolean | TaskDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["taskLink"]>
-
-  export type TaskLinkSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    sourceTaskId?: boolean
-    targetTaskId?: boolean
-    type?: boolean
-    createdAt?: boolean
-    sourceTask?: boolean | TaskDefaultArgs<ExtArgs>
-    targetTask?: boolean | TaskDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["taskLink"]>
-
-  export type TaskLinkSelectScalar = {
-    id?: boolean
-    sourceTaskId?: boolean
-    targetTaskId?: boolean
-    type?: boolean
-    createdAt?: boolean
-  }
-
-  export type TaskLinkOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "sourceTaskId" | "targetTaskId" | "type" | "createdAt", ExtArgs["result"]["taskLink"]>
-  export type TaskLinkInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    sourceTask?: boolean | TaskDefaultArgs<ExtArgs>
-    targetTask?: boolean | TaskDefaultArgs<ExtArgs>
-  }
-  export type TaskLinkIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    sourceTask?: boolean | TaskDefaultArgs<ExtArgs>
-    targetTask?: boolean | TaskDefaultArgs<ExtArgs>
-  }
-  export type TaskLinkIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    sourceTask?: boolean | TaskDefaultArgs<ExtArgs>
-    targetTask?: boolean | TaskDefaultArgs<ExtArgs>
-  }
-
-  export type $TaskLinkPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "TaskLink"
-    objects: {
-      sourceTask: Prisma.$TaskPayload<ExtArgs>
-      targetTask: Prisma.$TaskPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      sourceTaskId: string
-      targetTaskId: string
-      type: string
-      createdAt: Date
-    }, ExtArgs["result"]["taskLink"]>
-    composites: {}
-  }
-
-  type TaskLinkGetPayload<S extends boolean | null | undefined | TaskLinkDefaultArgs> = $Result.GetResult<Prisma.$TaskLinkPayload, S>
-
-  type TaskLinkCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<TaskLinkFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: TaskLinkCountAggregateInputType | true
-    }
-
-  export interface TaskLinkDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['TaskLink'], meta: { name: 'TaskLink' } }
-    /**
-     * Find zero or one TaskLink that matches the filter.
-     * @param {TaskLinkFindUniqueArgs} args - Arguments to find a TaskLink
-     * @example
-     * // Get one TaskLink
-     * const taskLink = await prisma.taskLink.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends TaskLinkFindUniqueArgs>(args: SelectSubset<T, TaskLinkFindUniqueArgs<ExtArgs>>): Prisma__TaskLinkClient<$Result.GetResult<Prisma.$TaskLinkPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one TaskLink that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {TaskLinkFindUniqueOrThrowArgs} args - Arguments to find a TaskLink
-     * @example
-     * // Get one TaskLink
-     * const taskLink = await prisma.taskLink.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends TaskLinkFindUniqueOrThrowArgs>(args: SelectSubset<T, TaskLinkFindUniqueOrThrowArgs<ExtArgs>>): Prisma__TaskLinkClient<$Result.GetResult<Prisma.$TaskLinkPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first TaskLink that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {TaskLinkFindFirstArgs} args - Arguments to find a TaskLink
-     * @example
-     * // Get one TaskLink
-     * const taskLink = await prisma.taskLink.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends TaskLinkFindFirstArgs>(args?: SelectSubset<T, TaskLinkFindFirstArgs<ExtArgs>>): Prisma__TaskLinkClient<$Result.GetResult<Prisma.$TaskLinkPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first TaskLink that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {TaskLinkFindFirstOrThrowArgs} args - Arguments to find a TaskLink
-     * @example
-     * // Get one TaskLink
-     * const taskLink = await prisma.taskLink.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends TaskLinkFindFirstOrThrowArgs>(args?: SelectSubset<T, TaskLinkFindFirstOrThrowArgs<ExtArgs>>): Prisma__TaskLinkClient<$Result.GetResult<Prisma.$TaskLinkPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more TaskLinks that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {TaskLinkFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all TaskLinks
-     * const taskLinks = await prisma.taskLink.findMany()
-     * 
-     * // Get first 10 TaskLinks
-     * const taskLinks = await prisma.taskLink.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const taskLinkWithIdOnly = await prisma.taskLink.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends TaskLinkFindManyArgs>(args?: SelectSubset<T, TaskLinkFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskLinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a TaskLink.
-     * @param {TaskLinkCreateArgs} args - Arguments to create a TaskLink.
-     * @example
-     * // Create one TaskLink
-     * const TaskLink = await prisma.taskLink.create({
-     *   data: {
-     *     // ... data to create a TaskLink
-     *   }
-     * })
-     * 
-     */
-    create<T extends TaskLinkCreateArgs>(args: SelectSubset<T, TaskLinkCreateArgs<ExtArgs>>): Prisma__TaskLinkClient<$Result.GetResult<Prisma.$TaskLinkPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many TaskLinks.
-     * @param {TaskLinkCreateManyArgs} args - Arguments to create many TaskLinks.
-     * @example
-     * // Create many TaskLinks
-     * const taskLink = await prisma.taskLink.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends TaskLinkCreateManyArgs>(args?: SelectSubset<T, TaskLinkCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many TaskLinks and returns the data saved in the database.
-     * @param {TaskLinkCreateManyAndReturnArgs} args - Arguments to create many TaskLinks.
-     * @example
-     * // Create many TaskLinks
-     * const taskLink = await prisma.taskLink.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many TaskLinks and only return the `id`
-     * const taskLinkWithIdOnly = await prisma.taskLink.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends TaskLinkCreateManyAndReturnArgs>(args?: SelectSubset<T, TaskLinkCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskLinkPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a TaskLink.
-     * @param {TaskLinkDeleteArgs} args - Arguments to delete one TaskLink.
-     * @example
-     * // Delete one TaskLink
-     * const TaskLink = await prisma.taskLink.delete({
-     *   where: {
-     *     // ... filter to delete one TaskLink
-     *   }
-     * })
-     * 
-     */
-    delete<T extends TaskLinkDeleteArgs>(args: SelectSubset<T, TaskLinkDeleteArgs<ExtArgs>>): Prisma__TaskLinkClient<$Result.GetResult<Prisma.$TaskLinkPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one TaskLink.
-     * @param {TaskLinkUpdateArgs} args - Arguments to update one TaskLink.
-     * @example
-     * // Update one TaskLink
-     * const taskLink = await prisma.taskLink.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends TaskLinkUpdateArgs>(args: SelectSubset<T, TaskLinkUpdateArgs<ExtArgs>>): Prisma__TaskLinkClient<$Result.GetResult<Prisma.$TaskLinkPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more TaskLinks.
-     * @param {TaskLinkDeleteManyArgs} args - Arguments to filter TaskLinks to delete.
-     * @example
-     * // Delete a few TaskLinks
-     * const { count } = await prisma.taskLink.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends TaskLinkDeleteManyArgs>(args?: SelectSubset<T, TaskLinkDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more TaskLinks.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {TaskLinkUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many TaskLinks
-     * const taskLink = await prisma.taskLink.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends TaskLinkUpdateManyArgs>(args: SelectSubset<T, TaskLinkUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more TaskLinks and returns the data updated in the database.
-     * @param {TaskLinkUpdateManyAndReturnArgs} args - Arguments to update many TaskLinks.
-     * @example
-     * // Update many TaskLinks
-     * const taskLink = await prisma.taskLink.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more TaskLinks and only return the `id`
-     * const taskLinkWithIdOnly = await prisma.taskLink.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends TaskLinkUpdateManyAndReturnArgs>(args: SelectSubset<T, TaskLinkUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$TaskLinkPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one TaskLink.
-     * @param {TaskLinkUpsertArgs} args - Arguments to update or create a TaskLink.
-     * @example
-     * // Update or create a TaskLink
-     * const taskLink = await prisma.taskLink.upsert({
-     *   create: {
-     *     // ... data to create a TaskLink
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the TaskLink we want to update
-     *   }
-     * })
-     */
-    upsert<T extends TaskLinkUpsertArgs>(args: SelectSubset<T, TaskLinkUpsertArgs<ExtArgs>>): Prisma__TaskLinkClient<$Result.GetResult<Prisma.$TaskLinkPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of TaskLinks.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {TaskLinkCountArgs} args - Arguments to filter TaskLinks to count.
-     * @example
-     * // Count the number of TaskLinks
-     * const count = await prisma.taskLink.count({
-     *   where: {
-     *     // ... the filter for the TaskLinks we want to count
-     *   }
-     * })
-    **/
-    count<T extends TaskLinkCountArgs>(
-      args?: Subset<T, TaskLinkCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], TaskLinkCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a TaskLink.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {TaskLinkAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends TaskLinkAggregateArgs>(args: Subset<T, TaskLinkAggregateArgs>): Prisma.PrismaPromise<GetTaskLinkAggregateType<T>>
-
-    /**
-     * Group by TaskLink.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {TaskLinkGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends TaskLinkGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: TaskLinkGroupByArgs['orderBy'] }
-        : { orderBy?: TaskLinkGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, TaskLinkGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetTaskLinkGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the TaskLink model
-   */
-  readonly fields: TaskLinkFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for TaskLink.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__TaskLinkClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    sourceTask<T extends TaskDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TaskDefaultArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    targetTask<T extends TaskDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TaskDefaultArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the TaskLink model
-   */
-  interface TaskLinkFieldRefs {
-    readonly id: FieldRef<"TaskLink", 'String'>
-    readonly sourceTaskId: FieldRef<"TaskLink", 'String'>
-    readonly targetTaskId: FieldRef<"TaskLink", 'String'>
-    readonly type: FieldRef<"TaskLink", 'String'>
-    readonly createdAt: FieldRef<"TaskLink", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * TaskLink findUnique
-   */
-  export type TaskLinkFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TaskLink
-     */
-    select?: TaskLinkSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the TaskLink
-     */
-    omit?: TaskLinkOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskLinkInclude<ExtArgs> | null
-    /**
-     * Filter, which TaskLink to fetch.
-     */
-    where: TaskLinkWhereUniqueInput
-  }
-
-  /**
-   * TaskLink findUniqueOrThrow
-   */
-  export type TaskLinkFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TaskLink
-     */
-    select?: TaskLinkSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the TaskLink
-     */
-    omit?: TaskLinkOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskLinkInclude<ExtArgs> | null
-    /**
-     * Filter, which TaskLink to fetch.
-     */
-    where: TaskLinkWhereUniqueInput
-  }
-
-  /**
-   * TaskLink findFirst
-   */
-  export type TaskLinkFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TaskLink
-     */
-    select?: TaskLinkSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the TaskLink
-     */
-    omit?: TaskLinkOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskLinkInclude<ExtArgs> | null
-    /**
-     * Filter, which TaskLink to fetch.
-     */
-    where?: TaskLinkWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of TaskLinks to fetch.
-     */
-    orderBy?: TaskLinkOrderByWithRelationInput | TaskLinkOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for TaskLinks.
-     */
-    cursor?: TaskLinkWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` TaskLinks from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` TaskLinks.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of TaskLinks.
-     */
-    distinct?: TaskLinkScalarFieldEnum | TaskLinkScalarFieldEnum[]
-  }
-
-  /**
-   * TaskLink findFirstOrThrow
-   */
-  export type TaskLinkFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TaskLink
-     */
-    select?: TaskLinkSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the TaskLink
-     */
-    omit?: TaskLinkOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskLinkInclude<ExtArgs> | null
-    /**
-     * Filter, which TaskLink to fetch.
-     */
-    where?: TaskLinkWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of TaskLinks to fetch.
-     */
-    orderBy?: TaskLinkOrderByWithRelationInput | TaskLinkOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for TaskLinks.
-     */
-    cursor?: TaskLinkWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` TaskLinks from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` TaskLinks.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of TaskLinks.
-     */
-    distinct?: TaskLinkScalarFieldEnum | TaskLinkScalarFieldEnum[]
-  }
-
-  /**
-   * TaskLink findMany
-   */
-  export type TaskLinkFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TaskLink
-     */
-    select?: TaskLinkSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the TaskLink
-     */
-    omit?: TaskLinkOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskLinkInclude<ExtArgs> | null
-    /**
-     * Filter, which TaskLinks to fetch.
-     */
-    where?: TaskLinkWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of TaskLinks to fetch.
-     */
-    orderBy?: TaskLinkOrderByWithRelationInput | TaskLinkOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing TaskLinks.
-     */
-    cursor?: TaskLinkWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` TaskLinks from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` TaskLinks.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of TaskLinks.
-     */
-    distinct?: TaskLinkScalarFieldEnum | TaskLinkScalarFieldEnum[]
-  }
-
-  /**
-   * TaskLink create
-   */
-  export type TaskLinkCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TaskLink
-     */
-    select?: TaskLinkSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the TaskLink
-     */
-    omit?: TaskLinkOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskLinkInclude<ExtArgs> | null
-    /**
-     * The data needed to create a TaskLink.
-     */
-    data: XOR<TaskLinkCreateInput, TaskLinkUncheckedCreateInput>
-  }
-
-  /**
-   * TaskLink createMany
-   */
-  export type TaskLinkCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many TaskLinks.
-     */
-    data: TaskLinkCreateManyInput | TaskLinkCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * TaskLink createManyAndReturn
-   */
-  export type TaskLinkCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TaskLink
-     */
-    select?: TaskLinkSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the TaskLink
-     */
-    omit?: TaskLinkOmit<ExtArgs> | null
-    /**
-     * The data used to create many TaskLinks.
-     */
-    data: TaskLinkCreateManyInput | TaskLinkCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskLinkIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * TaskLink update
-   */
-  export type TaskLinkUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TaskLink
-     */
-    select?: TaskLinkSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the TaskLink
-     */
-    omit?: TaskLinkOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskLinkInclude<ExtArgs> | null
-    /**
-     * The data needed to update a TaskLink.
-     */
-    data: XOR<TaskLinkUpdateInput, TaskLinkUncheckedUpdateInput>
-    /**
-     * Choose, which TaskLink to update.
-     */
-    where: TaskLinkWhereUniqueInput
-  }
-
-  /**
-   * TaskLink updateMany
-   */
-  export type TaskLinkUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update TaskLinks.
-     */
-    data: XOR<TaskLinkUpdateManyMutationInput, TaskLinkUncheckedUpdateManyInput>
-    /**
-     * Filter which TaskLinks to update
-     */
-    where?: TaskLinkWhereInput
-    /**
-     * Limit how many TaskLinks to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * TaskLink updateManyAndReturn
-   */
-  export type TaskLinkUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TaskLink
-     */
-    select?: TaskLinkSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the TaskLink
-     */
-    omit?: TaskLinkOmit<ExtArgs> | null
-    /**
-     * The data used to update TaskLinks.
-     */
-    data: XOR<TaskLinkUpdateManyMutationInput, TaskLinkUncheckedUpdateManyInput>
-    /**
-     * Filter which TaskLinks to update
-     */
-    where?: TaskLinkWhereInput
-    /**
-     * Limit how many TaskLinks to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskLinkIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * TaskLink upsert
-   */
-  export type TaskLinkUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TaskLink
-     */
-    select?: TaskLinkSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the TaskLink
-     */
-    omit?: TaskLinkOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskLinkInclude<ExtArgs> | null
-    /**
-     * The filter to search for the TaskLink to update in case it exists.
-     */
-    where: TaskLinkWhereUniqueInput
-    /**
-     * In case the TaskLink found by the `where` argument doesn't exist, create a new TaskLink with this data.
-     */
-    create: XOR<TaskLinkCreateInput, TaskLinkUncheckedCreateInput>
-    /**
-     * In case the TaskLink was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<TaskLinkUpdateInput, TaskLinkUncheckedUpdateInput>
-  }
-
-  /**
-   * TaskLink delete
-   */
-  export type TaskLinkDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TaskLink
-     */
-    select?: TaskLinkSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the TaskLink
-     */
-    omit?: TaskLinkOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskLinkInclude<ExtArgs> | null
-    /**
-     * Filter which TaskLink to delete.
-     */
-    where: TaskLinkWhereUniqueInput
-  }
-
-  /**
-   * TaskLink deleteMany
-   */
-  export type TaskLinkDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which TaskLinks to delete
-     */
-    where?: TaskLinkWhereInput
-    /**
-     * Limit how many TaskLinks to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * TaskLink without action
-   */
-  export type TaskLinkDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the TaskLink
-     */
-    select?: TaskLinkSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the TaskLink
-     */
-    omit?: TaskLinkOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskLinkInclude<ExtArgs> | null
   }
 
 
@@ -13575,1082 +11850,6 @@ export namespace Prisma {
      * Choose, which related nodes to fetch as well
      */
     include?: SprintInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model Subtask
-   */
-
-  export type AggregateSubtask = {
-    _count: SubtaskCountAggregateOutputType | null
-    _min: SubtaskMinAggregateOutputType | null
-    _max: SubtaskMaxAggregateOutputType | null
-  }
-
-  export type SubtaskMinAggregateOutputType = {
-    id: string | null
-    taskId: string | null
-    title: string | null
-    completed: boolean | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type SubtaskMaxAggregateOutputType = {
-    id: string | null
-    taskId: string | null
-    title: string | null
-    completed: boolean | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type SubtaskCountAggregateOutputType = {
-    id: number
-    taskId: number
-    title: number
-    completed: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type SubtaskMinAggregateInputType = {
-    id?: true
-    taskId?: true
-    title?: true
-    completed?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type SubtaskMaxAggregateInputType = {
-    id?: true
-    taskId?: true
-    title?: true
-    completed?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type SubtaskCountAggregateInputType = {
-    id?: true
-    taskId?: true
-    title?: true
-    completed?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type SubtaskAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Subtask to aggregate.
-     */
-    where?: SubtaskWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Subtasks to fetch.
-     */
-    orderBy?: SubtaskOrderByWithRelationInput | SubtaskOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: SubtaskWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Subtasks from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Subtasks.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Subtasks
-    **/
-    _count?: true | SubtaskCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: SubtaskMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: SubtaskMaxAggregateInputType
-  }
-
-  export type GetSubtaskAggregateType<T extends SubtaskAggregateArgs> = {
-        [P in keyof T & keyof AggregateSubtask]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateSubtask[P]>
-      : GetScalarType<T[P], AggregateSubtask[P]>
-  }
-
-
-
-
-  export type SubtaskGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: SubtaskWhereInput
-    orderBy?: SubtaskOrderByWithAggregationInput | SubtaskOrderByWithAggregationInput[]
-    by: SubtaskScalarFieldEnum[] | SubtaskScalarFieldEnum
-    having?: SubtaskScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: SubtaskCountAggregateInputType | true
-    _min?: SubtaskMinAggregateInputType
-    _max?: SubtaskMaxAggregateInputType
-  }
-
-  export type SubtaskGroupByOutputType = {
-    id: string
-    taskId: string
-    title: string
-    completed: boolean
-    createdAt: Date
-    updatedAt: Date
-    _count: SubtaskCountAggregateOutputType | null
-    _min: SubtaskMinAggregateOutputType | null
-    _max: SubtaskMaxAggregateOutputType | null
-  }
-
-  type GetSubtaskGroupByPayload<T extends SubtaskGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<SubtaskGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof SubtaskGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], SubtaskGroupByOutputType[P]>
-            : GetScalarType<T[P], SubtaskGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type SubtaskSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    taskId?: boolean
-    title?: boolean
-    completed?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    task?: boolean | TaskDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["subtask"]>
-
-  export type SubtaskSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    taskId?: boolean
-    title?: boolean
-    completed?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    task?: boolean | TaskDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["subtask"]>
-
-  export type SubtaskSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    taskId?: boolean
-    title?: boolean
-    completed?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    task?: boolean | TaskDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["subtask"]>
-
-  export type SubtaskSelectScalar = {
-    id?: boolean
-    taskId?: boolean
-    title?: boolean
-    completed?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type SubtaskOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "taskId" | "title" | "completed" | "createdAt" | "updatedAt", ExtArgs["result"]["subtask"]>
-  export type SubtaskInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    task?: boolean | TaskDefaultArgs<ExtArgs>
-  }
-  export type SubtaskIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    task?: boolean | TaskDefaultArgs<ExtArgs>
-  }
-  export type SubtaskIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    task?: boolean | TaskDefaultArgs<ExtArgs>
-  }
-
-  export type $SubtaskPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Subtask"
-    objects: {
-      task: Prisma.$TaskPayload<ExtArgs>
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      taskId: string
-      title: string
-      completed: boolean
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["subtask"]>
-    composites: {}
-  }
-
-  type SubtaskGetPayload<S extends boolean | null | undefined | SubtaskDefaultArgs> = $Result.GetResult<Prisma.$SubtaskPayload, S>
-
-  type SubtaskCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<SubtaskFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: SubtaskCountAggregateInputType | true
-    }
-
-  export interface SubtaskDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Subtask'], meta: { name: 'Subtask' } }
-    /**
-     * Find zero or one Subtask that matches the filter.
-     * @param {SubtaskFindUniqueArgs} args - Arguments to find a Subtask
-     * @example
-     * // Get one Subtask
-     * const subtask = await prisma.subtask.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends SubtaskFindUniqueArgs>(args: SelectSubset<T, SubtaskFindUniqueArgs<ExtArgs>>): Prisma__SubtaskClient<$Result.GetResult<Prisma.$SubtaskPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Subtask that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {SubtaskFindUniqueOrThrowArgs} args - Arguments to find a Subtask
-     * @example
-     * // Get one Subtask
-     * const subtask = await prisma.subtask.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends SubtaskFindUniqueOrThrowArgs>(args: SelectSubset<T, SubtaskFindUniqueOrThrowArgs<ExtArgs>>): Prisma__SubtaskClient<$Result.GetResult<Prisma.$SubtaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Subtask that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SubtaskFindFirstArgs} args - Arguments to find a Subtask
-     * @example
-     * // Get one Subtask
-     * const subtask = await prisma.subtask.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends SubtaskFindFirstArgs>(args?: SelectSubset<T, SubtaskFindFirstArgs<ExtArgs>>): Prisma__SubtaskClient<$Result.GetResult<Prisma.$SubtaskPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Subtask that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SubtaskFindFirstOrThrowArgs} args - Arguments to find a Subtask
-     * @example
-     * // Get one Subtask
-     * const subtask = await prisma.subtask.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends SubtaskFindFirstOrThrowArgs>(args?: SelectSubset<T, SubtaskFindFirstOrThrowArgs<ExtArgs>>): Prisma__SubtaskClient<$Result.GetResult<Prisma.$SubtaskPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Subtasks that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SubtaskFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Subtasks
-     * const subtasks = await prisma.subtask.findMany()
-     * 
-     * // Get first 10 Subtasks
-     * const subtasks = await prisma.subtask.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const subtaskWithIdOnly = await prisma.subtask.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends SubtaskFindManyArgs>(args?: SelectSubset<T, SubtaskFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SubtaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Subtask.
-     * @param {SubtaskCreateArgs} args - Arguments to create a Subtask.
-     * @example
-     * // Create one Subtask
-     * const Subtask = await prisma.subtask.create({
-     *   data: {
-     *     // ... data to create a Subtask
-     *   }
-     * })
-     * 
-     */
-    create<T extends SubtaskCreateArgs>(args: SelectSubset<T, SubtaskCreateArgs<ExtArgs>>): Prisma__SubtaskClient<$Result.GetResult<Prisma.$SubtaskPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Subtasks.
-     * @param {SubtaskCreateManyArgs} args - Arguments to create many Subtasks.
-     * @example
-     * // Create many Subtasks
-     * const subtask = await prisma.subtask.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends SubtaskCreateManyArgs>(args?: SelectSubset<T, SubtaskCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Subtasks and returns the data saved in the database.
-     * @param {SubtaskCreateManyAndReturnArgs} args - Arguments to create many Subtasks.
-     * @example
-     * // Create many Subtasks
-     * const subtask = await prisma.subtask.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Subtasks and only return the `id`
-     * const subtaskWithIdOnly = await prisma.subtask.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends SubtaskCreateManyAndReturnArgs>(args?: SelectSubset<T, SubtaskCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SubtaskPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Subtask.
-     * @param {SubtaskDeleteArgs} args - Arguments to delete one Subtask.
-     * @example
-     * // Delete one Subtask
-     * const Subtask = await prisma.subtask.delete({
-     *   where: {
-     *     // ... filter to delete one Subtask
-     *   }
-     * })
-     * 
-     */
-    delete<T extends SubtaskDeleteArgs>(args: SelectSubset<T, SubtaskDeleteArgs<ExtArgs>>): Prisma__SubtaskClient<$Result.GetResult<Prisma.$SubtaskPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Subtask.
-     * @param {SubtaskUpdateArgs} args - Arguments to update one Subtask.
-     * @example
-     * // Update one Subtask
-     * const subtask = await prisma.subtask.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends SubtaskUpdateArgs>(args: SelectSubset<T, SubtaskUpdateArgs<ExtArgs>>): Prisma__SubtaskClient<$Result.GetResult<Prisma.$SubtaskPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Subtasks.
-     * @param {SubtaskDeleteManyArgs} args - Arguments to filter Subtasks to delete.
-     * @example
-     * // Delete a few Subtasks
-     * const { count } = await prisma.subtask.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends SubtaskDeleteManyArgs>(args?: SelectSubset<T, SubtaskDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Subtasks.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SubtaskUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Subtasks
-     * const subtask = await prisma.subtask.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends SubtaskUpdateManyArgs>(args: SelectSubset<T, SubtaskUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Subtasks and returns the data updated in the database.
-     * @param {SubtaskUpdateManyAndReturnArgs} args - Arguments to update many Subtasks.
-     * @example
-     * // Update many Subtasks
-     * const subtask = await prisma.subtask.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Subtasks and only return the `id`
-     * const subtaskWithIdOnly = await prisma.subtask.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends SubtaskUpdateManyAndReturnArgs>(args: SelectSubset<T, SubtaskUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$SubtaskPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Subtask.
-     * @param {SubtaskUpsertArgs} args - Arguments to update or create a Subtask.
-     * @example
-     * // Update or create a Subtask
-     * const subtask = await prisma.subtask.upsert({
-     *   create: {
-     *     // ... data to create a Subtask
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Subtask we want to update
-     *   }
-     * })
-     */
-    upsert<T extends SubtaskUpsertArgs>(args: SelectSubset<T, SubtaskUpsertArgs<ExtArgs>>): Prisma__SubtaskClient<$Result.GetResult<Prisma.$SubtaskPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Subtasks.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SubtaskCountArgs} args - Arguments to filter Subtasks to count.
-     * @example
-     * // Count the number of Subtasks
-     * const count = await prisma.subtask.count({
-     *   where: {
-     *     // ... the filter for the Subtasks we want to count
-     *   }
-     * })
-    **/
-    count<T extends SubtaskCountArgs>(
-      args?: Subset<T, SubtaskCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], SubtaskCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Subtask.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SubtaskAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends SubtaskAggregateArgs>(args: Subset<T, SubtaskAggregateArgs>): Prisma.PrismaPromise<GetSubtaskAggregateType<T>>
-
-    /**
-     * Group by Subtask.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {SubtaskGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends SubtaskGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: SubtaskGroupByArgs['orderBy'] }
-        : { orderBy?: SubtaskGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, SubtaskGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetSubtaskGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the Subtask model
-   */
-  readonly fields: SubtaskFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Subtask.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__SubtaskClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    task<T extends TaskDefaultArgs<ExtArgs> = {}>(args?: Subset<T, TaskDefaultArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the Subtask model
-   */
-  interface SubtaskFieldRefs {
-    readonly id: FieldRef<"Subtask", 'String'>
-    readonly taskId: FieldRef<"Subtask", 'String'>
-    readonly title: FieldRef<"Subtask", 'String'>
-    readonly completed: FieldRef<"Subtask", 'Boolean'>
-    readonly createdAt: FieldRef<"Subtask", 'DateTime'>
-    readonly updatedAt: FieldRef<"Subtask", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Subtask findUnique
-   */
-  export type SubtaskFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Subtask
-     */
-    select?: SubtaskSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Subtask
-     */
-    omit?: SubtaskOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SubtaskInclude<ExtArgs> | null
-    /**
-     * Filter, which Subtask to fetch.
-     */
-    where: SubtaskWhereUniqueInput
-  }
-
-  /**
-   * Subtask findUniqueOrThrow
-   */
-  export type SubtaskFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Subtask
-     */
-    select?: SubtaskSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Subtask
-     */
-    omit?: SubtaskOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SubtaskInclude<ExtArgs> | null
-    /**
-     * Filter, which Subtask to fetch.
-     */
-    where: SubtaskWhereUniqueInput
-  }
-
-  /**
-   * Subtask findFirst
-   */
-  export type SubtaskFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Subtask
-     */
-    select?: SubtaskSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Subtask
-     */
-    omit?: SubtaskOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SubtaskInclude<ExtArgs> | null
-    /**
-     * Filter, which Subtask to fetch.
-     */
-    where?: SubtaskWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Subtasks to fetch.
-     */
-    orderBy?: SubtaskOrderByWithRelationInput | SubtaskOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Subtasks.
-     */
-    cursor?: SubtaskWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Subtasks from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Subtasks.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Subtasks.
-     */
-    distinct?: SubtaskScalarFieldEnum | SubtaskScalarFieldEnum[]
-  }
-
-  /**
-   * Subtask findFirstOrThrow
-   */
-  export type SubtaskFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Subtask
-     */
-    select?: SubtaskSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Subtask
-     */
-    omit?: SubtaskOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SubtaskInclude<ExtArgs> | null
-    /**
-     * Filter, which Subtask to fetch.
-     */
-    where?: SubtaskWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Subtasks to fetch.
-     */
-    orderBy?: SubtaskOrderByWithRelationInput | SubtaskOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Subtasks.
-     */
-    cursor?: SubtaskWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Subtasks from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Subtasks.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Subtasks.
-     */
-    distinct?: SubtaskScalarFieldEnum | SubtaskScalarFieldEnum[]
-  }
-
-  /**
-   * Subtask findMany
-   */
-  export type SubtaskFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Subtask
-     */
-    select?: SubtaskSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Subtask
-     */
-    omit?: SubtaskOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SubtaskInclude<ExtArgs> | null
-    /**
-     * Filter, which Subtasks to fetch.
-     */
-    where?: SubtaskWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Subtasks to fetch.
-     */
-    orderBy?: SubtaskOrderByWithRelationInput | SubtaskOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Subtasks.
-     */
-    cursor?: SubtaskWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Subtasks from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Subtasks.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Subtasks.
-     */
-    distinct?: SubtaskScalarFieldEnum | SubtaskScalarFieldEnum[]
-  }
-
-  /**
-   * Subtask create
-   */
-  export type SubtaskCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Subtask
-     */
-    select?: SubtaskSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Subtask
-     */
-    omit?: SubtaskOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SubtaskInclude<ExtArgs> | null
-    /**
-     * The data needed to create a Subtask.
-     */
-    data: XOR<SubtaskCreateInput, SubtaskUncheckedCreateInput>
-  }
-
-  /**
-   * Subtask createMany
-   */
-  export type SubtaskCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Subtasks.
-     */
-    data: SubtaskCreateManyInput | SubtaskCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * Subtask createManyAndReturn
-   */
-  export type SubtaskCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Subtask
-     */
-    select?: SubtaskSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Subtask
-     */
-    omit?: SubtaskOmit<ExtArgs> | null
-    /**
-     * The data used to create many Subtasks.
-     */
-    data: SubtaskCreateManyInput | SubtaskCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SubtaskIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Subtask update
-   */
-  export type SubtaskUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Subtask
-     */
-    select?: SubtaskSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Subtask
-     */
-    omit?: SubtaskOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SubtaskInclude<ExtArgs> | null
-    /**
-     * The data needed to update a Subtask.
-     */
-    data: XOR<SubtaskUpdateInput, SubtaskUncheckedUpdateInput>
-    /**
-     * Choose, which Subtask to update.
-     */
-    where: SubtaskWhereUniqueInput
-  }
-
-  /**
-   * Subtask updateMany
-   */
-  export type SubtaskUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Subtasks.
-     */
-    data: XOR<SubtaskUpdateManyMutationInput, SubtaskUncheckedUpdateManyInput>
-    /**
-     * Filter which Subtasks to update
-     */
-    where?: SubtaskWhereInput
-    /**
-     * Limit how many Subtasks to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * Subtask updateManyAndReturn
-   */
-  export type SubtaskUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Subtask
-     */
-    select?: SubtaskSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Subtask
-     */
-    omit?: SubtaskOmit<ExtArgs> | null
-    /**
-     * The data used to update Subtasks.
-     */
-    data: XOR<SubtaskUpdateManyMutationInput, SubtaskUncheckedUpdateManyInput>
-    /**
-     * Filter which Subtasks to update
-     */
-    where?: SubtaskWhereInput
-    /**
-     * Limit how many Subtasks to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SubtaskIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Subtask upsert
-   */
-  export type SubtaskUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Subtask
-     */
-    select?: SubtaskSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Subtask
-     */
-    omit?: SubtaskOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SubtaskInclude<ExtArgs> | null
-    /**
-     * The filter to search for the Subtask to update in case it exists.
-     */
-    where: SubtaskWhereUniqueInput
-    /**
-     * In case the Subtask found by the `where` argument doesn't exist, create a new Subtask with this data.
-     */
-    create: XOR<SubtaskCreateInput, SubtaskUncheckedCreateInput>
-    /**
-     * In case the Subtask was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<SubtaskUpdateInput, SubtaskUncheckedUpdateInput>
-  }
-
-  /**
-   * Subtask delete
-   */
-  export type SubtaskDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Subtask
-     */
-    select?: SubtaskSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Subtask
-     */
-    omit?: SubtaskOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SubtaskInclude<ExtArgs> | null
-    /**
-     * Filter which Subtask to delete.
-     */
-    where: SubtaskWhereUniqueInput
-  }
-
-  /**
-   * Subtask deleteMany
-   */
-  export type SubtaskDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Subtasks to delete
-     */
-    where?: SubtaskWhereInput
-    /**
-     * Limit how many Subtasks to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * Subtask without action
-   */
-  export type SubtaskDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Subtask
-     */
-    select?: SubtaskSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Subtask
-     */
-    omit?: SubtaskOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: SubtaskInclude<ExtArgs> | null
   }
 
 
@@ -16975,2537 +14174,6 @@ export namespace Prisma {
 
 
   /**
-   * Model PullRequest
-   */
-
-  export type AggregatePullRequest = {
-    _count: PullRequestCountAggregateOutputType | null
-    _avg: PullRequestAvgAggregateOutputType | null
-    _sum: PullRequestSumAggregateOutputType | null
-    _min: PullRequestMinAggregateOutputType | null
-    _max: PullRequestMaxAggregateOutputType | null
-  }
-
-  export type PullRequestAvgAggregateOutputType = {
-    number: number | null
-  }
-
-  export type PullRequestSumAggregateOutputType = {
-    number: number | null
-  }
-
-  export type PullRequestMinAggregateOutputType = {
-    id: string | null
-    projectId: string | null
-    taskId: string | null
-    provider: string | null
-    repository: string | null
-    number: number | null
-    title: string | null
-    url: string | null
-    branch: string | null
-    targetBranch: string | null
-    status: string | null
-    reviewState: string | null
-    ciStatus: string | null
-    author: string | null
-    openedAt: Date | null
-    mergedAt: Date | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type PullRequestMaxAggregateOutputType = {
-    id: string | null
-    projectId: string | null
-    taskId: string | null
-    provider: string | null
-    repository: string | null
-    number: number | null
-    title: string | null
-    url: string | null
-    branch: string | null
-    targetBranch: string | null
-    status: string | null
-    reviewState: string | null
-    ciStatus: string | null
-    author: string | null
-    openedAt: Date | null
-    mergedAt: Date | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type PullRequestCountAggregateOutputType = {
-    id: number
-    projectId: number
-    taskId: number
-    provider: number
-    repository: number
-    number: number
-    title: number
-    url: number
-    branch: number
-    targetBranch: number
-    status: number
-    reviewState: number
-    ciStatus: number
-    author: number
-    openedAt: number
-    mergedAt: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type PullRequestAvgAggregateInputType = {
-    number?: true
-  }
-
-  export type PullRequestSumAggregateInputType = {
-    number?: true
-  }
-
-  export type PullRequestMinAggregateInputType = {
-    id?: true
-    projectId?: true
-    taskId?: true
-    provider?: true
-    repository?: true
-    number?: true
-    title?: true
-    url?: true
-    branch?: true
-    targetBranch?: true
-    status?: true
-    reviewState?: true
-    ciStatus?: true
-    author?: true
-    openedAt?: true
-    mergedAt?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type PullRequestMaxAggregateInputType = {
-    id?: true
-    projectId?: true
-    taskId?: true
-    provider?: true
-    repository?: true
-    number?: true
-    title?: true
-    url?: true
-    branch?: true
-    targetBranch?: true
-    status?: true
-    reviewState?: true
-    ciStatus?: true
-    author?: true
-    openedAt?: true
-    mergedAt?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type PullRequestCountAggregateInputType = {
-    id?: true
-    projectId?: true
-    taskId?: true
-    provider?: true
-    repository?: true
-    number?: true
-    title?: true
-    url?: true
-    branch?: true
-    targetBranch?: true
-    status?: true
-    reviewState?: true
-    ciStatus?: true
-    author?: true
-    openedAt?: true
-    mergedAt?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type PullRequestAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which PullRequest to aggregate.
-     */
-    where?: PullRequestWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of PullRequests to fetch.
-     */
-    orderBy?: PullRequestOrderByWithRelationInput | PullRequestOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: PullRequestWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` PullRequests from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` PullRequests.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned PullRequests
-    **/
-    _count?: true | PullRequestCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to average
-    **/
-    _avg?: PullRequestAvgAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to sum
-    **/
-    _sum?: PullRequestSumAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: PullRequestMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: PullRequestMaxAggregateInputType
-  }
-
-  export type GetPullRequestAggregateType<T extends PullRequestAggregateArgs> = {
-        [P in keyof T & keyof AggregatePullRequest]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregatePullRequest[P]>
-      : GetScalarType<T[P], AggregatePullRequest[P]>
-  }
-
-
-
-
-  export type PullRequestGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: PullRequestWhereInput
-    orderBy?: PullRequestOrderByWithAggregationInput | PullRequestOrderByWithAggregationInput[]
-    by: PullRequestScalarFieldEnum[] | PullRequestScalarFieldEnum
-    having?: PullRequestScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: PullRequestCountAggregateInputType | true
-    _avg?: PullRequestAvgAggregateInputType
-    _sum?: PullRequestSumAggregateInputType
-    _min?: PullRequestMinAggregateInputType
-    _max?: PullRequestMaxAggregateInputType
-  }
-
-  export type PullRequestGroupByOutputType = {
-    id: string
-    projectId: string
-    taskId: string | null
-    provider: string
-    repository: string
-    number: number
-    title: string
-    url: string | null
-    branch: string | null
-    targetBranch: string | null
-    status: string
-    reviewState: string
-    ciStatus: string
-    author: string | null
-    openedAt: Date | null
-    mergedAt: Date | null
-    createdAt: Date
-    updatedAt: Date
-    _count: PullRequestCountAggregateOutputType | null
-    _avg: PullRequestAvgAggregateOutputType | null
-    _sum: PullRequestSumAggregateOutputType | null
-    _min: PullRequestMinAggregateOutputType | null
-    _max: PullRequestMaxAggregateOutputType | null
-  }
-
-  type GetPullRequestGroupByPayload<T extends PullRequestGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<PullRequestGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof PullRequestGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], PullRequestGroupByOutputType[P]>
-            : GetScalarType<T[P], PullRequestGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type PullRequestSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    projectId?: boolean
-    taskId?: boolean
-    provider?: boolean
-    repository?: boolean
-    number?: boolean
-    title?: boolean
-    url?: boolean
-    branch?: boolean
-    targetBranch?: boolean
-    status?: boolean
-    reviewState?: boolean
-    ciStatus?: boolean
-    author?: boolean
-    openedAt?: boolean
-    mergedAt?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    project?: boolean | ProjectDefaultArgs<ExtArgs>
-    task?: boolean | PullRequest$taskArgs<ExtArgs>
-    deployments?: boolean | PullRequest$deploymentsArgs<ExtArgs>
-    _count?: boolean | PullRequestCountOutputTypeDefaultArgs<ExtArgs>
-  }, ExtArgs["result"]["pullRequest"]>
-
-  export type PullRequestSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    projectId?: boolean
-    taskId?: boolean
-    provider?: boolean
-    repository?: boolean
-    number?: boolean
-    title?: boolean
-    url?: boolean
-    branch?: boolean
-    targetBranch?: boolean
-    status?: boolean
-    reviewState?: boolean
-    ciStatus?: boolean
-    author?: boolean
-    openedAt?: boolean
-    mergedAt?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    project?: boolean | ProjectDefaultArgs<ExtArgs>
-    task?: boolean | PullRequest$taskArgs<ExtArgs>
-  }, ExtArgs["result"]["pullRequest"]>
-
-  export type PullRequestSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    projectId?: boolean
-    taskId?: boolean
-    provider?: boolean
-    repository?: boolean
-    number?: boolean
-    title?: boolean
-    url?: boolean
-    branch?: boolean
-    targetBranch?: boolean
-    status?: boolean
-    reviewState?: boolean
-    ciStatus?: boolean
-    author?: boolean
-    openedAt?: boolean
-    mergedAt?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    project?: boolean | ProjectDefaultArgs<ExtArgs>
-    task?: boolean | PullRequest$taskArgs<ExtArgs>
-  }, ExtArgs["result"]["pullRequest"]>
-
-  export type PullRequestSelectScalar = {
-    id?: boolean
-    projectId?: boolean
-    taskId?: boolean
-    provider?: boolean
-    repository?: boolean
-    number?: boolean
-    title?: boolean
-    url?: boolean
-    branch?: boolean
-    targetBranch?: boolean
-    status?: boolean
-    reviewState?: boolean
-    ciStatus?: boolean
-    author?: boolean
-    openedAt?: boolean
-    mergedAt?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type PullRequestOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "taskId" | "provider" | "repository" | "number" | "title" | "url" | "branch" | "targetBranch" | "status" | "reviewState" | "ciStatus" | "author" | "openedAt" | "mergedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["pullRequest"]>
-  export type PullRequestInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    project?: boolean | ProjectDefaultArgs<ExtArgs>
-    task?: boolean | PullRequest$taskArgs<ExtArgs>
-    deployments?: boolean | PullRequest$deploymentsArgs<ExtArgs>
-    _count?: boolean | PullRequestCountOutputTypeDefaultArgs<ExtArgs>
-  }
-  export type PullRequestIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    project?: boolean | ProjectDefaultArgs<ExtArgs>
-    task?: boolean | PullRequest$taskArgs<ExtArgs>
-  }
-  export type PullRequestIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    project?: boolean | ProjectDefaultArgs<ExtArgs>
-    task?: boolean | PullRequest$taskArgs<ExtArgs>
-  }
-
-  export type $PullRequestPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "PullRequest"
-    objects: {
-      project: Prisma.$ProjectPayload<ExtArgs>
-      task: Prisma.$TaskPayload<ExtArgs> | null
-      deployments: Prisma.$DeploymentPayload<ExtArgs>[]
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      projectId: string
-      taskId: string | null
-      provider: string
-      repository: string
-      number: number
-      title: string
-      url: string | null
-      branch: string | null
-      targetBranch: string | null
-      status: string
-      reviewState: string
-      ciStatus: string
-      author: string | null
-      openedAt: Date | null
-      mergedAt: Date | null
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["pullRequest"]>
-    composites: {}
-  }
-
-  type PullRequestGetPayload<S extends boolean | null | undefined | PullRequestDefaultArgs> = $Result.GetResult<Prisma.$PullRequestPayload, S>
-
-  type PullRequestCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<PullRequestFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: PullRequestCountAggregateInputType | true
-    }
-
-  export interface PullRequestDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['PullRequest'], meta: { name: 'PullRequest' } }
-    /**
-     * Find zero or one PullRequest that matches the filter.
-     * @param {PullRequestFindUniqueArgs} args - Arguments to find a PullRequest
-     * @example
-     * // Get one PullRequest
-     * const pullRequest = await prisma.pullRequest.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends PullRequestFindUniqueArgs>(args: SelectSubset<T, PullRequestFindUniqueArgs<ExtArgs>>): Prisma__PullRequestClient<$Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one PullRequest that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {PullRequestFindUniqueOrThrowArgs} args - Arguments to find a PullRequest
-     * @example
-     * // Get one PullRequest
-     * const pullRequest = await prisma.pullRequest.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends PullRequestFindUniqueOrThrowArgs>(args: SelectSubset<T, PullRequestFindUniqueOrThrowArgs<ExtArgs>>): Prisma__PullRequestClient<$Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first PullRequest that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PullRequestFindFirstArgs} args - Arguments to find a PullRequest
-     * @example
-     * // Get one PullRequest
-     * const pullRequest = await prisma.pullRequest.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends PullRequestFindFirstArgs>(args?: SelectSubset<T, PullRequestFindFirstArgs<ExtArgs>>): Prisma__PullRequestClient<$Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first PullRequest that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PullRequestFindFirstOrThrowArgs} args - Arguments to find a PullRequest
-     * @example
-     * // Get one PullRequest
-     * const pullRequest = await prisma.pullRequest.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends PullRequestFindFirstOrThrowArgs>(args?: SelectSubset<T, PullRequestFindFirstOrThrowArgs<ExtArgs>>): Prisma__PullRequestClient<$Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more PullRequests that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PullRequestFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all PullRequests
-     * const pullRequests = await prisma.pullRequest.findMany()
-     * 
-     * // Get first 10 PullRequests
-     * const pullRequests = await prisma.pullRequest.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const pullRequestWithIdOnly = await prisma.pullRequest.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends PullRequestFindManyArgs>(args?: SelectSubset<T, PullRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a PullRequest.
-     * @param {PullRequestCreateArgs} args - Arguments to create a PullRequest.
-     * @example
-     * // Create one PullRequest
-     * const PullRequest = await prisma.pullRequest.create({
-     *   data: {
-     *     // ... data to create a PullRequest
-     *   }
-     * })
-     * 
-     */
-    create<T extends PullRequestCreateArgs>(args: SelectSubset<T, PullRequestCreateArgs<ExtArgs>>): Prisma__PullRequestClient<$Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many PullRequests.
-     * @param {PullRequestCreateManyArgs} args - Arguments to create many PullRequests.
-     * @example
-     * // Create many PullRequests
-     * const pullRequest = await prisma.pullRequest.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends PullRequestCreateManyArgs>(args?: SelectSubset<T, PullRequestCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many PullRequests and returns the data saved in the database.
-     * @param {PullRequestCreateManyAndReturnArgs} args - Arguments to create many PullRequests.
-     * @example
-     * // Create many PullRequests
-     * const pullRequest = await prisma.pullRequest.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many PullRequests and only return the `id`
-     * const pullRequestWithIdOnly = await prisma.pullRequest.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends PullRequestCreateManyAndReturnArgs>(args?: SelectSubset<T, PullRequestCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a PullRequest.
-     * @param {PullRequestDeleteArgs} args - Arguments to delete one PullRequest.
-     * @example
-     * // Delete one PullRequest
-     * const PullRequest = await prisma.pullRequest.delete({
-     *   where: {
-     *     // ... filter to delete one PullRequest
-     *   }
-     * })
-     * 
-     */
-    delete<T extends PullRequestDeleteArgs>(args: SelectSubset<T, PullRequestDeleteArgs<ExtArgs>>): Prisma__PullRequestClient<$Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one PullRequest.
-     * @param {PullRequestUpdateArgs} args - Arguments to update one PullRequest.
-     * @example
-     * // Update one PullRequest
-     * const pullRequest = await prisma.pullRequest.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends PullRequestUpdateArgs>(args: SelectSubset<T, PullRequestUpdateArgs<ExtArgs>>): Prisma__PullRequestClient<$Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more PullRequests.
-     * @param {PullRequestDeleteManyArgs} args - Arguments to filter PullRequests to delete.
-     * @example
-     * // Delete a few PullRequests
-     * const { count } = await prisma.pullRequest.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends PullRequestDeleteManyArgs>(args?: SelectSubset<T, PullRequestDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more PullRequests.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PullRequestUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many PullRequests
-     * const pullRequest = await prisma.pullRequest.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends PullRequestUpdateManyArgs>(args: SelectSubset<T, PullRequestUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more PullRequests and returns the data updated in the database.
-     * @param {PullRequestUpdateManyAndReturnArgs} args - Arguments to update many PullRequests.
-     * @example
-     * // Update many PullRequests
-     * const pullRequest = await prisma.pullRequest.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more PullRequests and only return the `id`
-     * const pullRequestWithIdOnly = await prisma.pullRequest.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends PullRequestUpdateManyAndReturnArgs>(args: SelectSubset<T, PullRequestUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one PullRequest.
-     * @param {PullRequestUpsertArgs} args - Arguments to update or create a PullRequest.
-     * @example
-     * // Update or create a PullRequest
-     * const pullRequest = await prisma.pullRequest.upsert({
-     *   create: {
-     *     // ... data to create a PullRequest
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the PullRequest we want to update
-     *   }
-     * })
-     */
-    upsert<T extends PullRequestUpsertArgs>(args: SelectSubset<T, PullRequestUpsertArgs<ExtArgs>>): Prisma__PullRequestClient<$Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of PullRequests.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PullRequestCountArgs} args - Arguments to filter PullRequests to count.
-     * @example
-     * // Count the number of PullRequests
-     * const count = await prisma.pullRequest.count({
-     *   where: {
-     *     // ... the filter for the PullRequests we want to count
-     *   }
-     * })
-    **/
-    count<T extends PullRequestCountArgs>(
-      args?: Subset<T, PullRequestCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], PullRequestCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a PullRequest.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PullRequestAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends PullRequestAggregateArgs>(args: Subset<T, PullRequestAggregateArgs>): Prisma.PrismaPromise<GetPullRequestAggregateType<T>>
-
-    /**
-     * Group by PullRequest.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {PullRequestGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends PullRequestGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: PullRequestGroupByArgs['orderBy'] }
-        : { orderBy?: PullRequestGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, PullRequestGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetPullRequestGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the PullRequest model
-   */
-  readonly fields: PullRequestFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for PullRequest.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__PullRequestClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    task<T extends PullRequest$taskArgs<ExtArgs> = {}>(args?: Subset<T, PullRequest$taskArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    deployments<T extends PullRequest$deploymentsArgs<ExtArgs> = {}>(args?: Subset<T, PullRequest$deploymentsArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DeploymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the PullRequest model
-   */
-  interface PullRequestFieldRefs {
-    readonly id: FieldRef<"PullRequest", 'String'>
-    readonly projectId: FieldRef<"PullRequest", 'String'>
-    readonly taskId: FieldRef<"PullRequest", 'String'>
-    readonly provider: FieldRef<"PullRequest", 'String'>
-    readonly repository: FieldRef<"PullRequest", 'String'>
-    readonly number: FieldRef<"PullRequest", 'Int'>
-    readonly title: FieldRef<"PullRequest", 'String'>
-    readonly url: FieldRef<"PullRequest", 'String'>
-    readonly branch: FieldRef<"PullRequest", 'String'>
-    readonly targetBranch: FieldRef<"PullRequest", 'String'>
-    readonly status: FieldRef<"PullRequest", 'String'>
-    readonly reviewState: FieldRef<"PullRequest", 'String'>
-    readonly ciStatus: FieldRef<"PullRequest", 'String'>
-    readonly author: FieldRef<"PullRequest", 'String'>
-    readonly openedAt: FieldRef<"PullRequest", 'DateTime'>
-    readonly mergedAt: FieldRef<"PullRequest", 'DateTime'>
-    readonly createdAt: FieldRef<"PullRequest", 'DateTime'>
-    readonly updatedAt: FieldRef<"PullRequest", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * PullRequest findUnique
-   */
-  export type PullRequestFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PullRequest
-     */
-    select?: PullRequestSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PullRequest
-     */
-    omit?: PullRequestOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PullRequestInclude<ExtArgs> | null
-    /**
-     * Filter, which PullRequest to fetch.
-     */
-    where: PullRequestWhereUniqueInput
-  }
-
-  /**
-   * PullRequest findUniqueOrThrow
-   */
-  export type PullRequestFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PullRequest
-     */
-    select?: PullRequestSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PullRequest
-     */
-    omit?: PullRequestOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PullRequestInclude<ExtArgs> | null
-    /**
-     * Filter, which PullRequest to fetch.
-     */
-    where: PullRequestWhereUniqueInput
-  }
-
-  /**
-   * PullRequest findFirst
-   */
-  export type PullRequestFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PullRequest
-     */
-    select?: PullRequestSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PullRequest
-     */
-    omit?: PullRequestOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PullRequestInclude<ExtArgs> | null
-    /**
-     * Filter, which PullRequest to fetch.
-     */
-    where?: PullRequestWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of PullRequests to fetch.
-     */
-    orderBy?: PullRequestOrderByWithRelationInput | PullRequestOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for PullRequests.
-     */
-    cursor?: PullRequestWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` PullRequests from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` PullRequests.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of PullRequests.
-     */
-    distinct?: PullRequestScalarFieldEnum | PullRequestScalarFieldEnum[]
-  }
-
-  /**
-   * PullRequest findFirstOrThrow
-   */
-  export type PullRequestFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PullRequest
-     */
-    select?: PullRequestSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PullRequest
-     */
-    omit?: PullRequestOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PullRequestInclude<ExtArgs> | null
-    /**
-     * Filter, which PullRequest to fetch.
-     */
-    where?: PullRequestWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of PullRequests to fetch.
-     */
-    orderBy?: PullRequestOrderByWithRelationInput | PullRequestOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for PullRequests.
-     */
-    cursor?: PullRequestWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` PullRequests from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` PullRequests.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of PullRequests.
-     */
-    distinct?: PullRequestScalarFieldEnum | PullRequestScalarFieldEnum[]
-  }
-
-  /**
-   * PullRequest findMany
-   */
-  export type PullRequestFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PullRequest
-     */
-    select?: PullRequestSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PullRequest
-     */
-    omit?: PullRequestOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PullRequestInclude<ExtArgs> | null
-    /**
-     * Filter, which PullRequests to fetch.
-     */
-    where?: PullRequestWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of PullRequests to fetch.
-     */
-    orderBy?: PullRequestOrderByWithRelationInput | PullRequestOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing PullRequests.
-     */
-    cursor?: PullRequestWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` PullRequests from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` PullRequests.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of PullRequests.
-     */
-    distinct?: PullRequestScalarFieldEnum | PullRequestScalarFieldEnum[]
-  }
-
-  /**
-   * PullRequest create
-   */
-  export type PullRequestCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PullRequest
-     */
-    select?: PullRequestSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PullRequest
-     */
-    omit?: PullRequestOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PullRequestInclude<ExtArgs> | null
-    /**
-     * The data needed to create a PullRequest.
-     */
-    data: XOR<PullRequestCreateInput, PullRequestUncheckedCreateInput>
-  }
-
-  /**
-   * PullRequest createMany
-   */
-  export type PullRequestCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many PullRequests.
-     */
-    data: PullRequestCreateManyInput | PullRequestCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * PullRequest createManyAndReturn
-   */
-  export type PullRequestCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PullRequest
-     */
-    select?: PullRequestSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the PullRequest
-     */
-    omit?: PullRequestOmit<ExtArgs> | null
-    /**
-     * The data used to create many PullRequests.
-     */
-    data: PullRequestCreateManyInput | PullRequestCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PullRequestIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * PullRequest update
-   */
-  export type PullRequestUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PullRequest
-     */
-    select?: PullRequestSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PullRequest
-     */
-    omit?: PullRequestOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PullRequestInclude<ExtArgs> | null
-    /**
-     * The data needed to update a PullRequest.
-     */
-    data: XOR<PullRequestUpdateInput, PullRequestUncheckedUpdateInput>
-    /**
-     * Choose, which PullRequest to update.
-     */
-    where: PullRequestWhereUniqueInput
-  }
-
-  /**
-   * PullRequest updateMany
-   */
-  export type PullRequestUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update PullRequests.
-     */
-    data: XOR<PullRequestUpdateManyMutationInput, PullRequestUncheckedUpdateManyInput>
-    /**
-     * Filter which PullRequests to update
-     */
-    where?: PullRequestWhereInput
-    /**
-     * Limit how many PullRequests to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * PullRequest updateManyAndReturn
-   */
-  export type PullRequestUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PullRequest
-     */
-    select?: PullRequestSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the PullRequest
-     */
-    omit?: PullRequestOmit<ExtArgs> | null
-    /**
-     * The data used to update PullRequests.
-     */
-    data: XOR<PullRequestUpdateManyMutationInput, PullRequestUncheckedUpdateManyInput>
-    /**
-     * Filter which PullRequests to update
-     */
-    where?: PullRequestWhereInput
-    /**
-     * Limit how many PullRequests to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PullRequestIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * PullRequest upsert
-   */
-  export type PullRequestUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PullRequest
-     */
-    select?: PullRequestSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PullRequest
-     */
-    omit?: PullRequestOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PullRequestInclude<ExtArgs> | null
-    /**
-     * The filter to search for the PullRequest to update in case it exists.
-     */
-    where: PullRequestWhereUniqueInput
-    /**
-     * In case the PullRequest found by the `where` argument doesn't exist, create a new PullRequest with this data.
-     */
-    create: XOR<PullRequestCreateInput, PullRequestUncheckedCreateInput>
-    /**
-     * In case the PullRequest was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<PullRequestUpdateInput, PullRequestUncheckedUpdateInput>
-  }
-
-  /**
-   * PullRequest delete
-   */
-  export type PullRequestDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PullRequest
-     */
-    select?: PullRequestSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PullRequest
-     */
-    omit?: PullRequestOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PullRequestInclude<ExtArgs> | null
-    /**
-     * Filter which PullRequest to delete.
-     */
-    where: PullRequestWhereUniqueInput
-  }
-
-  /**
-   * PullRequest deleteMany
-   */
-  export type PullRequestDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which PullRequests to delete
-     */
-    where?: PullRequestWhereInput
-    /**
-     * Limit how many PullRequests to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * PullRequest.task
-   */
-  export type PullRequest$taskArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Task
-     */
-    select?: TaskSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Task
-     */
-    omit?: TaskOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskInclude<ExtArgs> | null
-    where?: TaskWhereInput
-  }
-
-  /**
-   * PullRequest.deployments
-   */
-  export type PullRequest$deploymentsArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Deployment
-     */
-    select?: DeploymentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Deployment
-     */
-    omit?: DeploymentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeploymentInclude<ExtArgs> | null
-    where?: DeploymentWhereInput
-    orderBy?: DeploymentOrderByWithRelationInput | DeploymentOrderByWithRelationInput[]
-    cursor?: DeploymentWhereUniqueInput
-    take?: number
-    skip?: number
-    distinct?: DeploymentScalarFieldEnum | DeploymentScalarFieldEnum[]
-  }
-
-  /**
-   * PullRequest without action
-   */
-  export type PullRequestDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PullRequest
-     */
-    select?: PullRequestSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PullRequest
-     */
-    omit?: PullRequestOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PullRequestInclude<ExtArgs> | null
-  }
-
-
-  /**
-   * Model Deployment
-   */
-
-  export type AggregateDeployment = {
-    _count: DeploymentCountAggregateOutputType | null
-    _min: DeploymentMinAggregateOutputType | null
-    _max: DeploymentMaxAggregateOutputType | null
-  }
-
-  export type DeploymentMinAggregateOutputType = {
-    id: string | null
-    projectId: string | null
-    taskId: string | null
-    pullRequestId: string | null
-    environment: string | null
-    status: string | null
-    version: string | null
-    url: string | null
-    deployedBy: string | null
-    deployedAt: Date | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type DeploymentMaxAggregateOutputType = {
-    id: string | null
-    projectId: string | null
-    taskId: string | null
-    pullRequestId: string | null
-    environment: string | null
-    status: string | null
-    version: string | null
-    url: string | null
-    deployedBy: string | null
-    deployedAt: Date | null
-    createdAt: Date | null
-    updatedAt: Date | null
-  }
-
-  export type DeploymentCountAggregateOutputType = {
-    id: number
-    projectId: number
-    taskId: number
-    pullRequestId: number
-    environment: number
-    status: number
-    version: number
-    url: number
-    deployedBy: number
-    deployedAt: number
-    createdAt: number
-    updatedAt: number
-    _all: number
-  }
-
-
-  export type DeploymentMinAggregateInputType = {
-    id?: true
-    projectId?: true
-    taskId?: true
-    pullRequestId?: true
-    environment?: true
-    status?: true
-    version?: true
-    url?: true
-    deployedBy?: true
-    deployedAt?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type DeploymentMaxAggregateInputType = {
-    id?: true
-    projectId?: true
-    taskId?: true
-    pullRequestId?: true
-    environment?: true
-    status?: true
-    version?: true
-    url?: true
-    deployedBy?: true
-    deployedAt?: true
-    createdAt?: true
-    updatedAt?: true
-  }
-
-  export type DeploymentCountAggregateInputType = {
-    id?: true
-    projectId?: true
-    taskId?: true
-    pullRequestId?: true
-    environment?: true
-    status?: true
-    version?: true
-    url?: true
-    deployedBy?: true
-    deployedAt?: true
-    createdAt?: true
-    updatedAt?: true
-    _all?: true
-  }
-
-  export type DeploymentAggregateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Deployment to aggregate.
-     */
-    where?: DeploymentWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Deployments to fetch.
-     */
-    orderBy?: DeploymentOrderByWithRelationInput | DeploymentOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the start position
-     */
-    cursor?: DeploymentWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Deployments from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Deployments.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Count returned Deployments
-    **/
-    _count?: true | DeploymentCountAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the minimum value
-    **/
-    _min?: DeploymentMinAggregateInputType
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/aggregations Aggregation Docs}
-     * 
-     * Select which fields to find the maximum value
-    **/
-    _max?: DeploymentMaxAggregateInputType
-  }
-
-  export type GetDeploymentAggregateType<T extends DeploymentAggregateArgs> = {
-        [P in keyof T & keyof AggregateDeployment]: P extends '_count' | 'count'
-      ? T[P] extends true
-        ? number
-        : GetScalarType<T[P], AggregateDeployment[P]>
-      : GetScalarType<T[P], AggregateDeployment[P]>
-  }
-
-
-
-
-  export type DeploymentGroupByArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    where?: DeploymentWhereInput
-    orderBy?: DeploymentOrderByWithAggregationInput | DeploymentOrderByWithAggregationInput[]
-    by: DeploymentScalarFieldEnum[] | DeploymentScalarFieldEnum
-    having?: DeploymentScalarWhereWithAggregatesInput
-    take?: number
-    skip?: number
-    _count?: DeploymentCountAggregateInputType | true
-    _min?: DeploymentMinAggregateInputType
-    _max?: DeploymentMaxAggregateInputType
-  }
-
-  export type DeploymentGroupByOutputType = {
-    id: string
-    projectId: string
-    taskId: string | null
-    pullRequestId: string | null
-    environment: string
-    status: string
-    version: string | null
-    url: string | null
-    deployedBy: string | null
-    deployedAt: Date | null
-    createdAt: Date
-    updatedAt: Date
-    _count: DeploymentCountAggregateOutputType | null
-    _min: DeploymentMinAggregateOutputType | null
-    _max: DeploymentMaxAggregateOutputType | null
-  }
-
-  type GetDeploymentGroupByPayload<T extends DeploymentGroupByArgs> = Prisma.PrismaPromise<
-    Array<
-      PickEnumerable<DeploymentGroupByOutputType, T['by']> &
-        {
-          [P in ((keyof T) & (keyof DeploymentGroupByOutputType))]: P extends '_count'
-            ? T[P] extends boolean
-              ? number
-              : GetScalarType<T[P], DeploymentGroupByOutputType[P]>
-            : GetScalarType<T[P], DeploymentGroupByOutputType[P]>
-        }
-      >
-    >
-
-
-  export type DeploymentSelect<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    projectId?: boolean
-    taskId?: boolean
-    pullRequestId?: boolean
-    environment?: boolean
-    status?: boolean
-    version?: boolean
-    url?: boolean
-    deployedBy?: boolean
-    deployedAt?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    project?: boolean | ProjectDefaultArgs<ExtArgs>
-    task?: boolean | Deployment$taskArgs<ExtArgs>
-    pullRequest?: boolean | Deployment$pullRequestArgs<ExtArgs>
-  }, ExtArgs["result"]["deployment"]>
-
-  export type DeploymentSelectCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    projectId?: boolean
-    taskId?: boolean
-    pullRequestId?: boolean
-    environment?: boolean
-    status?: boolean
-    version?: boolean
-    url?: boolean
-    deployedBy?: boolean
-    deployedAt?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    project?: boolean | ProjectDefaultArgs<ExtArgs>
-    task?: boolean | Deployment$taskArgs<ExtArgs>
-    pullRequest?: boolean | Deployment$pullRequestArgs<ExtArgs>
-  }, ExtArgs["result"]["deployment"]>
-
-  export type DeploymentSelectUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetSelect<{
-    id?: boolean
-    projectId?: boolean
-    taskId?: boolean
-    pullRequestId?: boolean
-    environment?: boolean
-    status?: boolean
-    version?: boolean
-    url?: boolean
-    deployedBy?: boolean
-    deployedAt?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-    project?: boolean | ProjectDefaultArgs<ExtArgs>
-    task?: boolean | Deployment$taskArgs<ExtArgs>
-    pullRequest?: boolean | Deployment$pullRequestArgs<ExtArgs>
-  }, ExtArgs["result"]["deployment"]>
-
-  export type DeploymentSelectScalar = {
-    id?: boolean
-    projectId?: boolean
-    taskId?: boolean
-    pullRequestId?: boolean
-    environment?: boolean
-    status?: boolean
-    version?: boolean
-    url?: boolean
-    deployedBy?: boolean
-    deployedAt?: boolean
-    createdAt?: boolean
-    updatedAt?: boolean
-  }
-
-  export type DeploymentOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "projectId" | "taskId" | "pullRequestId" | "environment" | "status" | "version" | "url" | "deployedBy" | "deployedAt" | "createdAt" | "updatedAt", ExtArgs["result"]["deployment"]>
-  export type DeploymentInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    project?: boolean | ProjectDefaultArgs<ExtArgs>
-    task?: boolean | Deployment$taskArgs<ExtArgs>
-    pullRequest?: boolean | Deployment$pullRequestArgs<ExtArgs>
-  }
-  export type DeploymentIncludeCreateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    project?: boolean | ProjectDefaultArgs<ExtArgs>
-    task?: boolean | Deployment$taskArgs<ExtArgs>
-    pullRequest?: boolean | Deployment$pullRequestArgs<ExtArgs>
-  }
-  export type DeploymentIncludeUpdateManyAndReturn<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    project?: boolean | ProjectDefaultArgs<ExtArgs>
-    task?: boolean | Deployment$taskArgs<ExtArgs>
-    pullRequest?: boolean | Deployment$pullRequestArgs<ExtArgs>
-  }
-
-  export type $DeploymentPayload<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    name: "Deployment"
-    objects: {
-      project: Prisma.$ProjectPayload<ExtArgs>
-      task: Prisma.$TaskPayload<ExtArgs> | null
-      pullRequest: Prisma.$PullRequestPayload<ExtArgs> | null
-    }
-    scalars: $Extensions.GetPayloadResult<{
-      id: string
-      projectId: string
-      taskId: string | null
-      pullRequestId: string | null
-      environment: string
-      status: string
-      version: string | null
-      url: string | null
-      deployedBy: string | null
-      deployedAt: Date | null
-      createdAt: Date
-      updatedAt: Date
-    }, ExtArgs["result"]["deployment"]>
-    composites: {}
-  }
-
-  type DeploymentGetPayload<S extends boolean | null | undefined | DeploymentDefaultArgs> = $Result.GetResult<Prisma.$DeploymentPayload, S>
-
-  type DeploymentCountArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> =
-    Omit<DeploymentFindManyArgs, 'select' | 'include' | 'distinct' | 'omit'> & {
-      select?: DeploymentCountAggregateInputType | true
-    }
-
-  export interface DeploymentDelegate<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> {
-    [K: symbol]: { types: Prisma.TypeMap<ExtArgs>['model']['Deployment'], meta: { name: 'Deployment' } }
-    /**
-     * Find zero or one Deployment that matches the filter.
-     * @param {DeploymentFindUniqueArgs} args - Arguments to find a Deployment
-     * @example
-     * // Get one Deployment
-     * const deployment = await prisma.deployment.findUnique({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUnique<T extends DeploymentFindUniqueArgs>(args: SelectSubset<T, DeploymentFindUniqueArgs<ExtArgs>>): Prisma__DeploymentClient<$Result.GetResult<Prisma.$DeploymentPayload<ExtArgs>, T, "findUnique", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find one Deployment that matches the filter or throw an error with `error.code='P2025'`
-     * if no matches were found.
-     * @param {DeploymentFindUniqueOrThrowArgs} args - Arguments to find a Deployment
-     * @example
-     * // Get one Deployment
-     * const deployment = await prisma.deployment.findUniqueOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findUniqueOrThrow<T extends DeploymentFindUniqueOrThrowArgs>(args: SelectSubset<T, DeploymentFindUniqueOrThrowArgs<ExtArgs>>): Prisma__DeploymentClient<$Result.GetResult<Prisma.$DeploymentPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Deployment that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {DeploymentFindFirstArgs} args - Arguments to find a Deployment
-     * @example
-     * // Get one Deployment
-     * const deployment = await prisma.deployment.findFirst({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirst<T extends DeploymentFindFirstArgs>(args?: SelectSubset<T, DeploymentFindFirstArgs<ExtArgs>>): Prisma__DeploymentClient<$Result.GetResult<Prisma.$DeploymentPayload<ExtArgs>, T, "findFirst", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find the first Deployment that matches the filter or
-     * throw `PrismaKnownClientError` with `P2025` code if no matches were found.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {DeploymentFindFirstOrThrowArgs} args - Arguments to find a Deployment
-     * @example
-     * // Get one Deployment
-     * const deployment = await prisma.deployment.findFirstOrThrow({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     */
-    findFirstOrThrow<T extends DeploymentFindFirstOrThrowArgs>(args?: SelectSubset<T, DeploymentFindFirstOrThrowArgs<ExtArgs>>): Prisma__DeploymentClient<$Result.GetResult<Prisma.$DeploymentPayload<ExtArgs>, T, "findFirstOrThrow", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Find zero or more Deployments that matches the filter.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {DeploymentFindManyArgs} args - Arguments to filter and select certain fields only.
-     * @example
-     * // Get all Deployments
-     * const deployments = await prisma.deployment.findMany()
-     * 
-     * // Get first 10 Deployments
-     * const deployments = await prisma.deployment.findMany({ take: 10 })
-     * 
-     * // Only select the `id`
-     * const deploymentWithIdOnly = await prisma.deployment.findMany({ select: { id: true } })
-     * 
-     */
-    findMany<T extends DeploymentFindManyArgs>(args?: SelectSubset<T, DeploymentFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DeploymentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
-
-    /**
-     * Create a Deployment.
-     * @param {DeploymentCreateArgs} args - Arguments to create a Deployment.
-     * @example
-     * // Create one Deployment
-     * const Deployment = await prisma.deployment.create({
-     *   data: {
-     *     // ... data to create a Deployment
-     *   }
-     * })
-     * 
-     */
-    create<T extends DeploymentCreateArgs>(args: SelectSubset<T, DeploymentCreateArgs<ExtArgs>>): Prisma__DeploymentClient<$Result.GetResult<Prisma.$DeploymentPayload<ExtArgs>, T, "create", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Create many Deployments.
-     * @param {DeploymentCreateManyArgs} args - Arguments to create many Deployments.
-     * @example
-     * // Create many Deployments
-     * const deployment = await prisma.deployment.createMany({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     *     
-     */
-    createMany<T extends DeploymentCreateManyArgs>(args?: SelectSubset<T, DeploymentCreateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Create many Deployments and returns the data saved in the database.
-     * @param {DeploymentCreateManyAndReturnArgs} args - Arguments to create many Deployments.
-     * @example
-     * // Create many Deployments
-     * const deployment = await prisma.deployment.createManyAndReturn({
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Create many Deployments and only return the `id`
-     * const deploymentWithIdOnly = await prisma.deployment.createManyAndReturn({
-     *   select: { id: true },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    createManyAndReturn<T extends DeploymentCreateManyAndReturnArgs>(args?: SelectSubset<T, DeploymentCreateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DeploymentPayload<ExtArgs>, T, "createManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Delete a Deployment.
-     * @param {DeploymentDeleteArgs} args - Arguments to delete one Deployment.
-     * @example
-     * // Delete one Deployment
-     * const Deployment = await prisma.deployment.delete({
-     *   where: {
-     *     // ... filter to delete one Deployment
-     *   }
-     * })
-     * 
-     */
-    delete<T extends DeploymentDeleteArgs>(args: SelectSubset<T, DeploymentDeleteArgs<ExtArgs>>): Prisma__DeploymentClient<$Result.GetResult<Prisma.$DeploymentPayload<ExtArgs>, T, "delete", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Update one Deployment.
-     * @param {DeploymentUpdateArgs} args - Arguments to update one Deployment.
-     * @example
-     * // Update one Deployment
-     * const deployment = await prisma.deployment.update({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    update<T extends DeploymentUpdateArgs>(args: SelectSubset<T, DeploymentUpdateArgs<ExtArgs>>): Prisma__DeploymentClient<$Result.GetResult<Prisma.$DeploymentPayload<ExtArgs>, T, "update", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-    /**
-     * Delete zero or more Deployments.
-     * @param {DeploymentDeleteManyArgs} args - Arguments to filter Deployments to delete.
-     * @example
-     * // Delete a few Deployments
-     * const { count } = await prisma.deployment.deleteMany({
-     *   where: {
-     *     // ... provide filter here
-     *   }
-     * })
-     * 
-     */
-    deleteMany<T extends DeploymentDeleteManyArgs>(args?: SelectSubset<T, DeploymentDeleteManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Deployments.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {DeploymentUpdateManyArgs} args - Arguments to update one or more rows.
-     * @example
-     * // Update many Deployments
-     * const deployment = await prisma.deployment.updateMany({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: {
-     *     // ... provide data here
-     *   }
-     * })
-     * 
-     */
-    updateMany<T extends DeploymentUpdateManyArgs>(args: SelectSubset<T, DeploymentUpdateManyArgs<ExtArgs>>): Prisma.PrismaPromise<BatchPayload>
-
-    /**
-     * Update zero or more Deployments and returns the data updated in the database.
-     * @param {DeploymentUpdateManyAndReturnArgs} args - Arguments to update many Deployments.
-     * @example
-     * // Update many Deployments
-     * const deployment = await prisma.deployment.updateManyAndReturn({
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * 
-     * // Update zero or more Deployments and only return the `id`
-     * const deploymentWithIdOnly = await prisma.deployment.updateManyAndReturn({
-     *   select: { id: true },
-     *   where: {
-     *     // ... provide filter here
-     *   },
-     *   data: [
-     *     // ... provide data here
-     *   ]
-     * })
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * 
-     */
-    updateManyAndReturn<T extends DeploymentUpdateManyAndReturnArgs>(args: SelectSubset<T, DeploymentUpdateManyAndReturnArgs<ExtArgs>>): Prisma.PrismaPromise<$Result.GetResult<Prisma.$DeploymentPayload<ExtArgs>, T, "updateManyAndReturn", GlobalOmitOptions>>
-
-    /**
-     * Create or update one Deployment.
-     * @param {DeploymentUpsertArgs} args - Arguments to update or create a Deployment.
-     * @example
-     * // Update or create a Deployment
-     * const deployment = await prisma.deployment.upsert({
-     *   create: {
-     *     // ... data to create a Deployment
-     *   },
-     *   update: {
-     *     // ... in case it already exists, update
-     *   },
-     *   where: {
-     *     // ... the filter for the Deployment we want to update
-     *   }
-     * })
-     */
-    upsert<T extends DeploymentUpsertArgs>(args: SelectSubset<T, DeploymentUpsertArgs<ExtArgs>>): Prisma__DeploymentClient<$Result.GetResult<Prisma.$DeploymentPayload<ExtArgs>, T, "upsert", GlobalOmitOptions>, never, ExtArgs, GlobalOmitOptions>
-
-
-    /**
-     * Count the number of Deployments.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {DeploymentCountArgs} args - Arguments to filter Deployments to count.
-     * @example
-     * // Count the number of Deployments
-     * const count = await prisma.deployment.count({
-     *   where: {
-     *     // ... the filter for the Deployments we want to count
-     *   }
-     * })
-    **/
-    count<T extends DeploymentCountArgs>(
-      args?: Subset<T, DeploymentCountArgs>,
-    ): Prisma.PrismaPromise<
-      T extends $Utils.Record<'select', any>
-        ? T['select'] extends true
-          ? number
-          : GetScalarType<T['select'], DeploymentCountAggregateOutputType>
-        : number
-    >
-
-    /**
-     * Allows you to perform aggregations operations on a Deployment.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {DeploymentAggregateArgs} args - Select which aggregations you would like to apply and on what fields.
-     * @example
-     * // Ordered by age ascending
-     * // Where email contains prisma.io
-     * // Limited to the 10 users
-     * const aggregations = await prisma.user.aggregate({
-     *   _avg: {
-     *     age: true,
-     *   },
-     *   where: {
-     *     email: {
-     *       contains: "prisma.io",
-     *     },
-     *   },
-     *   orderBy: {
-     *     age: "asc",
-     *   },
-     *   take: 10,
-     * })
-    **/
-    aggregate<T extends DeploymentAggregateArgs>(args: Subset<T, DeploymentAggregateArgs>): Prisma.PrismaPromise<GetDeploymentAggregateType<T>>
-
-    /**
-     * Group by Deployment.
-     * Note, that providing `undefined` is treated as the value not being there.
-     * Read more here: https://pris.ly/d/null-undefined
-     * @param {DeploymentGroupByArgs} args - Group by arguments.
-     * @example
-     * // Group by city, order by createdAt, get count
-     * const result = await prisma.user.groupBy({
-     *   by: ['city', 'createdAt'],
-     *   orderBy: {
-     *     createdAt: true
-     *   },
-     *   _count: {
-     *     _all: true
-     *   },
-     * })
-     * 
-    **/
-    groupBy<
-      T extends DeploymentGroupByArgs,
-      HasSelectOrTake extends Or<
-        Extends<'skip', Keys<T>>,
-        Extends<'take', Keys<T>>
-      >,
-      OrderByArg extends True extends HasSelectOrTake
-        ? { orderBy: DeploymentGroupByArgs['orderBy'] }
-        : { orderBy?: DeploymentGroupByArgs['orderBy'] },
-      OrderFields extends ExcludeUnderscoreKeys<Keys<MaybeTupleToUnion<T['orderBy']>>>,
-      ByFields extends MaybeTupleToUnion<T['by']>,
-      ByValid extends Has<ByFields, OrderFields>,
-      HavingFields extends GetHavingFields<T['having']>,
-      HavingValid extends Has<ByFields, HavingFields>,
-      ByEmpty extends T['by'] extends never[] ? True : False,
-      InputErrors extends ByEmpty extends True
-      ? `Error: "by" must not be empty.`
-      : HavingValid extends False
-      ? {
-          [P in HavingFields]: P extends ByFields
-            ? never
-            : P extends string
-            ? `Error: Field "${P}" used in "having" needs to be provided in "by".`
-            : [
-                Error,
-                'Field ',
-                P,
-                ` in "having" needs to be provided in "by"`,
-              ]
-        }[HavingFields]
-      : 'take' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "take", you also need to provide "orderBy"'
-      : 'skip' extends Keys<T>
-      ? 'orderBy' extends Keys<T>
-        ? ByValid extends True
-          ? {}
-          : {
-              [P in OrderFields]: P extends ByFields
-                ? never
-                : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-            }[OrderFields]
-        : 'Error: If you provide "skip", you also need to provide "orderBy"'
-      : ByValid extends True
-      ? {}
-      : {
-          [P in OrderFields]: P extends ByFields
-            ? never
-            : `Error: Field "${P}" in "orderBy" needs to be provided in "by"`
-        }[OrderFields]
-    >(args: SubsetIntersection<T, DeploymentGroupByArgs, OrderByArg> & InputErrors): {} extends InputErrors ? GetDeploymentGroupByPayload<T> : Prisma.PrismaPromise<InputErrors>
-  /**
-   * Fields of the Deployment model
-   */
-  readonly fields: DeploymentFieldRefs;
-  }
-
-  /**
-   * The delegate class that acts as a "Promise-like" for Deployment.
-   * Why is this prefixed with `Prisma__`?
-   * Because we want to prevent naming conflicts as mentioned in
-   * https://github.com/prisma/prisma-client-js/issues/707
-   */
-  export interface Prisma__DeploymentClient<T, Null = never, ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
-    readonly [Symbol.toStringTag]: "PrismaPromise"
-    project<T extends ProjectDefaultArgs<ExtArgs> = {}>(args?: Subset<T, ProjectDefaultArgs<ExtArgs>>): Prisma__ProjectClient<$Result.GetResult<Prisma.$ProjectPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-    task<T extends Deployment$taskArgs<ExtArgs> = {}>(args?: Subset<T, Deployment$taskArgs<ExtArgs>>): Prisma__TaskClient<$Result.GetResult<Prisma.$TaskPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    pullRequest<T extends Deployment$pullRequestArgs<ExtArgs> = {}>(args?: Subset<T, Deployment$pullRequestArgs<ExtArgs>>): Prisma__PullRequestClient<$Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-    /**
-     * Attaches callbacks for the resolution and/or rejection of the Promise.
-     * @param onfulfilled The callback to execute when the Promise is resolved.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of which ever callback is executed.
-     */
-    then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => TResult1 | PromiseLike<TResult1>) | undefined | null, onrejected?: ((reason: any) => TResult2 | PromiseLike<TResult2>) | undefined | null): $Utils.JsPromise<TResult1 | TResult2>
-    /**
-     * Attaches a callback for only the rejection of the Promise.
-     * @param onrejected The callback to execute when the Promise is rejected.
-     * @returns A Promise for the completion of the callback.
-     */
-    catch<TResult = never>(onrejected?: ((reason: any) => TResult | PromiseLike<TResult>) | undefined | null): $Utils.JsPromise<T | TResult>
-    /**
-     * Attaches a callback that is invoked when the Promise is settled (fulfilled or rejected). The
-     * resolved value cannot be modified from the callback.
-     * @param onfinally The callback to execute when the Promise is settled (fulfilled or rejected).
-     * @returns A Promise for the completion of the callback.
-     */
-    finally(onfinally?: (() => void) | undefined | null): $Utils.JsPromise<T>
-  }
-
-
-
-
-  /**
-   * Fields of the Deployment model
-   */
-  interface DeploymentFieldRefs {
-    readonly id: FieldRef<"Deployment", 'String'>
-    readonly projectId: FieldRef<"Deployment", 'String'>
-    readonly taskId: FieldRef<"Deployment", 'String'>
-    readonly pullRequestId: FieldRef<"Deployment", 'String'>
-    readonly environment: FieldRef<"Deployment", 'String'>
-    readonly status: FieldRef<"Deployment", 'String'>
-    readonly version: FieldRef<"Deployment", 'String'>
-    readonly url: FieldRef<"Deployment", 'String'>
-    readonly deployedBy: FieldRef<"Deployment", 'String'>
-    readonly deployedAt: FieldRef<"Deployment", 'DateTime'>
-    readonly createdAt: FieldRef<"Deployment", 'DateTime'>
-    readonly updatedAt: FieldRef<"Deployment", 'DateTime'>
-  }
-    
-
-  // Custom InputTypes
-  /**
-   * Deployment findUnique
-   */
-  export type DeploymentFindUniqueArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Deployment
-     */
-    select?: DeploymentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Deployment
-     */
-    omit?: DeploymentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeploymentInclude<ExtArgs> | null
-    /**
-     * Filter, which Deployment to fetch.
-     */
-    where: DeploymentWhereUniqueInput
-  }
-
-  /**
-   * Deployment findUniqueOrThrow
-   */
-  export type DeploymentFindUniqueOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Deployment
-     */
-    select?: DeploymentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Deployment
-     */
-    omit?: DeploymentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeploymentInclude<ExtArgs> | null
-    /**
-     * Filter, which Deployment to fetch.
-     */
-    where: DeploymentWhereUniqueInput
-  }
-
-  /**
-   * Deployment findFirst
-   */
-  export type DeploymentFindFirstArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Deployment
-     */
-    select?: DeploymentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Deployment
-     */
-    omit?: DeploymentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeploymentInclude<ExtArgs> | null
-    /**
-     * Filter, which Deployment to fetch.
-     */
-    where?: DeploymentWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Deployments to fetch.
-     */
-    orderBy?: DeploymentOrderByWithRelationInput | DeploymentOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Deployments.
-     */
-    cursor?: DeploymentWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Deployments from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Deployments.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Deployments.
-     */
-    distinct?: DeploymentScalarFieldEnum | DeploymentScalarFieldEnum[]
-  }
-
-  /**
-   * Deployment findFirstOrThrow
-   */
-  export type DeploymentFindFirstOrThrowArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Deployment
-     */
-    select?: DeploymentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Deployment
-     */
-    omit?: DeploymentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeploymentInclude<ExtArgs> | null
-    /**
-     * Filter, which Deployment to fetch.
-     */
-    where?: DeploymentWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Deployments to fetch.
-     */
-    orderBy?: DeploymentOrderByWithRelationInput | DeploymentOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for searching for Deployments.
-     */
-    cursor?: DeploymentWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Deployments from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Deployments.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Deployments.
-     */
-    distinct?: DeploymentScalarFieldEnum | DeploymentScalarFieldEnum[]
-  }
-
-  /**
-   * Deployment findMany
-   */
-  export type DeploymentFindManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Deployment
-     */
-    select?: DeploymentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Deployment
-     */
-    omit?: DeploymentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeploymentInclude<ExtArgs> | null
-    /**
-     * Filter, which Deployments to fetch.
-     */
-    where?: DeploymentWhereInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/sorting Sorting Docs}
-     * 
-     * Determine the order of Deployments to fetch.
-     */
-    orderBy?: DeploymentOrderByWithRelationInput | DeploymentOrderByWithRelationInput[]
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination#cursor-based-pagination Cursor Docs}
-     * 
-     * Sets the position for listing Deployments.
-     */
-    cursor?: DeploymentWhereUniqueInput
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Take `±n` Deployments from the position of the cursor.
-     */
-    take?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/pagination Pagination Docs}
-     * 
-     * Skip the first `n` Deployments.
-     */
-    skip?: number
-    /**
-     * {@link https://www.prisma.io/docs/concepts/components/prisma-client/distinct Distinct Docs}
-     * 
-     * Filter by unique combinations of Deployments.
-     */
-    distinct?: DeploymentScalarFieldEnum | DeploymentScalarFieldEnum[]
-  }
-
-  /**
-   * Deployment create
-   */
-  export type DeploymentCreateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Deployment
-     */
-    select?: DeploymentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Deployment
-     */
-    omit?: DeploymentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeploymentInclude<ExtArgs> | null
-    /**
-     * The data needed to create a Deployment.
-     */
-    data: XOR<DeploymentCreateInput, DeploymentUncheckedCreateInput>
-  }
-
-  /**
-   * Deployment createMany
-   */
-  export type DeploymentCreateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to create many Deployments.
-     */
-    data: DeploymentCreateManyInput | DeploymentCreateManyInput[]
-    skipDuplicates?: boolean
-  }
-
-  /**
-   * Deployment createManyAndReturn
-   */
-  export type DeploymentCreateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Deployment
-     */
-    select?: DeploymentSelectCreateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Deployment
-     */
-    omit?: DeploymentOmit<ExtArgs> | null
-    /**
-     * The data used to create many Deployments.
-     */
-    data: DeploymentCreateManyInput | DeploymentCreateManyInput[]
-    skipDuplicates?: boolean
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeploymentIncludeCreateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Deployment update
-   */
-  export type DeploymentUpdateArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Deployment
-     */
-    select?: DeploymentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Deployment
-     */
-    omit?: DeploymentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeploymentInclude<ExtArgs> | null
-    /**
-     * The data needed to update a Deployment.
-     */
-    data: XOR<DeploymentUpdateInput, DeploymentUncheckedUpdateInput>
-    /**
-     * Choose, which Deployment to update.
-     */
-    where: DeploymentWhereUniqueInput
-  }
-
-  /**
-   * Deployment updateMany
-   */
-  export type DeploymentUpdateManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * The data used to update Deployments.
-     */
-    data: XOR<DeploymentUpdateManyMutationInput, DeploymentUncheckedUpdateManyInput>
-    /**
-     * Filter which Deployments to update
-     */
-    where?: DeploymentWhereInput
-    /**
-     * Limit how many Deployments to update.
-     */
-    limit?: number
-  }
-
-  /**
-   * Deployment updateManyAndReturn
-   */
-  export type DeploymentUpdateManyAndReturnArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Deployment
-     */
-    select?: DeploymentSelectUpdateManyAndReturn<ExtArgs> | null
-    /**
-     * Omit specific fields from the Deployment
-     */
-    omit?: DeploymentOmit<ExtArgs> | null
-    /**
-     * The data used to update Deployments.
-     */
-    data: XOR<DeploymentUpdateManyMutationInput, DeploymentUncheckedUpdateManyInput>
-    /**
-     * Filter which Deployments to update
-     */
-    where?: DeploymentWhereInput
-    /**
-     * Limit how many Deployments to update.
-     */
-    limit?: number
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeploymentIncludeUpdateManyAndReturn<ExtArgs> | null
-  }
-
-  /**
-   * Deployment upsert
-   */
-  export type DeploymentUpsertArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Deployment
-     */
-    select?: DeploymentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Deployment
-     */
-    omit?: DeploymentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeploymentInclude<ExtArgs> | null
-    /**
-     * The filter to search for the Deployment to update in case it exists.
-     */
-    where: DeploymentWhereUniqueInput
-    /**
-     * In case the Deployment found by the `where` argument doesn't exist, create a new Deployment with this data.
-     */
-    create: XOR<DeploymentCreateInput, DeploymentUncheckedCreateInput>
-    /**
-     * In case the Deployment was found with the provided `where` argument, update it with this data.
-     */
-    update: XOR<DeploymentUpdateInput, DeploymentUncheckedUpdateInput>
-  }
-
-  /**
-   * Deployment delete
-   */
-  export type DeploymentDeleteArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Deployment
-     */
-    select?: DeploymentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Deployment
-     */
-    omit?: DeploymentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeploymentInclude<ExtArgs> | null
-    /**
-     * Filter which Deployment to delete.
-     */
-    where: DeploymentWhereUniqueInput
-  }
-
-  /**
-   * Deployment deleteMany
-   */
-  export type DeploymentDeleteManyArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Filter which Deployments to delete
-     */
-    where?: DeploymentWhereInput
-    /**
-     * Limit how many Deployments to delete.
-     */
-    limit?: number
-  }
-
-  /**
-   * Deployment.task
-   */
-  export type Deployment$taskArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Task
-     */
-    select?: TaskSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Task
-     */
-    omit?: TaskOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: TaskInclude<ExtArgs> | null
-    where?: TaskWhereInput
-  }
-
-  /**
-   * Deployment.pullRequest
-   */
-  export type Deployment$pullRequestArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the PullRequest
-     */
-    select?: PullRequestSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the PullRequest
-     */
-    omit?: PullRequestOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: PullRequestInclude<ExtArgs> | null
-    where?: PullRequestWhereInput
-  }
-
-  /**
-   * Deployment without action
-   */
-  export type DeploymentDefaultArgs<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
-    /**
-     * Select specific fields to fetch from the Deployment
-     */
-    select?: DeploymentSelect<ExtArgs> | null
-    /**
-     * Omit specific fields from the Deployment
-     */
-    omit?: DeploymentOmit<ExtArgs> | null
-    /**
-     * Choose, which related nodes to fetch as well
-     */
-    include?: DeploymentInclude<ExtArgs> | null
-  }
-
-
-  /**
    * Enums
    */
 
@@ -19650,17 +14318,6 @@ export namespace Prisma {
   export type TaskScalarFieldEnum = (typeof TaskScalarFieldEnum)[keyof typeof TaskScalarFieldEnum]
 
 
-  export const TaskLinkScalarFieldEnum: {
-    id: 'id',
-    sourceTaskId: 'sourceTaskId',
-    targetTaskId: 'targetTaskId',
-    type: 'type',
-    createdAt: 'createdAt'
-  };
-
-  export type TaskLinkScalarFieldEnum = (typeof TaskLinkScalarFieldEnum)[keyof typeof TaskLinkScalarFieldEnum]
-
-
   export const SprintScalarFieldEnum: {
     id: 'id',
     name: 'name',
@@ -19674,18 +14331,6 @@ export namespace Prisma {
   };
 
   export type SprintScalarFieldEnum = (typeof SprintScalarFieldEnum)[keyof typeof SprintScalarFieldEnum]
-
-
-  export const SubtaskScalarFieldEnum: {
-    id: 'id',
-    taskId: 'taskId',
-    title: 'title',
-    completed: 'completed',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type SubtaskScalarFieldEnum = (typeof SubtaskScalarFieldEnum)[keyof typeof SubtaskScalarFieldEnum]
 
 
   export const CommentScalarFieldEnum: {
@@ -19717,48 +14362,6 @@ export namespace Prisma {
   };
 
   export type ActivityEventScalarFieldEnum = (typeof ActivityEventScalarFieldEnum)[keyof typeof ActivityEventScalarFieldEnum]
-
-
-  export const PullRequestScalarFieldEnum: {
-    id: 'id',
-    projectId: 'projectId',
-    taskId: 'taskId',
-    provider: 'provider',
-    repository: 'repository',
-    number: 'number',
-    title: 'title',
-    url: 'url',
-    branch: 'branch',
-    targetBranch: 'targetBranch',
-    status: 'status',
-    reviewState: 'reviewState',
-    ciStatus: 'ciStatus',
-    author: 'author',
-    openedAt: 'openedAt',
-    mergedAt: 'mergedAt',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type PullRequestScalarFieldEnum = (typeof PullRequestScalarFieldEnum)[keyof typeof PullRequestScalarFieldEnum]
-
-
-  export const DeploymentScalarFieldEnum: {
-    id: 'id',
-    projectId: 'projectId',
-    taskId: 'taskId',
-    pullRequestId: 'pullRequestId',
-    environment: 'environment',
-    status: 'status',
-    version: 'version',
-    url: 'url',
-    deployedBy: 'deployedBy',
-    deployedAt: 'deployedAt',
-    createdAt: 'createdAt',
-    updatedAt: 'updatedAt'
-  };
-
-  export type DeploymentScalarFieldEnum = (typeof DeploymentScalarFieldEnum)[keyof typeof DeploymentScalarFieldEnum]
 
 
   export const SortOrder: {
@@ -20216,8 +14819,6 @@ export namespace Prisma {
     sprints?: SprintListRelationFilter
     invites?: ProjectInviteListRelationFilter
     activityEvents?: ActivityEventListRelationFilter
-    pullRequests?: PullRequestListRelationFilter
-    deployments?: DeploymentListRelationFilter
   }
 
   export type ProjectOrderByWithRelationInput = {
@@ -20239,8 +14840,6 @@ export namespace Prisma {
     sprints?: SprintOrderByRelationAggregateInput
     invites?: ProjectInviteOrderByRelationAggregateInput
     activityEvents?: ActivityEventOrderByRelationAggregateInput
-    pullRequests?: PullRequestOrderByRelationAggregateInput
-    deployments?: DeploymentOrderByRelationAggregateInput
   }
 
   export type ProjectWhereUniqueInput = Prisma.AtLeast<{
@@ -20266,8 +14865,6 @@ export namespace Prisma {
     sprints?: SprintListRelationFilter
     invites?: ProjectInviteListRelationFilter
     activityEvents?: ActivityEventListRelationFilter
-    pullRequests?: PullRequestListRelationFilter
-    deployments?: DeploymentListRelationFilter
   }, "id" | "ownerId_key">
 
   export type ProjectOrderByWithAggregationInput = {
@@ -20497,13 +15094,8 @@ export namespace Prisma {
     sprint?: XOR<SprintNullableScalarRelationFilter, SprintWhereInput> | null
     assignee?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
-    subtasks?: SubtaskListRelationFilter
     comments?: CommentListRelationFilter
-    linkedFrom?: TaskLinkListRelationFilter
-    linkedTo?: TaskLinkListRelationFilter
     activityEvents?: ActivityEventListRelationFilter
-    pullRequests?: PullRequestListRelationFilter
-    deployments?: DeploymentListRelationFilter
   }
 
   export type TaskOrderByWithRelationInput = {
@@ -20532,13 +15124,8 @@ export namespace Prisma {
     sprint?: SprintOrderByWithRelationInput
     assignee?: UserOrderByWithRelationInput
     createdBy?: UserOrderByWithRelationInput
-    subtasks?: SubtaskOrderByRelationAggregateInput
     comments?: CommentOrderByRelationAggregateInput
-    linkedFrom?: TaskLinkOrderByRelationAggregateInput
-    linkedTo?: TaskLinkOrderByRelationAggregateInput
     activityEvents?: ActivityEventOrderByRelationAggregateInput
-    pullRequests?: PullRequestOrderByRelationAggregateInput
-    deployments?: DeploymentOrderByRelationAggregateInput
   }
 
   export type TaskWhereUniqueInput = Prisma.AtLeast<{
@@ -20570,13 +15157,8 @@ export namespace Prisma {
     sprint?: XOR<SprintNullableScalarRelationFilter, SprintWhereInput> | null
     assignee?: XOR<UserNullableScalarRelationFilter, UserWhereInput> | null
     createdBy?: XOR<UserScalarRelationFilter, UserWhereInput>
-    subtasks?: SubtaskListRelationFilter
     comments?: CommentListRelationFilter
-    linkedFrom?: TaskLinkListRelationFilter
-    linkedTo?: TaskLinkListRelationFilter
     activityEvents?: ActivityEventListRelationFilter
-    pullRequests?: PullRequestListRelationFilter
-    deployments?: DeploymentListRelationFilter
   }, "id">
 
   export type TaskOrderByWithAggregationInput = {
@@ -20633,65 +15215,6 @@ export namespace Prisma {
     dueDate?: DateTimeNullableWithAggregatesFilter<"Task"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Task"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Task"> | Date | string
-  }
-
-  export type TaskLinkWhereInput = {
-    AND?: TaskLinkWhereInput | TaskLinkWhereInput[]
-    OR?: TaskLinkWhereInput[]
-    NOT?: TaskLinkWhereInput | TaskLinkWhereInput[]
-    id?: StringFilter<"TaskLink"> | string
-    sourceTaskId?: StringFilter<"TaskLink"> | string
-    targetTaskId?: StringFilter<"TaskLink"> | string
-    type?: StringFilter<"TaskLink"> | string
-    createdAt?: DateTimeFilter<"TaskLink"> | Date | string
-    sourceTask?: XOR<TaskScalarRelationFilter, TaskWhereInput>
-    targetTask?: XOR<TaskScalarRelationFilter, TaskWhereInput>
-  }
-
-  export type TaskLinkOrderByWithRelationInput = {
-    id?: SortOrder
-    sourceTaskId?: SortOrder
-    targetTaskId?: SortOrder
-    type?: SortOrder
-    createdAt?: SortOrder
-    sourceTask?: TaskOrderByWithRelationInput
-    targetTask?: TaskOrderByWithRelationInput
-  }
-
-  export type TaskLinkWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    sourceTaskId_targetTaskId_type?: TaskLinkSourceTaskIdTargetTaskIdTypeCompoundUniqueInput
-    AND?: TaskLinkWhereInput | TaskLinkWhereInput[]
-    OR?: TaskLinkWhereInput[]
-    NOT?: TaskLinkWhereInput | TaskLinkWhereInput[]
-    sourceTaskId?: StringFilter<"TaskLink"> | string
-    targetTaskId?: StringFilter<"TaskLink"> | string
-    type?: StringFilter<"TaskLink"> | string
-    createdAt?: DateTimeFilter<"TaskLink"> | Date | string
-    sourceTask?: XOR<TaskScalarRelationFilter, TaskWhereInput>
-    targetTask?: XOR<TaskScalarRelationFilter, TaskWhereInput>
-  }, "id" | "sourceTaskId_targetTaskId_type">
-
-  export type TaskLinkOrderByWithAggregationInput = {
-    id?: SortOrder
-    sourceTaskId?: SortOrder
-    targetTaskId?: SortOrder
-    type?: SortOrder
-    createdAt?: SortOrder
-    _count?: TaskLinkCountOrderByAggregateInput
-    _max?: TaskLinkMaxOrderByAggregateInput
-    _min?: TaskLinkMinOrderByAggregateInput
-  }
-
-  export type TaskLinkScalarWhereWithAggregatesInput = {
-    AND?: TaskLinkScalarWhereWithAggregatesInput | TaskLinkScalarWhereWithAggregatesInput[]
-    OR?: TaskLinkScalarWhereWithAggregatesInput[]
-    NOT?: TaskLinkScalarWhereWithAggregatesInput | TaskLinkScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"TaskLink"> | string
-    sourceTaskId?: StringWithAggregatesFilter<"TaskLink"> | string
-    targetTaskId?: StringWithAggregatesFilter<"TaskLink"> | string
-    type?: StringWithAggregatesFilter<"TaskLink"> | string
-    createdAt?: DateTimeWithAggregatesFilter<"TaskLink"> | Date | string
   }
 
   export type SprintWhereInput = {
@@ -20770,66 +15293,6 @@ export namespace Prisma {
     endDate?: DateTimeNullableWithAggregatesFilter<"Sprint"> | Date | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Sprint"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Sprint"> | Date | string
-  }
-
-  export type SubtaskWhereInput = {
-    AND?: SubtaskWhereInput | SubtaskWhereInput[]
-    OR?: SubtaskWhereInput[]
-    NOT?: SubtaskWhereInput | SubtaskWhereInput[]
-    id?: StringFilter<"Subtask"> | string
-    taskId?: StringFilter<"Subtask"> | string
-    title?: StringFilter<"Subtask"> | string
-    completed?: BoolFilter<"Subtask"> | boolean
-    createdAt?: DateTimeFilter<"Subtask"> | Date | string
-    updatedAt?: DateTimeFilter<"Subtask"> | Date | string
-    task?: XOR<TaskScalarRelationFilter, TaskWhereInput>
-  }
-
-  export type SubtaskOrderByWithRelationInput = {
-    id?: SortOrder
-    taskId?: SortOrder
-    title?: SortOrder
-    completed?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    task?: TaskOrderByWithRelationInput
-  }
-
-  export type SubtaskWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: SubtaskWhereInput | SubtaskWhereInput[]
-    OR?: SubtaskWhereInput[]
-    NOT?: SubtaskWhereInput | SubtaskWhereInput[]
-    taskId?: StringFilter<"Subtask"> | string
-    title?: StringFilter<"Subtask"> | string
-    completed?: BoolFilter<"Subtask"> | boolean
-    createdAt?: DateTimeFilter<"Subtask"> | Date | string
-    updatedAt?: DateTimeFilter<"Subtask"> | Date | string
-    task?: XOR<TaskScalarRelationFilter, TaskWhereInput>
-  }, "id">
-
-  export type SubtaskOrderByWithAggregationInput = {
-    id?: SortOrder
-    taskId?: SortOrder
-    title?: SortOrder
-    completed?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: SubtaskCountOrderByAggregateInput
-    _max?: SubtaskMaxOrderByAggregateInput
-    _min?: SubtaskMinOrderByAggregateInput
-  }
-
-  export type SubtaskScalarWhereWithAggregatesInput = {
-    AND?: SubtaskScalarWhereWithAggregatesInput | SubtaskScalarWhereWithAggregatesInput[]
-    OR?: SubtaskScalarWhereWithAggregatesInput[]
-    NOT?: SubtaskScalarWhereWithAggregatesInput | SubtaskScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Subtask"> | string
-    taskId?: StringWithAggregatesFilter<"Subtask"> | string
-    title?: StringWithAggregatesFilter<"Subtask"> | string
-    completed?: BoolWithAggregatesFilter<"Subtask"> | boolean
-    createdAt?: DateTimeWithAggregatesFilter<"Subtask"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Subtask"> | Date | string
   }
 
   export type CommentWhereInput = {
@@ -20994,231 +15457,6 @@ export namespace Prisma {
     severity?: StringWithAggregatesFilter<"ActivityEvent"> | string
     metadata?: JsonNullableWithAggregatesFilter<"ActivityEvent">
     createdAt?: DateTimeWithAggregatesFilter<"ActivityEvent"> | Date | string
-  }
-
-  export type PullRequestWhereInput = {
-    AND?: PullRequestWhereInput | PullRequestWhereInput[]
-    OR?: PullRequestWhereInput[]
-    NOT?: PullRequestWhereInput | PullRequestWhereInput[]
-    id?: StringFilter<"PullRequest"> | string
-    projectId?: StringFilter<"PullRequest"> | string
-    taskId?: StringNullableFilter<"PullRequest"> | string | null
-    provider?: StringFilter<"PullRequest"> | string
-    repository?: StringFilter<"PullRequest"> | string
-    number?: IntFilter<"PullRequest"> | number
-    title?: StringFilter<"PullRequest"> | string
-    url?: StringNullableFilter<"PullRequest"> | string | null
-    branch?: StringNullableFilter<"PullRequest"> | string | null
-    targetBranch?: StringNullableFilter<"PullRequest"> | string | null
-    status?: StringFilter<"PullRequest"> | string
-    reviewState?: StringFilter<"PullRequest"> | string
-    ciStatus?: StringFilter<"PullRequest"> | string
-    author?: StringNullableFilter<"PullRequest"> | string | null
-    openedAt?: DateTimeNullableFilter<"PullRequest"> | Date | string | null
-    mergedAt?: DateTimeNullableFilter<"PullRequest"> | Date | string | null
-    createdAt?: DateTimeFilter<"PullRequest"> | Date | string
-    updatedAt?: DateTimeFilter<"PullRequest"> | Date | string
-    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
-    task?: XOR<TaskNullableScalarRelationFilter, TaskWhereInput> | null
-    deployments?: DeploymentListRelationFilter
-  }
-
-  export type PullRequestOrderByWithRelationInput = {
-    id?: SortOrder
-    projectId?: SortOrder
-    taskId?: SortOrderInput | SortOrder
-    provider?: SortOrder
-    repository?: SortOrder
-    number?: SortOrder
-    title?: SortOrder
-    url?: SortOrderInput | SortOrder
-    branch?: SortOrderInput | SortOrder
-    targetBranch?: SortOrderInput | SortOrder
-    status?: SortOrder
-    reviewState?: SortOrder
-    ciStatus?: SortOrder
-    author?: SortOrderInput | SortOrder
-    openedAt?: SortOrderInput | SortOrder
-    mergedAt?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    project?: ProjectOrderByWithRelationInput
-    task?: TaskOrderByWithRelationInput
-    deployments?: DeploymentOrderByRelationAggregateInput
-  }
-
-  export type PullRequestWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    projectId_provider_repository_number?: PullRequestProjectIdProviderRepositoryNumberCompoundUniqueInput
-    AND?: PullRequestWhereInput | PullRequestWhereInput[]
-    OR?: PullRequestWhereInput[]
-    NOT?: PullRequestWhereInput | PullRequestWhereInput[]
-    projectId?: StringFilter<"PullRequest"> | string
-    taskId?: StringNullableFilter<"PullRequest"> | string | null
-    provider?: StringFilter<"PullRequest"> | string
-    repository?: StringFilter<"PullRequest"> | string
-    number?: IntFilter<"PullRequest"> | number
-    title?: StringFilter<"PullRequest"> | string
-    url?: StringNullableFilter<"PullRequest"> | string | null
-    branch?: StringNullableFilter<"PullRequest"> | string | null
-    targetBranch?: StringNullableFilter<"PullRequest"> | string | null
-    status?: StringFilter<"PullRequest"> | string
-    reviewState?: StringFilter<"PullRequest"> | string
-    ciStatus?: StringFilter<"PullRequest"> | string
-    author?: StringNullableFilter<"PullRequest"> | string | null
-    openedAt?: DateTimeNullableFilter<"PullRequest"> | Date | string | null
-    mergedAt?: DateTimeNullableFilter<"PullRequest"> | Date | string | null
-    createdAt?: DateTimeFilter<"PullRequest"> | Date | string
-    updatedAt?: DateTimeFilter<"PullRequest"> | Date | string
-    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
-    task?: XOR<TaskNullableScalarRelationFilter, TaskWhereInput> | null
-    deployments?: DeploymentListRelationFilter
-  }, "id" | "projectId_provider_repository_number">
-
-  export type PullRequestOrderByWithAggregationInput = {
-    id?: SortOrder
-    projectId?: SortOrder
-    taskId?: SortOrderInput | SortOrder
-    provider?: SortOrder
-    repository?: SortOrder
-    number?: SortOrder
-    title?: SortOrder
-    url?: SortOrderInput | SortOrder
-    branch?: SortOrderInput | SortOrder
-    targetBranch?: SortOrderInput | SortOrder
-    status?: SortOrder
-    reviewState?: SortOrder
-    ciStatus?: SortOrder
-    author?: SortOrderInput | SortOrder
-    openedAt?: SortOrderInput | SortOrder
-    mergedAt?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: PullRequestCountOrderByAggregateInput
-    _avg?: PullRequestAvgOrderByAggregateInput
-    _max?: PullRequestMaxOrderByAggregateInput
-    _min?: PullRequestMinOrderByAggregateInput
-    _sum?: PullRequestSumOrderByAggregateInput
-  }
-
-  export type PullRequestScalarWhereWithAggregatesInput = {
-    AND?: PullRequestScalarWhereWithAggregatesInput | PullRequestScalarWhereWithAggregatesInput[]
-    OR?: PullRequestScalarWhereWithAggregatesInput[]
-    NOT?: PullRequestScalarWhereWithAggregatesInput | PullRequestScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"PullRequest"> | string
-    projectId?: StringWithAggregatesFilter<"PullRequest"> | string
-    taskId?: StringNullableWithAggregatesFilter<"PullRequest"> | string | null
-    provider?: StringWithAggregatesFilter<"PullRequest"> | string
-    repository?: StringWithAggregatesFilter<"PullRequest"> | string
-    number?: IntWithAggregatesFilter<"PullRequest"> | number
-    title?: StringWithAggregatesFilter<"PullRequest"> | string
-    url?: StringNullableWithAggregatesFilter<"PullRequest"> | string | null
-    branch?: StringNullableWithAggregatesFilter<"PullRequest"> | string | null
-    targetBranch?: StringNullableWithAggregatesFilter<"PullRequest"> | string | null
-    status?: StringWithAggregatesFilter<"PullRequest"> | string
-    reviewState?: StringWithAggregatesFilter<"PullRequest"> | string
-    ciStatus?: StringWithAggregatesFilter<"PullRequest"> | string
-    author?: StringNullableWithAggregatesFilter<"PullRequest"> | string | null
-    openedAt?: DateTimeNullableWithAggregatesFilter<"PullRequest"> | Date | string | null
-    mergedAt?: DateTimeNullableWithAggregatesFilter<"PullRequest"> | Date | string | null
-    createdAt?: DateTimeWithAggregatesFilter<"PullRequest"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"PullRequest"> | Date | string
-  }
-
-  export type DeploymentWhereInput = {
-    AND?: DeploymentWhereInput | DeploymentWhereInput[]
-    OR?: DeploymentWhereInput[]
-    NOT?: DeploymentWhereInput | DeploymentWhereInput[]
-    id?: StringFilter<"Deployment"> | string
-    projectId?: StringFilter<"Deployment"> | string
-    taskId?: StringNullableFilter<"Deployment"> | string | null
-    pullRequestId?: StringNullableFilter<"Deployment"> | string | null
-    environment?: StringFilter<"Deployment"> | string
-    status?: StringFilter<"Deployment"> | string
-    version?: StringNullableFilter<"Deployment"> | string | null
-    url?: StringNullableFilter<"Deployment"> | string | null
-    deployedBy?: StringNullableFilter<"Deployment"> | string | null
-    deployedAt?: DateTimeNullableFilter<"Deployment"> | Date | string | null
-    createdAt?: DateTimeFilter<"Deployment"> | Date | string
-    updatedAt?: DateTimeFilter<"Deployment"> | Date | string
-    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
-    task?: XOR<TaskNullableScalarRelationFilter, TaskWhereInput> | null
-    pullRequest?: XOR<PullRequestNullableScalarRelationFilter, PullRequestWhereInput> | null
-  }
-
-  export type DeploymentOrderByWithRelationInput = {
-    id?: SortOrder
-    projectId?: SortOrder
-    taskId?: SortOrderInput | SortOrder
-    pullRequestId?: SortOrderInput | SortOrder
-    environment?: SortOrder
-    status?: SortOrder
-    version?: SortOrderInput | SortOrder
-    url?: SortOrderInput | SortOrder
-    deployedBy?: SortOrderInput | SortOrder
-    deployedAt?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    project?: ProjectOrderByWithRelationInput
-    task?: TaskOrderByWithRelationInput
-    pullRequest?: PullRequestOrderByWithRelationInput
-  }
-
-  export type DeploymentWhereUniqueInput = Prisma.AtLeast<{
-    id?: string
-    AND?: DeploymentWhereInput | DeploymentWhereInput[]
-    OR?: DeploymentWhereInput[]
-    NOT?: DeploymentWhereInput | DeploymentWhereInput[]
-    projectId?: StringFilter<"Deployment"> | string
-    taskId?: StringNullableFilter<"Deployment"> | string | null
-    pullRequestId?: StringNullableFilter<"Deployment"> | string | null
-    environment?: StringFilter<"Deployment"> | string
-    status?: StringFilter<"Deployment"> | string
-    version?: StringNullableFilter<"Deployment"> | string | null
-    url?: StringNullableFilter<"Deployment"> | string | null
-    deployedBy?: StringNullableFilter<"Deployment"> | string | null
-    deployedAt?: DateTimeNullableFilter<"Deployment"> | Date | string | null
-    createdAt?: DateTimeFilter<"Deployment"> | Date | string
-    updatedAt?: DateTimeFilter<"Deployment"> | Date | string
-    project?: XOR<ProjectScalarRelationFilter, ProjectWhereInput>
-    task?: XOR<TaskNullableScalarRelationFilter, TaskWhereInput> | null
-    pullRequest?: XOR<PullRequestNullableScalarRelationFilter, PullRequestWhereInput> | null
-  }, "id">
-
-  export type DeploymentOrderByWithAggregationInput = {
-    id?: SortOrder
-    projectId?: SortOrder
-    taskId?: SortOrderInput | SortOrder
-    pullRequestId?: SortOrderInput | SortOrder
-    environment?: SortOrder
-    status?: SortOrder
-    version?: SortOrderInput | SortOrder
-    url?: SortOrderInput | SortOrder
-    deployedBy?: SortOrderInput | SortOrder
-    deployedAt?: SortOrderInput | SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-    _count?: DeploymentCountOrderByAggregateInput
-    _max?: DeploymentMaxOrderByAggregateInput
-    _min?: DeploymentMinOrderByAggregateInput
-  }
-
-  export type DeploymentScalarWhereWithAggregatesInput = {
-    AND?: DeploymentScalarWhereWithAggregatesInput | DeploymentScalarWhereWithAggregatesInput[]
-    OR?: DeploymentScalarWhereWithAggregatesInput[]
-    NOT?: DeploymentScalarWhereWithAggregatesInput | DeploymentScalarWhereWithAggregatesInput[]
-    id?: StringWithAggregatesFilter<"Deployment"> | string
-    projectId?: StringWithAggregatesFilter<"Deployment"> | string
-    taskId?: StringNullableWithAggregatesFilter<"Deployment"> | string | null
-    pullRequestId?: StringNullableWithAggregatesFilter<"Deployment"> | string | null
-    environment?: StringWithAggregatesFilter<"Deployment"> | string
-    status?: StringWithAggregatesFilter<"Deployment"> | string
-    version?: StringNullableWithAggregatesFilter<"Deployment"> | string | null
-    url?: StringNullableWithAggregatesFilter<"Deployment"> | string | null
-    deployedBy?: StringNullableWithAggregatesFilter<"Deployment"> | string | null
-    deployedAt?: DateTimeNullableWithAggregatesFilter<"Deployment"> | Date | string | null
-    createdAt?: DateTimeWithAggregatesFilter<"Deployment"> | Date | string
-    updatedAt?: DateTimeWithAggregatesFilter<"Deployment"> | Date | string
   }
 
   export type UserCreateInput = {
@@ -21606,8 +15844,6 @@ export namespace Prisma {
     sprints?: SprintCreateNestedManyWithoutProjectInput
     invites?: ProjectInviteCreateNestedManyWithoutProjectInput
     activityEvents?: ActivityEventCreateNestedManyWithoutProjectInput
-    pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
-    deployments?: DeploymentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateInput = {
@@ -21628,8 +15864,6 @@ export namespace Prisma {
     sprints?: SprintUncheckedCreateNestedManyWithoutProjectInput
     invites?: ProjectInviteUncheckedCreateNestedManyWithoutProjectInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutProjectInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUpdateInput = {
@@ -21650,8 +15884,6 @@ export namespace Prisma {
     sprints?: SprintUpdateManyWithoutProjectNestedInput
     invites?: ProjectInviteUpdateManyWithoutProjectNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutProjectNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
-    deployments?: DeploymentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateInput = {
@@ -21672,8 +15904,6 @@ export namespace Prisma {
     sprints?: SprintUncheckedUpdateManyWithoutProjectNestedInput
     invites?: ProjectInviteUncheckedUpdateManyWithoutProjectNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutProjectNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectCreateManyInput = {
@@ -21905,13 +16135,8 @@ export namespace Prisma {
     sprint?: SprintCreateNestedOneWithoutTasksInput
     assignee?: UserCreateNestedOneWithoutAssignedTasksInput
     createdBy: UserCreateNestedOneWithoutCreatedTasksInput
-    subtasks?: SubtaskCreateNestedManyWithoutTaskInput
     comments?: CommentCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkCreateNestedManyWithoutTargetTaskInput
     activityEvents?: ActivityEventCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentCreateNestedManyWithoutTaskInput
   }
 
   export type TaskUncheckedCreateInput = {
@@ -21936,13 +16161,8 @@ export namespace Prisma {
     dueDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    subtasks?: SubtaskUncheckedCreateNestedManyWithoutTaskInput
     comments?: CommentUncheckedCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkUncheckedCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkUncheckedCreateNestedManyWithoutTargetTaskInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutTaskInput
   }
 
   export type TaskUpdateInput = {
@@ -21967,13 +16187,8 @@ export namespace Prisma {
     sprint?: SprintUpdateOneWithoutTasksNestedInput
     assignee?: UserUpdateOneWithoutAssignedTasksNestedInput
     createdBy?: UserUpdateOneRequiredWithoutCreatedTasksNestedInput
-    subtasks?: SubtaskUpdateManyWithoutTaskNestedInput
     comments?: CommentUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUpdateManyWithoutTargetTaskNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUpdateManyWithoutTaskNestedInput
   }
 
   export type TaskUncheckedUpdateInput = {
@@ -21998,13 +16213,8 @@ export namespace Prisma {
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    subtasks?: SubtaskUncheckedUpdateManyWithoutTaskNestedInput
     comments?: CommentUncheckedUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUncheckedUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUncheckedUpdateManyWithoutTargetTaskNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutTaskNestedInput
   }
 
   export type TaskCreateManyInput = {
@@ -22073,60 +16283,6 @@ export namespace Prisma {
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type TaskLinkCreateInput = {
-    id?: string
-    type?: string
-    createdAt?: Date | string
-    sourceTask: TaskCreateNestedOneWithoutLinkedFromInput
-    targetTask: TaskCreateNestedOneWithoutLinkedToInput
-  }
-
-  export type TaskLinkUncheckedCreateInput = {
-    id?: string
-    sourceTaskId: string
-    targetTaskId: string
-    type?: string
-    createdAt?: Date | string
-  }
-
-  export type TaskLinkUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sourceTask?: TaskUpdateOneRequiredWithoutLinkedFromNestedInput
-    targetTask?: TaskUpdateOneRequiredWithoutLinkedToNestedInput
-  }
-
-  export type TaskLinkUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    sourceTaskId?: StringFieldUpdateOperationsInput | string
-    targetTaskId?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type TaskLinkCreateManyInput = {
-    id?: string
-    sourceTaskId: string
-    targetTaskId: string
-    type?: string
-    createdAt?: Date | string
-  }
-
-  export type TaskLinkUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type TaskLinkUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    sourceTaskId?: StringFieldUpdateOperationsInput | string
-    targetTaskId?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type SprintCreateInput = {
@@ -22212,68 +16368,6 @@ export namespace Prisma {
     projectId?: StringFieldUpdateOperationsInput | string
     startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SubtaskCreateInput = {
-    id?: string
-    title: string
-    completed?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    task: TaskCreateNestedOneWithoutSubtasksInput
-  }
-
-  export type SubtaskUncheckedCreateInput = {
-    id?: string
-    taskId: string
-    title: string
-    completed?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type SubtaskUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    completed?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    task?: TaskUpdateOneRequiredWithoutSubtasksNestedInput
-  }
-
-  export type SubtaskUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    taskId?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    completed?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SubtaskCreateManyInput = {
-    id?: string
-    taskId: string
-    title: string
-    completed?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type SubtaskUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    completed?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SubtaskUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    taskId?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    completed?: BoolFieldUpdateOperationsInput | boolean
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -22446,257 +16540,6 @@ export namespace Prisma {
     severity?: StringFieldUpdateOperationsInput | string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PullRequestCreateInput = {
-    id?: string
-    provider?: string
-    repository: string
-    number: number
-    title: string
-    url?: string | null
-    branch?: string | null
-    targetBranch?: string | null
-    status?: string
-    reviewState?: string
-    ciStatus?: string
-    author?: string | null
-    openedAt?: Date | string | null
-    mergedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    project: ProjectCreateNestedOneWithoutPullRequestsInput
-    task?: TaskCreateNestedOneWithoutPullRequestsInput
-    deployments?: DeploymentCreateNestedManyWithoutPullRequestInput
-  }
-
-  export type PullRequestUncheckedCreateInput = {
-    id?: string
-    projectId: string
-    taskId?: string | null
-    provider?: string
-    repository: string
-    number: number
-    title: string
-    url?: string | null
-    branch?: string | null
-    targetBranch?: string | null
-    status?: string
-    reviewState?: string
-    ciStatus?: string
-    author?: string | null
-    openedAt?: Date | string | null
-    mergedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutPullRequestInput
-  }
-
-  export type PullRequestUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    provider?: StringFieldUpdateOperationsInput | string
-    repository?: StringFieldUpdateOperationsInput | string
-    number?: IntFieldUpdateOperationsInput | number
-    title?: StringFieldUpdateOperationsInput | string
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    branch?: NullableStringFieldUpdateOperationsInput | string | null
-    targetBranch?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    reviewState?: StringFieldUpdateOperationsInput | string
-    ciStatus?: StringFieldUpdateOperationsInput | string
-    author?: NullableStringFieldUpdateOperationsInput | string | null
-    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    project?: ProjectUpdateOneRequiredWithoutPullRequestsNestedInput
-    task?: TaskUpdateOneWithoutPullRequestsNestedInput
-    deployments?: DeploymentUpdateManyWithoutPullRequestNestedInput
-  }
-
-  export type PullRequestUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    projectId?: StringFieldUpdateOperationsInput | string
-    taskId?: NullableStringFieldUpdateOperationsInput | string | null
-    provider?: StringFieldUpdateOperationsInput | string
-    repository?: StringFieldUpdateOperationsInput | string
-    number?: IntFieldUpdateOperationsInput | number
-    title?: StringFieldUpdateOperationsInput | string
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    branch?: NullableStringFieldUpdateOperationsInput | string | null
-    targetBranch?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    reviewState?: StringFieldUpdateOperationsInput | string
-    ciStatus?: StringFieldUpdateOperationsInput | string
-    author?: NullableStringFieldUpdateOperationsInput | string | null
-    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    deployments?: DeploymentUncheckedUpdateManyWithoutPullRequestNestedInput
-  }
-
-  export type PullRequestCreateManyInput = {
-    id?: string
-    projectId: string
-    taskId?: string | null
-    provider?: string
-    repository: string
-    number: number
-    title: string
-    url?: string | null
-    branch?: string | null
-    targetBranch?: string | null
-    status?: string
-    reviewState?: string
-    ciStatus?: string
-    author?: string | null
-    openedAt?: Date | string | null
-    mergedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type PullRequestUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    provider?: StringFieldUpdateOperationsInput | string
-    repository?: StringFieldUpdateOperationsInput | string
-    number?: IntFieldUpdateOperationsInput | number
-    title?: StringFieldUpdateOperationsInput | string
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    branch?: NullableStringFieldUpdateOperationsInput | string | null
-    targetBranch?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    reviewState?: StringFieldUpdateOperationsInput | string
-    ciStatus?: StringFieldUpdateOperationsInput | string
-    author?: NullableStringFieldUpdateOperationsInput | string | null
-    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type PullRequestUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    projectId?: StringFieldUpdateOperationsInput | string
-    taskId?: NullableStringFieldUpdateOperationsInput | string | null
-    provider?: StringFieldUpdateOperationsInput | string
-    repository?: StringFieldUpdateOperationsInput | string
-    number?: IntFieldUpdateOperationsInput | number
-    title?: StringFieldUpdateOperationsInput | string
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    branch?: NullableStringFieldUpdateOperationsInput | string | null
-    targetBranch?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    reviewState?: StringFieldUpdateOperationsInput | string
-    ciStatus?: StringFieldUpdateOperationsInput | string
-    author?: NullableStringFieldUpdateOperationsInput | string | null
-    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DeploymentCreateInput = {
-    id?: string
-    environment?: string
-    status?: string
-    version?: string | null
-    url?: string | null
-    deployedBy?: string | null
-    deployedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    project: ProjectCreateNestedOneWithoutDeploymentsInput
-    task?: TaskCreateNestedOneWithoutDeploymentsInput
-    pullRequest?: PullRequestCreateNestedOneWithoutDeploymentsInput
-  }
-
-  export type DeploymentUncheckedCreateInput = {
-    id?: string
-    projectId: string
-    taskId?: string | null
-    pullRequestId?: string | null
-    environment?: string
-    status?: string
-    version?: string | null
-    url?: string | null
-    deployedBy?: string | null
-    deployedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type DeploymentUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    environment?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    version?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    project?: ProjectUpdateOneRequiredWithoutDeploymentsNestedInput
-    task?: TaskUpdateOneWithoutDeploymentsNestedInput
-    pullRequest?: PullRequestUpdateOneWithoutDeploymentsNestedInput
-  }
-
-  export type DeploymentUncheckedUpdateInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    projectId?: StringFieldUpdateOperationsInput | string
-    taskId?: NullableStringFieldUpdateOperationsInput | string | null
-    pullRequestId?: NullableStringFieldUpdateOperationsInput | string | null
-    environment?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    version?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DeploymentCreateManyInput = {
-    id?: string
-    projectId: string
-    taskId?: string | null
-    pullRequestId?: string | null
-    environment?: string
-    status?: string
-    version?: string | null
-    url?: string | null
-    deployedBy?: string | null
-    deployedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type DeploymentUpdateManyMutationInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    environment?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    version?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DeploymentUncheckedUpdateManyInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    projectId?: StringFieldUpdateOperationsInput | string
-    taskId?: NullableStringFieldUpdateOperationsInput | string | null
-    pullRequestId?: NullableStringFieldUpdateOperationsInput | string | null
-    environment?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    version?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type StringFilter<$PrismaModel = never> = {
@@ -23071,27 +16914,7 @@ export namespace Prisma {
     none?: SprintWhereInput
   }
 
-  export type PullRequestListRelationFilter = {
-    every?: PullRequestWhereInput
-    some?: PullRequestWhereInput
-    none?: PullRequestWhereInput
-  }
-
-  export type DeploymentListRelationFilter = {
-    every?: DeploymentWhereInput
-    some?: DeploymentWhereInput
-    none?: DeploymentWhereInput
-  }
-
   export type SprintOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type PullRequestOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type DeploymentOrderByRelationAggregateInput = {
     _count?: SortOrder
   }
 
@@ -23283,26 +17106,6 @@ export namespace Prisma {
     isNot?: SprintWhereInput | null
   }
 
-  export type SubtaskListRelationFilter = {
-    every?: SubtaskWhereInput
-    some?: SubtaskWhereInput
-    none?: SubtaskWhereInput
-  }
-
-  export type TaskLinkListRelationFilter = {
-    every?: TaskLinkWhereInput
-    some?: TaskLinkWhereInput
-    none?: TaskLinkWhereInput
-  }
-
-  export type SubtaskOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
-  export type TaskLinkOrderByRelationAggregateInput = {
-    _count?: SortOrder
-  }
-
   export type TaskCountOrderByAggregateInput = {
     id?: SortOrder
     title?: SortOrder
@@ -23419,41 +17222,6 @@ export namespace Prisma {
     _max?: NestedFloatFilter<$PrismaModel>
   }
 
-  export type TaskScalarRelationFilter = {
-    is?: TaskWhereInput
-    isNot?: TaskWhereInput
-  }
-
-  export type TaskLinkSourceTaskIdTargetTaskIdTypeCompoundUniqueInput = {
-    sourceTaskId: string
-    targetTaskId: string
-    type: string
-  }
-
-  export type TaskLinkCountOrderByAggregateInput = {
-    id?: SortOrder
-    sourceTaskId?: SortOrder
-    targetTaskId?: SortOrder
-    type?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type TaskLinkMaxOrderByAggregateInput = {
-    id?: SortOrder
-    sourceTaskId?: SortOrder
-    targetTaskId?: SortOrder
-    type?: SortOrder
-    createdAt?: SortOrder
-  }
-
-  export type TaskLinkMinOrderByAggregateInput = {
-    id?: SortOrder
-    sourceTaskId?: SortOrder
-    targetTaskId?: SortOrder
-    type?: SortOrder
-    createdAt?: SortOrder
-  }
-
   export type SprintCountOrderByAggregateInput = {
     id?: SortOrder
     name?: SortOrder
@@ -23490,31 +17258,9 @@ export namespace Prisma {
     updatedAt?: SortOrder
   }
 
-  export type SubtaskCountOrderByAggregateInput = {
-    id?: SortOrder
-    taskId?: SortOrder
-    title?: SortOrder
-    completed?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type SubtaskMaxOrderByAggregateInput = {
-    id?: SortOrder
-    taskId?: SortOrder
-    title?: SortOrder
-    completed?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type SubtaskMinOrderByAggregateInput = {
-    id?: SortOrder
-    taskId?: SortOrder
-    title?: SortOrder
-    completed?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
+  export type TaskScalarRelationFilter = {
+    is?: TaskWhereInput
+    isNot?: TaskWhereInput
   }
 
   export type CommentCountOrderByAggregateInput = {
@@ -23647,134 +17393,6 @@ export namespace Prisma {
     _count?: NestedIntNullableFilter<$PrismaModel>
     _min?: NestedJsonNullableFilter<$PrismaModel>
     _max?: NestedJsonNullableFilter<$PrismaModel>
-  }
-
-  export type PullRequestProjectIdProviderRepositoryNumberCompoundUniqueInput = {
-    projectId: string
-    provider: string
-    repository: string
-    number: number
-  }
-
-  export type PullRequestCountOrderByAggregateInput = {
-    id?: SortOrder
-    projectId?: SortOrder
-    taskId?: SortOrder
-    provider?: SortOrder
-    repository?: SortOrder
-    number?: SortOrder
-    title?: SortOrder
-    url?: SortOrder
-    branch?: SortOrder
-    targetBranch?: SortOrder
-    status?: SortOrder
-    reviewState?: SortOrder
-    ciStatus?: SortOrder
-    author?: SortOrder
-    openedAt?: SortOrder
-    mergedAt?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type PullRequestAvgOrderByAggregateInput = {
-    number?: SortOrder
-  }
-
-  export type PullRequestMaxOrderByAggregateInput = {
-    id?: SortOrder
-    projectId?: SortOrder
-    taskId?: SortOrder
-    provider?: SortOrder
-    repository?: SortOrder
-    number?: SortOrder
-    title?: SortOrder
-    url?: SortOrder
-    branch?: SortOrder
-    targetBranch?: SortOrder
-    status?: SortOrder
-    reviewState?: SortOrder
-    ciStatus?: SortOrder
-    author?: SortOrder
-    openedAt?: SortOrder
-    mergedAt?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type PullRequestMinOrderByAggregateInput = {
-    id?: SortOrder
-    projectId?: SortOrder
-    taskId?: SortOrder
-    provider?: SortOrder
-    repository?: SortOrder
-    number?: SortOrder
-    title?: SortOrder
-    url?: SortOrder
-    branch?: SortOrder
-    targetBranch?: SortOrder
-    status?: SortOrder
-    reviewState?: SortOrder
-    ciStatus?: SortOrder
-    author?: SortOrder
-    openedAt?: SortOrder
-    mergedAt?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type PullRequestSumOrderByAggregateInput = {
-    number?: SortOrder
-  }
-
-  export type PullRequestNullableScalarRelationFilter = {
-    is?: PullRequestWhereInput | null
-    isNot?: PullRequestWhereInput | null
-  }
-
-  export type DeploymentCountOrderByAggregateInput = {
-    id?: SortOrder
-    projectId?: SortOrder
-    taskId?: SortOrder
-    pullRequestId?: SortOrder
-    environment?: SortOrder
-    status?: SortOrder
-    version?: SortOrder
-    url?: SortOrder
-    deployedBy?: SortOrder
-    deployedAt?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type DeploymentMaxOrderByAggregateInput = {
-    id?: SortOrder
-    projectId?: SortOrder
-    taskId?: SortOrder
-    pullRequestId?: SortOrder
-    environment?: SortOrder
-    status?: SortOrder
-    version?: SortOrder
-    url?: SortOrder
-    deployedBy?: SortOrder
-    deployedAt?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
-  }
-
-  export type DeploymentMinOrderByAggregateInput = {
-    id?: SortOrder
-    projectId?: SortOrder
-    taskId?: SortOrder
-    pullRequestId?: SortOrder
-    environment?: SortOrder
-    status?: SortOrder
-    version?: SortOrder
-    url?: SortOrder
-    deployedBy?: SortOrder
-    deployedAt?: SortOrder
-    createdAt?: SortOrder
-    updatedAt?: SortOrder
   }
 
   export type RefreshTokenCreateNestedManyWithoutUserInput = {
@@ -24276,20 +17894,6 @@ export namespace Prisma {
     connect?: ActivityEventWhereUniqueInput | ActivityEventWhereUniqueInput[]
   }
 
-  export type PullRequestCreateNestedManyWithoutProjectInput = {
-    create?: XOR<PullRequestCreateWithoutProjectInput, PullRequestUncheckedCreateWithoutProjectInput> | PullRequestCreateWithoutProjectInput[] | PullRequestUncheckedCreateWithoutProjectInput[]
-    connectOrCreate?: PullRequestCreateOrConnectWithoutProjectInput | PullRequestCreateOrConnectWithoutProjectInput[]
-    createMany?: PullRequestCreateManyProjectInputEnvelope
-    connect?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-  }
-
-  export type DeploymentCreateNestedManyWithoutProjectInput = {
-    create?: XOR<DeploymentCreateWithoutProjectInput, DeploymentUncheckedCreateWithoutProjectInput> | DeploymentCreateWithoutProjectInput[] | DeploymentUncheckedCreateWithoutProjectInput[]
-    connectOrCreate?: DeploymentCreateOrConnectWithoutProjectInput | DeploymentCreateOrConnectWithoutProjectInput[]
-    createMany?: DeploymentCreateManyProjectInputEnvelope
-    connect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-  }
-
   export type ProjectMemberUncheckedCreateNestedManyWithoutProjectInput = {
     create?: XOR<ProjectMemberCreateWithoutProjectInput, ProjectMemberUncheckedCreateWithoutProjectInput> | ProjectMemberCreateWithoutProjectInput[] | ProjectMemberUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: ProjectMemberCreateOrConnectWithoutProjectInput | ProjectMemberCreateOrConnectWithoutProjectInput[]
@@ -24323,20 +17927,6 @@ export namespace Prisma {
     connectOrCreate?: ActivityEventCreateOrConnectWithoutProjectInput | ActivityEventCreateOrConnectWithoutProjectInput[]
     createMany?: ActivityEventCreateManyProjectInputEnvelope
     connect?: ActivityEventWhereUniqueInput | ActivityEventWhereUniqueInput[]
-  }
-
-  export type PullRequestUncheckedCreateNestedManyWithoutProjectInput = {
-    create?: XOR<PullRequestCreateWithoutProjectInput, PullRequestUncheckedCreateWithoutProjectInput> | PullRequestCreateWithoutProjectInput[] | PullRequestUncheckedCreateWithoutProjectInput[]
-    connectOrCreate?: PullRequestCreateOrConnectWithoutProjectInput | PullRequestCreateOrConnectWithoutProjectInput[]
-    createMany?: PullRequestCreateManyProjectInputEnvelope
-    connect?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-  }
-
-  export type DeploymentUncheckedCreateNestedManyWithoutProjectInput = {
-    create?: XOR<DeploymentCreateWithoutProjectInput, DeploymentUncheckedCreateWithoutProjectInput> | DeploymentCreateWithoutProjectInput[] | DeploymentUncheckedCreateWithoutProjectInput[]
-    connectOrCreate?: DeploymentCreateOrConnectWithoutProjectInput | DeploymentCreateOrConnectWithoutProjectInput[]
-    createMany?: DeploymentCreateManyProjectInputEnvelope
-    connect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
   }
 
   export type IntFieldUpdateOperationsInput = {
@@ -24425,34 +18015,6 @@ export namespace Prisma {
     deleteMany?: ActivityEventScalarWhereInput | ActivityEventScalarWhereInput[]
   }
 
-  export type PullRequestUpdateManyWithoutProjectNestedInput = {
-    create?: XOR<PullRequestCreateWithoutProjectInput, PullRequestUncheckedCreateWithoutProjectInput> | PullRequestCreateWithoutProjectInput[] | PullRequestUncheckedCreateWithoutProjectInput[]
-    connectOrCreate?: PullRequestCreateOrConnectWithoutProjectInput | PullRequestCreateOrConnectWithoutProjectInput[]
-    upsert?: PullRequestUpsertWithWhereUniqueWithoutProjectInput | PullRequestUpsertWithWhereUniqueWithoutProjectInput[]
-    createMany?: PullRequestCreateManyProjectInputEnvelope
-    set?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-    disconnect?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-    delete?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-    connect?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-    update?: PullRequestUpdateWithWhereUniqueWithoutProjectInput | PullRequestUpdateWithWhereUniqueWithoutProjectInput[]
-    updateMany?: PullRequestUpdateManyWithWhereWithoutProjectInput | PullRequestUpdateManyWithWhereWithoutProjectInput[]
-    deleteMany?: PullRequestScalarWhereInput | PullRequestScalarWhereInput[]
-  }
-
-  export type DeploymentUpdateManyWithoutProjectNestedInput = {
-    create?: XOR<DeploymentCreateWithoutProjectInput, DeploymentUncheckedCreateWithoutProjectInput> | DeploymentCreateWithoutProjectInput[] | DeploymentUncheckedCreateWithoutProjectInput[]
-    connectOrCreate?: DeploymentCreateOrConnectWithoutProjectInput | DeploymentCreateOrConnectWithoutProjectInput[]
-    upsert?: DeploymentUpsertWithWhereUniqueWithoutProjectInput | DeploymentUpsertWithWhereUniqueWithoutProjectInput[]
-    createMany?: DeploymentCreateManyProjectInputEnvelope
-    set?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    disconnect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    delete?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    connect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    update?: DeploymentUpdateWithWhereUniqueWithoutProjectInput | DeploymentUpdateWithWhereUniqueWithoutProjectInput[]
-    updateMany?: DeploymentUpdateManyWithWhereWithoutProjectInput | DeploymentUpdateManyWithWhereWithoutProjectInput[]
-    deleteMany?: DeploymentScalarWhereInput | DeploymentScalarWhereInput[]
-  }
-
   export type ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput = {
     create?: XOR<ProjectMemberCreateWithoutProjectInput, ProjectMemberUncheckedCreateWithoutProjectInput> | ProjectMemberCreateWithoutProjectInput[] | ProjectMemberUncheckedCreateWithoutProjectInput[]
     connectOrCreate?: ProjectMemberCreateOrConnectWithoutProjectInput | ProjectMemberCreateOrConnectWithoutProjectInput[]
@@ -24521,34 +18083,6 @@ export namespace Prisma {
     update?: ActivityEventUpdateWithWhereUniqueWithoutProjectInput | ActivityEventUpdateWithWhereUniqueWithoutProjectInput[]
     updateMany?: ActivityEventUpdateManyWithWhereWithoutProjectInput | ActivityEventUpdateManyWithWhereWithoutProjectInput[]
     deleteMany?: ActivityEventScalarWhereInput | ActivityEventScalarWhereInput[]
-  }
-
-  export type PullRequestUncheckedUpdateManyWithoutProjectNestedInput = {
-    create?: XOR<PullRequestCreateWithoutProjectInput, PullRequestUncheckedCreateWithoutProjectInput> | PullRequestCreateWithoutProjectInput[] | PullRequestUncheckedCreateWithoutProjectInput[]
-    connectOrCreate?: PullRequestCreateOrConnectWithoutProjectInput | PullRequestCreateOrConnectWithoutProjectInput[]
-    upsert?: PullRequestUpsertWithWhereUniqueWithoutProjectInput | PullRequestUpsertWithWhereUniqueWithoutProjectInput[]
-    createMany?: PullRequestCreateManyProjectInputEnvelope
-    set?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-    disconnect?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-    delete?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-    connect?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-    update?: PullRequestUpdateWithWhereUniqueWithoutProjectInput | PullRequestUpdateWithWhereUniqueWithoutProjectInput[]
-    updateMany?: PullRequestUpdateManyWithWhereWithoutProjectInput | PullRequestUpdateManyWithWhereWithoutProjectInput[]
-    deleteMany?: PullRequestScalarWhereInput | PullRequestScalarWhereInput[]
-  }
-
-  export type DeploymentUncheckedUpdateManyWithoutProjectNestedInput = {
-    create?: XOR<DeploymentCreateWithoutProjectInput, DeploymentUncheckedCreateWithoutProjectInput> | DeploymentCreateWithoutProjectInput[] | DeploymentUncheckedCreateWithoutProjectInput[]
-    connectOrCreate?: DeploymentCreateOrConnectWithoutProjectInput | DeploymentCreateOrConnectWithoutProjectInput[]
-    upsert?: DeploymentUpsertWithWhereUniqueWithoutProjectInput | DeploymentUpsertWithWhereUniqueWithoutProjectInput[]
-    createMany?: DeploymentCreateManyProjectInputEnvelope
-    set?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    disconnect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    delete?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    connect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    update?: DeploymentUpdateWithWhereUniqueWithoutProjectInput | DeploymentUpdateWithWhereUniqueWithoutProjectInput[]
-    updateMany?: DeploymentUpdateManyWithWhereWithoutProjectInput | DeploymentUpdateManyWithWhereWithoutProjectInput[]
-    deleteMany?: DeploymentScalarWhereInput | DeploymentScalarWhereInput[]
   }
 
   export type ProjectCreateNestedOneWithoutInvitesInput = {
@@ -24647,32 +18181,11 @@ export namespace Prisma {
     connect?: UserWhereUniqueInput
   }
 
-  export type SubtaskCreateNestedManyWithoutTaskInput = {
-    create?: XOR<SubtaskCreateWithoutTaskInput, SubtaskUncheckedCreateWithoutTaskInput> | SubtaskCreateWithoutTaskInput[] | SubtaskUncheckedCreateWithoutTaskInput[]
-    connectOrCreate?: SubtaskCreateOrConnectWithoutTaskInput | SubtaskCreateOrConnectWithoutTaskInput[]
-    createMany?: SubtaskCreateManyTaskInputEnvelope
-    connect?: SubtaskWhereUniqueInput | SubtaskWhereUniqueInput[]
-  }
-
   export type CommentCreateNestedManyWithoutTaskInput = {
     create?: XOR<CommentCreateWithoutTaskInput, CommentUncheckedCreateWithoutTaskInput> | CommentCreateWithoutTaskInput[] | CommentUncheckedCreateWithoutTaskInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutTaskInput | CommentCreateOrConnectWithoutTaskInput[]
     createMany?: CommentCreateManyTaskInputEnvelope
     connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
-  }
-
-  export type TaskLinkCreateNestedManyWithoutSourceTaskInput = {
-    create?: XOR<TaskLinkCreateWithoutSourceTaskInput, TaskLinkUncheckedCreateWithoutSourceTaskInput> | TaskLinkCreateWithoutSourceTaskInput[] | TaskLinkUncheckedCreateWithoutSourceTaskInput[]
-    connectOrCreate?: TaskLinkCreateOrConnectWithoutSourceTaskInput | TaskLinkCreateOrConnectWithoutSourceTaskInput[]
-    createMany?: TaskLinkCreateManySourceTaskInputEnvelope
-    connect?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-  }
-
-  export type TaskLinkCreateNestedManyWithoutTargetTaskInput = {
-    create?: XOR<TaskLinkCreateWithoutTargetTaskInput, TaskLinkUncheckedCreateWithoutTargetTaskInput> | TaskLinkCreateWithoutTargetTaskInput[] | TaskLinkUncheckedCreateWithoutTargetTaskInput[]
-    connectOrCreate?: TaskLinkCreateOrConnectWithoutTargetTaskInput | TaskLinkCreateOrConnectWithoutTargetTaskInput[]
-    createMany?: TaskLinkCreateManyTargetTaskInputEnvelope
-    connect?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
   }
 
   export type ActivityEventCreateNestedManyWithoutTaskInput = {
@@ -24682,27 +18195,6 @@ export namespace Prisma {
     connect?: ActivityEventWhereUniqueInput | ActivityEventWhereUniqueInput[]
   }
 
-  export type PullRequestCreateNestedManyWithoutTaskInput = {
-    create?: XOR<PullRequestCreateWithoutTaskInput, PullRequestUncheckedCreateWithoutTaskInput> | PullRequestCreateWithoutTaskInput[] | PullRequestUncheckedCreateWithoutTaskInput[]
-    connectOrCreate?: PullRequestCreateOrConnectWithoutTaskInput | PullRequestCreateOrConnectWithoutTaskInput[]
-    createMany?: PullRequestCreateManyTaskInputEnvelope
-    connect?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-  }
-
-  export type DeploymentCreateNestedManyWithoutTaskInput = {
-    create?: XOR<DeploymentCreateWithoutTaskInput, DeploymentUncheckedCreateWithoutTaskInput> | DeploymentCreateWithoutTaskInput[] | DeploymentUncheckedCreateWithoutTaskInput[]
-    connectOrCreate?: DeploymentCreateOrConnectWithoutTaskInput | DeploymentCreateOrConnectWithoutTaskInput[]
-    createMany?: DeploymentCreateManyTaskInputEnvelope
-    connect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-  }
-
-  export type SubtaskUncheckedCreateNestedManyWithoutTaskInput = {
-    create?: XOR<SubtaskCreateWithoutTaskInput, SubtaskUncheckedCreateWithoutTaskInput> | SubtaskCreateWithoutTaskInput[] | SubtaskUncheckedCreateWithoutTaskInput[]
-    connectOrCreate?: SubtaskCreateOrConnectWithoutTaskInput | SubtaskCreateOrConnectWithoutTaskInput[]
-    createMany?: SubtaskCreateManyTaskInputEnvelope
-    connect?: SubtaskWhereUniqueInput | SubtaskWhereUniqueInput[]
-  }
-
   export type CommentUncheckedCreateNestedManyWithoutTaskInput = {
     create?: XOR<CommentCreateWithoutTaskInput, CommentUncheckedCreateWithoutTaskInput> | CommentCreateWithoutTaskInput[] | CommentUncheckedCreateWithoutTaskInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutTaskInput | CommentCreateOrConnectWithoutTaskInput[]
@@ -24710,39 +18202,11 @@ export namespace Prisma {
     connect?: CommentWhereUniqueInput | CommentWhereUniqueInput[]
   }
 
-  export type TaskLinkUncheckedCreateNestedManyWithoutSourceTaskInput = {
-    create?: XOR<TaskLinkCreateWithoutSourceTaskInput, TaskLinkUncheckedCreateWithoutSourceTaskInput> | TaskLinkCreateWithoutSourceTaskInput[] | TaskLinkUncheckedCreateWithoutSourceTaskInput[]
-    connectOrCreate?: TaskLinkCreateOrConnectWithoutSourceTaskInput | TaskLinkCreateOrConnectWithoutSourceTaskInput[]
-    createMany?: TaskLinkCreateManySourceTaskInputEnvelope
-    connect?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-  }
-
-  export type TaskLinkUncheckedCreateNestedManyWithoutTargetTaskInput = {
-    create?: XOR<TaskLinkCreateWithoutTargetTaskInput, TaskLinkUncheckedCreateWithoutTargetTaskInput> | TaskLinkCreateWithoutTargetTaskInput[] | TaskLinkUncheckedCreateWithoutTargetTaskInput[]
-    connectOrCreate?: TaskLinkCreateOrConnectWithoutTargetTaskInput | TaskLinkCreateOrConnectWithoutTargetTaskInput[]
-    createMany?: TaskLinkCreateManyTargetTaskInputEnvelope
-    connect?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-  }
-
   export type ActivityEventUncheckedCreateNestedManyWithoutTaskInput = {
     create?: XOR<ActivityEventCreateWithoutTaskInput, ActivityEventUncheckedCreateWithoutTaskInput> | ActivityEventCreateWithoutTaskInput[] | ActivityEventUncheckedCreateWithoutTaskInput[]
     connectOrCreate?: ActivityEventCreateOrConnectWithoutTaskInput | ActivityEventCreateOrConnectWithoutTaskInput[]
     createMany?: ActivityEventCreateManyTaskInputEnvelope
     connect?: ActivityEventWhereUniqueInput | ActivityEventWhereUniqueInput[]
-  }
-
-  export type PullRequestUncheckedCreateNestedManyWithoutTaskInput = {
-    create?: XOR<PullRequestCreateWithoutTaskInput, PullRequestUncheckedCreateWithoutTaskInput> | PullRequestCreateWithoutTaskInput[] | PullRequestUncheckedCreateWithoutTaskInput[]
-    connectOrCreate?: PullRequestCreateOrConnectWithoutTaskInput | PullRequestCreateOrConnectWithoutTaskInput[]
-    createMany?: PullRequestCreateManyTaskInputEnvelope
-    connect?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-  }
-
-  export type DeploymentUncheckedCreateNestedManyWithoutTaskInput = {
-    create?: XOR<DeploymentCreateWithoutTaskInput, DeploymentUncheckedCreateWithoutTaskInput> | DeploymentCreateWithoutTaskInput[] | DeploymentUncheckedCreateWithoutTaskInput[]
-    connectOrCreate?: DeploymentCreateOrConnectWithoutTaskInput | DeploymentCreateOrConnectWithoutTaskInput[]
-    createMany?: DeploymentCreateManyTaskInputEnvelope
-    connect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
   }
 
   export type NullableIntFieldUpdateOperationsInput = {
@@ -24797,20 +18261,6 @@ export namespace Prisma {
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutCreatedTasksInput, UserUpdateWithoutCreatedTasksInput>, UserUncheckedUpdateWithoutCreatedTasksInput>
   }
 
-  export type SubtaskUpdateManyWithoutTaskNestedInput = {
-    create?: XOR<SubtaskCreateWithoutTaskInput, SubtaskUncheckedCreateWithoutTaskInput> | SubtaskCreateWithoutTaskInput[] | SubtaskUncheckedCreateWithoutTaskInput[]
-    connectOrCreate?: SubtaskCreateOrConnectWithoutTaskInput | SubtaskCreateOrConnectWithoutTaskInput[]
-    upsert?: SubtaskUpsertWithWhereUniqueWithoutTaskInput | SubtaskUpsertWithWhereUniqueWithoutTaskInput[]
-    createMany?: SubtaskCreateManyTaskInputEnvelope
-    set?: SubtaskWhereUniqueInput | SubtaskWhereUniqueInput[]
-    disconnect?: SubtaskWhereUniqueInput | SubtaskWhereUniqueInput[]
-    delete?: SubtaskWhereUniqueInput | SubtaskWhereUniqueInput[]
-    connect?: SubtaskWhereUniqueInput | SubtaskWhereUniqueInput[]
-    update?: SubtaskUpdateWithWhereUniqueWithoutTaskInput | SubtaskUpdateWithWhereUniqueWithoutTaskInput[]
-    updateMany?: SubtaskUpdateManyWithWhereWithoutTaskInput | SubtaskUpdateManyWithWhereWithoutTaskInput[]
-    deleteMany?: SubtaskScalarWhereInput | SubtaskScalarWhereInput[]
-  }
-
   export type CommentUpdateManyWithoutTaskNestedInput = {
     create?: XOR<CommentCreateWithoutTaskInput, CommentUncheckedCreateWithoutTaskInput> | CommentCreateWithoutTaskInput[] | CommentUncheckedCreateWithoutTaskInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutTaskInput | CommentCreateOrConnectWithoutTaskInput[]
@@ -24823,34 +18273,6 @@ export namespace Prisma {
     update?: CommentUpdateWithWhereUniqueWithoutTaskInput | CommentUpdateWithWhereUniqueWithoutTaskInput[]
     updateMany?: CommentUpdateManyWithWhereWithoutTaskInput | CommentUpdateManyWithWhereWithoutTaskInput[]
     deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
-  }
-
-  export type TaskLinkUpdateManyWithoutSourceTaskNestedInput = {
-    create?: XOR<TaskLinkCreateWithoutSourceTaskInput, TaskLinkUncheckedCreateWithoutSourceTaskInput> | TaskLinkCreateWithoutSourceTaskInput[] | TaskLinkUncheckedCreateWithoutSourceTaskInput[]
-    connectOrCreate?: TaskLinkCreateOrConnectWithoutSourceTaskInput | TaskLinkCreateOrConnectWithoutSourceTaskInput[]
-    upsert?: TaskLinkUpsertWithWhereUniqueWithoutSourceTaskInput | TaskLinkUpsertWithWhereUniqueWithoutSourceTaskInput[]
-    createMany?: TaskLinkCreateManySourceTaskInputEnvelope
-    set?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-    disconnect?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-    delete?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-    connect?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-    update?: TaskLinkUpdateWithWhereUniqueWithoutSourceTaskInput | TaskLinkUpdateWithWhereUniqueWithoutSourceTaskInput[]
-    updateMany?: TaskLinkUpdateManyWithWhereWithoutSourceTaskInput | TaskLinkUpdateManyWithWhereWithoutSourceTaskInput[]
-    deleteMany?: TaskLinkScalarWhereInput | TaskLinkScalarWhereInput[]
-  }
-
-  export type TaskLinkUpdateManyWithoutTargetTaskNestedInput = {
-    create?: XOR<TaskLinkCreateWithoutTargetTaskInput, TaskLinkUncheckedCreateWithoutTargetTaskInput> | TaskLinkCreateWithoutTargetTaskInput[] | TaskLinkUncheckedCreateWithoutTargetTaskInput[]
-    connectOrCreate?: TaskLinkCreateOrConnectWithoutTargetTaskInput | TaskLinkCreateOrConnectWithoutTargetTaskInput[]
-    upsert?: TaskLinkUpsertWithWhereUniqueWithoutTargetTaskInput | TaskLinkUpsertWithWhereUniqueWithoutTargetTaskInput[]
-    createMany?: TaskLinkCreateManyTargetTaskInputEnvelope
-    set?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-    disconnect?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-    delete?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-    connect?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-    update?: TaskLinkUpdateWithWhereUniqueWithoutTargetTaskInput | TaskLinkUpdateWithWhereUniqueWithoutTargetTaskInput[]
-    updateMany?: TaskLinkUpdateManyWithWhereWithoutTargetTaskInput | TaskLinkUpdateManyWithWhereWithoutTargetTaskInput[]
-    deleteMany?: TaskLinkScalarWhereInput | TaskLinkScalarWhereInput[]
   }
 
   export type ActivityEventUpdateManyWithoutTaskNestedInput = {
@@ -24867,48 +18289,6 @@ export namespace Prisma {
     deleteMany?: ActivityEventScalarWhereInput | ActivityEventScalarWhereInput[]
   }
 
-  export type PullRequestUpdateManyWithoutTaskNestedInput = {
-    create?: XOR<PullRequestCreateWithoutTaskInput, PullRequestUncheckedCreateWithoutTaskInput> | PullRequestCreateWithoutTaskInput[] | PullRequestUncheckedCreateWithoutTaskInput[]
-    connectOrCreate?: PullRequestCreateOrConnectWithoutTaskInput | PullRequestCreateOrConnectWithoutTaskInput[]
-    upsert?: PullRequestUpsertWithWhereUniqueWithoutTaskInput | PullRequestUpsertWithWhereUniqueWithoutTaskInput[]
-    createMany?: PullRequestCreateManyTaskInputEnvelope
-    set?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-    disconnect?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-    delete?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-    connect?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-    update?: PullRequestUpdateWithWhereUniqueWithoutTaskInput | PullRequestUpdateWithWhereUniqueWithoutTaskInput[]
-    updateMany?: PullRequestUpdateManyWithWhereWithoutTaskInput | PullRequestUpdateManyWithWhereWithoutTaskInput[]
-    deleteMany?: PullRequestScalarWhereInput | PullRequestScalarWhereInput[]
-  }
-
-  export type DeploymentUpdateManyWithoutTaskNestedInput = {
-    create?: XOR<DeploymentCreateWithoutTaskInput, DeploymentUncheckedCreateWithoutTaskInput> | DeploymentCreateWithoutTaskInput[] | DeploymentUncheckedCreateWithoutTaskInput[]
-    connectOrCreate?: DeploymentCreateOrConnectWithoutTaskInput | DeploymentCreateOrConnectWithoutTaskInput[]
-    upsert?: DeploymentUpsertWithWhereUniqueWithoutTaskInput | DeploymentUpsertWithWhereUniqueWithoutTaskInput[]
-    createMany?: DeploymentCreateManyTaskInputEnvelope
-    set?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    disconnect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    delete?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    connect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    update?: DeploymentUpdateWithWhereUniqueWithoutTaskInput | DeploymentUpdateWithWhereUniqueWithoutTaskInput[]
-    updateMany?: DeploymentUpdateManyWithWhereWithoutTaskInput | DeploymentUpdateManyWithWhereWithoutTaskInput[]
-    deleteMany?: DeploymentScalarWhereInput | DeploymentScalarWhereInput[]
-  }
-
-  export type SubtaskUncheckedUpdateManyWithoutTaskNestedInput = {
-    create?: XOR<SubtaskCreateWithoutTaskInput, SubtaskUncheckedCreateWithoutTaskInput> | SubtaskCreateWithoutTaskInput[] | SubtaskUncheckedCreateWithoutTaskInput[]
-    connectOrCreate?: SubtaskCreateOrConnectWithoutTaskInput | SubtaskCreateOrConnectWithoutTaskInput[]
-    upsert?: SubtaskUpsertWithWhereUniqueWithoutTaskInput | SubtaskUpsertWithWhereUniqueWithoutTaskInput[]
-    createMany?: SubtaskCreateManyTaskInputEnvelope
-    set?: SubtaskWhereUniqueInput | SubtaskWhereUniqueInput[]
-    disconnect?: SubtaskWhereUniqueInput | SubtaskWhereUniqueInput[]
-    delete?: SubtaskWhereUniqueInput | SubtaskWhereUniqueInput[]
-    connect?: SubtaskWhereUniqueInput | SubtaskWhereUniqueInput[]
-    update?: SubtaskUpdateWithWhereUniqueWithoutTaskInput | SubtaskUpdateWithWhereUniqueWithoutTaskInput[]
-    updateMany?: SubtaskUpdateManyWithWhereWithoutTaskInput | SubtaskUpdateManyWithWhereWithoutTaskInput[]
-    deleteMany?: SubtaskScalarWhereInput | SubtaskScalarWhereInput[]
-  }
-
   export type CommentUncheckedUpdateManyWithoutTaskNestedInput = {
     create?: XOR<CommentCreateWithoutTaskInput, CommentUncheckedCreateWithoutTaskInput> | CommentCreateWithoutTaskInput[] | CommentUncheckedCreateWithoutTaskInput[]
     connectOrCreate?: CommentCreateOrConnectWithoutTaskInput | CommentCreateOrConnectWithoutTaskInput[]
@@ -24923,34 +18303,6 @@ export namespace Prisma {
     deleteMany?: CommentScalarWhereInput | CommentScalarWhereInput[]
   }
 
-  export type TaskLinkUncheckedUpdateManyWithoutSourceTaskNestedInput = {
-    create?: XOR<TaskLinkCreateWithoutSourceTaskInput, TaskLinkUncheckedCreateWithoutSourceTaskInput> | TaskLinkCreateWithoutSourceTaskInput[] | TaskLinkUncheckedCreateWithoutSourceTaskInput[]
-    connectOrCreate?: TaskLinkCreateOrConnectWithoutSourceTaskInput | TaskLinkCreateOrConnectWithoutSourceTaskInput[]
-    upsert?: TaskLinkUpsertWithWhereUniqueWithoutSourceTaskInput | TaskLinkUpsertWithWhereUniqueWithoutSourceTaskInput[]
-    createMany?: TaskLinkCreateManySourceTaskInputEnvelope
-    set?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-    disconnect?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-    delete?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-    connect?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-    update?: TaskLinkUpdateWithWhereUniqueWithoutSourceTaskInput | TaskLinkUpdateWithWhereUniqueWithoutSourceTaskInput[]
-    updateMany?: TaskLinkUpdateManyWithWhereWithoutSourceTaskInput | TaskLinkUpdateManyWithWhereWithoutSourceTaskInput[]
-    deleteMany?: TaskLinkScalarWhereInput | TaskLinkScalarWhereInput[]
-  }
-
-  export type TaskLinkUncheckedUpdateManyWithoutTargetTaskNestedInput = {
-    create?: XOR<TaskLinkCreateWithoutTargetTaskInput, TaskLinkUncheckedCreateWithoutTargetTaskInput> | TaskLinkCreateWithoutTargetTaskInput[] | TaskLinkUncheckedCreateWithoutTargetTaskInput[]
-    connectOrCreate?: TaskLinkCreateOrConnectWithoutTargetTaskInput | TaskLinkCreateOrConnectWithoutTargetTaskInput[]
-    upsert?: TaskLinkUpsertWithWhereUniqueWithoutTargetTaskInput | TaskLinkUpsertWithWhereUniqueWithoutTargetTaskInput[]
-    createMany?: TaskLinkCreateManyTargetTaskInputEnvelope
-    set?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-    disconnect?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-    delete?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-    connect?: TaskLinkWhereUniqueInput | TaskLinkWhereUniqueInput[]
-    update?: TaskLinkUpdateWithWhereUniqueWithoutTargetTaskInput | TaskLinkUpdateWithWhereUniqueWithoutTargetTaskInput[]
-    updateMany?: TaskLinkUpdateManyWithWhereWithoutTargetTaskInput | TaskLinkUpdateManyWithWhereWithoutTargetTaskInput[]
-    deleteMany?: TaskLinkScalarWhereInput | TaskLinkScalarWhereInput[]
-  }
-
   export type ActivityEventUncheckedUpdateManyWithoutTaskNestedInput = {
     create?: XOR<ActivityEventCreateWithoutTaskInput, ActivityEventUncheckedCreateWithoutTaskInput> | ActivityEventCreateWithoutTaskInput[] | ActivityEventUncheckedCreateWithoutTaskInput[]
     connectOrCreate?: ActivityEventCreateOrConnectWithoutTaskInput | ActivityEventCreateOrConnectWithoutTaskInput[]
@@ -24963,62 +18315,6 @@ export namespace Prisma {
     update?: ActivityEventUpdateWithWhereUniqueWithoutTaskInput | ActivityEventUpdateWithWhereUniqueWithoutTaskInput[]
     updateMany?: ActivityEventUpdateManyWithWhereWithoutTaskInput | ActivityEventUpdateManyWithWhereWithoutTaskInput[]
     deleteMany?: ActivityEventScalarWhereInput | ActivityEventScalarWhereInput[]
-  }
-
-  export type PullRequestUncheckedUpdateManyWithoutTaskNestedInput = {
-    create?: XOR<PullRequestCreateWithoutTaskInput, PullRequestUncheckedCreateWithoutTaskInput> | PullRequestCreateWithoutTaskInput[] | PullRequestUncheckedCreateWithoutTaskInput[]
-    connectOrCreate?: PullRequestCreateOrConnectWithoutTaskInput | PullRequestCreateOrConnectWithoutTaskInput[]
-    upsert?: PullRequestUpsertWithWhereUniqueWithoutTaskInput | PullRequestUpsertWithWhereUniqueWithoutTaskInput[]
-    createMany?: PullRequestCreateManyTaskInputEnvelope
-    set?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-    disconnect?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-    delete?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-    connect?: PullRequestWhereUniqueInput | PullRequestWhereUniqueInput[]
-    update?: PullRequestUpdateWithWhereUniqueWithoutTaskInput | PullRequestUpdateWithWhereUniqueWithoutTaskInput[]
-    updateMany?: PullRequestUpdateManyWithWhereWithoutTaskInput | PullRequestUpdateManyWithWhereWithoutTaskInput[]
-    deleteMany?: PullRequestScalarWhereInput | PullRequestScalarWhereInput[]
-  }
-
-  export type DeploymentUncheckedUpdateManyWithoutTaskNestedInput = {
-    create?: XOR<DeploymentCreateWithoutTaskInput, DeploymentUncheckedCreateWithoutTaskInput> | DeploymentCreateWithoutTaskInput[] | DeploymentUncheckedCreateWithoutTaskInput[]
-    connectOrCreate?: DeploymentCreateOrConnectWithoutTaskInput | DeploymentCreateOrConnectWithoutTaskInput[]
-    upsert?: DeploymentUpsertWithWhereUniqueWithoutTaskInput | DeploymentUpsertWithWhereUniqueWithoutTaskInput[]
-    createMany?: DeploymentCreateManyTaskInputEnvelope
-    set?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    disconnect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    delete?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    connect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    update?: DeploymentUpdateWithWhereUniqueWithoutTaskInput | DeploymentUpdateWithWhereUniqueWithoutTaskInput[]
-    updateMany?: DeploymentUpdateManyWithWhereWithoutTaskInput | DeploymentUpdateManyWithWhereWithoutTaskInput[]
-    deleteMany?: DeploymentScalarWhereInput | DeploymentScalarWhereInput[]
-  }
-
-  export type TaskCreateNestedOneWithoutLinkedFromInput = {
-    create?: XOR<TaskCreateWithoutLinkedFromInput, TaskUncheckedCreateWithoutLinkedFromInput>
-    connectOrCreate?: TaskCreateOrConnectWithoutLinkedFromInput
-    connect?: TaskWhereUniqueInput
-  }
-
-  export type TaskCreateNestedOneWithoutLinkedToInput = {
-    create?: XOR<TaskCreateWithoutLinkedToInput, TaskUncheckedCreateWithoutLinkedToInput>
-    connectOrCreate?: TaskCreateOrConnectWithoutLinkedToInput
-    connect?: TaskWhereUniqueInput
-  }
-
-  export type TaskUpdateOneRequiredWithoutLinkedFromNestedInput = {
-    create?: XOR<TaskCreateWithoutLinkedFromInput, TaskUncheckedCreateWithoutLinkedFromInput>
-    connectOrCreate?: TaskCreateOrConnectWithoutLinkedFromInput
-    upsert?: TaskUpsertWithoutLinkedFromInput
-    connect?: TaskWhereUniqueInput
-    update?: XOR<XOR<TaskUpdateToOneWithWhereWithoutLinkedFromInput, TaskUpdateWithoutLinkedFromInput>, TaskUncheckedUpdateWithoutLinkedFromInput>
-  }
-
-  export type TaskUpdateOneRequiredWithoutLinkedToNestedInput = {
-    create?: XOR<TaskCreateWithoutLinkedToInput, TaskUncheckedCreateWithoutLinkedToInput>
-    connectOrCreate?: TaskCreateOrConnectWithoutLinkedToInput
-    upsert?: TaskUpsertWithoutLinkedToInput
-    connect?: TaskWhereUniqueInput
-    update?: XOR<XOR<TaskUpdateToOneWithWhereWithoutLinkedToInput, TaskUpdateWithoutLinkedToInput>, TaskUncheckedUpdateWithoutLinkedToInput>
   }
 
   export type ProjectCreateNestedOneWithoutSprintsInput = {
@@ -25075,20 +18371,6 @@ export namespace Prisma {
     update?: TaskUpdateWithWhereUniqueWithoutSprintInput | TaskUpdateWithWhereUniqueWithoutSprintInput[]
     updateMany?: TaskUpdateManyWithWhereWithoutSprintInput | TaskUpdateManyWithWhereWithoutSprintInput[]
     deleteMany?: TaskScalarWhereInput | TaskScalarWhereInput[]
-  }
-
-  export type TaskCreateNestedOneWithoutSubtasksInput = {
-    create?: XOR<TaskCreateWithoutSubtasksInput, TaskUncheckedCreateWithoutSubtasksInput>
-    connectOrCreate?: TaskCreateOrConnectWithoutSubtasksInput
-    connect?: TaskWhereUniqueInput
-  }
-
-  export type TaskUpdateOneRequiredWithoutSubtasksNestedInput = {
-    create?: XOR<TaskCreateWithoutSubtasksInput, TaskUncheckedCreateWithoutSubtasksInput>
-    connectOrCreate?: TaskCreateOrConnectWithoutSubtasksInput
-    upsert?: TaskUpsertWithoutSubtasksInput
-    connect?: TaskWhereUniqueInput
-    update?: XOR<XOR<TaskUpdateToOneWithWhereWithoutSubtasksInput, TaskUpdateWithoutSubtasksInput>, TaskUncheckedUpdateWithoutSubtasksInput>
   }
 
   export type TaskCreateNestedOneWithoutCommentsInput = {
@@ -25165,124 +18447,6 @@ export namespace Prisma {
     delete?: UserWhereInput | boolean
     connect?: UserWhereUniqueInput
     update?: XOR<XOR<UserUpdateToOneWithWhereWithoutActivityEventsInput, UserUpdateWithoutActivityEventsInput>, UserUncheckedUpdateWithoutActivityEventsInput>
-  }
-
-  export type ProjectCreateNestedOneWithoutPullRequestsInput = {
-    create?: XOR<ProjectCreateWithoutPullRequestsInput, ProjectUncheckedCreateWithoutPullRequestsInput>
-    connectOrCreate?: ProjectCreateOrConnectWithoutPullRequestsInput
-    connect?: ProjectWhereUniqueInput
-  }
-
-  export type TaskCreateNestedOneWithoutPullRequestsInput = {
-    create?: XOR<TaskCreateWithoutPullRequestsInput, TaskUncheckedCreateWithoutPullRequestsInput>
-    connectOrCreate?: TaskCreateOrConnectWithoutPullRequestsInput
-    connect?: TaskWhereUniqueInput
-  }
-
-  export type DeploymentCreateNestedManyWithoutPullRequestInput = {
-    create?: XOR<DeploymentCreateWithoutPullRequestInput, DeploymentUncheckedCreateWithoutPullRequestInput> | DeploymentCreateWithoutPullRequestInput[] | DeploymentUncheckedCreateWithoutPullRequestInput[]
-    connectOrCreate?: DeploymentCreateOrConnectWithoutPullRequestInput | DeploymentCreateOrConnectWithoutPullRequestInput[]
-    createMany?: DeploymentCreateManyPullRequestInputEnvelope
-    connect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-  }
-
-  export type DeploymentUncheckedCreateNestedManyWithoutPullRequestInput = {
-    create?: XOR<DeploymentCreateWithoutPullRequestInput, DeploymentUncheckedCreateWithoutPullRequestInput> | DeploymentCreateWithoutPullRequestInput[] | DeploymentUncheckedCreateWithoutPullRequestInput[]
-    connectOrCreate?: DeploymentCreateOrConnectWithoutPullRequestInput | DeploymentCreateOrConnectWithoutPullRequestInput[]
-    createMany?: DeploymentCreateManyPullRequestInputEnvelope
-    connect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-  }
-
-  export type ProjectUpdateOneRequiredWithoutPullRequestsNestedInput = {
-    create?: XOR<ProjectCreateWithoutPullRequestsInput, ProjectUncheckedCreateWithoutPullRequestsInput>
-    connectOrCreate?: ProjectCreateOrConnectWithoutPullRequestsInput
-    upsert?: ProjectUpsertWithoutPullRequestsInput
-    connect?: ProjectWhereUniqueInput
-    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutPullRequestsInput, ProjectUpdateWithoutPullRequestsInput>, ProjectUncheckedUpdateWithoutPullRequestsInput>
-  }
-
-  export type TaskUpdateOneWithoutPullRequestsNestedInput = {
-    create?: XOR<TaskCreateWithoutPullRequestsInput, TaskUncheckedCreateWithoutPullRequestsInput>
-    connectOrCreate?: TaskCreateOrConnectWithoutPullRequestsInput
-    upsert?: TaskUpsertWithoutPullRequestsInput
-    disconnect?: TaskWhereInput | boolean
-    delete?: TaskWhereInput | boolean
-    connect?: TaskWhereUniqueInput
-    update?: XOR<XOR<TaskUpdateToOneWithWhereWithoutPullRequestsInput, TaskUpdateWithoutPullRequestsInput>, TaskUncheckedUpdateWithoutPullRequestsInput>
-  }
-
-  export type DeploymentUpdateManyWithoutPullRequestNestedInput = {
-    create?: XOR<DeploymentCreateWithoutPullRequestInput, DeploymentUncheckedCreateWithoutPullRequestInput> | DeploymentCreateWithoutPullRequestInput[] | DeploymentUncheckedCreateWithoutPullRequestInput[]
-    connectOrCreate?: DeploymentCreateOrConnectWithoutPullRequestInput | DeploymentCreateOrConnectWithoutPullRequestInput[]
-    upsert?: DeploymentUpsertWithWhereUniqueWithoutPullRequestInput | DeploymentUpsertWithWhereUniqueWithoutPullRequestInput[]
-    createMany?: DeploymentCreateManyPullRequestInputEnvelope
-    set?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    disconnect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    delete?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    connect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    update?: DeploymentUpdateWithWhereUniqueWithoutPullRequestInput | DeploymentUpdateWithWhereUniqueWithoutPullRequestInput[]
-    updateMany?: DeploymentUpdateManyWithWhereWithoutPullRequestInput | DeploymentUpdateManyWithWhereWithoutPullRequestInput[]
-    deleteMany?: DeploymentScalarWhereInput | DeploymentScalarWhereInput[]
-  }
-
-  export type DeploymentUncheckedUpdateManyWithoutPullRequestNestedInput = {
-    create?: XOR<DeploymentCreateWithoutPullRequestInput, DeploymentUncheckedCreateWithoutPullRequestInput> | DeploymentCreateWithoutPullRequestInput[] | DeploymentUncheckedCreateWithoutPullRequestInput[]
-    connectOrCreate?: DeploymentCreateOrConnectWithoutPullRequestInput | DeploymentCreateOrConnectWithoutPullRequestInput[]
-    upsert?: DeploymentUpsertWithWhereUniqueWithoutPullRequestInput | DeploymentUpsertWithWhereUniqueWithoutPullRequestInput[]
-    createMany?: DeploymentCreateManyPullRequestInputEnvelope
-    set?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    disconnect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    delete?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    connect?: DeploymentWhereUniqueInput | DeploymentWhereUniqueInput[]
-    update?: DeploymentUpdateWithWhereUniqueWithoutPullRequestInput | DeploymentUpdateWithWhereUniqueWithoutPullRequestInput[]
-    updateMany?: DeploymentUpdateManyWithWhereWithoutPullRequestInput | DeploymentUpdateManyWithWhereWithoutPullRequestInput[]
-    deleteMany?: DeploymentScalarWhereInput | DeploymentScalarWhereInput[]
-  }
-
-  export type ProjectCreateNestedOneWithoutDeploymentsInput = {
-    create?: XOR<ProjectCreateWithoutDeploymentsInput, ProjectUncheckedCreateWithoutDeploymentsInput>
-    connectOrCreate?: ProjectCreateOrConnectWithoutDeploymentsInput
-    connect?: ProjectWhereUniqueInput
-  }
-
-  export type TaskCreateNestedOneWithoutDeploymentsInput = {
-    create?: XOR<TaskCreateWithoutDeploymentsInput, TaskUncheckedCreateWithoutDeploymentsInput>
-    connectOrCreate?: TaskCreateOrConnectWithoutDeploymentsInput
-    connect?: TaskWhereUniqueInput
-  }
-
-  export type PullRequestCreateNestedOneWithoutDeploymentsInput = {
-    create?: XOR<PullRequestCreateWithoutDeploymentsInput, PullRequestUncheckedCreateWithoutDeploymentsInput>
-    connectOrCreate?: PullRequestCreateOrConnectWithoutDeploymentsInput
-    connect?: PullRequestWhereUniqueInput
-  }
-
-  export type ProjectUpdateOneRequiredWithoutDeploymentsNestedInput = {
-    create?: XOR<ProjectCreateWithoutDeploymentsInput, ProjectUncheckedCreateWithoutDeploymentsInput>
-    connectOrCreate?: ProjectCreateOrConnectWithoutDeploymentsInput
-    upsert?: ProjectUpsertWithoutDeploymentsInput
-    connect?: ProjectWhereUniqueInput
-    update?: XOR<XOR<ProjectUpdateToOneWithWhereWithoutDeploymentsInput, ProjectUpdateWithoutDeploymentsInput>, ProjectUncheckedUpdateWithoutDeploymentsInput>
-  }
-
-  export type TaskUpdateOneWithoutDeploymentsNestedInput = {
-    create?: XOR<TaskCreateWithoutDeploymentsInput, TaskUncheckedCreateWithoutDeploymentsInput>
-    connectOrCreate?: TaskCreateOrConnectWithoutDeploymentsInput
-    upsert?: TaskUpsertWithoutDeploymentsInput
-    disconnect?: TaskWhereInput | boolean
-    delete?: TaskWhereInput | boolean
-    connect?: TaskWhereUniqueInput
-    update?: XOR<XOR<TaskUpdateToOneWithWhereWithoutDeploymentsInput, TaskUpdateWithoutDeploymentsInput>, TaskUncheckedUpdateWithoutDeploymentsInput>
-  }
-
-  export type PullRequestUpdateOneWithoutDeploymentsNestedInput = {
-    create?: XOR<PullRequestCreateWithoutDeploymentsInput, PullRequestUncheckedCreateWithoutDeploymentsInput>
-    connectOrCreate?: PullRequestCreateOrConnectWithoutDeploymentsInput
-    upsert?: PullRequestUpsertWithoutDeploymentsInput
-    disconnect?: PullRequestWhereInput | boolean
-    delete?: PullRequestWhereInput | boolean
-    connect?: PullRequestWhereUniqueInput
-    update?: XOR<XOR<PullRequestUpdateToOneWithWhereWithoutDeploymentsInput, PullRequestUpdateWithoutDeploymentsInput>, PullRequestUncheckedUpdateWithoutDeploymentsInput>
   }
 
   export type NestedStringFilter<$PrismaModel = never> = {
@@ -25566,8 +18730,6 @@ export namespace Prisma {
     sprints?: SprintCreateNestedManyWithoutProjectInput
     invites?: ProjectInviteCreateNestedManyWithoutProjectInput
     activityEvents?: ActivityEventCreateNestedManyWithoutProjectInput
-    pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
-    deployments?: DeploymentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutOwnerInput = {
@@ -25587,8 +18749,6 @@ export namespace Prisma {
     sprints?: SprintUncheckedCreateNestedManyWithoutProjectInput
     invites?: ProjectInviteUncheckedCreateNestedManyWithoutProjectInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutProjectInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutOwnerInput = {
@@ -25648,13 +18808,8 @@ export namespace Prisma {
     project: ProjectCreateNestedOneWithoutTasksInput
     sprint?: SprintCreateNestedOneWithoutTasksInput
     assignee?: UserCreateNestedOneWithoutAssignedTasksInput
-    subtasks?: SubtaskCreateNestedManyWithoutTaskInput
     comments?: CommentCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkCreateNestedManyWithoutTargetTaskInput
     activityEvents?: ActivityEventCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentCreateNestedManyWithoutTaskInput
   }
 
   export type TaskUncheckedCreateWithoutCreatedByInput = {
@@ -25678,13 +18833,8 @@ export namespace Prisma {
     dueDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    subtasks?: SubtaskUncheckedCreateNestedManyWithoutTaskInput
     comments?: CommentUncheckedCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkUncheckedCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkUncheckedCreateNestedManyWithoutTargetTaskInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutTaskInput
   }
 
   export type TaskCreateOrConnectWithoutCreatedByInput = {
@@ -25718,13 +18868,8 @@ export namespace Prisma {
     project: ProjectCreateNestedOneWithoutTasksInput
     sprint?: SprintCreateNestedOneWithoutTasksInput
     createdBy: UserCreateNestedOneWithoutCreatedTasksInput
-    subtasks?: SubtaskCreateNestedManyWithoutTaskInput
     comments?: CommentCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkCreateNestedManyWithoutTargetTaskInput
     activityEvents?: ActivityEventCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentCreateNestedManyWithoutTaskInput
   }
 
   export type TaskUncheckedCreateWithoutAssigneeInput = {
@@ -25748,13 +18893,8 @@ export namespace Prisma {
     dueDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    subtasks?: SubtaskUncheckedCreateNestedManyWithoutTaskInput
     comments?: CommentUncheckedCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkUncheckedCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkUncheckedCreateNestedManyWithoutTargetTaskInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutTaskInput
   }
 
   export type TaskCreateOrConnectWithoutAssigneeInput = {
@@ -26602,13 +19742,8 @@ export namespace Prisma {
     sprint?: SprintCreateNestedOneWithoutTasksInput
     assignee?: UserCreateNestedOneWithoutAssignedTasksInput
     createdBy: UserCreateNestedOneWithoutCreatedTasksInput
-    subtasks?: SubtaskCreateNestedManyWithoutTaskInput
     comments?: CommentCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkCreateNestedManyWithoutTargetTaskInput
     activityEvents?: ActivityEventCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentCreateNestedManyWithoutTaskInput
   }
 
   export type TaskUncheckedCreateWithoutProjectInput = {
@@ -26632,13 +19767,8 @@ export namespace Prisma {
     dueDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    subtasks?: SubtaskUncheckedCreateNestedManyWithoutTaskInput
     comments?: CommentUncheckedCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkUncheckedCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkUncheckedCreateNestedManyWithoutTargetTaskInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutTaskInput
   }
 
   export type TaskCreateOrConnectWithoutProjectInput = {
@@ -26760,96 +19890,6 @@ export namespace Prisma {
 
   export type ActivityEventCreateManyProjectInputEnvelope = {
     data: ActivityEventCreateManyProjectInput | ActivityEventCreateManyProjectInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type PullRequestCreateWithoutProjectInput = {
-    id?: string
-    provider?: string
-    repository: string
-    number: number
-    title: string
-    url?: string | null
-    branch?: string | null
-    targetBranch?: string | null
-    status?: string
-    reviewState?: string
-    ciStatus?: string
-    author?: string | null
-    openedAt?: Date | string | null
-    mergedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    task?: TaskCreateNestedOneWithoutPullRequestsInput
-    deployments?: DeploymentCreateNestedManyWithoutPullRequestInput
-  }
-
-  export type PullRequestUncheckedCreateWithoutProjectInput = {
-    id?: string
-    taskId?: string | null
-    provider?: string
-    repository: string
-    number: number
-    title: string
-    url?: string | null
-    branch?: string | null
-    targetBranch?: string | null
-    status?: string
-    reviewState?: string
-    ciStatus?: string
-    author?: string | null
-    openedAt?: Date | string | null
-    mergedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutPullRequestInput
-  }
-
-  export type PullRequestCreateOrConnectWithoutProjectInput = {
-    where: PullRequestWhereUniqueInput
-    create: XOR<PullRequestCreateWithoutProjectInput, PullRequestUncheckedCreateWithoutProjectInput>
-  }
-
-  export type PullRequestCreateManyProjectInputEnvelope = {
-    data: PullRequestCreateManyProjectInput | PullRequestCreateManyProjectInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type DeploymentCreateWithoutProjectInput = {
-    id?: string
-    environment?: string
-    status?: string
-    version?: string | null
-    url?: string | null
-    deployedBy?: string | null
-    deployedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    task?: TaskCreateNestedOneWithoutDeploymentsInput
-    pullRequest?: PullRequestCreateNestedOneWithoutDeploymentsInput
-  }
-
-  export type DeploymentUncheckedCreateWithoutProjectInput = {
-    id?: string
-    taskId?: string | null
-    pullRequestId?: string | null
-    environment?: string
-    status?: string
-    version?: string | null
-    url?: string | null
-    deployedBy?: string | null
-    deployedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type DeploymentCreateOrConnectWithoutProjectInput = {
-    where: DeploymentWhereUniqueInput
-    create: XOR<DeploymentCreateWithoutProjectInput, DeploymentUncheckedCreateWithoutProjectInput>
-  }
-
-  export type DeploymentCreateManyProjectInputEnvelope = {
-    data: DeploymentCreateManyProjectInput | DeploymentCreateManyProjectInput[]
     skipDuplicates?: boolean
   }
 
@@ -27007,80 +20047,6 @@ export namespace Prisma {
     data: XOR<ActivityEventUpdateManyMutationInput, ActivityEventUncheckedUpdateManyWithoutProjectInput>
   }
 
-  export type PullRequestUpsertWithWhereUniqueWithoutProjectInput = {
-    where: PullRequestWhereUniqueInput
-    update: XOR<PullRequestUpdateWithoutProjectInput, PullRequestUncheckedUpdateWithoutProjectInput>
-    create: XOR<PullRequestCreateWithoutProjectInput, PullRequestUncheckedCreateWithoutProjectInput>
-  }
-
-  export type PullRequestUpdateWithWhereUniqueWithoutProjectInput = {
-    where: PullRequestWhereUniqueInput
-    data: XOR<PullRequestUpdateWithoutProjectInput, PullRequestUncheckedUpdateWithoutProjectInput>
-  }
-
-  export type PullRequestUpdateManyWithWhereWithoutProjectInput = {
-    where: PullRequestScalarWhereInput
-    data: XOR<PullRequestUpdateManyMutationInput, PullRequestUncheckedUpdateManyWithoutProjectInput>
-  }
-
-  export type PullRequestScalarWhereInput = {
-    AND?: PullRequestScalarWhereInput | PullRequestScalarWhereInput[]
-    OR?: PullRequestScalarWhereInput[]
-    NOT?: PullRequestScalarWhereInput | PullRequestScalarWhereInput[]
-    id?: StringFilter<"PullRequest"> | string
-    projectId?: StringFilter<"PullRequest"> | string
-    taskId?: StringNullableFilter<"PullRequest"> | string | null
-    provider?: StringFilter<"PullRequest"> | string
-    repository?: StringFilter<"PullRequest"> | string
-    number?: IntFilter<"PullRequest"> | number
-    title?: StringFilter<"PullRequest"> | string
-    url?: StringNullableFilter<"PullRequest"> | string | null
-    branch?: StringNullableFilter<"PullRequest"> | string | null
-    targetBranch?: StringNullableFilter<"PullRequest"> | string | null
-    status?: StringFilter<"PullRequest"> | string
-    reviewState?: StringFilter<"PullRequest"> | string
-    ciStatus?: StringFilter<"PullRequest"> | string
-    author?: StringNullableFilter<"PullRequest"> | string | null
-    openedAt?: DateTimeNullableFilter<"PullRequest"> | Date | string | null
-    mergedAt?: DateTimeNullableFilter<"PullRequest"> | Date | string | null
-    createdAt?: DateTimeFilter<"PullRequest"> | Date | string
-    updatedAt?: DateTimeFilter<"PullRequest"> | Date | string
-  }
-
-  export type DeploymentUpsertWithWhereUniqueWithoutProjectInput = {
-    where: DeploymentWhereUniqueInput
-    update: XOR<DeploymentUpdateWithoutProjectInput, DeploymentUncheckedUpdateWithoutProjectInput>
-    create: XOR<DeploymentCreateWithoutProjectInput, DeploymentUncheckedCreateWithoutProjectInput>
-  }
-
-  export type DeploymentUpdateWithWhereUniqueWithoutProjectInput = {
-    where: DeploymentWhereUniqueInput
-    data: XOR<DeploymentUpdateWithoutProjectInput, DeploymentUncheckedUpdateWithoutProjectInput>
-  }
-
-  export type DeploymentUpdateManyWithWhereWithoutProjectInput = {
-    where: DeploymentScalarWhereInput
-    data: XOR<DeploymentUpdateManyMutationInput, DeploymentUncheckedUpdateManyWithoutProjectInput>
-  }
-
-  export type DeploymentScalarWhereInput = {
-    AND?: DeploymentScalarWhereInput | DeploymentScalarWhereInput[]
-    OR?: DeploymentScalarWhereInput[]
-    NOT?: DeploymentScalarWhereInput | DeploymentScalarWhereInput[]
-    id?: StringFilter<"Deployment"> | string
-    projectId?: StringFilter<"Deployment"> | string
-    taskId?: StringNullableFilter<"Deployment"> | string | null
-    pullRequestId?: StringNullableFilter<"Deployment"> | string | null
-    environment?: StringFilter<"Deployment"> | string
-    status?: StringFilter<"Deployment"> | string
-    version?: StringNullableFilter<"Deployment"> | string | null
-    url?: StringNullableFilter<"Deployment"> | string | null
-    deployedBy?: StringNullableFilter<"Deployment"> | string | null
-    deployedAt?: DateTimeNullableFilter<"Deployment"> | Date | string | null
-    createdAt?: DateTimeFilter<"Deployment"> | Date | string
-    updatedAt?: DateTimeFilter<"Deployment"> | Date | string
-  }
-
   export type ProjectCreateWithoutInvitesInput = {
     id?: string
     name: string
@@ -27098,8 +20064,6 @@ export namespace Prisma {
     tasks?: TaskCreateNestedManyWithoutProjectInput
     sprints?: SprintCreateNestedManyWithoutProjectInput
     activityEvents?: ActivityEventCreateNestedManyWithoutProjectInput
-    pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
-    deployments?: DeploymentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutInvitesInput = {
@@ -27119,8 +20083,6 @@ export namespace Prisma {
     tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
     sprints?: SprintUncheckedCreateNestedManyWithoutProjectInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutProjectInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutInvitesInput = {
@@ -27262,8 +20224,6 @@ export namespace Prisma {
     tasks?: TaskUpdateManyWithoutProjectNestedInput
     sprints?: SprintUpdateManyWithoutProjectNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutProjectNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
-    deployments?: DeploymentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutInvitesInput = {
@@ -27283,8 +20243,6 @@ export namespace Prisma {
     tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
     sprints?: SprintUncheckedUpdateManyWithoutProjectNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutProjectNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutSentProjectInvitesInput = {
@@ -27422,8 +20380,6 @@ export namespace Prisma {
     sprints?: SprintCreateNestedManyWithoutProjectInput
     invites?: ProjectInviteCreateNestedManyWithoutProjectInput
     activityEvents?: ActivityEventCreateNestedManyWithoutProjectInput
-    pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
-    deployments?: DeploymentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutMembersInput = {
@@ -27443,8 +20399,6 @@ export namespace Prisma {
     sprints?: SprintUncheckedCreateNestedManyWithoutProjectInput
     invites?: ProjectInviteUncheckedCreateNestedManyWithoutProjectInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutProjectInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutMembersInput = {
@@ -27533,8 +20487,6 @@ export namespace Prisma {
     sprints?: SprintUpdateManyWithoutProjectNestedInput
     invites?: ProjectInviteUpdateManyWithoutProjectNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutProjectNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
-    deployments?: DeploymentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutMembersInput = {
@@ -27554,8 +20506,6 @@ export namespace Prisma {
     sprints?: SprintUncheckedUpdateManyWithoutProjectNestedInput
     invites?: ProjectInviteUncheckedUpdateManyWithoutProjectNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutProjectNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type UserUpsertWithoutProjectMembersInput = {
@@ -27634,8 +20584,6 @@ export namespace Prisma {
     sprints?: SprintCreateNestedManyWithoutProjectInput
     invites?: ProjectInviteCreateNestedManyWithoutProjectInput
     activityEvents?: ActivityEventCreateNestedManyWithoutProjectInput
-    pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
-    deployments?: DeploymentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutTasksInput = {
@@ -27655,8 +20603,6 @@ export namespace Prisma {
     sprints?: SprintUncheckedCreateNestedManyWithoutProjectInput
     invites?: ProjectInviteUncheckedCreateNestedManyWithoutProjectInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutProjectInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutTasksInput = {
@@ -27799,32 +20745,6 @@ export namespace Prisma {
     create: XOR<UserCreateWithoutCreatedTasksInput, UserUncheckedCreateWithoutCreatedTasksInput>
   }
 
-  export type SubtaskCreateWithoutTaskInput = {
-    id?: string
-    title: string
-    completed?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type SubtaskUncheckedCreateWithoutTaskInput = {
-    id?: string
-    title: string
-    completed?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type SubtaskCreateOrConnectWithoutTaskInput = {
-    where: SubtaskWhereUniqueInput
-    create: XOR<SubtaskCreateWithoutTaskInput, SubtaskUncheckedCreateWithoutTaskInput>
-  }
-
-  export type SubtaskCreateManyTaskInputEnvelope = {
-    data: SubtaskCreateManyTaskInput | SubtaskCreateManyTaskInput[]
-    skipDuplicates?: boolean
-  }
-
   export type CommentCreateWithoutTaskInput = {
     id?: string
     content: string
@@ -27848,54 +20768,6 @@ export namespace Prisma {
 
   export type CommentCreateManyTaskInputEnvelope = {
     data: CommentCreateManyTaskInput | CommentCreateManyTaskInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type TaskLinkCreateWithoutSourceTaskInput = {
-    id?: string
-    type?: string
-    createdAt?: Date | string
-    targetTask: TaskCreateNestedOneWithoutLinkedToInput
-  }
-
-  export type TaskLinkUncheckedCreateWithoutSourceTaskInput = {
-    id?: string
-    targetTaskId: string
-    type?: string
-    createdAt?: Date | string
-  }
-
-  export type TaskLinkCreateOrConnectWithoutSourceTaskInput = {
-    where: TaskLinkWhereUniqueInput
-    create: XOR<TaskLinkCreateWithoutSourceTaskInput, TaskLinkUncheckedCreateWithoutSourceTaskInput>
-  }
-
-  export type TaskLinkCreateManySourceTaskInputEnvelope = {
-    data: TaskLinkCreateManySourceTaskInput | TaskLinkCreateManySourceTaskInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type TaskLinkCreateWithoutTargetTaskInput = {
-    id?: string
-    type?: string
-    createdAt?: Date | string
-    sourceTask: TaskCreateNestedOneWithoutLinkedFromInput
-  }
-
-  export type TaskLinkUncheckedCreateWithoutTargetTaskInput = {
-    id?: string
-    sourceTaskId: string
-    type?: string
-    createdAt?: Date | string
-  }
-
-  export type TaskLinkCreateOrConnectWithoutTargetTaskInput = {
-    where: TaskLinkWhereUniqueInput
-    create: XOR<TaskLinkCreateWithoutTargetTaskInput, TaskLinkUncheckedCreateWithoutTargetTaskInput>
-  }
-
-  export type TaskLinkCreateManyTargetTaskInputEnvelope = {
-    data: TaskLinkCreateManyTargetTaskInput | TaskLinkCreateManyTargetTaskInput[]
     skipDuplicates?: boolean
   }
 
@@ -27939,96 +20811,6 @@ export namespace Prisma {
     skipDuplicates?: boolean
   }
 
-  export type PullRequestCreateWithoutTaskInput = {
-    id?: string
-    provider?: string
-    repository: string
-    number: number
-    title: string
-    url?: string | null
-    branch?: string | null
-    targetBranch?: string | null
-    status?: string
-    reviewState?: string
-    ciStatus?: string
-    author?: string | null
-    openedAt?: Date | string | null
-    mergedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    project: ProjectCreateNestedOneWithoutPullRequestsInput
-    deployments?: DeploymentCreateNestedManyWithoutPullRequestInput
-  }
-
-  export type PullRequestUncheckedCreateWithoutTaskInput = {
-    id?: string
-    projectId: string
-    provider?: string
-    repository: string
-    number: number
-    title: string
-    url?: string | null
-    branch?: string | null
-    targetBranch?: string | null
-    status?: string
-    reviewState?: string
-    ciStatus?: string
-    author?: string | null
-    openedAt?: Date | string | null
-    mergedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutPullRequestInput
-  }
-
-  export type PullRequestCreateOrConnectWithoutTaskInput = {
-    where: PullRequestWhereUniqueInput
-    create: XOR<PullRequestCreateWithoutTaskInput, PullRequestUncheckedCreateWithoutTaskInput>
-  }
-
-  export type PullRequestCreateManyTaskInputEnvelope = {
-    data: PullRequestCreateManyTaskInput | PullRequestCreateManyTaskInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type DeploymentCreateWithoutTaskInput = {
-    id?: string
-    environment?: string
-    status?: string
-    version?: string | null
-    url?: string | null
-    deployedBy?: string | null
-    deployedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    project: ProjectCreateNestedOneWithoutDeploymentsInput
-    pullRequest?: PullRequestCreateNestedOneWithoutDeploymentsInput
-  }
-
-  export type DeploymentUncheckedCreateWithoutTaskInput = {
-    id?: string
-    projectId: string
-    pullRequestId?: string | null
-    environment?: string
-    status?: string
-    version?: string | null
-    url?: string | null
-    deployedBy?: string | null
-    deployedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type DeploymentCreateOrConnectWithoutTaskInput = {
-    where: DeploymentWhereUniqueInput
-    create: XOR<DeploymentCreateWithoutTaskInput, DeploymentUncheckedCreateWithoutTaskInput>
-  }
-
-  export type DeploymentCreateManyTaskInputEnvelope = {
-    data: DeploymentCreateManyTaskInput | DeploymentCreateManyTaskInput[]
-    skipDuplicates?: boolean
-  }
-
   export type ProjectUpsertWithoutTasksInput = {
     update: XOR<ProjectUpdateWithoutTasksInput, ProjectUncheckedUpdateWithoutTasksInput>
     create: XOR<ProjectCreateWithoutTasksInput, ProjectUncheckedCreateWithoutTasksInput>
@@ -28057,8 +20839,6 @@ export namespace Prisma {
     sprints?: SprintUpdateManyWithoutProjectNestedInput
     invites?: ProjectInviteUpdateManyWithoutProjectNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutProjectNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
-    deployments?: DeploymentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutTasksInput = {
@@ -28078,8 +20858,6 @@ export namespace Prisma {
     sprints?: SprintUncheckedUpdateManyWithoutProjectNestedInput
     invites?: ProjectInviteUncheckedUpdateManyWithoutProjectNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutProjectNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type SprintUpsertWithoutTasksInput = {
@@ -28235,34 +21013,6 @@ export namespace Prisma {
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutActorNestedInput
   }
 
-  export type SubtaskUpsertWithWhereUniqueWithoutTaskInput = {
-    where: SubtaskWhereUniqueInput
-    update: XOR<SubtaskUpdateWithoutTaskInput, SubtaskUncheckedUpdateWithoutTaskInput>
-    create: XOR<SubtaskCreateWithoutTaskInput, SubtaskUncheckedCreateWithoutTaskInput>
-  }
-
-  export type SubtaskUpdateWithWhereUniqueWithoutTaskInput = {
-    where: SubtaskWhereUniqueInput
-    data: XOR<SubtaskUpdateWithoutTaskInput, SubtaskUncheckedUpdateWithoutTaskInput>
-  }
-
-  export type SubtaskUpdateManyWithWhereWithoutTaskInput = {
-    where: SubtaskScalarWhereInput
-    data: XOR<SubtaskUpdateManyMutationInput, SubtaskUncheckedUpdateManyWithoutTaskInput>
-  }
-
-  export type SubtaskScalarWhereInput = {
-    AND?: SubtaskScalarWhereInput | SubtaskScalarWhereInput[]
-    OR?: SubtaskScalarWhereInput[]
-    NOT?: SubtaskScalarWhereInput | SubtaskScalarWhereInput[]
-    id?: StringFilter<"Subtask"> | string
-    taskId?: StringFilter<"Subtask"> | string
-    title?: StringFilter<"Subtask"> | string
-    completed?: BoolFilter<"Subtask"> | boolean
-    createdAt?: DateTimeFilter<"Subtask"> | Date | string
-    updatedAt?: DateTimeFilter<"Subtask"> | Date | string
-  }
-
   export type CommentUpsertWithWhereUniqueWithoutTaskInput = {
     where: CommentWhereUniqueInput
     update: XOR<CommentUpdateWithoutTaskInput, CommentUncheckedUpdateWithoutTaskInput>
@@ -28279,49 +21029,6 @@ export namespace Prisma {
     data: XOR<CommentUpdateManyMutationInput, CommentUncheckedUpdateManyWithoutTaskInput>
   }
 
-  export type TaskLinkUpsertWithWhereUniqueWithoutSourceTaskInput = {
-    where: TaskLinkWhereUniqueInput
-    update: XOR<TaskLinkUpdateWithoutSourceTaskInput, TaskLinkUncheckedUpdateWithoutSourceTaskInput>
-    create: XOR<TaskLinkCreateWithoutSourceTaskInput, TaskLinkUncheckedCreateWithoutSourceTaskInput>
-  }
-
-  export type TaskLinkUpdateWithWhereUniqueWithoutSourceTaskInput = {
-    where: TaskLinkWhereUniqueInput
-    data: XOR<TaskLinkUpdateWithoutSourceTaskInput, TaskLinkUncheckedUpdateWithoutSourceTaskInput>
-  }
-
-  export type TaskLinkUpdateManyWithWhereWithoutSourceTaskInput = {
-    where: TaskLinkScalarWhereInput
-    data: XOR<TaskLinkUpdateManyMutationInput, TaskLinkUncheckedUpdateManyWithoutSourceTaskInput>
-  }
-
-  export type TaskLinkScalarWhereInput = {
-    AND?: TaskLinkScalarWhereInput | TaskLinkScalarWhereInput[]
-    OR?: TaskLinkScalarWhereInput[]
-    NOT?: TaskLinkScalarWhereInput | TaskLinkScalarWhereInput[]
-    id?: StringFilter<"TaskLink"> | string
-    sourceTaskId?: StringFilter<"TaskLink"> | string
-    targetTaskId?: StringFilter<"TaskLink"> | string
-    type?: StringFilter<"TaskLink"> | string
-    createdAt?: DateTimeFilter<"TaskLink"> | Date | string
-  }
-
-  export type TaskLinkUpsertWithWhereUniqueWithoutTargetTaskInput = {
-    where: TaskLinkWhereUniqueInput
-    update: XOR<TaskLinkUpdateWithoutTargetTaskInput, TaskLinkUncheckedUpdateWithoutTargetTaskInput>
-    create: XOR<TaskLinkCreateWithoutTargetTaskInput, TaskLinkUncheckedCreateWithoutTargetTaskInput>
-  }
-
-  export type TaskLinkUpdateWithWhereUniqueWithoutTargetTaskInput = {
-    where: TaskLinkWhereUniqueInput
-    data: XOR<TaskLinkUpdateWithoutTargetTaskInput, TaskLinkUncheckedUpdateWithoutTargetTaskInput>
-  }
-
-  export type TaskLinkUpdateManyWithWhereWithoutTargetTaskInput = {
-    where: TaskLinkScalarWhereInput
-    data: XOR<TaskLinkUpdateManyMutationInput, TaskLinkUncheckedUpdateManyWithoutTargetTaskInput>
-  }
-
   export type ActivityEventUpsertWithWhereUniqueWithoutTaskInput = {
     where: ActivityEventWhereUniqueInput
     update: XOR<ActivityEventUpdateWithoutTaskInput, ActivityEventUncheckedUpdateWithoutTaskInput>
@@ -28336,310 +21043,6 @@ export namespace Prisma {
   export type ActivityEventUpdateManyWithWhereWithoutTaskInput = {
     where: ActivityEventScalarWhereInput
     data: XOR<ActivityEventUpdateManyMutationInput, ActivityEventUncheckedUpdateManyWithoutTaskInput>
-  }
-
-  export type PullRequestUpsertWithWhereUniqueWithoutTaskInput = {
-    where: PullRequestWhereUniqueInput
-    update: XOR<PullRequestUpdateWithoutTaskInput, PullRequestUncheckedUpdateWithoutTaskInput>
-    create: XOR<PullRequestCreateWithoutTaskInput, PullRequestUncheckedCreateWithoutTaskInput>
-  }
-
-  export type PullRequestUpdateWithWhereUniqueWithoutTaskInput = {
-    where: PullRequestWhereUniqueInput
-    data: XOR<PullRequestUpdateWithoutTaskInput, PullRequestUncheckedUpdateWithoutTaskInput>
-  }
-
-  export type PullRequestUpdateManyWithWhereWithoutTaskInput = {
-    where: PullRequestScalarWhereInput
-    data: XOR<PullRequestUpdateManyMutationInput, PullRequestUncheckedUpdateManyWithoutTaskInput>
-  }
-
-  export type DeploymentUpsertWithWhereUniqueWithoutTaskInput = {
-    where: DeploymentWhereUniqueInput
-    update: XOR<DeploymentUpdateWithoutTaskInput, DeploymentUncheckedUpdateWithoutTaskInput>
-    create: XOR<DeploymentCreateWithoutTaskInput, DeploymentUncheckedCreateWithoutTaskInput>
-  }
-
-  export type DeploymentUpdateWithWhereUniqueWithoutTaskInput = {
-    where: DeploymentWhereUniqueInput
-    data: XOR<DeploymentUpdateWithoutTaskInput, DeploymentUncheckedUpdateWithoutTaskInput>
-  }
-
-  export type DeploymentUpdateManyWithWhereWithoutTaskInput = {
-    where: DeploymentScalarWhereInput
-    data: XOR<DeploymentUpdateManyMutationInput, DeploymentUncheckedUpdateManyWithoutTaskInput>
-  }
-
-  export type TaskCreateWithoutLinkedFromInput = {
-    id?: string
-    title: string
-    description?: string | null
-    type?: string
-    priority?: string
-    status?: string
-    estimate?: number | null
-    branchName?: string | null
-    blockedReason?: string | null
-    readyAt?: Date | string | null
-    mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
-    backlogOrder?: number
-    sprintOrder?: number
-    dueDate?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    project: ProjectCreateNestedOneWithoutTasksInput
-    sprint?: SprintCreateNestedOneWithoutTasksInput
-    assignee?: UserCreateNestedOneWithoutAssignedTasksInput
-    createdBy: UserCreateNestedOneWithoutCreatedTasksInput
-    subtasks?: SubtaskCreateNestedManyWithoutTaskInput
-    comments?: CommentCreateNestedManyWithoutTaskInput
-    linkedTo?: TaskLinkCreateNestedManyWithoutTargetTaskInput
-    activityEvents?: ActivityEventCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentCreateNestedManyWithoutTaskInput
-  }
-
-  export type TaskUncheckedCreateWithoutLinkedFromInput = {
-    id?: string
-    title: string
-    description?: string | null
-    projectId: string
-    assigneeId?: string | null
-    createdById: string
-    sprintId?: string | null
-    type?: string
-    priority?: string
-    status?: string
-    estimate?: number | null
-    branchName?: string | null
-    blockedReason?: string | null
-    readyAt?: Date | string | null
-    mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
-    backlogOrder?: number
-    sprintOrder?: number
-    dueDate?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    subtasks?: SubtaskUncheckedCreateNestedManyWithoutTaskInput
-    comments?: CommentUncheckedCreateNestedManyWithoutTaskInput
-    linkedTo?: TaskLinkUncheckedCreateNestedManyWithoutTargetTaskInput
-    activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutTaskInput
-  }
-
-  export type TaskCreateOrConnectWithoutLinkedFromInput = {
-    where: TaskWhereUniqueInput
-    create: XOR<TaskCreateWithoutLinkedFromInput, TaskUncheckedCreateWithoutLinkedFromInput>
-  }
-
-  export type TaskCreateWithoutLinkedToInput = {
-    id?: string
-    title: string
-    description?: string | null
-    type?: string
-    priority?: string
-    status?: string
-    estimate?: number | null
-    branchName?: string | null
-    blockedReason?: string | null
-    readyAt?: Date | string | null
-    mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
-    backlogOrder?: number
-    sprintOrder?: number
-    dueDate?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    project: ProjectCreateNestedOneWithoutTasksInput
-    sprint?: SprintCreateNestedOneWithoutTasksInput
-    assignee?: UserCreateNestedOneWithoutAssignedTasksInput
-    createdBy: UserCreateNestedOneWithoutCreatedTasksInput
-    subtasks?: SubtaskCreateNestedManyWithoutTaskInput
-    comments?: CommentCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkCreateNestedManyWithoutSourceTaskInput
-    activityEvents?: ActivityEventCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentCreateNestedManyWithoutTaskInput
-  }
-
-  export type TaskUncheckedCreateWithoutLinkedToInput = {
-    id?: string
-    title: string
-    description?: string | null
-    projectId: string
-    assigneeId?: string | null
-    createdById: string
-    sprintId?: string | null
-    type?: string
-    priority?: string
-    status?: string
-    estimate?: number | null
-    branchName?: string | null
-    blockedReason?: string | null
-    readyAt?: Date | string | null
-    mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
-    backlogOrder?: number
-    sprintOrder?: number
-    dueDate?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    subtasks?: SubtaskUncheckedCreateNestedManyWithoutTaskInput
-    comments?: CommentUncheckedCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkUncheckedCreateNestedManyWithoutSourceTaskInput
-    activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutTaskInput
-  }
-
-  export type TaskCreateOrConnectWithoutLinkedToInput = {
-    where: TaskWhereUniqueInput
-    create: XOR<TaskCreateWithoutLinkedToInput, TaskUncheckedCreateWithoutLinkedToInput>
-  }
-
-  export type TaskUpsertWithoutLinkedFromInput = {
-    update: XOR<TaskUpdateWithoutLinkedFromInput, TaskUncheckedUpdateWithoutLinkedFromInput>
-    create: XOR<TaskCreateWithoutLinkedFromInput, TaskUncheckedCreateWithoutLinkedFromInput>
-    where?: TaskWhereInput
-  }
-
-  export type TaskUpdateToOneWithWhereWithoutLinkedFromInput = {
-    where?: TaskWhereInput
-    data: XOR<TaskUpdateWithoutLinkedFromInput, TaskUncheckedUpdateWithoutLinkedFromInput>
-  }
-
-  export type TaskUpdateWithoutLinkedFromInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    estimate?: NullableIntFieldUpdateOperationsInput | number | null
-    branchName?: NullableStringFieldUpdateOperationsInput | string | null
-    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
-    readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    backlogOrder?: FloatFieldUpdateOperationsInput | number
-    sprintOrder?: FloatFieldUpdateOperationsInput | number
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    project?: ProjectUpdateOneRequiredWithoutTasksNestedInput
-    sprint?: SprintUpdateOneWithoutTasksNestedInput
-    assignee?: UserUpdateOneWithoutAssignedTasksNestedInput
-    createdBy?: UserUpdateOneRequiredWithoutCreatedTasksNestedInput
-    subtasks?: SubtaskUpdateManyWithoutTaskNestedInput
-    comments?: CommentUpdateManyWithoutTaskNestedInput
-    linkedTo?: TaskLinkUpdateManyWithoutTargetTaskNestedInput
-    activityEvents?: ActivityEventUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUpdateManyWithoutTaskNestedInput
-  }
-
-  export type TaskUncheckedUpdateWithoutLinkedFromInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    projectId?: StringFieldUpdateOperationsInput | string
-    assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdById?: StringFieldUpdateOperationsInput | string
-    sprintId?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    estimate?: NullableIntFieldUpdateOperationsInput | number | null
-    branchName?: NullableStringFieldUpdateOperationsInput | string | null
-    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
-    readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    backlogOrder?: FloatFieldUpdateOperationsInput | number
-    sprintOrder?: FloatFieldUpdateOperationsInput | number
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    subtasks?: SubtaskUncheckedUpdateManyWithoutTaskNestedInput
-    comments?: CommentUncheckedUpdateManyWithoutTaskNestedInput
-    linkedTo?: TaskLinkUncheckedUpdateManyWithoutTargetTaskNestedInput
-    activityEvents?: ActivityEventUncheckedUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutTaskNestedInput
-  }
-
-  export type TaskUpsertWithoutLinkedToInput = {
-    update: XOR<TaskUpdateWithoutLinkedToInput, TaskUncheckedUpdateWithoutLinkedToInput>
-    create: XOR<TaskCreateWithoutLinkedToInput, TaskUncheckedCreateWithoutLinkedToInput>
-    where?: TaskWhereInput
-  }
-
-  export type TaskUpdateToOneWithWhereWithoutLinkedToInput = {
-    where?: TaskWhereInput
-    data: XOR<TaskUpdateWithoutLinkedToInput, TaskUncheckedUpdateWithoutLinkedToInput>
-  }
-
-  export type TaskUpdateWithoutLinkedToInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    estimate?: NullableIntFieldUpdateOperationsInput | number | null
-    branchName?: NullableStringFieldUpdateOperationsInput | string | null
-    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
-    readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    backlogOrder?: FloatFieldUpdateOperationsInput | number
-    sprintOrder?: FloatFieldUpdateOperationsInput | number
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    project?: ProjectUpdateOneRequiredWithoutTasksNestedInput
-    sprint?: SprintUpdateOneWithoutTasksNestedInput
-    assignee?: UserUpdateOneWithoutAssignedTasksNestedInput
-    createdBy?: UserUpdateOneRequiredWithoutCreatedTasksNestedInput
-    subtasks?: SubtaskUpdateManyWithoutTaskNestedInput
-    comments?: CommentUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUpdateManyWithoutSourceTaskNestedInput
-    activityEvents?: ActivityEventUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUpdateManyWithoutTaskNestedInput
-  }
-
-  export type TaskUncheckedUpdateWithoutLinkedToInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    projectId?: StringFieldUpdateOperationsInput | string
-    assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdById?: StringFieldUpdateOperationsInput | string
-    sprintId?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    estimate?: NullableIntFieldUpdateOperationsInput | number | null
-    branchName?: NullableStringFieldUpdateOperationsInput | string | null
-    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
-    readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    backlogOrder?: FloatFieldUpdateOperationsInput | number
-    sprintOrder?: FloatFieldUpdateOperationsInput | number
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    subtasks?: SubtaskUncheckedUpdateManyWithoutTaskNestedInput
-    comments?: CommentUncheckedUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUncheckedUpdateManyWithoutSourceTaskNestedInput
-    activityEvents?: ActivityEventUncheckedUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutTaskNestedInput
   }
 
   export type ProjectCreateWithoutSprintsInput = {
@@ -28659,8 +21062,6 @@ export namespace Prisma {
     tasks?: TaskCreateNestedManyWithoutProjectInput
     invites?: ProjectInviteCreateNestedManyWithoutProjectInput
     activityEvents?: ActivityEventCreateNestedManyWithoutProjectInput
-    pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
-    deployments?: DeploymentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutSprintsInput = {
@@ -28680,8 +21081,6 @@ export namespace Prisma {
     tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
     invites?: ProjectInviteUncheckedCreateNestedManyWithoutProjectInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutProjectInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutSprintsInput = {
@@ -28710,13 +21109,8 @@ export namespace Prisma {
     project: ProjectCreateNestedOneWithoutTasksInput
     assignee?: UserCreateNestedOneWithoutAssignedTasksInput
     createdBy: UserCreateNestedOneWithoutCreatedTasksInput
-    subtasks?: SubtaskCreateNestedManyWithoutTaskInput
     comments?: CommentCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkCreateNestedManyWithoutTargetTaskInput
     activityEvents?: ActivityEventCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentCreateNestedManyWithoutTaskInput
   }
 
   export type TaskUncheckedCreateWithoutSprintInput = {
@@ -28740,13 +21134,8 @@ export namespace Prisma {
     dueDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    subtasks?: SubtaskUncheckedCreateNestedManyWithoutTaskInput
     comments?: CommentUncheckedCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkUncheckedCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkUncheckedCreateNestedManyWithoutTargetTaskInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutTaskInput
   }
 
   export type TaskCreateOrConnectWithoutSprintInput = {
@@ -28787,8 +21176,6 @@ export namespace Prisma {
     tasks?: TaskUpdateManyWithoutProjectNestedInput
     invites?: ProjectInviteUpdateManyWithoutProjectNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutProjectNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
-    deployments?: DeploymentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutSprintsInput = {
@@ -28808,8 +21195,6 @@ export namespace Prisma {
     tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
     invites?: ProjectInviteUncheckedUpdateManyWithoutProjectNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutProjectNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type TaskUpsertWithWhereUniqueWithoutSprintInput = {
@@ -28826,142 +21211,6 @@ export namespace Prisma {
   export type TaskUpdateManyWithWhereWithoutSprintInput = {
     where: TaskScalarWhereInput
     data: XOR<TaskUpdateManyMutationInput, TaskUncheckedUpdateManyWithoutSprintInput>
-  }
-
-  export type TaskCreateWithoutSubtasksInput = {
-    id?: string
-    title: string
-    description?: string | null
-    type?: string
-    priority?: string
-    status?: string
-    estimate?: number | null
-    branchName?: string | null
-    blockedReason?: string | null
-    readyAt?: Date | string | null
-    mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
-    backlogOrder?: number
-    sprintOrder?: number
-    dueDate?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    project: ProjectCreateNestedOneWithoutTasksInput
-    sprint?: SprintCreateNestedOneWithoutTasksInput
-    assignee?: UserCreateNestedOneWithoutAssignedTasksInput
-    createdBy: UserCreateNestedOneWithoutCreatedTasksInput
-    comments?: CommentCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkCreateNestedManyWithoutTargetTaskInput
-    activityEvents?: ActivityEventCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentCreateNestedManyWithoutTaskInput
-  }
-
-  export type TaskUncheckedCreateWithoutSubtasksInput = {
-    id?: string
-    title: string
-    description?: string | null
-    projectId: string
-    assigneeId?: string | null
-    createdById: string
-    sprintId?: string | null
-    type?: string
-    priority?: string
-    status?: string
-    estimate?: number | null
-    branchName?: string | null
-    blockedReason?: string | null
-    readyAt?: Date | string | null
-    mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
-    backlogOrder?: number
-    sprintOrder?: number
-    dueDate?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    comments?: CommentUncheckedCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkUncheckedCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkUncheckedCreateNestedManyWithoutTargetTaskInput
-    activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutTaskInput
-  }
-
-  export type TaskCreateOrConnectWithoutSubtasksInput = {
-    where: TaskWhereUniqueInput
-    create: XOR<TaskCreateWithoutSubtasksInput, TaskUncheckedCreateWithoutSubtasksInput>
-  }
-
-  export type TaskUpsertWithoutSubtasksInput = {
-    update: XOR<TaskUpdateWithoutSubtasksInput, TaskUncheckedUpdateWithoutSubtasksInput>
-    create: XOR<TaskCreateWithoutSubtasksInput, TaskUncheckedCreateWithoutSubtasksInput>
-    where?: TaskWhereInput
-  }
-
-  export type TaskUpdateToOneWithWhereWithoutSubtasksInput = {
-    where?: TaskWhereInput
-    data: XOR<TaskUpdateWithoutSubtasksInput, TaskUncheckedUpdateWithoutSubtasksInput>
-  }
-
-  export type TaskUpdateWithoutSubtasksInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    estimate?: NullableIntFieldUpdateOperationsInput | number | null
-    branchName?: NullableStringFieldUpdateOperationsInput | string | null
-    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
-    readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    backlogOrder?: FloatFieldUpdateOperationsInput | number
-    sprintOrder?: FloatFieldUpdateOperationsInput | number
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    project?: ProjectUpdateOneRequiredWithoutTasksNestedInput
-    sprint?: SprintUpdateOneWithoutTasksNestedInput
-    assignee?: UserUpdateOneWithoutAssignedTasksNestedInput
-    createdBy?: UserUpdateOneRequiredWithoutCreatedTasksNestedInput
-    comments?: CommentUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUpdateManyWithoutTargetTaskNestedInput
-    activityEvents?: ActivityEventUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUpdateManyWithoutTaskNestedInput
-  }
-
-  export type TaskUncheckedUpdateWithoutSubtasksInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    projectId?: StringFieldUpdateOperationsInput | string
-    assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdById?: StringFieldUpdateOperationsInput | string
-    sprintId?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    estimate?: NullableIntFieldUpdateOperationsInput | number | null
-    branchName?: NullableStringFieldUpdateOperationsInput | string | null
-    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
-    readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    backlogOrder?: FloatFieldUpdateOperationsInput | number
-    sprintOrder?: FloatFieldUpdateOperationsInput | number
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    comments?: CommentUncheckedUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUncheckedUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUncheckedUpdateManyWithoutTargetTaskNestedInput
-    activityEvents?: ActivityEventUncheckedUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutTaskNestedInput
   }
 
   export type TaskCreateWithoutCommentsInput = {
@@ -28986,12 +21235,7 @@ export namespace Prisma {
     sprint?: SprintCreateNestedOneWithoutTasksInput
     assignee?: UserCreateNestedOneWithoutAssignedTasksInput
     createdBy: UserCreateNestedOneWithoutCreatedTasksInput
-    subtasks?: SubtaskCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkCreateNestedManyWithoutTargetTaskInput
     activityEvents?: ActivityEventCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentCreateNestedManyWithoutTaskInput
   }
 
   export type TaskUncheckedCreateWithoutCommentsInput = {
@@ -29016,12 +21260,7 @@ export namespace Prisma {
     dueDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    subtasks?: SubtaskUncheckedCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkUncheckedCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkUncheckedCreateNestedManyWithoutTargetTaskInput
     activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutTaskInput
   }
 
   export type TaskCreateOrConnectWithoutCommentsInput = {
@@ -29115,12 +21354,7 @@ export namespace Prisma {
     sprint?: SprintUpdateOneWithoutTasksNestedInput
     assignee?: UserUpdateOneWithoutAssignedTasksNestedInput
     createdBy?: UserUpdateOneRequiredWithoutCreatedTasksNestedInput
-    subtasks?: SubtaskUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUpdateManyWithoutTargetTaskNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUpdateManyWithoutTaskNestedInput
   }
 
   export type TaskUncheckedUpdateWithoutCommentsInput = {
@@ -29145,12 +21379,7 @@ export namespace Prisma {
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    subtasks?: SubtaskUncheckedUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUncheckedUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUncheckedUpdateManyWithoutTargetTaskNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutTaskNestedInput
   }
 
   export type UserUpsertWithoutCommentsInput = {
@@ -29229,8 +21458,6 @@ export namespace Prisma {
     tasks?: TaskCreateNestedManyWithoutProjectInput
     sprints?: SprintCreateNestedManyWithoutProjectInput
     invites?: ProjectInviteCreateNestedManyWithoutProjectInput
-    pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
-    deployments?: DeploymentCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectUncheckedCreateWithoutActivityEventsInput = {
@@ -29250,8 +21477,6 @@ export namespace Prisma {
     tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
     sprints?: SprintUncheckedCreateNestedManyWithoutProjectInput
     invites?: ProjectInviteUncheckedCreateNestedManyWithoutProjectInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
   }
 
   export type ProjectCreateOrConnectWithoutActivityEventsInput = {
@@ -29281,12 +21506,7 @@ export namespace Prisma {
     sprint?: SprintCreateNestedOneWithoutTasksInput
     assignee?: UserCreateNestedOneWithoutAssignedTasksInput
     createdBy: UserCreateNestedOneWithoutCreatedTasksInput
-    subtasks?: SubtaskCreateNestedManyWithoutTaskInput
     comments?: CommentCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkCreateNestedManyWithoutTargetTaskInput
-    pullRequests?: PullRequestCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentCreateNestedManyWithoutTaskInput
   }
 
   export type TaskUncheckedCreateWithoutActivityEventsInput = {
@@ -29311,12 +21531,7 @@ export namespace Prisma {
     dueDate?: Date | string | null
     createdAt?: Date | string
     updatedAt?: Date | string
-    subtasks?: SubtaskUncheckedCreateNestedManyWithoutTaskInput
     comments?: CommentUncheckedCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkUncheckedCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkUncheckedCreateNestedManyWithoutTargetTaskInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutTaskInput
   }
 
   export type TaskCreateOrConnectWithoutActivityEventsInput = {
@@ -29405,8 +21620,6 @@ export namespace Prisma {
     tasks?: TaskUpdateManyWithoutProjectNestedInput
     sprints?: SprintUpdateManyWithoutProjectNestedInput
     invites?: ProjectInviteUpdateManyWithoutProjectNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
-    deployments?: DeploymentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutActivityEventsInput = {
@@ -29426,8 +21639,6 @@ export namespace Prisma {
     tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
     sprints?: SprintUncheckedUpdateManyWithoutProjectNestedInput
     invites?: ProjectInviteUncheckedUpdateManyWithoutProjectNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type TaskUpsertWithoutActivityEventsInput = {
@@ -29463,12 +21674,7 @@ export namespace Prisma {
     sprint?: SprintUpdateOneWithoutTasksNestedInput
     assignee?: UserUpdateOneWithoutAssignedTasksNestedInput
     createdBy?: UserUpdateOneRequiredWithoutCreatedTasksNestedInput
-    subtasks?: SubtaskUpdateManyWithoutTaskNestedInput
     comments?: CommentUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUpdateManyWithoutTargetTaskNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUpdateManyWithoutTaskNestedInput
   }
 
   export type TaskUncheckedUpdateWithoutActivityEventsInput = {
@@ -29493,12 +21699,7 @@ export namespace Prisma {
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    subtasks?: SubtaskUncheckedUpdateManyWithoutTaskNestedInput
     comments?: CommentUncheckedUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUncheckedUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUncheckedUpdateManyWithoutTargetTaskNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutTaskNestedInput
   }
 
   export type UserUpsertWithoutActivityEventsInput = {
@@ -29558,632 +21759,6 @@ export namespace Prisma {
     sentProjectInvites?: ProjectInviteUncheckedUpdateManyWithoutInvitedByNestedInput
     acceptedProjectInvites?: ProjectInviteUncheckedUpdateManyWithoutAcceptedByNestedInput
     preferences?: UserPreferenceUncheckedUpdateOneWithoutUserNestedInput
-  }
-
-  export type ProjectCreateWithoutPullRequestsInput = {
-    id?: string
-    name: string
-    key: string
-    description?: string | null
-    status?: string
-    visibility?: string
-    startDate?: Date | string | null
-    endDate?: Date | string | null
-    progress?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    owner: UserCreateNestedOneWithoutOwnedProjectsInput
-    members?: ProjectMemberCreateNestedManyWithoutProjectInput
-    tasks?: TaskCreateNestedManyWithoutProjectInput
-    sprints?: SprintCreateNestedManyWithoutProjectInput
-    invites?: ProjectInviteCreateNestedManyWithoutProjectInput
-    activityEvents?: ActivityEventCreateNestedManyWithoutProjectInput
-    deployments?: DeploymentCreateNestedManyWithoutProjectInput
-  }
-
-  export type ProjectUncheckedCreateWithoutPullRequestsInput = {
-    id?: string
-    name: string
-    key: string
-    description?: string | null
-    ownerId: string
-    status?: string
-    visibility?: string
-    startDate?: Date | string | null
-    endDate?: Date | string | null
-    progress?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-    tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
-    sprints?: SprintUncheckedCreateNestedManyWithoutProjectInput
-    invites?: ProjectInviteUncheckedCreateNestedManyWithoutProjectInput
-    activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutProjectInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutProjectInput
-  }
-
-  export type ProjectCreateOrConnectWithoutPullRequestsInput = {
-    where: ProjectWhereUniqueInput
-    create: XOR<ProjectCreateWithoutPullRequestsInput, ProjectUncheckedCreateWithoutPullRequestsInput>
-  }
-
-  export type TaskCreateWithoutPullRequestsInput = {
-    id?: string
-    title: string
-    description?: string | null
-    type?: string
-    priority?: string
-    status?: string
-    estimate?: number | null
-    branchName?: string | null
-    blockedReason?: string | null
-    readyAt?: Date | string | null
-    mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
-    backlogOrder?: number
-    sprintOrder?: number
-    dueDate?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    project: ProjectCreateNestedOneWithoutTasksInput
-    sprint?: SprintCreateNestedOneWithoutTasksInput
-    assignee?: UserCreateNestedOneWithoutAssignedTasksInput
-    createdBy: UserCreateNestedOneWithoutCreatedTasksInput
-    subtasks?: SubtaskCreateNestedManyWithoutTaskInput
-    comments?: CommentCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkCreateNestedManyWithoutTargetTaskInput
-    activityEvents?: ActivityEventCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentCreateNestedManyWithoutTaskInput
-  }
-
-  export type TaskUncheckedCreateWithoutPullRequestsInput = {
-    id?: string
-    title: string
-    description?: string | null
-    projectId: string
-    assigneeId?: string | null
-    createdById: string
-    sprintId?: string | null
-    type?: string
-    priority?: string
-    status?: string
-    estimate?: number | null
-    branchName?: string | null
-    blockedReason?: string | null
-    readyAt?: Date | string | null
-    mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
-    backlogOrder?: number
-    sprintOrder?: number
-    dueDate?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    subtasks?: SubtaskUncheckedCreateNestedManyWithoutTaskInput
-    comments?: CommentUncheckedCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkUncheckedCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkUncheckedCreateNestedManyWithoutTargetTaskInput
-    activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutTaskInput
-    deployments?: DeploymentUncheckedCreateNestedManyWithoutTaskInput
-  }
-
-  export type TaskCreateOrConnectWithoutPullRequestsInput = {
-    where: TaskWhereUniqueInput
-    create: XOR<TaskCreateWithoutPullRequestsInput, TaskUncheckedCreateWithoutPullRequestsInput>
-  }
-
-  export type DeploymentCreateWithoutPullRequestInput = {
-    id?: string
-    environment?: string
-    status?: string
-    version?: string | null
-    url?: string | null
-    deployedBy?: string | null
-    deployedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    project: ProjectCreateNestedOneWithoutDeploymentsInput
-    task?: TaskCreateNestedOneWithoutDeploymentsInput
-  }
-
-  export type DeploymentUncheckedCreateWithoutPullRequestInput = {
-    id?: string
-    projectId: string
-    taskId?: string | null
-    environment?: string
-    status?: string
-    version?: string | null
-    url?: string | null
-    deployedBy?: string | null
-    deployedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type DeploymentCreateOrConnectWithoutPullRequestInput = {
-    where: DeploymentWhereUniqueInput
-    create: XOR<DeploymentCreateWithoutPullRequestInput, DeploymentUncheckedCreateWithoutPullRequestInput>
-  }
-
-  export type DeploymentCreateManyPullRequestInputEnvelope = {
-    data: DeploymentCreateManyPullRequestInput | DeploymentCreateManyPullRequestInput[]
-    skipDuplicates?: boolean
-  }
-
-  export type ProjectUpsertWithoutPullRequestsInput = {
-    update: XOR<ProjectUpdateWithoutPullRequestsInput, ProjectUncheckedUpdateWithoutPullRequestsInput>
-    create: XOR<ProjectCreateWithoutPullRequestsInput, ProjectUncheckedCreateWithoutPullRequestsInput>
-    where?: ProjectWhereInput
-  }
-
-  export type ProjectUpdateToOneWithWhereWithoutPullRequestsInput = {
-    where?: ProjectWhereInput
-    data: XOR<ProjectUpdateWithoutPullRequestsInput, ProjectUncheckedUpdateWithoutPullRequestsInput>
-  }
-
-  export type ProjectUpdateWithoutPullRequestsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    key?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    visibility?: StringFieldUpdateOperationsInput | string
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    progress?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    owner?: UserUpdateOneRequiredWithoutOwnedProjectsNestedInput
-    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
-    tasks?: TaskUpdateManyWithoutProjectNestedInput
-    sprints?: SprintUpdateManyWithoutProjectNestedInput
-    invites?: ProjectInviteUpdateManyWithoutProjectNestedInput
-    activityEvents?: ActivityEventUpdateManyWithoutProjectNestedInput
-    deployments?: DeploymentUpdateManyWithoutProjectNestedInput
-  }
-
-  export type ProjectUncheckedUpdateWithoutPullRequestsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    key?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerId?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    visibility?: StringFieldUpdateOperationsInput | string
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    progress?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-    tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
-    sprints?: SprintUncheckedUpdateManyWithoutProjectNestedInput
-    invites?: ProjectInviteUncheckedUpdateManyWithoutProjectNestedInput
-    activityEvents?: ActivityEventUncheckedUpdateManyWithoutProjectNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
-  }
-
-  export type TaskUpsertWithoutPullRequestsInput = {
-    update: XOR<TaskUpdateWithoutPullRequestsInput, TaskUncheckedUpdateWithoutPullRequestsInput>
-    create: XOR<TaskCreateWithoutPullRequestsInput, TaskUncheckedCreateWithoutPullRequestsInput>
-    where?: TaskWhereInput
-  }
-
-  export type TaskUpdateToOneWithWhereWithoutPullRequestsInput = {
-    where?: TaskWhereInput
-    data: XOR<TaskUpdateWithoutPullRequestsInput, TaskUncheckedUpdateWithoutPullRequestsInput>
-  }
-
-  export type TaskUpdateWithoutPullRequestsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    estimate?: NullableIntFieldUpdateOperationsInput | number | null
-    branchName?: NullableStringFieldUpdateOperationsInput | string | null
-    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
-    readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    backlogOrder?: FloatFieldUpdateOperationsInput | number
-    sprintOrder?: FloatFieldUpdateOperationsInput | number
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    project?: ProjectUpdateOneRequiredWithoutTasksNestedInput
-    sprint?: SprintUpdateOneWithoutTasksNestedInput
-    assignee?: UserUpdateOneWithoutAssignedTasksNestedInput
-    createdBy?: UserUpdateOneRequiredWithoutCreatedTasksNestedInput
-    subtasks?: SubtaskUpdateManyWithoutTaskNestedInput
-    comments?: CommentUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUpdateManyWithoutTargetTaskNestedInput
-    activityEvents?: ActivityEventUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUpdateManyWithoutTaskNestedInput
-  }
-
-  export type TaskUncheckedUpdateWithoutPullRequestsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    projectId?: StringFieldUpdateOperationsInput | string
-    assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdById?: StringFieldUpdateOperationsInput | string
-    sprintId?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    estimate?: NullableIntFieldUpdateOperationsInput | number | null
-    branchName?: NullableStringFieldUpdateOperationsInput | string | null
-    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
-    readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    backlogOrder?: FloatFieldUpdateOperationsInput | number
-    sprintOrder?: FloatFieldUpdateOperationsInput | number
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    subtasks?: SubtaskUncheckedUpdateManyWithoutTaskNestedInput
-    comments?: CommentUncheckedUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUncheckedUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUncheckedUpdateManyWithoutTargetTaskNestedInput
-    activityEvents?: ActivityEventUncheckedUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutTaskNestedInput
-  }
-
-  export type DeploymentUpsertWithWhereUniqueWithoutPullRequestInput = {
-    where: DeploymentWhereUniqueInput
-    update: XOR<DeploymentUpdateWithoutPullRequestInput, DeploymentUncheckedUpdateWithoutPullRequestInput>
-    create: XOR<DeploymentCreateWithoutPullRequestInput, DeploymentUncheckedCreateWithoutPullRequestInput>
-  }
-
-  export type DeploymentUpdateWithWhereUniqueWithoutPullRequestInput = {
-    where: DeploymentWhereUniqueInput
-    data: XOR<DeploymentUpdateWithoutPullRequestInput, DeploymentUncheckedUpdateWithoutPullRequestInput>
-  }
-
-  export type DeploymentUpdateManyWithWhereWithoutPullRequestInput = {
-    where: DeploymentScalarWhereInput
-    data: XOR<DeploymentUpdateManyMutationInput, DeploymentUncheckedUpdateManyWithoutPullRequestInput>
-  }
-
-  export type ProjectCreateWithoutDeploymentsInput = {
-    id?: string
-    name: string
-    key: string
-    description?: string | null
-    status?: string
-    visibility?: string
-    startDate?: Date | string | null
-    endDate?: Date | string | null
-    progress?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    owner: UserCreateNestedOneWithoutOwnedProjectsInput
-    members?: ProjectMemberCreateNestedManyWithoutProjectInput
-    tasks?: TaskCreateNestedManyWithoutProjectInput
-    sprints?: SprintCreateNestedManyWithoutProjectInput
-    invites?: ProjectInviteCreateNestedManyWithoutProjectInput
-    activityEvents?: ActivityEventCreateNestedManyWithoutProjectInput
-    pullRequests?: PullRequestCreateNestedManyWithoutProjectInput
-  }
-
-  export type ProjectUncheckedCreateWithoutDeploymentsInput = {
-    id?: string
-    name: string
-    key: string
-    description?: string | null
-    ownerId: string
-    status?: string
-    visibility?: string
-    startDate?: Date | string | null
-    endDate?: Date | string | null
-    progress?: number
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    members?: ProjectMemberUncheckedCreateNestedManyWithoutProjectInput
-    tasks?: TaskUncheckedCreateNestedManyWithoutProjectInput
-    sprints?: SprintUncheckedCreateNestedManyWithoutProjectInput
-    invites?: ProjectInviteUncheckedCreateNestedManyWithoutProjectInput
-    activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutProjectInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutProjectInput
-  }
-
-  export type ProjectCreateOrConnectWithoutDeploymentsInput = {
-    where: ProjectWhereUniqueInput
-    create: XOR<ProjectCreateWithoutDeploymentsInput, ProjectUncheckedCreateWithoutDeploymentsInput>
-  }
-
-  export type TaskCreateWithoutDeploymentsInput = {
-    id?: string
-    title: string
-    description?: string | null
-    type?: string
-    priority?: string
-    status?: string
-    estimate?: number | null
-    branchName?: string | null
-    blockedReason?: string | null
-    readyAt?: Date | string | null
-    mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
-    backlogOrder?: number
-    sprintOrder?: number
-    dueDate?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    project: ProjectCreateNestedOneWithoutTasksInput
-    sprint?: SprintCreateNestedOneWithoutTasksInput
-    assignee?: UserCreateNestedOneWithoutAssignedTasksInput
-    createdBy: UserCreateNestedOneWithoutCreatedTasksInput
-    subtasks?: SubtaskCreateNestedManyWithoutTaskInput
-    comments?: CommentCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkCreateNestedManyWithoutTargetTaskInput
-    activityEvents?: ActivityEventCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestCreateNestedManyWithoutTaskInput
-  }
-
-  export type TaskUncheckedCreateWithoutDeploymentsInput = {
-    id?: string
-    title: string
-    description?: string | null
-    projectId: string
-    assigneeId?: string | null
-    createdById: string
-    sprintId?: string | null
-    type?: string
-    priority?: string
-    status?: string
-    estimate?: number | null
-    branchName?: string | null
-    blockedReason?: string | null
-    readyAt?: Date | string | null
-    mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
-    backlogOrder?: number
-    sprintOrder?: number
-    dueDate?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    subtasks?: SubtaskUncheckedCreateNestedManyWithoutTaskInput
-    comments?: CommentUncheckedCreateNestedManyWithoutTaskInput
-    linkedFrom?: TaskLinkUncheckedCreateNestedManyWithoutSourceTaskInput
-    linkedTo?: TaskLinkUncheckedCreateNestedManyWithoutTargetTaskInput
-    activityEvents?: ActivityEventUncheckedCreateNestedManyWithoutTaskInput
-    pullRequests?: PullRequestUncheckedCreateNestedManyWithoutTaskInput
-  }
-
-  export type TaskCreateOrConnectWithoutDeploymentsInput = {
-    where: TaskWhereUniqueInput
-    create: XOR<TaskCreateWithoutDeploymentsInput, TaskUncheckedCreateWithoutDeploymentsInput>
-  }
-
-  export type PullRequestCreateWithoutDeploymentsInput = {
-    id?: string
-    provider?: string
-    repository: string
-    number: number
-    title: string
-    url?: string | null
-    branch?: string | null
-    targetBranch?: string | null
-    status?: string
-    reviewState?: string
-    ciStatus?: string
-    author?: string | null
-    openedAt?: Date | string | null
-    mergedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-    project: ProjectCreateNestedOneWithoutPullRequestsInput
-    task?: TaskCreateNestedOneWithoutPullRequestsInput
-  }
-
-  export type PullRequestUncheckedCreateWithoutDeploymentsInput = {
-    id?: string
-    projectId: string
-    taskId?: string | null
-    provider?: string
-    repository: string
-    number: number
-    title: string
-    url?: string | null
-    branch?: string | null
-    targetBranch?: string | null
-    status?: string
-    reviewState?: string
-    ciStatus?: string
-    author?: string | null
-    openedAt?: Date | string | null
-    mergedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type PullRequestCreateOrConnectWithoutDeploymentsInput = {
-    where: PullRequestWhereUniqueInput
-    create: XOR<PullRequestCreateWithoutDeploymentsInput, PullRequestUncheckedCreateWithoutDeploymentsInput>
-  }
-
-  export type ProjectUpsertWithoutDeploymentsInput = {
-    update: XOR<ProjectUpdateWithoutDeploymentsInput, ProjectUncheckedUpdateWithoutDeploymentsInput>
-    create: XOR<ProjectCreateWithoutDeploymentsInput, ProjectUncheckedCreateWithoutDeploymentsInput>
-    where?: ProjectWhereInput
-  }
-
-  export type ProjectUpdateToOneWithWhereWithoutDeploymentsInput = {
-    where?: ProjectWhereInput
-    data: XOR<ProjectUpdateWithoutDeploymentsInput, ProjectUncheckedUpdateWithoutDeploymentsInput>
-  }
-
-  export type ProjectUpdateWithoutDeploymentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    key?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    visibility?: StringFieldUpdateOperationsInput | string
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    progress?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    owner?: UserUpdateOneRequiredWithoutOwnedProjectsNestedInput
-    members?: ProjectMemberUpdateManyWithoutProjectNestedInput
-    tasks?: TaskUpdateManyWithoutProjectNestedInput
-    sprints?: SprintUpdateManyWithoutProjectNestedInput
-    invites?: ProjectInviteUpdateManyWithoutProjectNestedInput
-    activityEvents?: ActivityEventUpdateManyWithoutProjectNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
-  }
-
-  export type ProjectUncheckedUpdateWithoutDeploymentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    name?: StringFieldUpdateOperationsInput | string
-    key?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    ownerId?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    visibility?: StringFieldUpdateOperationsInput | string
-    startDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    endDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    progress?: IntFieldUpdateOperationsInput | number
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    members?: ProjectMemberUncheckedUpdateManyWithoutProjectNestedInput
-    tasks?: TaskUncheckedUpdateManyWithoutProjectNestedInput
-    sprints?: SprintUncheckedUpdateManyWithoutProjectNestedInput
-    invites?: ProjectInviteUncheckedUpdateManyWithoutProjectNestedInput
-    activityEvents?: ActivityEventUncheckedUpdateManyWithoutProjectNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
-  }
-
-  export type TaskUpsertWithoutDeploymentsInput = {
-    update: XOR<TaskUpdateWithoutDeploymentsInput, TaskUncheckedUpdateWithoutDeploymentsInput>
-    create: XOR<TaskCreateWithoutDeploymentsInput, TaskUncheckedCreateWithoutDeploymentsInput>
-    where?: TaskWhereInput
-  }
-
-  export type TaskUpdateToOneWithWhereWithoutDeploymentsInput = {
-    where?: TaskWhereInput
-    data: XOR<TaskUpdateWithoutDeploymentsInput, TaskUncheckedUpdateWithoutDeploymentsInput>
-  }
-
-  export type TaskUpdateWithoutDeploymentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    estimate?: NullableIntFieldUpdateOperationsInput | number | null
-    branchName?: NullableStringFieldUpdateOperationsInput | string | null
-    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
-    readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    backlogOrder?: FloatFieldUpdateOperationsInput | number
-    sprintOrder?: FloatFieldUpdateOperationsInput | number
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    project?: ProjectUpdateOneRequiredWithoutTasksNestedInput
-    sprint?: SprintUpdateOneWithoutTasksNestedInput
-    assignee?: UserUpdateOneWithoutAssignedTasksNestedInput
-    createdBy?: UserUpdateOneRequiredWithoutCreatedTasksNestedInput
-    subtasks?: SubtaskUpdateManyWithoutTaskNestedInput
-    comments?: CommentUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUpdateManyWithoutTargetTaskNestedInput
-    activityEvents?: ActivityEventUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutTaskNestedInput
-  }
-
-  export type TaskUncheckedUpdateWithoutDeploymentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    description?: NullableStringFieldUpdateOperationsInput | string | null
-    projectId?: StringFieldUpdateOperationsInput | string
-    assigneeId?: NullableStringFieldUpdateOperationsInput | string | null
-    createdById?: StringFieldUpdateOperationsInput | string
-    sprintId?: NullableStringFieldUpdateOperationsInput | string | null
-    type?: StringFieldUpdateOperationsInput | string
-    priority?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    estimate?: NullableIntFieldUpdateOperationsInput | number | null
-    branchName?: NullableStringFieldUpdateOperationsInput | string | null
-    blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
-    readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    backlogOrder?: FloatFieldUpdateOperationsInput | number
-    sprintOrder?: FloatFieldUpdateOperationsInput | number
-    dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    subtasks?: SubtaskUncheckedUpdateManyWithoutTaskNestedInput
-    comments?: CommentUncheckedUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUncheckedUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUncheckedUpdateManyWithoutTargetTaskNestedInput
-    activityEvents?: ActivityEventUncheckedUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutTaskNestedInput
-  }
-
-  export type PullRequestUpsertWithoutDeploymentsInput = {
-    update: XOR<PullRequestUpdateWithoutDeploymentsInput, PullRequestUncheckedUpdateWithoutDeploymentsInput>
-    create: XOR<PullRequestCreateWithoutDeploymentsInput, PullRequestUncheckedCreateWithoutDeploymentsInput>
-    where?: PullRequestWhereInput
-  }
-
-  export type PullRequestUpdateToOneWithWhereWithoutDeploymentsInput = {
-    where?: PullRequestWhereInput
-    data: XOR<PullRequestUpdateWithoutDeploymentsInput, PullRequestUncheckedUpdateWithoutDeploymentsInput>
-  }
-
-  export type PullRequestUpdateWithoutDeploymentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    provider?: StringFieldUpdateOperationsInput | string
-    repository?: StringFieldUpdateOperationsInput | string
-    number?: IntFieldUpdateOperationsInput | number
-    title?: StringFieldUpdateOperationsInput | string
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    branch?: NullableStringFieldUpdateOperationsInput | string | null
-    targetBranch?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    reviewState?: StringFieldUpdateOperationsInput | string
-    ciStatus?: StringFieldUpdateOperationsInput | string
-    author?: NullableStringFieldUpdateOperationsInput | string | null
-    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    project?: ProjectUpdateOneRequiredWithoutPullRequestsNestedInput
-    task?: TaskUpdateOneWithoutPullRequestsNestedInput
-  }
-
-  export type PullRequestUncheckedUpdateWithoutDeploymentsInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    projectId?: StringFieldUpdateOperationsInput | string
-    taskId?: NullableStringFieldUpdateOperationsInput | string | null
-    provider?: StringFieldUpdateOperationsInput | string
-    repository?: StringFieldUpdateOperationsInput | string
-    number?: IntFieldUpdateOperationsInput | number
-    title?: StringFieldUpdateOperationsInput | string
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    branch?: NullableStringFieldUpdateOperationsInput | string | null
-    targetBranch?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    reviewState?: StringFieldUpdateOperationsInput | string
-    ciStatus?: StringFieldUpdateOperationsInput | string
-    author?: NullableStringFieldUpdateOperationsInput | string | null
-    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type RefreshTokenCreateManyUserInput = {
@@ -30350,8 +21925,6 @@ export namespace Prisma {
     sprints?: SprintUpdateManyWithoutProjectNestedInput
     invites?: ProjectInviteUpdateManyWithoutProjectNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutProjectNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutProjectNestedInput
-    deployments?: DeploymentUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateWithoutOwnerInput = {
@@ -30371,8 +21944,6 @@ export namespace Prisma {
     sprints?: SprintUncheckedUpdateManyWithoutProjectNestedInput
     invites?: ProjectInviteUncheckedUpdateManyWithoutProjectNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutProjectNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutProjectNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutProjectNestedInput
   }
 
   export type ProjectUncheckedUpdateManyWithoutOwnerInput = {
@@ -30434,13 +22005,8 @@ export namespace Prisma {
     project?: ProjectUpdateOneRequiredWithoutTasksNestedInput
     sprint?: SprintUpdateOneWithoutTasksNestedInput
     assignee?: UserUpdateOneWithoutAssignedTasksNestedInput
-    subtasks?: SubtaskUpdateManyWithoutTaskNestedInput
     comments?: CommentUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUpdateManyWithoutTargetTaskNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUpdateManyWithoutTaskNestedInput
   }
 
   export type TaskUncheckedUpdateWithoutCreatedByInput = {
@@ -30464,13 +22030,8 @@ export namespace Prisma {
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    subtasks?: SubtaskUncheckedUpdateManyWithoutTaskNestedInput
     comments?: CommentUncheckedUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUncheckedUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUncheckedUpdateManyWithoutTargetTaskNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutTaskNestedInput
   }
 
   export type TaskUncheckedUpdateManyWithoutCreatedByInput = {
@@ -30517,13 +22078,8 @@ export namespace Prisma {
     project?: ProjectUpdateOneRequiredWithoutTasksNestedInput
     sprint?: SprintUpdateOneWithoutTasksNestedInput
     createdBy?: UserUpdateOneRequiredWithoutCreatedTasksNestedInput
-    subtasks?: SubtaskUpdateManyWithoutTaskNestedInput
     comments?: CommentUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUpdateManyWithoutTargetTaskNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUpdateManyWithoutTaskNestedInput
   }
 
   export type TaskUncheckedUpdateWithoutAssigneeInput = {
@@ -30547,13 +22103,8 @@ export namespace Prisma {
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    subtasks?: SubtaskUncheckedUpdateManyWithoutTaskNestedInput
     comments?: CommentUncheckedUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUncheckedUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUncheckedUpdateManyWithoutTargetTaskNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutTaskNestedInput
   }
 
   export type TaskUncheckedUpdateManyWithoutAssigneeInput = {
@@ -30803,40 +22354,6 @@ export namespace Prisma {
     createdAt?: Date | string
   }
 
-  export type PullRequestCreateManyProjectInput = {
-    id?: string
-    taskId?: string | null
-    provider?: string
-    repository: string
-    number: number
-    title: string
-    url?: string | null
-    branch?: string | null
-    targetBranch?: string | null
-    status?: string
-    reviewState?: string
-    ciStatus?: string
-    author?: string | null
-    openedAt?: Date | string | null
-    mergedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type DeploymentCreateManyProjectInput = {
-    id?: string
-    taskId?: string | null
-    pullRequestId?: string | null
-    environment?: string
-    status?: string
-    version?: string | null
-    url?: string | null
-    deployedBy?: string | null
-    deployedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
   export type ProjectMemberUpdateWithoutProjectInput = {
     id?: StringFieldUpdateOperationsInput | string
     role?: StringFieldUpdateOperationsInput | string
@@ -30882,13 +22399,8 @@ export namespace Prisma {
     sprint?: SprintUpdateOneWithoutTasksNestedInput
     assignee?: UserUpdateOneWithoutAssignedTasksNestedInput
     createdBy?: UserUpdateOneRequiredWithoutCreatedTasksNestedInput
-    subtasks?: SubtaskUpdateManyWithoutTaskNestedInput
     comments?: CommentUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUpdateManyWithoutTargetTaskNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUpdateManyWithoutTaskNestedInput
   }
 
   export type TaskUncheckedUpdateWithoutProjectInput = {
@@ -30912,13 +22424,8 @@ export namespace Prisma {
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    subtasks?: SubtaskUncheckedUpdateManyWithoutTaskNestedInput
     comments?: CommentUncheckedUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUncheckedUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUncheckedUpdateManyWithoutTargetTaskNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutTaskNestedInput
   }
 
   export type TaskUncheckedUpdateManyWithoutProjectInput = {
@@ -31066,138 +22573,12 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type PullRequestUpdateWithoutProjectInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    provider?: StringFieldUpdateOperationsInput | string
-    repository?: StringFieldUpdateOperationsInput | string
-    number?: IntFieldUpdateOperationsInput | number
-    title?: StringFieldUpdateOperationsInput | string
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    branch?: NullableStringFieldUpdateOperationsInput | string | null
-    targetBranch?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    reviewState?: StringFieldUpdateOperationsInput | string
-    ciStatus?: StringFieldUpdateOperationsInput | string
-    author?: NullableStringFieldUpdateOperationsInput | string | null
-    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    task?: TaskUpdateOneWithoutPullRequestsNestedInput
-    deployments?: DeploymentUpdateManyWithoutPullRequestNestedInput
-  }
-
-  export type PullRequestUncheckedUpdateWithoutProjectInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    taskId?: NullableStringFieldUpdateOperationsInput | string | null
-    provider?: StringFieldUpdateOperationsInput | string
-    repository?: StringFieldUpdateOperationsInput | string
-    number?: IntFieldUpdateOperationsInput | number
-    title?: StringFieldUpdateOperationsInput | string
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    branch?: NullableStringFieldUpdateOperationsInput | string | null
-    targetBranch?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    reviewState?: StringFieldUpdateOperationsInput | string
-    ciStatus?: StringFieldUpdateOperationsInput | string
-    author?: NullableStringFieldUpdateOperationsInput | string | null
-    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    deployments?: DeploymentUncheckedUpdateManyWithoutPullRequestNestedInput
-  }
-
-  export type PullRequestUncheckedUpdateManyWithoutProjectInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    taskId?: NullableStringFieldUpdateOperationsInput | string | null
-    provider?: StringFieldUpdateOperationsInput | string
-    repository?: StringFieldUpdateOperationsInput | string
-    number?: IntFieldUpdateOperationsInput | number
-    title?: StringFieldUpdateOperationsInput | string
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    branch?: NullableStringFieldUpdateOperationsInput | string | null
-    targetBranch?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    reviewState?: StringFieldUpdateOperationsInput | string
-    ciStatus?: StringFieldUpdateOperationsInput | string
-    author?: NullableStringFieldUpdateOperationsInput | string | null
-    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DeploymentUpdateWithoutProjectInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    environment?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    version?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    task?: TaskUpdateOneWithoutDeploymentsNestedInput
-    pullRequest?: PullRequestUpdateOneWithoutDeploymentsNestedInput
-  }
-
-  export type DeploymentUncheckedUpdateWithoutProjectInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    taskId?: NullableStringFieldUpdateOperationsInput | string | null
-    pullRequestId?: NullableStringFieldUpdateOperationsInput | string | null
-    environment?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    version?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DeploymentUncheckedUpdateManyWithoutProjectInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    taskId?: NullableStringFieldUpdateOperationsInput | string | null
-    pullRequestId?: NullableStringFieldUpdateOperationsInput | string | null
-    environment?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    version?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SubtaskCreateManyTaskInput = {
-    id?: string
-    title: string
-    completed?: boolean
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
   export type CommentCreateManyTaskInput = {
     id?: string
     userId: string
     content: string
     createdAt?: Date | string
     updatedAt?: Date | string
-  }
-
-  export type TaskLinkCreateManySourceTaskInput = {
-    id?: string
-    targetTaskId: string
-    type?: string
-    createdAt?: Date | string
-  }
-
-  export type TaskLinkCreateManyTargetTaskInput = {
-    id?: string
-    sourceTaskId: string
-    type?: string
-    createdAt?: Date | string
   }
 
   export type ActivityEventCreateManyTaskInput = {
@@ -31213,64 +22594,6 @@ export namespace Prisma {
     severity?: string
     metadata?: NullableJsonNullValueInput | InputJsonValue
     createdAt?: Date | string
-  }
-
-  export type PullRequestCreateManyTaskInput = {
-    id?: string
-    projectId: string
-    provider?: string
-    repository: string
-    number: number
-    title: string
-    url?: string | null
-    branch?: string | null
-    targetBranch?: string | null
-    status?: string
-    reviewState?: string
-    ciStatus?: string
-    author?: string | null
-    openedAt?: Date | string | null
-    mergedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type DeploymentCreateManyTaskInput = {
-    id?: string
-    projectId: string
-    pullRequestId?: string | null
-    environment?: string
-    status?: string
-    version?: string | null
-    url?: string | null
-    deployedBy?: string | null
-    deployedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type SubtaskUpdateWithoutTaskInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    completed?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SubtaskUncheckedUpdateWithoutTaskInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    completed?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type SubtaskUncheckedUpdateManyWithoutTaskInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    title?: StringFieldUpdateOperationsInput | string
-    completed?: BoolFieldUpdateOperationsInput | boolean
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type CommentUpdateWithoutTaskInput = {
@@ -31295,48 +22618,6 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type TaskLinkUpdateWithoutSourceTaskInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    targetTask?: TaskUpdateOneRequiredWithoutLinkedToNestedInput
-  }
-
-  export type TaskLinkUncheckedUpdateWithoutSourceTaskInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    targetTaskId?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type TaskLinkUncheckedUpdateManyWithoutSourceTaskInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    targetTaskId?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type TaskLinkUpdateWithoutTargetTaskInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    sourceTask?: TaskUpdateOneRequiredWithoutLinkedFromNestedInput
-  }
-
-  export type TaskLinkUncheckedUpdateWithoutTargetTaskInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    sourceTaskId?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type TaskLinkUncheckedUpdateManyWithoutTargetTaskInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    sourceTaskId?: StringFieldUpdateOperationsInput | string
-    type?: StringFieldUpdateOperationsInput | string
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
   export type ActivityEventUpdateWithoutTaskInput = {
@@ -31384,110 +22665,6 @@ export namespace Prisma {
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
 
-  export type PullRequestUpdateWithoutTaskInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    provider?: StringFieldUpdateOperationsInput | string
-    repository?: StringFieldUpdateOperationsInput | string
-    number?: IntFieldUpdateOperationsInput | number
-    title?: StringFieldUpdateOperationsInput | string
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    branch?: NullableStringFieldUpdateOperationsInput | string | null
-    targetBranch?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    reviewState?: StringFieldUpdateOperationsInput | string
-    ciStatus?: StringFieldUpdateOperationsInput | string
-    author?: NullableStringFieldUpdateOperationsInput | string | null
-    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    project?: ProjectUpdateOneRequiredWithoutPullRequestsNestedInput
-    deployments?: DeploymentUpdateManyWithoutPullRequestNestedInput
-  }
-
-  export type PullRequestUncheckedUpdateWithoutTaskInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    projectId?: StringFieldUpdateOperationsInput | string
-    provider?: StringFieldUpdateOperationsInput | string
-    repository?: StringFieldUpdateOperationsInput | string
-    number?: IntFieldUpdateOperationsInput | number
-    title?: StringFieldUpdateOperationsInput | string
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    branch?: NullableStringFieldUpdateOperationsInput | string | null
-    targetBranch?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    reviewState?: StringFieldUpdateOperationsInput | string
-    ciStatus?: StringFieldUpdateOperationsInput | string
-    author?: NullableStringFieldUpdateOperationsInput | string | null
-    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    deployments?: DeploymentUncheckedUpdateManyWithoutPullRequestNestedInput
-  }
-
-  export type PullRequestUncheckedUpdateManyWithoutTaskInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    projectId?: StringFieldUpdateOperationsInput | string
-    provider?: StringFieldUpdateOperationsInput | string
-    repository?: StringFieldUpdateOperationsInput | string
-    number?: IntFieldUpdateOperationsInput | number
-    title?: StringFieldUpdateOperationsInput | string
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    branch?: NullableStringFieldUpdateOperationsInput | string | null
-    targetBranch?: NullableStringFieldUpdateOperationsInput | string | null
-    status?: StringFieldUpdateOperationsInput | string
-    reviewState?: StringFieldUpdateOperationsInput | string
-    ciStatus?: StringFieldUpdateOperationsInput | string
-    author?: NullableStringFieldUpdateOperationsInput | string | null
-    openedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DeploymentUpdateWithoutTaskInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    environment?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    version?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    project?: ProjectUpdateOneRequiredWithoutDeploymentsNestedInput
-    pullRequest?: PullRequestUpdateOneWithoutDeploymentsNestedInput
-  }
-
-  export type DeploymentUncheckedUpdateWithoutTaskInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    projectId?: StringFieldUpdateOperationsInput | string
-    pullRequestId?: NullableStringFieldUpdateOperationsInput | string | null
-    environment?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    version?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DeploymentUncheckedUpdateManyWithoutTaskInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    projectId?: StringFieldUpdateOperationsInput | string
-    pullRequestId?: NullableStringFieldUpdateOperationsInput | string | null
-    environment?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    version?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
   export type TaskCreateManySprintInput = {
     id?: string
     title: string
@@ -31532,13 +22709,8 @@ export namespace Prisma {
     project?: ProjectUpdateOneRequiredWithoutTasksNestedInput
     assignee?: UserUpdateOneWithoutAssignedTasksNestedInput
     createdBy?: UserUpdateOneRequiredWithoutCreatedTasksNestedInput
-    subtasks?: SubtaskUpdateManyWithoutTaskNestedInput
     comments?: CommentUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUpdateManyWithoutTargetTaskNestedInput
     activityEvents?: ActivityEventUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUpdateManyWithoutTaskNestedInput
   }
 
   export type TaskUncheckedUpdateWithoutSprintInput = {
@@ -31562,13 +22734,8 @@ export namespace Prisma {
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    subtasks?: SubtaskUncheckedUpdateManyWithoutTaskNestedInput
     comments?: CommentUncheckedUpdateManyWithoutTaskNestedInput
-    linkedFrom?: TaskLinkUncheckedUpdateManyWithoutSourceTaskNestedInput
-    linkedTo?: TaskLinkUncheckedUpdateManyWithoutTargetTaskNestedInput
     activityEvents?: ActivityEventUncheckedUpdateManyWithoutTaskNestedInput
-    pullRequests?: PullRequestUncheckedUpdateManyWithoutTaskNestedInput
-    deployments?: DeploymentUncheckedUpdateManyWithoutTaskNestedInput
   }
 
   export type TaskUncheckedUpdateManyWithoutSprintInput = {
@@ -31590,62 +22757,6 @@ export namespace Prisma {
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DeploymentCreateManyPullRequestInput = {
-    id?: string
-    projectId: string
-    taskId?: string | null
-    environment?: string
-    status?: string
-    version?: string | null
-    url?: string | null
-    deployedBy?: string | null
-    deployedAt?: Date | string | null
-    createdAt?: Date | string
-    updatedAt?: Date | string
-  }
-
-  export type DeploymentUpdateWithoutPullRequestInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    environment?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    version?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    project?: ProjectUpdateOneRequiredWithoutDeploymentsNestedInput
-    task?: TaskUpdateOneWithoutDeploymentsNestedInput
-  }
-
-  export type DeploymentUncheckedUpdateWithoutPullRequestInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    projectId?: StringFieldUpdateOperationsInput | string
-    taskId?: NullableStringFieldUpdateOperationsInput | string | null
-    environment?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    version?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
-    updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
-  }
-
-  export type DeploymentUncheckedUpdateManyWithoutPullRequestInput = {
-    id?: StringFieldUpdateOperationsInput | string
-    projectId?: StringFieldUpdateOperationsInput | string
-    taskId?: NullableStringFieldUpdateOperationsInput | string | null
-    environment?: StringFieldUpdateOperationsInput | string
-    status?: StringFieldUpdateOperationsInput | string
-    version?: NullableStringFieldUpdateOperationsInput | string | null
-    url?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedBy?: NullableStringFieldUpdateOperationsInput | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

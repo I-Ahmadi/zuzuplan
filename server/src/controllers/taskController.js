@@ -146,56 +146,6 @@ async function remove(req, res, next) {
   }
 }
 
-async function addSubtask(req, res, next) {
-  try {
-    const subtask = await taskService.addSubtask(req.params.id, req.user.id, req.body.title);
-    res.status(201).json({ success: true, data: subtask });
-  } catch (err) {
-    next(err);
-  }
-}
-
-async function updateSubtask(req, res, next) {
-  try {
-    const subtask = await taskService.updateSubtask(
-      req.params.id,
-      req.params.subtaskId,
-      req.user.id,
-      req.body
-    );
-    res.json({ success: true, data: subtask });
-  } catch (err) {
-    next(err);
-  }
-}
-
-async function deleteSubtask(req, res, next) {
-  try {
-    await taskService.deleteSubtask(req.params.id, req.params.subtaskId, req.user.id);
-    res.json({ success: true, message: 'Subtask deleted' });
-  } catch (err) {
-    next(err);
-  }
-}
-
-async function addTaskLink(req, res, next) {
-  try {
-    const link = await taskService.addTaskLink(req.params.id, req.user.id, req.body);
-    res.status(201).json({ success: true, data: link });
-  } catch (err) {
-    next(err);
-  }
-}
-
-async function deleteTaskLink(req, res, next) {
-  try {
-    await taskService.deleteTaskLink(req.params.id, req.params.linkId, req.user.id);
-    res.json({ success: true, message: 'Linked work item removed' });
-  } catch (err) {
-    next(err);
-  }
-}
-
 export {
   list,
   backlog,
@@ -208,9 +158,4 @@ export {
   create,
   update,
   remove,
-  addSubtask,
-  updateSubtask,
-  deleteSubtask,
-  addTaskLink,
-  deleteTaskLink,
 };

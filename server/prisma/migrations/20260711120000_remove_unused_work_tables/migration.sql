@@ -1,0 +1,4 @@
+DROP TABLE IF EXISTS "Deployment";
+DROP TABLE IF EXISTS "PullRequest";
+DROP TABLE IF EXISTS "TaskLink";
+DROP TABLE IF EXISTS "Subtask";

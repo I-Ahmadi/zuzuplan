@@ -34,7 +34,7 @@ REST API for the Sprintly task management system. Built with **Node.js**, **Expr
 - **Auth**: `POST /api/auth/register`, `POST /api/auth/login`, refresh, logout, verify-email, forgot/reset password
 - **Users**: `GET/PUT /api/users/me`, `GET /api/users/:id`
 - **Projects**: CRUD at `/api/projects`, members at `/:id/members`, invites at `/:id/invites`
-- **Tasks**: `/api/projects/:projectId/tasks` (CRUD, subtasks)
+- **Tasks**: `/api/projects/:projectId/tasks` (CRUD)
 - **Comments**: `/api/tasks/:taskId/comments`
 
 Protected routes require header: `Authorization: Bearer <accessToken>`.

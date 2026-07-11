@@ -105,12 +105,6 @@ const TASK_MUTATION_SELECT = {
   id: true,
 };
 
-const LINKED_TASK_SELECT = {
-  id: true,
-  title: true,
-  projectId: true,
-};
-
 const TASK_DETAIL_SELECT = {
   id: true,
   title: true,
@@ -775,91 +769,3 @@ export async function deleteTask(taskId, userId) {
   await calculateProgress(task.projectId);
 }
 
-export async function addSubtask(taskId, userId, title) {
-  const task = await ensureTaskAccess(taskId, userId);
-  if (!canUpdateTask(task, userId)) {
-    throw new AppError('Insufficient task update permission', 403);
-  }
-  const subtask = await prisma.subtask.create({
-    data: { taskId, title },
-  });
-  return subtask;
-}
-
-export async function updateSubtask(taskId, subtaskId, userId, data) {
-  const task = await ensureTaskAccess(taskId, userId);
-  if (!canUpdateTask(task, userId)) {
-    throw new AppError('Insufficient task update permission', 403);
-  }
-  const subtask = await prisma.subtask.findFirst({
-    where: { id: subtaskId, taskId },
-  });
-  if (!subtask) throw new AppError('Subtask not found', 404);
-
-  const updateData = {};
-  if (data.title != null) updateData.title = data.title;
-  if (data.completed !== undefined) updateData.completed = data.completed;
-
-  const updated = await prisma.subtask.update({
-    where: { id: subtaskId },
-    data: updateData,
-  });
-  return updated;
-}
-
-export async function deleteSubtask(taskId, subtaskId, userId) {
-  const task = await ensureTaskAccess(taskId, userId);
-  if (!canUpdateTask(task, userId)) {
-    throw new AppError('Insufficient task update permission', 403);
-  }
-  const subtask = await prisma.subtask.findFirst({
-    where: { id: subtaskId, taskId },
-  });
-  if (!subtask) throw new AppError('Subtask not found', 404);
-  await prisma.subtask.delete({ where: { id: subtaskId } });
-}
-
-export async function addTaskLink(taskId, userId, data) {
-  const task = await ensureTaskAccess(taskId, userId);
-  if (!canUpdateTask(task, userId)) {
-    throw new AppError('Insufficient task update permission', 403);
-  }
-  if (!data.targetTaskId || data.targetTaskId === taskId) {
-    throw new AppError('A different linked work item is required', 400);
-  }
-  const targetTask = await prisma.task.findFirst({
-    where: { id: data.targetTaskId, projectId: task.projectId },
-  });
-  if (!targetTask) throw new AppError('Linked work item must belong to this project', 404);
-
-  const link = await prisma.taskLink.create({
-    data: {
-      sourceTaskId: taskId,
-      targetTaskId: data.targetTaskId,
-      type: data.type || 'RELATES_TO',
-    },
-    select: {
-      id: true,
-      type: true,
-      sourceTaskId: true,
-      targetTaskId: true,
-      targetTask: { select: LINKED_TASK_SELECT },
-    },
-  });
-  return link;
-}
-
-export async function deleteTaskLink(taskId, linkId, userId) {
-  const task = await ensureTaskAccess(taskId, userId);
-  if (!canUpdateTask(task, userId)) {
-    throw new AppError('Insufficient task update permission', 403);
-  }
-  const link = await prisma.taskLink.findFirst({
-    where: {
-      id: linkId,
-      OR: [{ sourceTaskId: taskId }, { targetTaskId: taskId }],
-    },
-  });
-  if (!link) throw new AppError('Linked work item not found', 404);
-  await prisma.taskLink.delete({ where: { id: linkId } });
-}

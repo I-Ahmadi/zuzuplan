@@ -311,13 +311,6 @@ async function createProjectGraph(blueprint, projectIndex, people) {
         createdAt: days(-35 + taskIndex + projectIndex),
         updatedAt: days(-12 + taskIndex + projectIndex),
         ...statusDates(status, taskIndex),
-        subtasks: {
-          create: [
-            { title: 'Reproduce the target workflow', completed: taskIndex % 3 !== 0 },
-            { title: 'Verify empty, loading, and error states', completed: taskIndex % 4 === 0 },
-            { title: 'Capture notes for regression coverage', completed: status === 'DONE' },
-          ],
-        },
         comments: {
           create: [
             {
@@ -337,62 +330,11 @@ async function createProjectGraph(blueprint, projectIndex, people) {
     tasks.push(task);
   }
 
-  for (let index = 0; index < tasks.length - 1; index += 4) {
-    await prisma.taskLink.create({
-      data: {
-        sourceTaskId: tasks[index].id,
-        targetTaskId: tasks[index + 1].id,
-        type: index % 8 === 0 ? 'BLOCKS' : 'RELATES_TO',
-      },
-    });
-  }
-
-  const deliveryTasks = tasks.filter((task) => ['IN_REVIEW', 'DONE'].includes(task.status));
-  for (let index = 0; index < Math.min(8, deliveryTasks.length); index += 1) {
-    const task = deliveryTasks[index];
-    const prStatus = task.status === 'DONE' ? 'MERGED' : index % 3 === 0 ? 'DRAFT' : 'OPEN';
-    const pr = await prisma.pullRequest.create({
-      data: {
-        projectId: project.id,
-        taskId: task.id,
-        provider: 'MANUAL',
-        repository: `sprintly/${blueprint.key.toLowerCase()}`,
-        number: projectIndex * 100 + index + 1,
-        title: task.title.replace(`[${blueprint.key}-`, `PR ${blueprint.key}-`),
-        url: `https://example.local/${blueprint.key.toLowerCase()}/pull/${projectIndex * 100 + index + 1}`,
-        branch: task.branchName,
-        targetBranch: 'main',
-        status: prStatus,
-        reviewState: prStatus === 'MERGED' ? 'MERGED' : index % 2 === 0 ? 'APPROVED' : 'REQUESTED',
-        ciStatus: index % 5 === 0 ? 'FAILED' : index % 2 === 0 ? 'SUCCESS' : 'PENDING',
-        author: users[(index % 3) + 1].name,
-        openedAt: days(-9 + index),
-        mergedAt: prStatus === 'MERGED' ? days(-2 + index) : null,
-      },
-    });
-
-    if (index % 2 === 0 || task.status === 'DONE') {
-      await prisma.deployment.create({
-        data: {
-          projectId: project.id,
-          taskId: task.id,
-          pullRequestId: pr.id,
-          environment: index % 4 === 0 ? 'production' : index % 3 === 0 ? 'preview' : 'staging',
-          status: index % 5 === 0 ? 'FAILED' : task.status === 'DONE' ? 'SUCCESS' : 'RUNNING',
-          version: `v${projectIndex + 1}.${index + 1}.${task.id.slice(-3)}`,
-          url: `https://${blueprint.key.toLowerCase()}-${index + 1}.example.local`,
-          deployedBy: users[(index % 3) + 1].name,
-          deployedAt: index % 5 === 0 ? null : days(-1 + index),
-        },
-      });
-    }
-  }
-
   const activitySeeds = [
     { task: tasks[0], type: 'task.created', title: 'Task created', severity: 'SUCCESS' },
     { task: tasks[4], type: 'task.status_changed', title: 'Status changed to IN_REVIEW', severity: 'INFO' },
     { task: tasks[8], type: 'task.status_changed', title: 'Status changed to IN_PROGRESS', severity: 'INFO' },
-    { task: tasks[16], type: 'deployment.created', title: 'Deployment recorded', severity: 'CRITICAL' },
+    { task: tasks[16], type: 'task.completed', title: 'Task completed', severity: 'SUCCESS' },
   ];
 
   for (const [index, item] of activitySeeds.entries()) {
@@ -403,7 +345,7 @@ async function createProjectGraph(blueprint, projectIndex, people) {
         actorId: people[(index % 3) + 1].id,
         targetUserId: item.task.assigneeId,
         type: item.type,
-        entityType: item.type.startsWith('deployment') ? 'deployment' : 'task',
+        entityType: 'task',
         entityId: item.task.id,
         title: item.title,
         description: item.task.title,

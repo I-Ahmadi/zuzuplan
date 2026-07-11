@@ -1,6 +1,6 @@
 import { createPortal } from "react-dom";
 import { createContext, useContext, useEffect, useRef } from "react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/utils/cn";
 
 const DialogContext = createContext({ requestOpenChange: null });
 

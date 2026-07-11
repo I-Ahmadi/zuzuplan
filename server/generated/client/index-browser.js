@@ -230,14 +230,6 @@ exports.Prisma.TaskScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.TaskLinkScalarFieldEnum = {
-  id: 'id',
-  sourceTaskId: 'sourceTaskId',
-  targetTaskId: 'targetTaskId',
-  type: 'type',
-  createdAt: 'createdAt'
-};
-
 exports.Prisma.SprintScalarFieldEnum = {
   id: 'id',
   name: 'name',
@@ -246,15 +238,6 @@ exports.Prisma.SprintScalarFieldEnum = {
   projectId: 'projectId',
   startDate: 'startDate',
   endDate: 'endDate',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.SubtaskScalarFieldEnum = {
-  id: 'id',
-  taskId: 'taskId',
-  title: 'title',
-  completed: 'completed',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };
@@ -282,42 +265,6 @@ exports.Prisma.ActivityEventScalarFieldEnum = {
   severity: 'severity',
   metadata: 'metadata',
   createdAt: 'createdAt'
-};
-
-exports.Prisma.PullRequestScalarFieldEnum = {
-  id: 'id',
-  projectId: 'projectId',
-  taskId: 'taskId',
-  provider: 'provider',
-  repository: 'repository',
-  number: 'number',
-  title: 'title',
-  url: 'url',
-  branch: 'branch',
-  targetBranch: 'targetBranch',
-  status: 'status',
-  reviewState: 'reviewState',
-  ciStatus: 'ciStatus',
-  author: 'author',
-  openedAt: 'openedAt',
-  mergedAt: 'mergedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
-};
-
-exports.Prisma.DeploymentScalarFieldEnum = {
-  id: 'id',
-  projectId: 'projectId',
-  taskId: 'taskId',
-  pullRequestId: 'pullRequestId',
-  environment: 'environment',
-  status: 'status',
-  version: 'version',
-  url: 'url',
-  deployedBy: 'deployedBy',
-  deployedAt: 'deployedAt',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.SortOrder = {
@@ -355,13 +302,9 @@ exports.Prisma.ModelName = {
   ProjectInvite: 'ProjectInvite',
   ProjectMember: 'ProjectMember',
   Task: 'Task',
-  TaskLink: 'TaskLink',
   Sprint: 'Sprint',
-  Subtask: 'Subtask',
   Comment: 'Comment',
-  ActivityEvent: 'ActivityEvent',
-  PullRequest: 'PullRequest',
-  Deployment: 'Deployment'
+  ActivityEvent: 'ActivityEvent'
 };
 
 /**

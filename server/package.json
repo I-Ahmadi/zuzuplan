@@ -6,7 +6,7 @@
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",
-    "prestart": "prisma generate",
+    "prestart": "prisma migrate deploy && prisma generate",
     "dev": "node --watch src/index.js",
     "predev": "prisma generate",
     "test": "node --test",
