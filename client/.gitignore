@@ -32,3 +32,6 @@ vite-dev.err.log
 
 # typescript
 *.tsbuildinfo
+
+.vercel
+.env*

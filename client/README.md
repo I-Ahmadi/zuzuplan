@@ -27,7 +27,7 @@ The Vite dev server runs at `http://localhost:5173` by default.
 
 ## Environment
 
-- `VITE_API_URL` - backend API base URL. Production should use your deployed API URL, for example `https://YOUR_RENDER_SERVICE.onrender.com/api`.
+- `VITE_API_URL` - backend API base URL. Production uses the Railway API URL, for example `https://YOUR_RAILWAY_SERVICE.up.railway.app/api`.
 
 ## Project layout
 
