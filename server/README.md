@@ -40,3 +40,16 @@ REST API for the Sprintly task management system. Built with **Node.js**, **Expr
 Protected routes require header: `Authorization: Bearer <accessToken>`.
 
 See project root `BACKEND.md` for full API and data model details.
+
+## Render deployment
+
+Create a Render Web Service from the GitHub repository with these settings:
+
+- Root Directory: `server`
+- Runtime: `Node`
+- Build Command: `npm ci && npm run build`
+- Start Command: `npm start`
+- Health Check Path: `/health`
+
+Set production secrets in Render's Environment settings. Do not commit `.env`.
+Render supplies `PORT` automatically; the server falls back to `3000` locally.
