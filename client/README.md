@@ -21,13 +21,11 @@ npm run dev
 The Vite dev server runs at `http://localhost:5173` by default.
 
 - `npm run dev` - start the development server
-- `npm run build` - create a production build
-- `npm run preview` - preview the production build locally
+- `npm run build` - check that the client compiles
+- `npm run preview` - preview a local build
 - `npm run lint` - run ESLint
 
-## Environment
-
-- `VITE_API_URL` - backend API base URL. Production uses the Render API URL, for example `https://YOUR_RENDER_SERVICE.onrender.com/api`.
+API and upload requests are proxied to the local server at `http://localhost:3000`; no client environment file is required.
 
 ## Project layout
 

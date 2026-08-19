@@ -7,11 +7,11 @@ module.exports = defineConfig({
   server: {
     proxy: {
       "/api": {
-        target: process.env.VITE_DEV_API_TARGET || "http://localhost:3000",
+        target: "http://localhost:3000",
         changeOrigin: true,
       },
       "/uploads": {
-        target: process.env.VITE_DEV_API_TARGET || "http://localhost:3000",
+        target: "http://localhost:3000",
         changeOrigin: true,
       },
     },

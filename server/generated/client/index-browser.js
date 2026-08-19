@@ -222,7 +222,6 @@ exports.Prisma.TaskScalarFieldEnum = {
   blockedReason: 'blockedReason',
   readyAt: 'readyAt',
   mergedAt: 'mergedAt',
-  deployedAt: 'deployedAt',
   backlogOrder: 'backlogOrder',
   sprintOrder: 'sprintOrder',
   dueDate: 'dueDate',

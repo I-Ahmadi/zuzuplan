@@ -1,35 +1,13 @@
 import path from 'path';
 
-export const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 export const PORT = process.env.PORT || 3000;
 export const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(process.cwd(), 'uploads');
-
-function splitEnvList(value = '') {
-  return value
-    .split(',')
-    .map((item) => item.trim())
-    .filter(Boolean);
-}
-
-export function getAllowedOrigins() {
-  return Array.from(new Set([
-    process.env.CLIENT_URL,
-    ...splitEnvList(process.env.CORS_ORIGINS),
-  ].filter(Boolean)));
-}
+export const CLIENT_URL = 'http://localhost:5173';
 
 export function isOriginAllowed(origin) {
   if (!origin) return true;
 
-  if (getAllowedOrigins().includes(origin)) {
-    return true;
-  }
-
-  if (!IS_PRODUCTION) {
-    return /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/.test(origin);
-  }
-
-  return false;
+  return /^https?:\/\/(?:localhost|127\.0\.0\.1|\[::1\])(?::\d+)?$/.test(origin);
 }
 
 export function validateEnv() {
@@ -42,10 +20,6 @@ export function validateEnv() {
     'JWT_REFRESH_EXPIRES_MS',
   ];
 
-  if (IS_PRODUCTION) {
-    required.push('CLIENT_URL');
-  }
-
   const missing = required.filter((key) => !process.env[key]);
 
   if (missing.length > 0) {
@@ -54,11 +28,5 @@ export function validateEnv() {
 
   if (process.env.JWT_REFRESH_EXPIRES_MS && Number.isNaN(Number(process.env.JWT_REFRESH_EXPIRES_MS))) {
     throw new Error('JWT_REFRESH_EXPIRES_MS must be a number of milliseconds.');
-  }
-
-  const hasBrevoEmail = process.env.BREVO_API_KEY && process.env.BREVO_SENDER_EMAIL;
-
-  if (IS_PRODUCTION && !hasBrevoEmail) {
-    throw new Error('Production email requires BREVO_API_KEY and BREVO_SENDER_EMAIL.');
   }
 }

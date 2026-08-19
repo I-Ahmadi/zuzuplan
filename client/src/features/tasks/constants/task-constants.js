@@ -53,7 +53,7 @@ export const LEGACY_TASK_STATUS_GROUPS = {
   TODO: ["TODO", "BACKLOG", "READY"],
   IN_PROGRESS: ["IN_PROGRESS", "READY_TO_MERGE", "BLOCKED"],
   IN_REVIEW: ["IN_REVIEW"],
-  DONE: ["DONE", "MERGED", "DEPLOYED", "CANCELED", "CANCELLED"],
+  DONE: ["DONE", "MERGED", "CANCELED", "CANCELLED"],
 };
 
 export function normalizeTaskStatus(status) {

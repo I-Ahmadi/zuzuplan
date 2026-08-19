@@ -3,10 +3,9 @@ import fs from 'fs';
 import express from 'express';
 import cors from 'cors';
 import { connectDB } from './config/database.js';
-import { IS_PRODUCTION, PORT, UPLOAD_DIR, isOriginAllowed, validateEnv } from './config/env.js';
+import { PORT, UPLOAD_DIR, isOriginAllowed, validateEnv } from './config/env.js';
 import { errorHandler } from './middleware/errorHandler.js';
 import notFoundHandler from './middleware/notFoundHandler.js';
-import { verifyEmailProvider } from './services/emailService.js';
 
 import authRoutes from './routes/authRoutes.js';
 import userRoutes from './routes/usersRoutes.js';
@@ -34,10 +33,6 @@ if (!fs.existsSync(UPLOAD_DIR)) {
 const app = express();
 app.disable('x-powered-by');
 
-if (IS_PRODUCTION) {
-  app.set('trust proxy', 1);
-}
-
 app.use((req, res, next) => {
   res.setHeader('X-Content-Type-Options', 'nosniff');
   res.setHeader('X-Frame-Options', 'DENY');
@@ -61,11 +56,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.path}`);
   next();
-});
-
-// Health Check Route
-app.get('/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 // API Routes
@@ -92,7 +82,6 @@ app.use(errorHandler);
 // Server Startup
 async function start() {
   await connectDB();
-  verifyEmailProvider();
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });

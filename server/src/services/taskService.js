@@ -725,7 +725,6 @@ export async function updateTask(taskId, userId, data) {
     if (updateData.status === TASK_STATUS.IN_PROGRESS) updateData.readyAt = new Date();
     if (updateData.status === TASK_STATUS.DONE) {
       updateData.mergedAt = new Date();
-      updateData.deployedAt = new Date();
     }
   }
   if (data.sprintId !== undefined) {
@@ -768,4 +767,3 @@ export async function deleteTask(taskId, userId) {
   await prisma.task.delete({ where: { id: taskId } });
   await calculateProgress(task.projectId);
 }
-

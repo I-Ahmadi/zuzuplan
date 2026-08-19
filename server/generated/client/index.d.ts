@@ -9315,7 +9315,6 @@ export namespace Prisma {
     blockedReason: string | null
     readyAt: Date | null
     mergedAt: Date | null
-    deployedAt: Date | null
     backlogOrder: number | null
     sprintOrder: number | null
     dueDate: Date | null
@@ -9339,7 +9338,6 @@ export namespace Prisma {
     blockedReason: string | null
     readyAt: Date | null
     mergedAt: Date | null
-    deployedAt: Date | null
     backlogOrder: number | null
     sprintOrder: number | null
     dueDate: Date | null
@@ -9363,7 +9361,6 @@ export namespace Prisma {
     blockedReason: number
     readyAt: number
     mergedAt: number
-    deployedAt: number
     backlogOrder: number
     sprintOrder: number
     dueDate: number
@@ -9401,7 +9398,6 @@ export namespace Prisma {
     blockedReason?: true
     readyAt?: true
     mergedAt?: true
-    deployedAt?: true
     backlogOrder?: true
     sprintOrder?: true
     dueDate?: true
@@ -9425,7 +9421,6 @@ export namespace Prisma {
     blockedReason?: true
     readyAt?: true
     mergedAt?: true
-    deployedAt?: true
     backlogOrder?: true
     sprintOrder?: true
     dueDate?: true
@@ -9449,7 +9444,6 @@ export namespace Prisma {
     blockedReason?: true
     readyAt?: true
     mergedAt?: true
-    deployedAt?: true
     backlogOrder?: true
     sprintOrder?: true
     dueDate?: true
@@ -9560,7 +9554,6 @@ export namespace Prisma {
     blockedReason: string | null
     readyAt: Date | null
     mergedAt: Date | null
-    deployedAt: Date | null
     backlogOrder: number
     sprintOrder: number
     dueDate: Date | null
@@ -9603,7 +9596,6 @@ export namespace Prisma {
     blockedReason?: boolean
     readyAt?: boolean
     mergedAt?: boolean
-    deployedAt?: boolean
     backlogOrder?: boolean
     sprintOrder?: boolean
     dueDate?: boolean
@@ -9634,7 +9626,6 @@ export namespace Prisma {
     blockedReason?: boolean
     readyAt?: boolean
     mergedAt?: boolean
-    deployedAt?: boolean
     backlogOrder?: boolean
     sprintOrder?: boolean
     dueDate?: boolean
@@ -9662,7 +9653,6 @@ export namespace Prisma {
     blockedReason?: boolean
     readyAt?: boolean
     mergedAt?: boolean
-    deployedAt?: boolean
     backlogOrder?: boolean
     sprintOrder?: boolean
     dueDate?: boolean
@@ -9690,7 +9680,6 @@ export namespace Prisma {
     blockedReason?: boolean
     readyAt?: boolean
     mergedAt?: boolean
-    deployedAt?: boolean
     backlogOrder?: boolean
     sprintOrder?: boolean
     dueDate?: boolean
@@ -9698,7 +9687,7 @@ export namespace Prisma {
     updatedAt?: boolean
   }
 
-  export type TaskOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "projectId" | "assigneeId" | "createdById" | "sprintId" | "type" | "priority" | "status" | "estimate" | "branchName" | "blockedReason" | "readyAt" | "mergedAt" | "deployedAt" | "backlogOrder" | "sprintOrder" | "dueDate" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
+  export type TaskOmit<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = $Extensions.GetOmit<"id" | "title" | "description" | "projectId" | "assigneeId" | "createdById" | "sprintId" | "type" | "priority" | "status" | "estimate" | "branchName" | "blockedReason" | "readyAt" | "mergedAt" | "backlogOrder" | "sprintOrder" | "dueDate" | "createdAt" | "updatedAt", ExtArgs["result"]["task"]>
   export type TaskInclude<ExtArgs extends $Extensions.InternalArgs = $Extensions.DefaultArgs> = {
     project?: boolean | ProjectDefaultArgs<ExtArgs>
     sprint?: boolean | Task$sprintArgs<ExtArgs>
@@ -9747,7 +9736,6 @@ export namespace Prisma {
       blockedReason: string | null
       readyAt: Date | null
       mergedAt: Date | null
-      deployedAt: Date | null
       backlogOrder: number
       sprintOrder: number
       dueDate: Date | null
@@ -10197,7 +10185,6 @@ export namespace Prisma {
     readonly blockedReason: FieldRef<"Task", 'String'>
     readonly readyAt: FieldRef<"Task", 'DateTime'>
     readonly mergedAt: FieldRef<"Task", 'DateTime'>
-    readonly deployedAt: FieldRef<"Task", 'DateTime'>
     readonly backlogOrder: FieldRef<"Task", 'Float'>
     readonly sprintOrder: FieldRef<"Task", 'Float'>
     readonly dueDate: FieldRef<"Task", 'DateTime'>
@@ -14307,7 +14294,6 @@ export namespace Prisma {
     blockedReason: 'blockedReason',
     readyAt: 'readyAt',
     mergedAt: 'mergedAt',
-    deployedAt: 'deployedAt',
     backlogOrder: 'backlogOrder',
     sprintOrder: 'sprintOrder',
     dueDate: 'dueDate',
@@ -15084,7 +15070,6 @@ export namespace Prisma {
     blockedReason?: StringNullableFilter<"Task"> | string | null
     readyAt?: DateTimeNullableFilter<"Task"> | Date | string | null
     mergedAt?: DateTimeNullableFilter<"Task"> | Date | string | null
-    deployedAt?: DateTimeNullableFilter<"Task"> | Date | string | null
     backlogOrder?: FloatFilter<"Task"> | number
     sprintOrder?: FloatFilter<"Task"> | number
     dueDate?: DateTimeNullableFilter<"Task"> | Date | string | null
@@ -15114,7 +15099,6 @@ export namespace Prisma {
     blockedReason?: SortOrderInput | SortOrder
     readyAt?: SortOrderInput | SortOrder
     mergedAt?: SortOrderInput | SortOrder
-    deployedAt?: SortOrderInput | SortOrder
     backlogOrder?: SortOrder
     sprintOrder?: SortOrder
     dueDate?: SortOrderInput | SortOrder
@@ -15147,7 +15131,6 @@ export namespace Prisma {
     blockedReason?: StringNullableFilter<"Task"> | string | null
     readyAt?: DateTimeNullableFilter<"Task"> | Date | string | null
     mergedAt?: DateTimeNullableFilter<"Task"> | Date | string | null
-    deployedAt?: DateTimeNullableFilter<"Task"> | Date | string | null
     backlogOrder?: FloatFilter<"Task"> | number
     sprintOrder?: FloatFilter<"Task"> | number
     dueDate?: DateTimeNullableFilter<"Task"> | Date | string | null
@@ -15177,7 +15160,6 @@ export namespace Prisma {
     blockedReason?: SortOrderInput | SortOrder
     readyAt?: SortOrderInput | SortOrder
     mergedAt?: SortOrderInput | SortOrder
-    deployedAt?: SortOrderInput | SortOrder
     backlogOrder?: SortOrder
     sprintOrder?: SortOrder
     dueDate?: SortOrderInput | SortOrder
@@ -15209,7 +15191,6 @@ export namespace Prisma {
     blockedReason?: StringNullableWithAggregatesFilter<"Task"> | string | null
     readyAt?: DateTimeNullableWithAggregatesFilter<"Task"> | Date | string | null
     mergedAt?: DateTimeNullableWithAggregatesFilter<"Task"> | Date | string | null
-    deployedAt?: DateTimeNullableWithAggregatesFilter<"Task"> | Date | string | null
     backlogOrder?: FloatWithAggregatesFilter<"Task"> | number
     sprintOrder?: FloatWithAggregatesFilter<"Task"> | number
     dueDate?: DateTimeNullableWithAggregatesFilter<"Task"> | Date | string | null
@@ -16125,7 +16106,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -16155,7 +16135,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -16177,7 +16156,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16207,7 +16185,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16233,7 +16210,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -16253,7 +16229,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -16277,7 +16252,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -17122,7 +17096,6 @@ export namespace Prisma {
     blockedReason?: SortOrder
     readyAt?: SortOrder
     mergedAt?: SortOrder
-    deployedAt?: SortOrder
     backlogOrder?: SortOrder
     sprintOrder?: SortOrder
     dueDate?: SortOrder
@@ -17152,7 +17125,6 @@ export namespace Prisma {
     blockedReason?: SortOrder
     readyAt?: SortOrder
     mergedAt?: SortOrder
-    deployedAt?: SortOrder
     backlogOrder?: SortOrder
     sprintOrder?: SortOrder
     dueDate?: SortOrder
@@ -17176,7 +17148,6 @@ export namespace Prisma {
     blockedReason?: SortOrder
     readyAt?: SortOrder
     mergedAt?: SortOrder
-    deployedAt?: SortOrder
     backlogOrder?: SortOrder
     sprintOrder?: SortOrder
     dueDate?: SortOrder
@@ -18799,7 +18770,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -18827,7 +18797,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -18859,7 +18828,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -18887,7 +18855,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -19224,7 +19191,6 @@ export namespace Prisma {
     blockedReason?: StringNullableFilter<"Task"> | string | null
     readyAt?: DateTimeNullableFilter<"Task"> | Date | string | null
     mergedAt?: DateTimeNullableFilter<"Task"> | Date | string | null
-    deployedAt?: DateTimeNullableFilter<"Task"> | Date | string | null
     backlogOrder?: FloatFilter<"Task"> | number
     sprintOrder?: FloatFilter<"Task"> | number
     dueDate?: DateTimeNullableFilter<"Task"> | Date | string | null
@@ -19733,7 +19699,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -19761,7 +19726,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -21100,7 +21064,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -21128,7 +21091,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -21225,7 +21187,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -21254,7 +21215,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -21344,7 +21304,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -21373,7 +21332,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -21496,7 +21454,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -21525,7 +21482,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -21664,7 +21620,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -21693,7 +21648,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -21805,7 +21759,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -21828,7 +21781,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -21996,7 +21948,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22024,7 +21975,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22049,7 +21999,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22069,7 +22018,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22097,7 +22045,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22122,7 +22069,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22306,7 +22252,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -22390,7 +22335,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22418,7 +22362,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22443,7 +22386,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22680,7 +22622,6 @@ export namespace Prisma {
     blockedReason?: string | null
     readyAt?: Date | string | null
     mergedAt?: Date | string | null
-    deployedAt?: Date | string | null
     backlogOrder?: number
     sprintOrder?: number
     dueDate?: Date | string | null
@@ -22700,7 +22641,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22728,7 +22668,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
@@ -22753,7 +22692,6 @@ export namespace Prisma {
     blockedReason?: NullableStringFieldUpdateOperationsInput | string | null
     readyAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     mergedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
-    deployedAt?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null
     backlogOrder?: FloatFieldUpdateOperationsInput | number
     sprintOrder?: FloatFieldUpdateOperationsInput | number
     dueDate?: NullableDateTimeFieldUpdateOperationsInput | Date | string | null

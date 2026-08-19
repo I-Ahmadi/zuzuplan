@@ -7,13 +7,7 @@ import {
 } from "@/services/auth-session";
 import { startGlobalLoading } from "@/stores/loading-store";
 
-const configuredApiBase = import.meta.env.VITE_API_URL;
-
-if (import.meta.env.PROD && !configuredApiBase) {
-  console.error("Missing VITE_API_URL. Production API requests may fail.");
-}
-
-const API_BASE = (configuredApiBase || "/api").replace(/\/$/, "");
+const API_BASE = "/api";
 
 let refreshPromise = null;
 const pendingGetRequests = new Map();

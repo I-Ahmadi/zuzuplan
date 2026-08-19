@@ -154,7 +154,6 @@ model Task {
   blockedReason String?
   readyAt     DateTime?
   mergedAt    DateTime?
-  deployedAt  DateTime?
   backlogOrder Float   @default(0)
   sprintOrder  Float   @default(0)
   dueDate     DateTime?

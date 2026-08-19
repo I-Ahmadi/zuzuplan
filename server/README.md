@@ -11,16 +11,23 @@ REST API for the Sprintly task management system. Built with **Node.js**, **Expr
 
 2. **Environment**
    - Copy `.env.example` to `.env`
-   - Set `DATABASE_URL` to your PostgreSQL connection string with SSL in production, e.g.:
+   - Set `DATABASE_URL` to your local PostgreSQL database, e.g.:
      ```
-     DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/postgres?sslmode=require"
+     DATABASE_URL="postgresql://postgres:postgres@localhost:5432/sprintly"
      ```
-   - Set `CLIENT_URL`, `CORS_ORIGINS`, `JWT_SECRET`, and `JWT_REFRESH_SECRET` for auth and browser access
+   - Set `JWT_SECRET` and `JWT_REFRESH_SECRET` for local authentication
 
 3. **Database**
+
+   From the project root, start the included PostgreSQL container:
    ```bash
-   npx prisma generate
-   npx prisma migrate dev --name init
+   docker compose up -d postgres
+   ```
+
+   Then apply the existing migrations:
+   ```bash
+   npm run prisma:generate
+   npm run db:setup
    ```
 
 4. **Run**
@@ -28,6 +35,8 @@ REST API for the Sprintly task management system. Built with **Node.js**, **Expr
    npm run dev
    ```
    Server runs on `PORT` from env, or `3000` when unset.
+
+   Verification, password-reset, and invitation emails are printed in the server terminal for local testing.
 
 ## API Overview
 
@@ -40,16 +49,3 @@ REST API for the Sprintly task management system. Built with **Node.js**, **Expr
 Protected routes require header: `Authorization: Bearer <accessToken>`.
 
 See project root `BACKEND.md` for full API and data model details.
-
-## Render deployment
-
-Create a Render Web Service from the GitHub repository with these settings:
-
-- Root Directory: `server`
-- Runtime: `Node`
-- Build Command: `npm ci && npm run build`
-- Start Command: `npm start`
-- Health Check Path: `/health`
-
-Set production secrets in Render's Environment settings. Do not commit `.env`.
-Render supplies `PORT` automatically; the server falls back to `3000` locally.

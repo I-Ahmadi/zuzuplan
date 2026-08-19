@@ -13,7 +13,7 @@
 /dist/
 /vite.config.js.timestamp-*
 
-# production
+# build output
 /build
 
 # misc
@@ -33,5 +33,4 @@ vite-dev.err.log
 # typescript
 *.tsbuildinfo
 
-.vercel
 .env*

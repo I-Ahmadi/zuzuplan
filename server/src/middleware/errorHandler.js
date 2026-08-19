@@ -38,10 +38,6 @@ export function errorHandler(err, req, res, next) {
     message = err.code === 'LIMIT_FILE_SIZE' ? 'Uploaded file is too large' : err.message;
   }
 
-  if (process.env.NODE_ENV === 'production' && statusCode === 500) {
-    message = 'Internal server error';
-  }
-
   res.status(statusCode).json({
     success: false,
     error: { message, statusCode },
